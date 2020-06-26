@@ -322,7 +322,7 @@ function cancelProfileEditing() {
   profileForm.hidden = true;
 }
 
-window.onload = function() {
-  configureUserProfile(user);
-  configureProfileEditButton(user);
-}
+addLoadEvent(() => {
+    configureUserProfile(user);
+    configureProfileEditButton(user);
+  });
