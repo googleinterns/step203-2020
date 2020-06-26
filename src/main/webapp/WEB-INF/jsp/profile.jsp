@@ -7,7 +7,7 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
   <title>Profile</title>
-  <script src="js/user_profile.js"></script>
+  <script src="js/profile.js"></script>
   <link href="css/deal.css" rel="stylesheet" />
   <link href="tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Font Awesome icons (free version)-->
