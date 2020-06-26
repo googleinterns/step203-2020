@@ -20,6 +20,7 @@
 
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
+  <div class="page-section">
   <div class="container">
     <div class="row mb-5 mt-5">
       <div class="col-md-8">
@@ -47,9 +48,9 @@
       </div>
       <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-sm-12 mt-3">
             <form id="comment-form" class="hidden" enctype="multipart/form-data" method="POST">
-              <textarea style="width: 100%;" class="comment border border-info" type="text" name="comment" placeholder="Leave a comment..."></textarea>
+              <textarea style="width: 100%;" class="comment form-control mb-3" type="text" name="comment" placeholder="Leave a comment..."></textarea>
               <input type="submit" class="btn btn-secondary float-right" />
             </form>
           </div>
@@ -71,5 +72,4 @@
   <!-- Core theme JS-->
   <script src="js/scripts.js"></script>
 </body>
-
 </html>
