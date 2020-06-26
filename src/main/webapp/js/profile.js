@@ -4,7 +4,7 @@ const user =
   'name': 'Aaron Tan',
   'username': 'aarontan',
   'email': 'aaront@example.com',
-  'picture': '/assets/img/portfolio/cabin.png',
+  'picture': 'images/profile_pic.svg',
   'bio': 'a short bio of aaron tan',
   'dealsUploaded': [
     {
@@ -12,35 +12,35 @@ const user =
         'name': 'Starbucks Mocha 1-for-1',
         'votes': 5,
         'poster': 'def',
-        'image': 'assets/img/avataaars.svg'
+        'image': 'images/profile_pic.svg'
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'assets/img/avataaars.svg'
+      'image': 'images/profile_pic.svg'
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'assets/img/avataaars.svg'
+      'image': 'images/profile_pic.svg'
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'assets/img/avataaars.svg'
+      'image': 'images/profile_pic.svg'
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'assets/img/avataaars.svg'
+      'image': 'images/profile_pic.svg'
     },
   ],
   'followers': [
@@ -48,37 +48,37 @@ const user =
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       },
       {
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       },
       {
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       },
       {
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       },
       {
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       },
       {
         'id': 1234,
         'name': 'Alice Chen',
         'username': 'alicechen',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
       }
   ],
   'following': [
@@ -86,20 +86,20 @@ const user =
           'id': 1234,
           'name': 'Alice Chen',
           'username': 'alicechen',
-          'picture': '/assets/img/avataaars.svg'
+          'picture': 'images/profile_pic.svg'
       },
       {
         'id': 2345,
         'name': 'Starbucks',
         'username': 'starbucks',
-        'picture': '/assets/img/avataaars.svg'
+        'picture': 'images/profile_pic.svg'
     },
   ],
   'restaurantsFollowed': [
     {
       'id': 2345,
       'name': 'Starbucks',
-      'picture': '/assets/img/avataaars.svg'
+      'picture': 'images/profile_pic.svg'
     },
   ],
   'tagsFollowed': [
@@ -265,7 +265,7 @@ function configureTagsFollowedBy(user) {
 function configureProfileEditButton(user) {
   const profileEditButton = document.getElementById('edit-profile-btn');
   profileEditButton.onclick = function() {
-    showProfileEditingStatus(user);
+    showProfileEditingForm(user);
   }
 }
 
