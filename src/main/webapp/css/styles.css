@@ -5942,8 +5942,8 @@ a.close.disabled {
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 50px;
+  height: 50px;
   background: no-repeat 50%/100% 100%;
 }
 
@@ -6002,7 +6002,7 @@ a.close.disabled {
   padding-top: 20px;
   padding-bottom: 20px;
   color: #fff;
-  text-align: center;
+  text-align: center;f
 }
 
 @-webkit-keyframes spinner-border {
@@ -10277,7 +10277,7 @@ body > .container {
   flex-grow: 1;
 }
 
-#header-bg-img {
+.header-bg-img {
   background-image: url(/../assets/img/food-photo.jpeg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -10288,12 +10288,21 @@ body > .container {
   height: 270px;
 }
 
-.see-more-link {
-  display:inline-block;
-  bottom: 0;
-}
-
 .deal-img {
   height: 300px;
   width: auto;
+}
+
+.carousel-control-prev {
+  margin-left: -125px;
+  filter: invert(100%);
+}
+.carousel-control-next {
+  margin-right: -125px;
+  filter: invert(100%);
+}
+
+.carousel-indicators {
+  filter: invert(100%);
+  margin-bottom: -50px;
 }
