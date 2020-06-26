@@ -10276,3 +10276,24 @@ body {
 body > .container {
   flex-grow: 1;
 }
+
+#header-bg-img {
+  background-image: url(/../assets/img/food-photo.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+.home-deal-img {
+  height: 270px;
+}
+
+.see-more-link {
+  display:inline-block;
+  bottom: 0;
+}
+
+.deal-img {
+  height: 300px;
+  width: auto;
+}
