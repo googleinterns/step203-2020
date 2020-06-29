@@ -1,4 +1,4 @@
-package com.google.servlets;
+package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
