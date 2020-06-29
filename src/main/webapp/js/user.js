@@ -208,7 +208,7 @@ function createSimpleUserContainer(user) {
   const username = document.createElement('a');
   username.innerText = user.username;
   username.className = 'h6 d-inline-block w-75';
-  username.href = '/profile/' + user.id;
+  username.href = '/user/' + user.id;
   userContainer.appendChild(username);
   return userContainer;
 }
