@@ -33,7 +33,7 @@ public class FollowServlet extends HttpServlet {
 
     long followerId = 3141; // TODO: check user authentication
 
-    if (pathInfo.startsWith("retaurant/")) {
+    if (pathInfo.startsWith("restaurants/")) {
       manager.followRestaurant(followerId, id);
     } else if (pathInfo.startsWith("tags/")) {
       manager.followTag(followerId, id);
@@ -63,7 +63,7 @@ public class FollowServlet extends HttpServlet {
 
     long followerId = 3141; // TODO: check user authentication
 
-    if (pathInfo.startsWith("retaurant/")) {
+    if (pathInfo.startsWith("restaurants/")) {
       manager.unfollowRestaurant(followerId, id);
     } else if (pathInfo.startsWith("tags/")) {
       manager.unfollowTag(followerId, id);
