@@ -1,4 +1,4 @@
-package com.google.model;
+package com.google.step.model;
 
 public class Deal {
   public final long id;

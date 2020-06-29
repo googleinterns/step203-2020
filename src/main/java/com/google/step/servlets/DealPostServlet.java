@@ -1,8 +1,8 @@
-package com.google.servlets;
+package com.google.step.servlets;
 
-import com.google.datamanager.DealManager;
-import com.google.datamanager.DealManagerDatastore;
-import com.google.model.Deal;
+import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.model.Deal;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

@@ -1,7 +1,7 @@
-package com.google.servlets;
+package com.google.step.servlets;
 
 import com.google.gson.Gson;
-import com.google.model.Deal;
+import com.google.step.model.Deal;
 import java.util.HashMap;
 import java.util.Map;
 

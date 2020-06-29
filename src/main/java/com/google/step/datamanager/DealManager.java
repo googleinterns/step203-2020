@@ -1,6 +1,6 @@
-package com.google.datamanager;
+package com.google.step.datamanager;
 
-import com.google.model.Deal;
+import com.google.step.model.Deal;
 
 public interface DealManager {
   public Deal createDeal(

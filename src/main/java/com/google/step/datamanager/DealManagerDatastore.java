@@ -1,4 +1,4 @@
-package com.google.datamanager;
+package com.google.step.datamanager;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -6,7 +6,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.model.Deal;
+import com.google.step.model.Deal;
 
 public class DealManagerDatastore implements DealManager {
 
