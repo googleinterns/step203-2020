@@ -23,9 +23,15 @@ public class DealDetailServlet extends HttpServlet {
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    long id = Long.parseLong(request.getPathInfo().substring(1));
-    System.out.println("delete deal " + id);
-    // TODO(limli) add delete logic
+    // TODO: check user authentication
+    long id;
+    try {
+      id = Long.parseLong(request.getPathInfo().substring(1));
+    } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    manager.deleteDeal(id);
   }
 
   /** Deletes the deal with the given id parameter */

@@ -64,8 +64,8 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public void deleteDeal(long id) {
-    // TODO Auto-generated method stub
-
+    Key key = KeyFactory.createKey("Deal", id);
+    datastore.delete(key);
   }
 
   @Override
