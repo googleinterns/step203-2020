@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FollowManagerDatastore implements FollowManager {
 
@@ -85,5 +87,34 @@ public class FollowManagerDatastore implements FollowManager {
     }
 
     datastore.delete(entity.getKey());
+  }
+
+  @Override
+  public List<Long> getFollowedRestaurants(long followerId) {
+    return getFollowedSomething(followerId, RESTAURANT_FIELD_NAME);
+  }
+
+  @Override
+  public List<Long> getFollowedUsers(long followerId) {
+    return getFollowedSomething(followerId, USER_FIELD_NAME);
+  }
+
+  @Override
+  public List<Long> getFollowedTags(long followerId) {
+    return getFollowedSomething(followerId, TAG_FIELD_NAME);
+  }
+
+  private List<Long> getFollowedSomething(long followerId, String fieldName) {
+    Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
+    Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
+    Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);
+    Query query = new Query(ENTITY_NAME).setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+
+    List<Long> list = new ArrayList<>();
+    for (Entity entity : pq.asIterable()) {
+      list.add((Long) entity.getProperty(fieldName));
+    }
+    return list;
   }
 }
