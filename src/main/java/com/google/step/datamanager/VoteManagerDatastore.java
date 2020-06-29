@@ -26,7 +26,7 @@ public class VoteManagerDatastore implements VoteManager {
 
     int totalVotes = 0;
     for (Entity entity : pq.asIterable()) {
-      int dir = (int) entity.getProperty("dir");
+      int dir = ((Long) entity.getProperty("dir")).intValue();
       totalVotes += dir;
     }
     return totalVotes;
