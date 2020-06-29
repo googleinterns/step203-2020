@@ -70,7 +70,33 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public Deal updateDeal(Deal deal) {
-    // TODO Auto-generated method stub
-    return null;
+    Key key = KeyFactory.createKey("Deal", deal.id);
+    Entity dealEntity;
+    try {
+      dealEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    if (deal.description != null) {
+      dealEntity.setProperty("description", deal.description);
+      System.out.println(deal.description);
+    }
+    if (deal.photoBlobkey != null) {
+      dealEntity.setProperty("photoBlobkey", deal.photoBlobkey);
+    }
+    if (deal.start != null) {
+      dealEntity.setProperty("start", deal.start);
+    }
+    if (deal.end != null) {
+      dealEntity.setProperty("end", deal.end);
+    }
+    if (deal.source != null) {
+      dealEntity.setProperty("source", deal.source);
+    }
+    if (deal.restaurant != -1) {
+      dealEntity.setProperty("restaurant", deal.restaurant);
+    }
+    datastore.put(dealEntity);
+    return readDeal(deal.id);
   }
 }
