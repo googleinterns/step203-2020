@@ -28,8 +28,8 @@
       <div id="profile" class="row mb-5">
         <div class="col-sm-4 col-lg-3">
           <img id="profile-photo" class="img-fluid mb-4" alt="profile-photo"/>
-          <button id="follow-btn" type="button" class="btn btn-primary">Follow</button>
-          <button id="edit-profile-btn" type="button" class="btn btn-primary">
+          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+          <button id="edit-profile-btn" type="button" class="btn btn-primary" hidden>
             Edit profile
           </button>
         </div>

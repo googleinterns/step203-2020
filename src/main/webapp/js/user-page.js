@@ -195,9 +195,23 @@ function configureTagsFollowedBy(user) {
  */
 function configureProfileEditButton(user) {
   const profileEditButton = document.getElementById('edit-profile-btn');
+  profileEditButton.hidden = false;
   profileEditButton.onclick = function() {
     showProfileEditingForm(user);
   };
+}
+
+/**
+ * Configures a button for following/unfollowing the user.
+ * @param {object} user The user who will be followed or unfollowed.
+ * @param {number} userLoggedInId The id of the current user who will
+ *  follow or unfollow.
+ */
+function configureFollowButton(user, userLoggedInId) {
+  const followButton = document.getElementById('follow-btn');
+  followButton.hidden = false;
+  followButton.innerText = 'unfollow';
+  // TODO: Check follow relationship, btn onclick
 }
 
 /**
@@ -260,6 +274,24 @@ function cancelProfileEditing() {
 }
 
 /**
+ * Configures buttons based the user profile and the current logged
+ * in user if any.
+ * @param {object} user The user whose profile is shown.
+ */
+function configureButtons(user) {
+  fetch('/api/authentication')
+      .then((response) =>(response.json()))
+      .then((loginStatus) => {
+        if (loginStatus.isLoggedIn) {
+          if (loginStatus.id == user.id) {
+            configureProfileEditButton(user);
+          } else {
+            configureFollowButton(user, loginStatus.id);
+          }
+        }
+      });
+}
+/**
  * Initializes the user profile based on the id.
  */
 function init() {
@@ -267,8 +299,8 @@ function init() {
   fetch('/api/users/' + id)
       .then((response) => response.json())
       .then((user) => {
+        configureButtons(user);
         configureUserProfile(user);
-        configureProfileEditButton(user);
       });
 }
 
