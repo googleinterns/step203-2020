@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** A class that handles converting entities to json format. */
 public class JsonFormatter {
   public static String getDealJson(Deal deal) {
     Gson gson = new Gson();
@@ -96,11 +97,11 @@ public class JsonFormatter {
       userMap.put("photoBlobKey", user.photoBlobKey.get());
     }
 
-    userMap.put("dealsPublished", getDealListBriefMaps(deals));
+    userMap.put("dealsUploaded", getDealListBriefMaps(deals));
     userMap.put("following", getUserListBriefMaps(following));
     userMap.put("followers", getUserListBriefMaps(followers));
-    userMap.put("tags", getTagListBriefMaps(tags));
-    userMap.put("restaurants", getRestaurantListBriefMaps(restaurants));
+    userMap.put("tagsFollowed", getTagListBriefMaps(tags));
+    userMap.put("restaurantsFollowed", getRestaurantListBriefMaps(restaurants));
     return userMap;
   }
 

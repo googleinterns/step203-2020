@@ -14,11 +14,11 @@ function configureUserProfile(user) {
   const profileImage = document.getElementById('profile-photo');
   profileImage.src = user.picture;
 
-  //configureDealsPublishedBy(user);
-  //configureUserFollowers(user);
-  //configureUsersFollowedBy(user);
-  //configureRestaurantsFollowedBy(user);
-  //configureTagsFollowedBy(user);
+  configureDealsPublishedBy(user);
+  configureUserFollowers(user);
+  configureUsersFollowedBy(user);
+  configureRestaurantsFollowedBy(user);
+  configureTagsFollowedBy(user);
 }
 
 /**
