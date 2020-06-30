@@ -24,7 +24,7 @@ public class DealPostServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     System.out.println("post deal");
     String description = request.getParameter("description");
-    String photoBlobkey = "TODO"; // TODO connect to blobstore
+    String photoBlobkey = ImageProcessor.getUploadedImageBlobkey(request, "pic");
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");

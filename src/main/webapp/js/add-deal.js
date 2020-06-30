@@ -45,6 +45,18 @@ form.addEventListener('submit', (event) => {
   });
 });
 
+/*
+ * Sets the form URL
+ */
+form.style.display = 'none';
+$.ajax({
+  url: '/api/upload-deals-url',
+  method: 'GET',
+}).done((url) => {
+  form.action = url;
+  form.style.display = 'block';
+});
+
 
 /**
  * Handles restaurant selection
