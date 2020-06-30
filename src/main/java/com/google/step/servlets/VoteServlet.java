@@ -19,6 +19,10 @@ public class VoteServlet extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (request.getPathInfo() == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     long user = 2345; // TODO get authenticated user id
     long deal;
     try {
@@ -28,7 +32,7 @@ public class VoteServlet extends HttpServlet {
       return;
     }
     String dir = request.getParameter("dir");
-    if (!dir.equals("1") && !dir.equals("-1") && !dir.equals("0")) {
+    if (dir == null || (!dir.equals("1") && !dir.equals("-1") && !dir.equals("0"))) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
