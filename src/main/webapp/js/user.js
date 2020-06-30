@@ -380,7 +380,7 @@ function cancelProfileEditing() {
   profileForm.hidden = true;
 }
 
-window.onload = function() {
+addLoadEvent(() => {
   configureUserProfile(user);
   configureProfileEditButton(user);
-};
+});
