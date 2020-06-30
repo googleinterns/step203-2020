@@ -1,4 +1,5 @@
-const user = 
+/* eslint-disable no-unused-vars */
+const user =
 {
   'id': 1234,
   'name': 'Aaron Tan',
@@ -8,113 +9,116 @@ const user =
   'bio': 'a short bio of aaron tan',
   'dealsUploaded': [
     {
-        'id': 1234,
-        'name': 'Starbucks Mocha 1-for-1',
-        'votes': 5,
-        'poster': 'def',
-        'image': 'images/profile_pic.svg'
+      'id': 1234,
+      'name': 'Starbucks Mocha 1-for-1',
+      'votes': 5,
+      'poster': 'def',
+      'image': 'images/profile_pic.svg',
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'images/profile_pic.svg'
+      'image': 'images/profile_pic.svg',
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'images/profile_pic.svg'
+      'image': 'images/profile_pic.svg',
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'images/profile_pic.svg'
+      'image': 'images/profile_pic.svg',
     },
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
-      'image': 'images/profile_pic.svg'
+      'image': 'images/profile_pic.svg',
     },
   ],
   'followers': [
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'picture': 'images/profile_pic.svg'
-      }
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
   ],
   'following': [
-      {
-          'id': 1234,
-          'name': 'Alice Chen',
-          'username': 'alicechen',
-          'picture': 'images/profile_pic.svg'
-      },
-      {
-        'id': 2345,
-        'name': 'Starbucks',
-        'username': 'starbucks',
-        'picture': 'images/profile_pic.svg'
+    {
+      'id': 1234,
+      'name': 'Alice Chen',
+      'username': 'alicechen',
+      'picture': 'images/profile_pic.svg',
+    },
+    {
+      'id': 2345,
+      'name': 'Starbucks',
+      'username': 'starbucks',
+      'picture': 'images/profile_pic.svg',
     },
   ],
   'restaurantsFollowed': [
     {
       'id': 2345,
       'name': 'Starbucks',
-      'picture': 'images/profile_pic.svg'
+      'picture': 'images/profile_pic.svg',
     },
   ],
   'tagsFollowed': [
     {
       'id': 23452,
-      'name': 'coffee'
+      'name': 'coffee',
     },
     {
       'id': 23452,
-      'name': 'sushi'
-    }
-  ]
-}
+      'name': 'sushi',
+    },
+  ],
+};
 
-/** Configures user's profile. */
+/**
+ * Configures user's profile.
+ * @param {object} user The user profile.
+ */
 function configureUserProfile(user) {
   const nameContainer = document.getElementById('name');
   nameContainer.innerText = user.name;
@@ -134,7 +138,11 @@ function configureUserProfile(user) {
   configureTagsFollowedBy(user);
 }
 
-/** Creates a container for deal. */
+/**
+ * Returns a container for a deal.
+ * @param {object} deal deal whose info will be shown.
+ * @return {object} a DOM element showing deal's info.
+ */
 function createDealCard(deal) {
   const dealCard = document.createElement('div');
   dealCard.classList.add('deal-card', 'card');
@@ -142,12 +150,12 @@ function createDealCard(deal) {
   dealImage.className = 'card-img-top deal-card-img';
   dealImage.src = deal.image;
   dealImage.alt = 'Deal image';
-  
+
   const dealBody = document.createElement('div');
   dealBody.className = 'card-body';
-  
+
   const dealName = document.createElement('h6');
-  dealName.className = 'card-title'
+  dealName.className = 'card-title';
   dealName.innerText = deal.name;
 
   const dealVotes = document.createElement('p');
@@ -167,6 +175,10 @@ function createDealCard(deal) {
   return dealCard;
 }
 
+/**
+ * Configures deals published by the user.
+ * @param {object} user The user whose deals are shown.
+ */
 function configureDealsPublishedBy(user) {
   const dealsUploadedContainer = document.getElementById('deals');
   dealsUploadedContainer.classList.add('card-columns');
@@ -176,7 +188,11 @@ function configureDealsPublishedBy(user) {
   }
 }
 
-/** Returns a container with user profile photo and username. */
+/**
+ * Returns a container with user profile photo and username.
+ * @param {object} user The user whose info will be shown.
+ * @return {object} a DOM element with user's profile photo and username.
+ */
 function createSimpleUserContainer(user) {
   const userContainer = document.createElement('div');
   userContainer.className = 'mb-2';
@@ -192,12 +208,16 @@ function createSimpleUserContainer(user) {
   const username = document.createElement('a');
   username.innerText = user.username;
   username.className = 'h6 d-inline-block w-75';
-  username.href = '/profile/' + user.id;
+  username.href = '/user/' + user.id;
   userContainer.appendChild(username);
   return userContainer;
 }
 
-/** Adds a list of users to the container. */
+/**
+ * Adds a list of users to the container.
+ * @param {object[]} userList a list users to be shown.
+ * @param {object} container a DOM element in which users to be added
+ */
 function configureUserList(userList, container) {
   for (const user of userList) {
     const userContainer = createSimpleUserContainer(user);
@@ -206,17 +226,29 @@ function configureUserList(userList, container) {
   }
 }
 
+/**
+ * Configures users followed by the user.
+ * @param {object} user The user whose following is shown.
+ */
 function configureUsersFollowedBy(user) {
   const followeeContainer = document.getElementById('following');
   configureUserList(user.following, followeeContainer);
 }
 
+/**
+ * Configures followers of the user.
+ * @param {object} user The user whose followers are shown.
+ */
 function configureUserFollowers(user) {
   const followersContainer = document.getElementById('followers');
   configureUserList(user.followers, followersContainer);
 }
 
-/** Returns a container with restaurant's photo and name. */
+/**
+ * Returns a container with restaurant's photo and name.
+ * @param {object} restaurant The restaurant whose info is shown.
+ * @return {object} a restaurant container with the restaurant's info.
+ */
 function createSimpleRestaurantContainer(restaurant) {
   const restaurantContainer = document.createElement('div');
   restaurantContainer.className = 'mb-2';
@@ -237,6 +269,10 @@ function createSimpleRestaurantContainer(restaurant) {
   return restaurantContainer;
 }
 
+/**
+ * Configures restaurants followed by the user.
+ * @param {object} user The user whose restaurants followed are shown.
+ */
 function configureRestaurantsFollowedBy(user) {
   const restaurantsContainer = document.getElementById('restaurants');
   for (const restaurant of user.restaurantsFollowed) {
@@ -245,7 +281,11 @@ function configureRestaurantsFollowedBy(user) {
   }
 }
 
-/** Returns a container with tag's name. */
+/**
+ * Returns a container with tag's name.
+ * @param {object} tag The tag object.
+ * @return {object} a container with tag's name.
+ */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
   tagContainer.className = 'badge badge-pill badge-primary';
@@ -253,6 +293,10 @@ function createTagContainer(tag) {
   return tagContainer;
 }
 
+/**
+ * Configures tags followed by the user.
+ * @param {object} user The user whose tags are shown.
+ */
 function configureTagsFollowedBy(user) {
   const tagsContainer = document.getElementById('tags');
   tagsContainer.classList.add('d-flex', 'flex-wrap');
@@ -262,14 +306,21 @@ function configureTagsFollowedBy(user) {
   }
 }
 
+/**
+ * Configures a button for editing the user's profile.
+ * @param {object} user The user whose profile will be edited.
+ */
 function configureProfileEditButton(user) {
   const profileEditButton = document.getElementById('edit-profile-btn');
   profileEditButton.onclick = function() {
     showProfileEditingForm(user);
-  }
+  };
 }
 
-/** Shows profile editing form and initializes input values with the user. */
+/**
+ * Shows profile editing form and initializes input values with the user.
+ * @param {object} user The user whose profile is being edited.
+ */
 function showProfileEditingForm(user) {
   const profile = document.getElementById('profile');
   profile.hidden = true;
@@ -278,7 +329,8 @@ function showProfileEditingForm(user) {
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
   if (typeof user.picture != 'undefined') {
-    const profilePhotoPreview = document.getElementById('profile-photo-preview');
+    const profilePhotoPreview =
+      document.getElementById('profile-photo-preview');
     profilePhotoPreview.src = user.picture;
   }
   if (typeof user.username != 'undefined') {
@@ -295,26 +347,32 @@ function showProfileEditingForm(user) {
   }
 
   if (typeof user.tagsFollowed != 'undefined') {
-    const tagsInput = document.getElementById('tags-input');
-    user.tagsFollowed.forEach(tag => $('#tags-input').tagsinput('add', tag.name));
+    user.tagsFollowed.forEach((tag) =>
+      $('#tags-input').tagsinput('add', tag.name));
   }
 }
 
-/** Shows preview of the uploaded photo. */
+/**
+ * Shows preview of the uploaded photo.
+ * @param {object} input The input element in DOM.
+ */
 function profilePhotoPreview(input) {
   if (input.files && input.files[0]) {
     const reader = new FileReader();
-    
+
     reader.onload = function(e) {
-      const profilePhotoPreview = document.getElementById('profile-photo-preview');
+      const profilePhotoPreview =
+        document.getElementById('profile-photo-preview');
       profilePhotoPreview.src = e.target.result;
-    }
-    
+    };
+
     reader.readAsDataURL(input.files[0]);
   }
 }
 
-/** Cancels profile editing. */
+/**
+ * Cancels profile editing.
+ */
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
@@ -325,4 +383,4 @@ function cancelProfileEditing() {
 window.onload = function() {
   configureUserProfile(user);
   configureProfileEditButton(user);
-}
+};
