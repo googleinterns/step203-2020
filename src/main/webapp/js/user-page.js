@@ -5,8 +5,6 @@
  * @param {object} user The user profile.
  */
 function configureUserProfile(user) {
-  const nameContainer = document.getElementById('name');
-  nameContainer.innerText = user.name;
   const usernameContainer = document.getElementById('username');
   usernameContainer.innerText = user.username;
   const emailContainer = document.getElementById('email');
@@ -16,11 +14,11 @@ function configureUserProfile(user) {
   const profileImage = document.getElementById('profile-photo');
   profileImage.src = user.picture;
 
-  configureDealsPublishedBy(user);
-  configureUserFollowers(user);
-  configureUsersFollowedBy(user);
-  configureRestaurantsFollowedBy(user);
-  configureTagsFollowedBy(user);
+  //configureDealsPublishedBy(user);
+  //configureUserFollowers(user);
+  //configureUsersFollowedBy(user);
+  //configureRestaurantsFollowedBy(user);
+  //configureTagsFollowedBy(user);
 }
 
 /**
@@ -222,10 +220,6 @@ function showProfileEditingForm(user) {
     const usernameInput = document.getElementById('username-input');
     usernameInput.value = user.username;
   }
-  if (typeof user.name != 'undefined') {
-    const nameInput = document.getElementById('name-input');
-    nameInput.value = user.username;
-  }
   if (typeof user.bio != 'undefined') {
     const bioInput = document.getElementById('bio-input');
     bioInput.value = user.bio;
@@ -265,13 +259,19 @@ function cancelProfileEditing() {
   profileForm.hidden = true;
 }
 
+/**
+ * Initializes the user profile based on the id.
+ */
 function init() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
-  fetch("/api/users/" + id)
-    .then(response => response.json())
-    .then(user => console.log(user));
+  fetch('/api/users/' + id)
+      .then((response) => response.json())
+      .then((user) => {
+        configureUserProfile(user);
+        configureProfileEditButton(user);
+      });
 }
 
 addLoadEvent(() => {
-  //init();
+  init();
 });

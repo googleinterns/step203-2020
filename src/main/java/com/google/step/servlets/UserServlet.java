@@ -22,7 +22,6 @@ public class UserServlet extends HttpServlet {
     response.setContentType("application/json");
 
     String idString = request.getPathInfo().substring(1); // Remove '/'
-    System.out.println(idString);
     long id = Long.parseLong(idString);
     // TODO: user json formatter
     User user = userManager.readUser(id);
