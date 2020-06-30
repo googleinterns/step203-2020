@@ -28,7 +28,7 @@ function configureHeaderLoginStatus() {
           loginStatusLink.href = loginStatus.logoutUrl;
           loginStatusLink.innerText = 'Logout';
           headerUsername.innerText = loginStatus.username;
-          headerUsername.href = '/user';
+          headerUsername.href = '/user/' + loginStatus.id;
         } else {
           loginStatusLink.href = loginStatus.loginUrl;
           loginStatusLink.innerText = 'Login';

@@ -8,7 +8,7 @@
   <meta name="author" content="" />
   <title>Profile</title>
   <script src="js/util.js"></script>
-  <script src="js/user.js"></script>
+  <script src="js/user-page.js"></script>
   <link href="css/deal.css" rel="stylesheet" />
   <link href="tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Font Awesome icons (free version)-->

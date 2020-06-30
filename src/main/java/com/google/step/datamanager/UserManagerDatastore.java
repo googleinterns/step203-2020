@@ -51,7 +51,7 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User readDeal(long id) {
+  public User readUser(long id) {
     Key key = KeyFactory.createKey("User", id);
     Entity dealEntity;
     try {

@@ -1,119 +1,4 @@
 /* eslint-disable no-unused-vars */
-const user =
-{
-  'id': 1234,
-  'name': 'Aaron Tan',
-  'username': 'aarontan',
-  'email': 'aaront@example.com',
-  'picture': 'images/profile_pic.svg',
-  'bio': 'a short bio of aaron tan',
-  'dealsUploaded': [
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-  ],
-  'followers': [
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'following': [
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 2345,
-      'name': 'Starbucks',
-      'username': 'starbucks',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'restaurantsFollowed': [
-    {
-      'id': 2345,
-      'name': 'Starbucks',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'tagsFollowed': [
-    {
-      'id': 23452,
-      'name': 'coffee',
-    },
-    {
-      'id': 23452,
-      'name': 'sushi',
-    },
-  ],
-};
 
 /**
  * Configures user's profile.
@@ -380,7 +265,13 @@ function cancelProfileEditing() {
   profileForm.hidden = true;
 }
 
+function init() {
+  const id = window.location.pathname.substring(6); // Remove '/user/'
+  fetch("/api/users/" + id)
+    .then(response => response.json())
+    .then(user => console.log(user));
+}
+
 addLoadEvent(() => {
-  configureUserProfile(user);
-  configureProfileEditButton(user);
+  //init();
 });
