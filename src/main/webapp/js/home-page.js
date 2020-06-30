@@ -57,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
   createHomePage(homePage);
 });
 
+/**
+ * Creates deal elements on home page
+ * @param {object} homePage
+ */
 function createHomePage(homePage) {
   const popularDealsData = homePage['Popular Deals'];
   const dealCardElements = document.querySelectorAll('.deal-card');
@@ -74,6 +78,10 @@ function createHomePage(homePage) {
   }
 }
 
+/**
+ * Creates carousel on home page
+ * @param {object} homePage
+ */
 function createCarousel() {
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
