@@ -92,14 +92,14 @@ public class UserManagerDatastore implements UserManager {
     entity.setProperty("username", username);
     entity.setProperty("bio", bio);
     if (photoBlobKey.isPresent()) {
-      entity.setProperty("photoBlobkey", photoBlobKey.get());
+      entity.setProperty("photoBlobKey", photoBlobKey.get());
     }
     datastore.put(entity);
   }
 
   @Override
   public void deleteUser(long id) {
-    Key key = KeyFactory.createKey("Deal", id);
+    Key key = KeyFactory.createKey("User", id);
     datastore.delete(key);
   }
 }
