@@ -115,7 +115,6 @@ public class JsonFormatter {
     Map<String, Object> userMap = new HashMap<>();
     userMap.put("id", user.id);
     userMap.put("username", user.username);
-    userMap.put("email", user.email);
     if (user.photoBlobKey.isPresent()) {
       userMap.put("photoBlobKey", user.photoBlobKey.get());
     }
