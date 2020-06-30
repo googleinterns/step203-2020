@@ -28,7 +28,7 @@ public interface UserManager {
    * @param id id of the user.
    * @return User object with the id.
    */
-  public User readDeal(long id);
+  public User readUser(long id);
 
   /**
    * Updates a user's info with the given id.
