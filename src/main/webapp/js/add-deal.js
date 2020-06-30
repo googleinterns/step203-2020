@@ -63,7 +63,6 @@ $.ajax({
  * @param {object} restaurant
  */
 function selectRestaurant(restaurant) {
-  console.log(restaurant);
   const restaurantDiv = $('#restaurant-selected')[0];
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
