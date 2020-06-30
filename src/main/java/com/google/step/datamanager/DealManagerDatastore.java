@@ -23,21 +23,21 @@ public class DealManagerDatastore implements DealManager {
       String start,
       String end,
       String source,
-      long poster,
-      long restaurant) {
+      long posterId,
+      long restaurantId) {
     Entity entity = new Entity("Deal");
     entity.setProperty("description", description);
     entity.setProperty("photoBlobkey", photoBlobkey);
     entity.setProperty("start", start);
     entity.setProperty("end", end);
     entity.setProperty("source", source);
-    entity.setProperty("poster", poster);
-    entity.setProperty("restaurant", restaurant);
+    entity.setProperty("posterId", posterId);
+    entity.setProperty("restaurantId", restaurantId);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, poster, restaurant);
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
 
     return deal;
   }
@@ -56,9 +56,9 @@ public class DealManagerDatastore implements DealManager {
     String start = (String) dealEntity.getProperty("start");
     String end = (String) dealEntity.getProperty("end");
     String source = (String) dealEntity.getProperty("source");
-    long poster = (long) dealEntity.getProperty("poster");
-    long restaurant = (long) dealEntity.getProperty("restaurant");
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, poster, restaurant);
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
     return deal;
   }
 
@@ -93,8 +93,8 @@ public class DealManagerDatastore implements DealManager {
     if (deal.source != null) {
       dealEntity.setProperty("source", deal.source);
     }
-    if (deal.restaurant != -1) {
-      dealEntity.setProperty("restaurant", deal.restaurant);
+    if (deal.restaurantId != -1) {
+      dealEntity.setProperty("restaurantId", deal.restaurantId);
     }
     datastore.put(dealEntity);
     return readDeal(deal.id);
