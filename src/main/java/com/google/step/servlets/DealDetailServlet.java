@@ -34,7 +34,7 @@ public class DealDetailServlet extends HttpServlet {
     manager.deleteDeal(id);
   }
 
-  /** Deletes the deal with the given id parameter */
+  /** Gets the deal with the given id parameter */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
