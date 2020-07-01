@@ -22,8 +22,12 @@ public class DealSearchManagerIndex implements DealSearchManager {
 
   @Override
   public List<Long> search(String query, List<Long> tagIds) {
-    // replace all non alphenumeric with space character
-    query = query.replaceAll("[^a-zA-Z0-9]", " ");
+    // replace characters that might cause syntax errors with space character and change all to
+    // lowercase
+    query = query.replaceAll("[^a-zA-Z0-9-_/]", " ");
+    query = query.toLowerCase();
+    query = query.trim();
+
     String tags = tagsToString(tagIds);
 
     String queryString = "";
@@ -59,7 +63,7 @@ public class DealSearchManagerIndex implements DealSearchManager {
   private String tagsToString(List<Long> tagIds) {
     List<String> tagIdsString =
         tagIds.stream().map(x -> Long.toString(x)).collect(Collectors.toList());
-    return String.join(" ", tagIdsString);
+    return String.join(" ", tagIdsString).trim();
   }
 
   @Override
