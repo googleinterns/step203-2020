@@ -1,7 +1,5 @@
 package com.google.step.servlets;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
@@ -48,10 +46,5 @@ public class UserServlet extends HttpServlet {
 
     String json = JsonFormatter.getUserJson(user, deals, following, followers, tags, restaurants);
     response.getWriter().println(json);
-  }
-
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
   }
 }
