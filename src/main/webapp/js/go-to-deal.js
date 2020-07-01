@@ -44,14 +44,7 @@ const commentsData = {
   ],
   'token': 'bhfsdaog', // token for pagination
 };
-/*
-window.onload = function() {
-  addLoadEvent(() => {
-    getDeal(deal);
-    getComments(commentsData);
-  });
-};
-*/
+
 /**
  * Adds a function to window onload event.
  * @param {function} func The function to be executed.
