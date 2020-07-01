@@ -26,9 +26,20 @@ public class UserServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
-    String idString = request.getPathInfo().substring(1); // Remove '/'
-    long id = Long.parseLong(idString);
+    long id;
+    try {
+      String idString = request.getPathInfo().substring(1); // Remove '/'
+      id = Long.parseLong(idString);
+    } catch (IndexOutOfBoundsException | NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     User user = userManager.readUser(id);
+    if (user == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
     List<Deal> deals = new ArrayList<>(); // dealManager.getDealsPublishedByUser(id);
     List<User> following = new ArrayList<>(); // followManager.getUsersFollowedByUser(id);
     List<User> followers = new ArrayList<>(); // followManager.getUsersFollowingUser(id);
