@@ -56,6 +56,7 @@ public class DealSearchServlet extends HttpServlet {
 
     List<Long> dealIds = manager.search(query, tagsList);
 
+    // TODO return a list of brief deals instead of just the ID
     Gson gson = new Gson();
     String json = gson.toJson(dealIds);
     response.getWriter().println(json);
