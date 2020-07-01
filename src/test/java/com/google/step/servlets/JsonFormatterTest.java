@@ -7,7 +7,6 @@ import com.google.step.model.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,11 +36,9 @@ public class JsonFormatterTest {
   private static final String BIO_B = "Hello, I'm Bob!";
   private static final String BIO_C = "";
 
-  private static final User USER_A =
-      new User(ID_A, EMAIL_A, USERNAME_A, Optional.of(BLOBKEY_A), BIO_A);
-  private static final User USER_B =
-      new User(ID_B, EMAIL_B, USERNAME_B, Optional.of(BLOBKEY_B), BIO_B);
-  private static final User USER_C = new User(ID_C, EMAIL_C, USERNAME_C, Optional.empty(), BIO_C);
+  private static final User USER_A = new User(ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
+  private static final User USER_B = new User(ID_B, EMAIL_B, USERNAME_B, BLOBKEY_B, BIO_B);
+  private static final User USER_C = new User(ID_C, EMAIL_C, USERNAME_C, BIO_C);
 
   private static final String USER_B_BRIEF_JSON =
       String.format(
