@@ -21,7 +21,12 @@ public class DealSearchServlet extends HttpServlet {
     manager = new DealSearchManagerIndex();
   }
 
-  /** Posts the deal with the given id parameter */
+  /**
+   * Searches for deals with certain description and tags.
+   *
+   * <p>Request format: ?q=my+query&tags=123,456, where q is the query string, and tags is a comma
+   * separated list of tag IDs
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     System.out.println("search deal");

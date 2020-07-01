@@ -59,7 +59,7 @@ public class DealSearchManagerIndex implements DealSearchManager {
     index.put(doc);
   }
 
-  /** Joins the list og tag IDs in a string */
+  /** Joins the list of tag IDs in a string */
   private String tagsToString(List<Long> tagIds) {
     List<String> tagIdsString =
         tagIds.stream().map(x -> Long.toString(x)).collect(Collectors.toList());
