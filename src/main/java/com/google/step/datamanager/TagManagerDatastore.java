@@ -55,11 +55,18 @@ public class TagManagerDatastore implements TagManager {
   private Tag createTag(String name) {
     Entity entity = new Entity("Tag");
     entity.setProperty("name", name);
+    datastore.put(entity);
 
     long id = entity.getKey().getId();
     return new Tag(id, name);
   }
 
+  /**
+   * Returns a tag object transformed from the entity.
+   *
+   * @param entity tag entity.
+   * @return a tag object transformed from the entity.
+   */
   private Tag transformEntityToTag(Entity entity) {
     String name = (String) entity.getProperty("name");
     long id = (long) entity.getKey().getId();
