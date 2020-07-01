@@ -28,7 +28,7 @@ const deal = {
   'votes': 5,
 };
 
-const commentsEle = {
+const commentsData = {
   'comments': [
     {
       'id': 1234,
@@ -45,11 +45,17 @@ const commentsEle = {
   'token': 'bhfsdaog', // token for pagination
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  getDeal(deal);
-  getComments(commentsEle);
-});
+window.onload = function() {
+  addLoadEvent(() => {
+    getDeal(deal);
+    getComments(commentsData);
+  });
+};
 
+/**
+ * Get individual deal data
+ * @param {object} dealData
+ */
 function getDeal(dealData) {
   const dealTitleElement = document.getElementById('deal-title');
   dealTitleElement.innerText = dealData.name;
@@ -69,21 +75,31 @@ function getDeal(dealData) {
   dealSource.href = dealData.source;
 }
 
-function getComments(commentsEle) {
+/**
+ * Get comments for a deal
+ * @param {object} commentsData
+ */
+function getComments(commentsData) {
   const commentListElement = document.getElementById('comment-list');
   commentListElement.innerHTML = '';
-  commentsEle.comments.forEach((comment) => {
+  commentsData.comments.forEach((comment) => {
     commentListElement.appendChild(createCommentElement(comment));
   });
 }
 
-/** Creates an <li> element containing text and image. */
+
+/**
+ * Creates comment element
+ * @param {object} commentEntity
+ * @return {object}commentElement
+ */
 function createCommentElement(commentEntity) {
   const commentElement = document.createElement('div');
   commentElement.className = 'comment border border-info pb-3 pt-3 mb-3 mt-3';
 
   const textElement = document.createElement('span');
-  textElement.innerText = commentEntity.user.username + ': ' + commentEntity.text;
+  textElement.innerText = commentEntity.user.username +
+  ': ' + commentEntity.text;
 
   commentElement.appendChild(textElement);
   return commentElement;
