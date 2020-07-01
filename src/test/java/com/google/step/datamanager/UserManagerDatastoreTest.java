@@ -53,8 +53,8 @@ public final class UserManagerDatastoreTest {
   }
 
   @Test
-  public void testUserLogin_firstTime() {
-    User user = userManagerDatastore.userLogin(EMAIL_B);
+  public void testReadUserByEmail_firstTime() {
+    User user = userManagerDatastore.readUser(EMAIL_B);
     Assert.assertEquals(EMAIL_B, user.email);
     Assert.assertEquals(EMAIL_B, user.username);
     Assert.assertEquals("", user.bio);
@@ -62,9 +62,9 @@ public final class UserManagerDatastoreTest {
   }
 
   @Test
-  public void testUserLoginBefore() {
-    User user = userManagerDatastore.userLogin(EMAIL_B);
-    User userSecondTime = userManagerDatastore.userLogin(EMAIL_B);
+  public void testReadUserByEmailExists() {
+    User user = userManagerDatastore.createUser(EMAIL_B);
+    User userSecondTime = userManagerDatastore.readUser(EMAIL_B);
     Assert.assertEquals(EMAIL_B, userSecondTime.email);
     Assert.assertEquals(EMAIL_B, userSecondTime.username);
     Assert.assertEquals("", userSecondTime.bio);
@@ -73,8 +73,8 @@ public final class UserManagerDatastoreTest {
   }
 
   @Test
-  public void testReadUser_success() {
-    User userA = userManagerDatastore.userLogin(EMAIL_A);
+  public void testReadUserById_success() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
     User userARead = userManagerDatastore.readUser(userA.id);
     Assert.assertEquals(EMAIL_A, userARead.email);
     Assert.assertEquals(EMAIL_A, userARead.username);
@@ -84,22 +84,22 @@ public final class UserManagerDatastoreTest {
   }
 
   @Test
-  public void testReadUser_notExists() {
-    userManagerDatastore.userLogin(EMAIL_A);
+  public void testReadUserById_notExists() {
+    userManagerDatastore.createUser(EMAIL_A);
     User userRead = userManagerDatastore.readUser(100000); // a random id
     Assert.assertNull(userRead);
   }
 
   @Test
   public void testDeleteUser() {
-    User userA = userManagerDatastore.userLogin(EMAIL_A);
+    User userA = userManagerDatastore.createUser(EMAIL_A);
     userManagerDatastore.deleteUser(userA.id);
     Assert.assertNull(userManagerDatastore.readUser(userA.id));
   }
 
   @Test
   public void testUpdateUser() {
-    User userA = userManagerDatastore.userLogin(EMAIL_A);
+    User userA = userManagerDatastore.createUser(EMAIL_A);
     userManagerDatastore.updateUser(userA.id, userA.email, USERNAME_A, Optional.empty(), BIO_A);
     User userARead = userManagerDatastore.readUser(userA.id);
     Assert.assertEquals(EMAIL_A, userARead.email);
@@ -110,9 +110,9 @@ public final class UserManagerDatastoreTest {
 
   @Test
   public void testUpdateUser_blobKey() {
-    User userB = userManagerDatastore.userLogin(EMAIL_B);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
     userManagerDatastore.updateUser(userB.id, userB.email, USERNAME_B, Optional.of(BLOBKEY), BIO_B);
-    User userBRead = userManagerDatastore.userLogin(EMAIL_B);
+    User userBRead = userManagerDatastore.readUser(EMAIL_B);
     assertEquals(BLOBKEY, userBRead.photoBlobKey.get());
     userManagerDatastore.updateUser(userB.id, userB.email, USERNAME_B, Optional.empty(), BIO_B);
     userBRead = userManagerDatastore.readUser(userB.id);
