@@ -11,6 +11,8 @@
     <servlet>
         <servlet-name>deals</servlet-name>
         <jsp-file>/WEB-INF/jsp/deals.jsp</jsp-file>
+    </servlet>
+    <servlet>
         <servlet-name>addDeal</servlet-name>
         <jsp-file>/WEB-INF/jsp/add-deal.jsp</jsp-file>
     </servlet>
