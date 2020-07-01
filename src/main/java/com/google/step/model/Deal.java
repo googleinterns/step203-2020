@@ -7,8 +7,8 @@ public class Deal {
   public final String start;
   public final String end;
   public final String source;
-  public final long poster;
-  public final long restaurant;
+  public final long posterId;
+  public final long restaurantId;
 
   public Deal(
       long id,
@@ -17,15 +17,15 @@ public class Deal {
       String start,
       String end,
       String source,
-      long poster,
-      long restaurant) {
+      long posterId,
+      long restaurantId) {
     this.id = id;
     this.description = description;
     this.photoBlobkey = photoBlobkey;
     this.start = start;
     this.end = end;
     this.source = source;
-    this.poster = poster;
-    this.restaurant = restaurant;
+    this.posterId = posterId;
+    this.restaurantId = restaurantId;
   }
 }
