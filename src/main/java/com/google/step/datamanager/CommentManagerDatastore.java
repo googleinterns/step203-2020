@@ -6,6 +6,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -42,7 +44,7 @@ public class CommentManagerDatastore implements CommentManager {
   @Override
   public List<Comment> getComments(long dealId) {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
-    Query q = new Query("Comment").setFilter(propertyFilter);
+    Query query = new Query("Comment").setFilter(propertyFilter);
     PreparedQuery pq = datastore.prepare(query);
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : pq.asIterable()) {
@@ -73,6 +75,8 @@ public class CommentManagerDatastore implements CommentManager {
       commentEntity.setProperty("content", content);
     }
     datastore.put(commentEntity);
-    return new Comment(long id, commentEntity.getProperty("deal"), commentEntity.getProperty("user"), content);
+    long dealId = (long) commentEntity.getProperty("deal");
+    long userId = (long) commentEntity.getProperty("user");
+    return new Comment(id, dealId, userId, content);
   }
 }

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.List;
+
 /** Servlet that handles individual deals. */
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {

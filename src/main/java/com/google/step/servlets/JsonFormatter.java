@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class JsonFormatter {
-  public static String getCommentsJson(List<Comments> comments) {
+  public static String getCommentsJson(List<Comment> comments) {
     Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<HashMap<>>();
+    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
     for (Comment comment: comments) {
       commentMapList.add(getCommentMap(comment));
     }
