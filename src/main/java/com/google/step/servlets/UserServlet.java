@@ -23,9 +23,10 @@ public class UserServlet extends HttpServlet {
   private UserManager userManager = new UserManagerDatastore();
   private UserService userService = UserServiceFactory.getUserService();
 
-  public UserServlet(UserManager userManager) {
+  public UserServlet(UserManager userManager, UserService userService) {
     super();
     this.userManager = userManager;
+    this.userService = userService;
   }
 
   public UserServlet() {
@@ -67,14 +68,12 @@ public class UserServlet extends HttpServlet {
       return;
     }
     String email = userService.getCurrentUser().getEmail();
+
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    if (email == null || username == null) {
+    if (username == null || bio == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
-    }
-    if (bio == null) {
-      bio = "";
     }
 
     User user = userManager.readUser(email);
