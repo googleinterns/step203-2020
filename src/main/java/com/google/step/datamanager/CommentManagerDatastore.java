@@ -59,4 +59,20 @@ public class CommentManagerDatastore implements CommentManager {
     Key key = KeyFactory.createKey("Comment", id);
     datastore.delete(key);
   }
+
+  @Override
+  public Comment updateComment(long id, String content) {
+    Key key = KeyFactory.createKey("Comment", id);
+    Entity commentEntity;
+    try {
+      commentEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    if (content != null) {
+      commentEntity.setProperty("content", content);
+    }
+    datastore.put(commentEntity);
+    return new Comment(long id, commentEntity.getProperty("deal"), commentEntity.getProperty("user"), content);
+  }
 }

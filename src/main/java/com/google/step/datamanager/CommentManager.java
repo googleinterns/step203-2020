@@ -10,7 +10,7 @@ public interface CommentManager {
     )
     public Comment getComments(long dealId);
 
-    public Comment updateComment(Comment comment);
+    public Comment updateComment(long id, String content);
 
     public void deleteComment(long id);
 }
