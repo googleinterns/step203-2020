@@ -7,12 +7,13 @@ import java.util.Optional;
 public interface UserManager {
 
   /**
-   * Returns a User object when the user with the email logs in.
+   * Returns a User object when the user with the given email. Creates a User object if it does not
+   * exist.
    *
-   * @param email email of the user who logs in.
+   * @param email email of the user.
    * @return User object with the email.
    */
-  public User userLogin(String email);
+  public User readUser(String email);
 
   /**
    * Creates a User object with the given email.
