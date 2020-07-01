@@ -22,8 +22,8 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User userLogin(String email) {
-    // Checks if the user is logged in for the first time.
+  public User readUser(String email) {
+    // Checks if the user exists.
     Query query =
         new Query("User")
             .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, email));
