@@ -7,13 +7,16 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
+import java.util.ArrayList;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
+  DealSearchManager searchManager;
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
+    searchManager = new DealSearchManagerIndex();
   }
 
   @Override
@@ -38,6 +41,7 @@ public class DealManagerDatastore implements DealManager {
     long id = key.getId();
 
     Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    searchManager.addDeal(deal, new ArrayList<>());
 
     return deal;
   }
@@ -66,6 +70,7 @@ public class DealManagerDatastore implements DealManager {
   public void deleteDeal(long id) {
     Key key = KeyFactory.createKey("Deal", id);
     datastore.delete(key);
+    searchManager.removeDeal(id);
   }
 
   @Override
