@@ -87,7 +87,6 @@ public class UserServletTest {
     when(request.getPathInfo()).thenReturn("/100x00");
 
     servlet.doGet(request, response);
-    System.out.println(response.getStatus());
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -99,7 +98,6 @@ public class UserServletTest {
     when(request.getPathInfo()).thenReturn("");
 
     servlet.doGet(request, response);
-    System.out.println(response.getStatus());
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
