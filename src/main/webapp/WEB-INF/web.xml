@@ -26,7 +26,7 @@
     <servlet-mapping>
         <servlet-name>user</servlet-name>
         <url-pattern>/user/*</url-pattern>
-    <servlet-mapping>
+    </servlet-mapping>
       
     <servlet-mapping>
         <servlet-name>addDeal</servlet-name>
