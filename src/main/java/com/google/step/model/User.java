@@ -18,11 +18,19 @@ public class User {
     this.bio = "";
   }
 
-  public User(long id, String email, String username, Optional<String> photoBlobKey, String bio) {
+  public User(long id, String email, String username, String photoBlobKey, String bio) {
     this.id = id;
     this.username = username;
     this.email = email;
-    this.photoBlobKey = photoBlobKey;
     this.bio = bio;
+    this.photoBlobKey = Optional.of(photoBlobKey);
+  }
+
+  public User(long id, String email, String username, String bio) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.bio = bio;
+    this.photoBlobKey = Optional.empty();
   }
 }

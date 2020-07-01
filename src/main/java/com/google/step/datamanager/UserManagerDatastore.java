@@ -72,13 +72,14 @@ public class UserManagerDatastore implements UserManager {
     String email = (String) entity.getProperty("email");
     String username = (String) entity.getProperty("username");
     String bio = (String) entity.getProperty("bio");
-    Optional<String> photoBlobKey = Optional.empty();
-    if (entity.getProperty("photoBlobKey") != null) {
-      photoBlobKey = Optional.of((String) entity.getProperty("photoBlobKey"));
+    String photoBlobKey = (String) entity.getProperty("photoBlobKey");
+    long id = entity.getKey().getId();
+    User user;
+    if (photoBlobKey != null) {
+      user = new User(id, email, username, photoBlobKey, bio);
+    } else {
+      user = new User(id, email, username, bio);
     }
-
-    User user = new User(entity.getKey().getId(), email, username, photoBlobKey, bio);
-
     return user;
   }
 
