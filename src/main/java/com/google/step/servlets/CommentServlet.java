@@ -15,10 +15,10 @@ import java.util.List;
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
-  private final CommentManager manager;
+  private CommentManager manager = new CommentManagerDatastore();
 
-  public CommentServlet() {
-    manager = new CommentManagerDatastore();
+  public CommentServlet(CommentManager commentManager) {
+    manager = commentManager;
   }
 
   /** Deletes the comment with the given id parameter */

@@ -42,7 +42,7 @@ public class CommentServletTest {
     @Before
     public void setUp() {
       commentManager = mock(CommentManager.class);
-      commentServlet = new CommentServlet();
+      commentServlet = new CommentServlet(commentManager);
       comments.add(comment_A);
       comments.add(comment_B);
    }
@@ -61,9 +61,9 @@ public class CommentServletTest {
 
         commentServlet.doGet(request, response);
 
-        String commentA = String.format("{id:%d,deal:%d,user:%d,content:\"%s\"}",
+        String commentA = String.format("{id:%d,dealId:%d,userId:%d,content:\"%s\"}",
                           ID_A, dealId, userId_A, content_A);
-        String commentB = String.format("{id:%d,deal:%d,user:%d,content:\"%s\"}",
+        String commentB = String.format("{id:%d,dealId:%d,userId:%d,content:\"%s\"}",
                           ID_B, dealId, userId_B, content_B);
         String expected = "[" + commentA + "," + commentB + "]";
 
