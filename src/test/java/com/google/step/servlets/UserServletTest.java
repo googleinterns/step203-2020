@@ -1,31 +1,24 @@
 package com.google.step.servlets;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.runners.JUnit4;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnit4.class)
 public class UserServletTest {
-  private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig()
-              .setDefaultHighRepJobPolicyUnappliedJobPercentage(100));
 
   private static final long ID_A = 1;
 
@@ -39,28 +32,19 @@ public class UserServletTest {
 
   private static final User USER_A = new User(ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
 
-  @Mock(name = "userManager")
+  private UserServlet servlet;
   private UserManager userManager;
-
-  @InjectMocks private UserServlet servlet;
 
   @Before
   public void setUp() {
-    helper.setUp();
-    MockitoAnnotations.initMocks(this);
-    servlet = new UserServlet();
-  }
-
-  @After
-  public void tearDown() {
-    helper.tearDown();
+    userManager = mock(UserManager.class);
+    servlet = new UserServlet(userManager);
   }
 
   @Test
-  public void testDoGet() throws Exception {
+  public void testDoGet_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getPathInfo()).thenReturn("/1");
     when(userManager.readUser(1)).thenReturn(USER_A);
 
@@ -81,8 +65,42 @@ public class UserServletTest {
                 + "tagsFollowed:[],"
                 + "restaurantsFollowed:[]}",
             ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_A);
-    System.out.println(stringWriter.toString());
 
-    // JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_notExist() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(request.getPathInfo()).thenReturn("/1000");
+    when(userManager.readUser(1000)).thenReturn(null);
+
+    servlet.doGet(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_invalidId() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(request.getPathInfo()).thenReturn("/100x00");
+
+    servlet.doGet(request, response);
+    System.out.println(response.getStatus());
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_noId() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(request.getPathInfo()).thenReturn("");
+
+    servlet.doGet(request, response);
+    System.out.println(response.getStatus());
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
