@@ -11,8 +11,6 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,30 +61,25 @@ public class UserServlet extends HttpServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!userService.isUserLoggedIn()) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
     String email = userService.getCurrentUser().getEmail();
-    String userIdString = request.getParameter("id");
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    // TODO photo blob key
-    Optional<String> photoBlobKey = Optional.empty();
-    if (userIdString == null || username == null || bio == null) {
+    if (email == null || username == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
+    }
+    if (bio == null) {
+      bio = "";
     }
 
     User user = userManager.readUser(email);
-    if (!String.valueOf(user.id).equals(userIdString)) {
-      // current logged in users can only edit their own profile
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
 
-    userManager.updateUser(user.id, email, username, photoBlobKey, bio);
+    userManager.updateUser(user.id, email, username, user.photoBlobKey, bio);
+    response.sendRedirect("/user/" + user.id);
   }
 }
