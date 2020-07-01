@@ -29,7 +29,7 @@ public class AuthenticationServlet extends HttpServlet {
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
       // TODO: move the following part to JsonFormatter
-      User user = userManager.userLogin(userEmail);
+      User user = userManager.readUser(userEmail);
       Gson gson = new Gson();
       JsonElement jsonElement = gson.toJsonTree(user);
       JsonObject jsonObject = jsonElement.getAsJsonObject();
