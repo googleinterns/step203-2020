@@ -10,7 +10,7 @@ public interface TagManager {
    * @param name tag name.
    * @return tag with the given name;
    */
-  public Tag getTag(String name);
+  public Tag readOrCreateTagByName(String name);
 
   /**
    * Returns a tag object with the id.

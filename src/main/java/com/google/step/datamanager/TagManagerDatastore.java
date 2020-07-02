@@ -20,7 +20,7 @@ public class TagManagerDatastore implements TagManager {
   }
 
   @Override
-  public Tag getTag(String name) {
+  public Tag readOrCreateTagByName(String name) {
     Query query =
         new Query("Tag")
             .setFilter(new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, name));
