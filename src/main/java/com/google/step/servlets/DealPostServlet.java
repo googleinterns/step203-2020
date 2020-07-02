@@ -41,7 +41,7 @@ public class DealPostServlet extends HttpServlet {
     // TODO validate that restaurant ID exists
 
     // validate required parameters exist
-    if (anyNull(description, photoBlobkey, start, end)) {
+    if (anyEmpty(description, photoBlobkey, start, end)) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -63,9 +63,9 @@ public class DealPostServlet extends HttpServlet {
     response.getWriter().println(JsonFormatter.getDealJson(deal));
   }
 
-  private boolean anyNull(Object... objects) {
-    for (Object object : objects) {
-      if (object == null) {
+  private boolean anyEmpty(String... strs) {
+    for (String str : strs) {
+      if (str == null || str.isEmpty()) {
         return true;
       }
     }
