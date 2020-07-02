@@ -41,7 +41,7 @@ public class DealManagerDatastore implements DealManager {
     long id = key.getId();
 
     Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
-    searchManager.addDeal(deal, new ArrayList<>());
+    searchManager.putDeal(deal, new ArrayList<>());
 
     return deal;
   }
@@ -102,6 +102,7 @@ public class DealManagerDatastore implements DealManager {
       dealEntity.setProperty("restaurantId", deal.restaurantId);
     }
     datastore.put(dealEntity);
+    searchManager.putDeal(deal, new ArrayList<>());
     return readDeal(deal.id);
   }
 }

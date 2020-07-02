@@ -12,8 +12,11 @@ public interface DealSearchManager {
    */
   public List<Long> search(String query, List<Long> tagIds);
 
-  /** Adds a Deal to the search index */
-  public void addDeal(Deal deal, List<Long> tagIds);
+  /**
+   * Puts a Deal to the search index. If it doesn't exist, creates a new deal. Else, updates the
+   * existing deal.
+   */
+  public void putDeal(Deal deal, List<Long> tagIds);
 
   /**
    * Removes a Deal from the search index

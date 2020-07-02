@@ -53,7 +53,7 @@ public class DealSearchManagerIndex implements DealSearchManager {
   }
 
   @Override
-  public void addDeal(Deal deal, List<Long> tagIds) {
+  public void putDeal(Deal deal, List<Long> tagIds) {
     String tags = tagsToString(tagIds);
     Document doc =
         Document.newBuilder()
