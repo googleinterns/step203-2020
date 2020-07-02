@@ -69,18 +69,23 @@ public class UserServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    String email = userService.getCurrentUser().getEmail();
+    String userEmail = userService.getCurrentUser().getEmail();
 
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    if (username == null || bio == null) {
+    String email = (String) request.getParameter("email");
+
+    if (!userEmail.equals(email)) {
+      // Inconsistent request with login status
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    User user = userManager.readUser(email);
+    User user = userManager.readOrCreateUserByEmail(userEmail);
 
-    userManager.updateUser(user.id, email, username, user.photoBlobKey, bio);
+    User updatedUser = new User(user.id, null, username, null, bio);
+    System.out.println(updatedUser);
+    userManager.updateUser(updatedUser);
     response.sendRedirect("/user/" + user.id);
   }
 }
