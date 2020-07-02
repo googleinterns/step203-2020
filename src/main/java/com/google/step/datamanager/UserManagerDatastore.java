@@ -9,7 +9,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.User;
-import java.util.Optional;
 
 /** A data manager handling datastore operations on user. */
 public class UserManagerDatastore implements UserManager {
@@ -22,7 +21,7 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User readUser(String email) {
+  public User readOrCreateUserByEmail(String email) {
     // Checks if the user exists.
     Query query =
         new Query("User")
@@ -51,15 +50,9 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User readUser(long id) {
-    Key key = KeyFactory.createKey("User", id);
-    Entity dealEntity;
-    try {
-      dealEntity = datastore.get(key);
-    } catch (EntityNotFoundException e) {
-      return null;
-    }
-    return transformEntityToUser(dealEntity);
+  public User readUser(long id) throws IllegalArgumentException {
+    Entity entity = getUserEntity(id);
+    return transformEntityToUser(entity);
   }
 
   /**
@@ -83,17 +76,40 @@ public class UserManagerDatastore implements UserManager {
     return user;
   }
 
+  /**
+   * Returns a user entity in datastore with the id.
+   *
+   * @param id id of the user entity.
+   * @return a user entity in datastore with the id.
+   * @throws IllegalArgumentException if the id does not exist.
+   */
+  private Entity getUserEntity(long id) throws IllegalArgumentException {
+    Key key = KeyFactory.createKey("User", id);
+    Entity userEntity;
+    try {
+      userEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      throw new IllegalArgumentException("User with id: " + id + " does not exist.");
+    }
+    return userEntity;
+  }
+
   @Override
-  public void updateUser(
-      long id, String email, String username, Optional<String> photoBlobKey, String bio) {
+  public void updateUser(User user) throws IllegalArgumentException {
+    Entity entity = getUserEntity(user.id);
 
-    Entity entity = new Entity("User", id);
-
-    entity.setProperty("email", email);
-    entity.setProperty("username", username);
-    entity.setProperty("bio", bio);
-    if (photoBlobKey.isPresent()) {
-      entity.setProperty("photoBlobKey", photoBlobKey.get());
+    if (user.username != null) {
+      entity.setProperty("username", user.username);
+    }
+    if (user.bio != null) {
+      entity.setProperty("bio", user.bio);
+    }
+    if (user.photoBlobKey != null) {
+      if (user.photoBlobKey.isPresent()) {
+        entity.setProperty("photoBlobKey", user.photoBlobKey.get());
+      } else {
+        entity.removeProperty("photoBlobKey");
+      }
     }
     datastore.put(entity);
   }
