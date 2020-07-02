@@ -28,8 +28,8 @@ public class JsonFormatter {
   public static Map<String, Object> getCommentMap(Comment comment) {
     Map<String, Object> commentMap = new HashMap<>();
     commentMap.put("id", comment.id);
-    commentMap.put("dealId", comment.deal);
-    commentMap.put("userId", comment.user);
+    commentMap.put("dealId", comment.dealId);
+    commentMap.put("userId", comment.userId);
     commentMap.put("content", comment.content);
     return commentMap;
   }
