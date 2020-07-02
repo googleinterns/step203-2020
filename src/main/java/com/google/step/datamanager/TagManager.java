@@ -17,6 +17,7 @@ public interface TagManager {
    *
    * @param id id of the tag.
    * @return a tag object with the id.
+   * @throws IllegalArgumentException if the id does not exist.
    */
-  public Tag readTag(long id);
+  public Tag readTag(long id) throws IllegalArgumentException;
 }

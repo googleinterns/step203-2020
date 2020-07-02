@@ -34,14 +34,14 @@ public final class TagManagerDatastoreTest {
 
   @Test
   public void testGetTag_newTag() {
-    Tag tag = tagManagerDatastore.getTag(NAME_A);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
     Assert.assertEquals(NAME_A, tag.name);
   }
 
   @Test
   public void testGetTag_exist() {
-    Tag tag = tagManagerDatastore.getTag(NAME_A);
-    Tag duplicatedTag = tagManagerDatastore.getTag(NAME_A);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    Tag duplicatedTag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
 
     Assert.assertEquals(tag.id, duplicatedTag.id);
     Assert.assertEquals(tag.name, duplicatedTag.name);
@@ -49,18 +49,16 @@ public final class TagManagerDatastoreTest {
 
   @Test
   public void testReadTag_success() {
-    Tag tag = tagManagerDatastore.getTag(NAME_A);
-    Tag tabB = tagManagerDatastore.getTag(NAME_B);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    Tag tabB = tagManagerDatastore.readOrCreateTagByName(NAME_B);
     Tag tagRead = tagManagerDatastore.readTag(tag.id);
 
     Assert.assertEquals(NAME_A, tagRead.name);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void testReadTag_notExist() {
-    Tag tag = tagManagerDatastore.getTag(NAME_A);
-    Tag tagRead = tagManagerDatastore.readTag(1000);
-
-    Assert.assertNull(tagRead);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    tagManagerDatastore.readTag(1000);
   }
 }

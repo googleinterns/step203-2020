@@ -41,7 +41,7 @@ public class TagManagerDatastore implements TagManager {
     try {
       tagEntity = datastore.get(key);
     } catch (EntityNotFoundException e) {
-      return null;
+      throw new IllegalArgumentException("Tag id does not exist");
     }
     return transformEntityToTag(tagEntity);
   }
