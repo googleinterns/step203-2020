@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,12 +95,43 @@ public class CommentServletTest {
         when(responseGet.getWriter()).thenReturn(writer);
 
         commentServlet.doGet(requestGet, responseGet);
-        
+
         String expected = String.format("[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]",
                           ID_A, dealId, userId_A, content_A);
 
         System.out.println(stringWriter.toString());
 
         JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testDoDelete_success() throws Exception {
+        //Do Post
+        List<Comment> comments = new ArrayList<>();
+        HttpServletRequest requestPost = mock(HttpServletRequest.class);
+        HttpServletResponse responsePost = mock(HttpServletResponse.class);
+
+        //Submitting comment
+        when(requestPost.getParameter("dealId")).thenReturn(Long.toString(dealId));
+        when(requestPost.getParameter("userId")).thenReturn(Long.toString(userId_A));
+        when(requestPost.getParameter("content")).thenReturn(content_A);
+        when(commentManager.createComment(dealId, userId_A, content_A)).thenReturn(comment_A);
+        commentServlet.doPost(requestPost, responsePost);
+
+        //Do Delete
+        HttpServletRequest requestDelete = mock(HttpServletRequest.class);
+        HttpServletResponse responseDelete = mock(HttpServletResponse.class);
+        when(requestDelete.getPathInfo()).thenReturn("/"+comment_A.id);
+        commentServlet.doDelete(requestDelete, responseDelete);
+
+        //Do Get
+        HttpServletRequest requestGet = mock(HttpServletRequest.class);
+        HttpServletResponse responseGet = mock(HttpServletResponse.class);
+
+        when(requestGet.getPathInfo()).thenReturn("/2");
+        when(commentManager.getComments(2)).thenReturn(comments);
+
+        Assert.assertTrue(comments.isEmpty());
+
     }
 }
