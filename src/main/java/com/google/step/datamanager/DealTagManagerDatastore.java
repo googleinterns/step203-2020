@@ -23,9 +23,9 @@ public class DealTagManagerDatastore implements DealTagManager {
   }
 
   @Override
-  public void updateTagsOfDeal(long id, List<Long> tagIds) {
+  public void updateTagsOfDeal(long dealId, List<Long> tagIds) {
     HashSet<Long> newTagIds = new HashSet(tagIds);
-    Iterable<Entity> results = getDealTagEntitiesOfDeal(id);
+    Iterable<Entity> results = getDealTagEntitiesOfDeal(dealId);
 
     // Keeps tags in the new list and remove others
     for (Entity entity : results) {
@@ -39,7 +39,7 @@ public class DealTagManagerDatastore implements DealTagManager {
 
     // Adds remaining tags in the new list
     for (long tagId : newTagIds) {
-      Entity entity = createDealTagEntity(id, tagId);
+      Entity entity = createDealTagEntity(dealId, tagId);
       datastore.put(entity);
     }
   }

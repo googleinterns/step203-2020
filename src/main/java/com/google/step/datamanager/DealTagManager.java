@@ -15,8 +15,8 @@ public interface DealTagManager {
   /**
    * Updates tags of deal with the id to be the list of tags.
    *
-   * @param id id of the deal.
+   * @param dealId id of the deal.
    * @param tagIds updated tag ids of the deal.
    */
-  public void updateTagsOfDeal(long id, List<Long> tagIds);
+  public void updateTagsOfDeal(long dealId, List<Long> tagIds);
 }
