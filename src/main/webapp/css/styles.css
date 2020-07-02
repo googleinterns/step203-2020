@@ -10276,3 +10276,8 @@ body {
 body > .container {
   flex-grow: 1;
 }
+
+.deal-img {
+  height: 300px;
+  width: auto;
+}
