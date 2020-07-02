@@ -4,6 +4,8 @@ import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.Field;
 import com.google.appengine.api.search.Index;
 import com.google.appengine.api.search.IndexSpec;
+import com.google.appengine.api.search.Query;
+import com.google.appengine.api.search.QueryOptions;
 import com.google.appengine.api.search.Results;
 import com.google.appengine.api.search.ScoredDocument;
 import com.google.appengine.api.search.SearchServiceFactory;
@@ -21,25 +23,28 @@ public class DealSearchManagerIndex implements DealSearchManager {
   }
 
   @Override
-  public List<Long> search(String query, List<Long> tagIds) {
+  public List<Long> search(String userQuery, List<Long> tagIds) {
     // replace characters that might cause syntax errors with space character and change all to
     // lowercase
-    query = query.replaceAll("[^a-zA-Z0-9-_/]", " ");
-    query = query.toLowerCase();
-    query = query.trim();
+    userQuery = userQuery.replaceAll("[^a-zA-Z0-9-_/]", " ");
+    userQuery = userQuery.toLowerCase();
+    userQuery = userQuery.trim();
 
     String tags = tagsToString(tagIds);
 
     String queryString = "";
-    if (!query.isEmpty()) {
-      queryString += " description=(" + query + ")";
+    if (!userQuery.isEmpty()) {
+      queryString += " description=(" + userQuery + ")";
     }
     if (!tags.isEmpty()) {
       queryString += " tags=(" + tags + ")";
     }
 
+    QueryOptions options = QueryOptions.newBuilder().setReturningIdsOnly(true).build();
+    Query query = Query.newBuilder().setOptions(options).build(queryString);
+
     List<Long> dealIds = new ArrayList<>();
-    Results<ScoredDocument> results = index.search(queryString);
+    Results<ScoredDocument> results = index.search(query);
     for (ScoredDocument document : results) {
       long id = Long.parseLong(document.getId());
       dealIds.add(id);
