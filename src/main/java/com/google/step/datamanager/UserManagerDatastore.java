@@ -22,7 +22,7 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User readUser(String email) {
+  public User readOrCreateUserByEmail(String email) {
     // Checks if the user exists.
     Query query =
         new Query("User")

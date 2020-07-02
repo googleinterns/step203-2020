@@ -13,7 +13,7 @@ public interface UserManager {
    * @param email email of the user.
    * @return User object with the email.
    */
-  public User readUser(String email);
+  public User readOrCreateUserByEmail(String email);
 
   /**
    * Creates a User object with the given email.
