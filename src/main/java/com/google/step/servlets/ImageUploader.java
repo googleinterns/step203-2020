@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
-public class ImageProcessor {
+public class ImageUploader {
 
   private static final BlobstoreService blobstoreService =
       BlobstoreServiceFactory.getBlobstoreService();

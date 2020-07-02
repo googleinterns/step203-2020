@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ServeImageServlet extends HttpServlet {
   private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
+  /** Serves the image with the specified blobKey */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String pathInfo = request.getPathInfo();
