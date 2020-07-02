@@ -66,25 +66,31 @@ public class UserServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    String idString;
+    try {
+      idString = request.getPathInfo().substring(1);
+    } catch (IndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
     String userEmail = userService.getCurrentUser().getEmail();
-
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    String email = (String) request.getParameter("email");
 
-    if (!userEmail.equals(email)) {
+    User user = userManager.readOrCreateUserByEmail(userEmail);
+
+    if (!idString.equals(String.valueOf(user.id))) {
       // Inconsistent request with login status
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    User user = userManager.readOrCreateUserByEmail(userEmail);
-
     User updatedUser = new User(user.id, null, username, null, bio);
-    System.out.println(updatedUser);
+
     userManager.updateUser(updatedUser);
     response.sendRedirect("/user/" + user.id);
   }

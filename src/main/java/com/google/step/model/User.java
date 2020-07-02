@@ -45,7 +45,7 @@ public class User {
     }
     User user = (User) obj;
     return user.id == this.id
-        && ((user.email == null && this.email == null) || user.email.equals(this.email))
+        && ((user.username == null && this.username == null) || user.username.equals(this.username))
         && ((user.bio == null && this.bio == null) || user.bio.equals(this.bio))
         && ((user.email == null && this.email == null) || user.email.equals(this.email))
         && ((user.photoBlobKey == null && this.photoBlobKey == null)

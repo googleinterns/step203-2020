@@ -220,6 +220,8 @@ function configureFollowButton(user, userLoggedInId) {
  */
 function showProfileEditingForm(user) {
   const profileEditForms = document.getElementById('profile-edit-forms');
+  const profileInfoForm = document.getElementById('profile-form');
+  profileInfoForm.action += '/' + user.id;
   profileEditForms.hidden = false;
   const profile = document.getElementById('profile');
   profile.hidden = true;

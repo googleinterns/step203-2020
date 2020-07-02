@@ -10,20 +10,6 @@
     <servlet-name>addDeal</servlet-name>
     <jsp-file>/WEB-INF/jsp/add-deal.jsp</jsp-file>
   </servlet>
-
-  <servlet-mapping>
-    <servlet-name>home</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>home</servlet-name>
-    <jsp-file>/WEB-INF/jsp/home.jsp</jsp-file>
-  </servlet>
-  <servlet>
-    <servlet-name>addDeal</servlet-name>
-    <jsp-file>/WEB-INF/jsp/add-deal.jsp</jsp-file>
-  </servlet>
   <servlet>
     <servlet-name>userPage</servlet-name>
     <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
