@@ -33,8 +33,6 @@ public class CommentServletTest {
     private static final String content_B = "Hello world2";
     private static final Comment comment_B = new Comment(ID_B, dealId, userId_B, content_B);
 
-    private static final List<Comment> comments = new ArrayList<>();
-
     private CommentManager commentManager;
 
     private CommentServlet commentServlet;
@@ -43,12 +41,13 @@ public class CommentServletTest {
     public void setUp() {
       commentManager = mock(CommentManager.class);
       commentServlet = new CommentServlet(commentManager);
-      comments.add(comment_A);
-      comments.add(comment_B);
    }
  
     @Test
     public void testDoGet_success() throws Exception {
+        List<Comment> comments = new ArrayList<>();
+        comments.add(comment_A);
+        comments.add(comment_B);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -66,6 +65,40 @@ public class CommentServletTest {
         String commentB = String.format("{id:%d,dealId:%d,userId:%d,content:\"%s\"}",
                           ID_B, dealId, userId_B, content_B);
         String expected = "[" + commentA + "," + commentB + "]";
+
+        JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void testDoPost_success() throws Exception {
+        List<Comment> comments = new ArrayList<>();
+        HttpServletRequest requestPost = mock(HttpServletRequest.class);
+        HttpServletResponse responsePost = mock(HttpServletResponse.class);
+
+        //Submitting comment
+        when(requestPost.getParameter("dealId")).thenReturn(Long.toString(dealId));
+        when(requestPost.getParameter("userId")).thenReturn(Long.toString(userId_A));
+        when(requestPost.getParameter("content")).thenReturn(content_A);
+        when(commentManager.createComment(dealId, userId_A, content_A)).thenReturn(comment_A);
+        commentServlet.doPost(requestPost, responsePost);
+
+        HttpServletRequest requestGet = mock(HttpServletRequest.class);
+        HttpServletResponse responseGet = mock(HttpServletResponse.class);
+        //Get comment
+        comments.add(comment_A);
+        when(requestGet.getPathInfo()).thenReturn("/2");
+        when(commentManager.getComments(2)).thenReturn(comments);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(responseGet.getWriter()).thenReturn(writer);
+
+        commentServlet.doGet(requestGet, responseGet);
+        
+        String expected = String.format("[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]",
+                          ID_A, dealId, userId_A, content_A);
+
+        System.out.println(stringWriter.toString());
 
         JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
     }

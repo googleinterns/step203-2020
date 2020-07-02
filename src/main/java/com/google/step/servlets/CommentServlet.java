@@ -61,9 +61,9 @@ public class CommentServlet extends HttpServlet {
     long userId; 
     String content;
     try {
-      dealId = (long) request.getParameter("deal");
-      userId = (long) request.getParameter("user");
-      content = (String) request.getParameter("content");
+      dealId = Long.parseLong(request.getParameter("deal"));
+      userId = Long.parseLong(request.getParameter("user"));
+      content = request.getParameter("content");
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -73,6 +73,6 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
-    response.sendRedirect("/deals/"+deal.id));
+    response.sendRedirect("/deals/"+ comment.dealId);
   }
 }
