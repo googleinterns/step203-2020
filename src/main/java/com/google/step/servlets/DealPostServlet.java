@@ -23,8 +23,6 @@ public class DealPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     System.out.println("post deal");
-    // String test =
-    // request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     String description = request.getParameter("description");
     String photoBlobkey = "TODO"; // TODO connect to blobstore
     String start = request.getParameter("start");

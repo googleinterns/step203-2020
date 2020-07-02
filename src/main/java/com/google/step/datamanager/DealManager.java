@@ -9,8 +9,8 @@ public interface DealManager {
       String start,
       String end,
       String source,
-      long poster,
-      long restaurant);
+      long posterId,
+      long restaurantId);
 
   public Deal readDeal(long id);
 
