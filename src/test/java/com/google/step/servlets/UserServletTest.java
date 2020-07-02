@@ -24,9 +24,9 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class UserServletTest {
 
   private static final long ID_A = 1;
+  private static final long ID_B = 2;
 
   private static final String EMAIL_A = "testa@example.com";
-  private static final String EMAIL_B = "testb@example.com";
 
   private static final String USERNAME_A = "Alice";
   private static final String USERNAME_A_NEW = "AliceW";
@@ -117,7 +117,7 @@ public class UserServletTest {
     when(userService.isUserLoggedIn()).thenReturn(false);
 
     servlet.doPost(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
@@ -130,7 +130,7 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(request.getParameter("email")).thenReturn(EMAIL_A);
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_A));
     when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
@@ -142,7 +142,7 @@ public class UserServletTest {
   }
 
   @Test
-  public void testDoPost_inconsistentEmail() throws Exception {
+  public void testDoPost_inconsistentUser() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(userService.isUserLoggedIn()).thenReturn(true);
@@ -151,7 +151,7 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(request.getParameter("email")).thenReturn(EMAIL_B);
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_B));
     when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
