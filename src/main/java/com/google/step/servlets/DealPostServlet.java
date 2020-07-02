@@ -17,6 +17,10 @@ public class DealPostServlet extends HttpServlet {
 
   private final DealManager manager;
 
+  public DealPostServlet(DealManager manager) {
+    this.manager = manager;
+  }
+
   public DealPostServlet() {
     manager = new DealManagerDatastore();
   }
