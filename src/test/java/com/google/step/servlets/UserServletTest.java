@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,13 +10,13 @@ import com.google.step.datamanager.UserManager;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.ArgumentCaptor;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -25,6 +26,7 @@ public class UserServletTest {
   private static final long ID_A = 1;
 
   private static final String EMAIL_A = "testa@example.com";
+  private static final String EMAIL_B = "testb@example.com";
 
   private static final String USERNAME_A = "Alice";
   private static final String USERNAME_A_NEW = "AliceW";
@@ -80,7 +82,7 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1000");
-    when(userManager.readUser(1000)).thenReturn(null);
+    when(userManager.readUser(1000)).thenThrow(new IllegalArgumentException());
 
     servlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -128,16 +130,19 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(EMAIL_A)).thenReturn(USER_A);
+    when(request.getParameter("email")).thenReturn(EMAIL_A);
+    when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
-    verify(userManager)
-        .updateUser(ID_A, EMAIL_A, USERNAME_A_NEW, Optional.of(BLOBKEY_A), BIO_A_NEW);
+    User updatedUser = new User(ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
+    ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+    verify(userManager).updateUser(captor.capture());
+    assertEquals(updatedUser, captor.getValue());
     verify(response).sendRedirect("/user/" + ID_A);
   }
 
   @Test
-  public void testDoPost_missingParam() throws Exception {
+  public void testDoPost_inconsistentEmail() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(userService.isUserLoggedIn()).thenReturn(true);
@@ -146,7 +151,8 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(EMAIL_A)).thenReturn(USER_A);
+    when(request.getParameter("email")).thenReturn(EMAIL_B);
+    when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);

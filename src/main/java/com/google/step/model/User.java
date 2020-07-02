@@ -23,7 +23,11 @@ public class User {
     this.username = username;
     this.email = email;
     this.bio = bio;
-    this.photoBlobKey = Optional.of(photoBlobKey);
+    if (photoBlobKey != null) {
+      this.photoBlobKey = Optional.of(photoBlobKey);
+    } else {
+      this.photoBlobKey = null;
+    }
   }
 
   public User(long id, String email, String username, String bio) {
@@ -32,5 +36,19 @@ public class User {
     this.email = email;
     this.bio = bio;
     this.photoBlobKey = Optional.empty();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof User)) {
+      return false;
+    }
+    User user = (User) obj;
+    return user.id == this.id
+        && ((user.email == null && this.email == null) || user.email.equals(this.email))
+        && ((user.bio == null && this.bio == null) || user.bio.equals(this.bio))
+        && ((user.email == null && this.email == null) || user.email.equals(this.email))
+        && ((user.photoBlobKey == null && this.photoBlobKey == null)
+            || user.photoBlobKey.equals(this.photoBlobKey));
   }
 }
