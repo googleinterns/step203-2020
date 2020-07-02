@@ -53,4 +53,26 @@ public class CommentServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
+
+  /** Posts a comment for the deal with the given id parameter */
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long dealId;
+    long userId; 
+    String content;
+    try {
+      dealId = (long) request.getParameter("deal");
+      userId = (long) request.getParameter("user");
+      content = (String) request.getParameter("content");
+    } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    Comment comment = manager.createComment(dealId, userId, content);
+    if (comment == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+    response.sendRedirect("/deals/"+deal.id));
+  }
 }
