@@ -177,4 +177,67 @@ public class DealPostServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
+
+  @Test
+  public void testDoPost_dateWrongFormat_badRequest() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("description")).thenReturn(DESCRIPTION);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("start")).thenReturn(DATE_WRONG_FORMAT);
+    when(request.getParameter("end")).thenReturn(DATE_B);
+    when(request.getParameter("source")).thenReturn(SOURCE);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_dateWrongOrder_badRequest() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("description")).thenReturn(DESCRIPTION);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("start")).thenReturn(DATE_B);
+    when(request.getParameter("end")).thenReturn(DATE_A);
+    when(request.getParameter("source")).thenReturn(SOURCE);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_restaurantInvalid_badRequest() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("description")).thenReturn(DESCRIPTION);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("start")).thenReturn(DATE_B);
+    when(request.getParameter("end")).thenReturn(DATE_A);
+    when(request.getParameter("source")).thenReturn(SOURCE);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_INVALID);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
 }
