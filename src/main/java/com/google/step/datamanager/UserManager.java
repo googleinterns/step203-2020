@@ -1,7 +1,6 @@
 package com.google.step.datamanager;
 
 import com.google.step.model.User;
-import java.util.Optional;
 
 /** A UserManager handling user datastore operations. */
 public interface UserManager {
@@ -13,7 +12,7 @@ public interface UserManager {
    * @param email email of the user.
    * @return User object with the email.
    */
-  public User readUser(String email);
+  public User readOrCreateUserByEmail(String email);
 
   /**
    * Creates a User object with the given email.
@@ -27,21 +26,19 @@ public interface UserManager {
    * Returns a User object with the given id.
    *
    * @param id id of the user.
-   * @return User object with the id.
+   * @return user object with the id.
+   * @throws IllegalArgumentException if user id does not exist.
    */
-  public User readUser(long id);
+  public User readUser(long id) throws IllegalArgumentException;
 
   /**
-   * Updates a user's info with the given id.
+   * Updates a user's info with a partially populated user object. Updates fields except email that
+   * are not null and keeps other field unchanged.
    *
-   * @param id id of the user.
-   * @param email email of the user.
-   * @param username username of the user.
-   * @param photoBlobKey blob key of the profile photo if it exists.
-   * @param bio bio of the user.
+   * @param user a user object with updated value.
+   * @throws IllegalArgumentException if user id does not exist.
    */
-  public void updateUser(
-      long id, String email, String username, Optional<String> photoBlobKey, String bio);
+  public void updateUser(User user) throws IllegalArgumentException;
 
   /**
    * Deletes a user with the given id.

@@ -80,7 +80,7 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1000");
-    when(userManager.readUser(1000)).thenReturn(null);
+    when(userManager.readUser(1000)).thenThrow(new IllegalArgumentException());
 
     servlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
