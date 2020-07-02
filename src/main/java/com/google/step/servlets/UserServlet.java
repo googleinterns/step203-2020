@@ -31,8 +31,10 @@ public class UserServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    User user = userManager.readUser(id);
-    if (user == null) {
+    User user;
+    try {
+      user = userManager.readUser(id);
+    } catch (IllegalArgumentException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
