@@ -29,7 +29,6 @@ public class DealSearchServlet extends HttpServlet {
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    System.out.println("search deal");
     String query = request.getParameter("q");
     if (query == null) {
       query = "";
