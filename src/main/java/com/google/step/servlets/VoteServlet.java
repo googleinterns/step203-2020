@@ -14,6 +14,10 @@ public class VoteServlet extends HttpServlet {
 
   private final VoteManager manager;
 
+  public VoteServlet(VoteManager manager) {
+    this.manager = manager;
+  }
+
   public VoteServlet() {
     manager = new VoteManagerDatastore();
   }
