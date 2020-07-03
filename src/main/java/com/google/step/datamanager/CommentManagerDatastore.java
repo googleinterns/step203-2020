@@ -41,6 +41,7 @@ public class CommentManagerDatastore implements CommentManager {
     return comment;
   }
 
+  /** Gets the list of comments with the given dealId */
   @Override
   public List<Comment> getComments(long dealId) {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
@@ -56,12 +57,14 @@ public class CommentManagerDatastore implements CommentManager {
     return comments;
   }
 
+  /**Deletes the comment with the given commentId */
   @Override
   public void deleteComment(long id) {
     Key key = KeyFactory.createKey("Comment", id);
     datastore.delete(key);
   }
 
+  /**Updates the comment with the given commentId */
   @Override
   public Comment updateComment(long id, String content) {
     Key key = KeyFactory.createKey("Comment", id);
@@ -71,9 +74,7 @@ public class CommentManagerDatastore implements CommentManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    if (content != null) {
-      commentEntity.setProperty("content", content);
-    }
+    commentEntity.setProperty("content", content);
     datastore.put(commentEntity);
     long dealId = (long) commentEntity.getProperty("deal");
     long userId = (long) commentEntity.getProperty("user");

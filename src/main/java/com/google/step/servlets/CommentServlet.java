@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
-/** Servlet that handles individual deals. */
+/** Servlet that handles individual comments. */
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
@@ -76,6 +76,22 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
+    response.sendRedirect("/deals/"+ comment.dealId);
+  }
+
+  /**Updates a comment with the given id parameter */
+  @Override
+  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long id;
+    String content;
+    try {
+      id = Long.parseLong(request.getParameter("id"));
+      content = request.getParameter("content");
+    } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    Comment comment = manager.updateComment(id, content);
     response.sendRedirect("/deals/"+ comment.dealId);
   }
 }
