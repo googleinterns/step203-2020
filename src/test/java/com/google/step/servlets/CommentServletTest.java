@@ -79,7 +79,7 @@ public class CommentServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getParameter("dealId")).thenReturn("1000");
-        when(commentManager.getComments(1000)).thenReturn(null);
+        when(commentManager.getComments(1000)).thenReturn(new ArrayList<>());
 
         commentServlet.doGet(request, response);
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);

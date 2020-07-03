@@ -31,6 +31,9 @@ public class CommentServlet extends HttpServlet {
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
+    } catch (StringIndexOutOfBoundsException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     }
     manager.deleteComment(id);
   }
@@ -44,12 +47,9 @@ public class CommentServlet extends HttpServlet {
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
-    } catch (StringIndexOutOfBoundsException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
     }
     List<Comment> comments = manager.getComments(dealId);
-    if (comments == null) {
+    if (comments.isEmpty()) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
@@ -66,6 +66,9 @@ public class CommentServlet extends HttpServlet {
       id = Long.parseLong(request.getPathInfo().substring(1));
       content = request.getParameter("content");
     } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    } catch (StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
