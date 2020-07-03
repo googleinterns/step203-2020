@@ -1,11 +1,12 @@
 package com.google.step.datamanager;
 
 public interface VoteManager {
-  /** Gets the number of votes the Deal with the given dealId has */
+  /** Gets the number of votes for a deal, specified by dealId. */
   public int getVotes(long dealId);
 
   /**
-   * The user with the given userId votes on the Deal with the given dealId in the given direction.
+   * Registers a vote from a user (specified by {@code userId}) for a deal (specified by {@code
+   * dealId}) in {@code dir} direction.
    */
   public void vote(long userId, long dealId, int dir);
 }
