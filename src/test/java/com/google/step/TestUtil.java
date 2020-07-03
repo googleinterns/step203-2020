@@ -35,6 +35,8 @@ public class TestUtil {
   // Tag
   public static final String TAG_NAME_A = "1for1";
   public static final String TAG_NAME_B = "tea";
+  public static final String TAG_NAME_C = "fish";
+  public static final String TAG_NAME_D = "20%off";
 
   public static final long TAG_ID_A = 1;
   public static final long TAG_ID_B = 2;
@@ -46,4 +48,16 @@ public class TestUtil {
   public static final long DEAL_ID_B = 2;
   public static final long DEAL_ID_C = 3;
   public static final long DEAL_ID_D = 4;
+
+  // Restaurant
+  public static final long RESTAURANT_ID_A = 1;
+  public static final long RESTAURANT_ID_B = 2;
+  public static final long RESTAURANT_ID_C = 3;
+  public static final long RESTAURANT_ID_D = 4;
+
+  // Comment
+  public static final long COMMENT_ID_A = 1;
+  public static final long COMMENT_ID_B = 2;
+  public static final long COMMENT_ID_C = 3;
+  public static final long COMMENT_ID_D = 4;
 }
