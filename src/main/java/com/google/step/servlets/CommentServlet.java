@@ -44,6 +44,9 @@ public class CommentServlet extends HttpServlet {
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
+    } catch (StringIndexOutOfBoundsException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     }
     List<Comment> comments = manager.getComments(dealId);
     if (comments == null) {
