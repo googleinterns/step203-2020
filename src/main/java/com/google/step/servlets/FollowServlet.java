@@ -13,6 +13,10 @@ public class FollowServlet extends HttpServlet {
 
   private final FollowManager manager;
 
+  public FollowServlet(FollowManager manager) {
+    this.manager = manager;
+  }
+
   public FollowServlet() {
     manager = new FollowManagerDatastore();
   }
