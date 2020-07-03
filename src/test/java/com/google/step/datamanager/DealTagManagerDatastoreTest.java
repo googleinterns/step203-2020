@@ -97,5 +97,7 @@ public class DealTagManagerDatastoreTest {
     actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_C).toArray(new Long[0]);
     expected = tagIdsOfC.toArray(new Long[0]);
     Assert.assertArrayEquals(expected, actual);
+
+    Assert.assertTrue(dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_D).isEmpty());
   }
 }
