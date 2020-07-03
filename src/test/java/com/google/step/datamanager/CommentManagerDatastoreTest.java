@@ -1,12 +1,12 @@
 package com.google.step.datamanager;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Comment;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,9 +45,9 @@ public final class CommentManagerDatastoreTest {
   @Test
   public void testCreateComment() {
     Comment comment = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Assert.assertEquals(DEALID, comment.dealId);
-    Assert.assertEquals(USERID_A, comment.userId);
-    Assert.assertEquals(CONTENT_A, comment.content);
+    assertEquals(DEALID, comment.dealId);
+    assertEquals(USERID_A, comment.userId);
+    assertEquals(CONTENT_A, comment.content);
   }
 
   @Test
@@ -69,7 +69,7 @@ public final class CommentManagerDatastoreTest {
   public void testDeleteSingleComment() {
     Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
     commentManagerDatastore.deleteComment(comment_A.id);
-    Assert.assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
+    assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
   }
 
   @Test
@@ -78,7 +78,7 @@ public final class CommentManagerDatastoreTest {
     Comment comment_B = commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
     commentManagerDatastore.deleteComment(comment_A.id);
     commentManagerDatastore.deleteComment(comment_B.id);
-    Assert.assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
+    assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
   }
 
   @Test
@@ -88,10 +88,10 @@ public final class CommentManagerDatastoreTest {
     commentManagerDatastore.deleteComment(comment_A.id);
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
     Comment comment_B_Test = comments.get(0);
-    Assert.assertEquals(DEALID, comment_B_Test.dealId);
-    Assert.assertEquals(USERID_B, comment_B_Test.userId);
-    Assert.assertEquals(CONTENT_B, comment_B_Test.content);
-    Assert.assertEquals(1, comments.size());
+    assertEquals(DEALID, comment_B_Test.dealId);
+    assertEquals(USERID_B, comment_B_Test.userId);
+    assertEquals(CONTENT_B, comment_B_Test.content);
+    assertEquals(1, comments.size());
   }
 
   @Test
@@ -100,8 +100,8 @@ public final class CommentManagerDatastoreTest {
     Comment comment_A_Updated = commentManagerDatastore.updateComment(comment_A.id, "Updated comment");
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
     Comment comment_A_Test = comments.get(0);
-    Assert.assertEquals(DEALID, comment_A_Test.dealId);
-    Assert.assertEquals(USERID_A, comment_A_Test.userId);
-    Assert.assertEquals("Updated comment", comment_A_Test.content);
+    assertEquals(DEALID, comment_A_Test.dealId);
+    assertEquals(USERID_A, comment_A_Test.userId);
+    assertEquals("Updated comment", comment_A_Test.content);
   }
 }

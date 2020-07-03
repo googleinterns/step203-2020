@@ -1,14 +1,15 @@
 package com.google.step.servlets;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.step.datamanager.CommentManager;
 import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,8 +130,6 @@ public class CommentServletTest {
 
         String expected = String.format("[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]",
                           ID_A, DEALID, USERID_A, CONTENT_A);
-
-        System.out.println(stringWriter.toString());
 
         JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
     }
