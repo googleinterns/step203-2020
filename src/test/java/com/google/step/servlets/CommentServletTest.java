@@ -38,10 +38,13 @@ public class CommentServletTest {
 
     private CommentServlet commentServlet;
 
+    private CommentServletPost commentServletPost;
+
     @Before
     public void setUp() {
       commentManager = mock(CommentManager.class);
       commentServlet = new CommentServlet(commentManager);
+      commentServletPost = new CommentServletPost(commentManager);
     }
  
     @Test
@@ -52,7 +55,7 @@ public class CommentServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getPathInfo()).thenReturn("/2");
+        when(request.getParameter("dealId")).thenReturn("2");
         when(commentManager.getComments(2)).thenReturn(comments);
 
         StringWriter stringWriter = new StringWriter();
@@ -74,7 +77,7 @@ public class CommentServletTest {
     public void testDoGet_notExist() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getPathInfo()).thenReturn("/1000");
+        when(request.getParameter("dealId")).thenReturn("1000");
         when(commentManager.getComments(1000)).thenReturn(null);
 
         commentServlet.doGet(request, response);
@@ -85,7 +88,7 @@ public class CommentServletTest {
     public void testDoGet_invalidID() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getPathInfo()).thenReturn("/abcd");
+        when(request.getParameter("deaId")).thenReturn("abcd");
 
         commentServlet.doGet(request, response);
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -95,7 +98,7 @@ public class CommentServletTest {
     public void testDoGet_noId() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getPathInfo()).thenReturn("");
+        when(request.getParameter("dealId")).thenReturn("");
 
         commentServlet.doGet(request, response);
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -112,7 +115,7 @@ public class CommentServletTest {
         when(request.getParameter("userId")).thenReturn(Long.toString(userId_A));
         when(request.getParameter("content")).thenReturn(content_A);
         when(commentManager.createComment(dealId, userId_A, content_A)).thenReturn(comment_A);
-        commentServlet.doPost(request, response);
+        commentServletPost.doPost(request, response);
 
         comments.add(comment_A);
         when(request.getPathInfo()).thenReturn("/2");

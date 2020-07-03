@@ -40,7 +40,7 @@ public class CommentServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long dealId;
     try {
-      dealId = Long.parseLong(request.getPathInfo().substring(1));
+      dealId = Long.parseLong(request.getParameter("dealId"));
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -57,35 +57,13 @@ public class CommentServlet extends HttpServlet {
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
 
-  /** Posts a comment for the deal with the given id parameter */
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long dealId;
-    long userId; 
-    String content;
-    try {
-      dealId = Long.parseLong(request.getParameter("deal"));
-      userId = Long.parseLong(request.getParameter("user"));
-      content = request.getParameter("content");
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
-    Comment comment = manager.createComment(dealId, userId, content);
-    if (comment == null) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return;
-    }
-    response.sendRedirect("/deals/"+ comment.dealId);
-  }
-
   /**Updates a comment with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
     String content;
     try {
-      id = Long.parseLong(request.getParameter("id"));
+      id = Long.parseLong(request.getPathInfo().substring(1));
       content = request.getParameter("content");
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
