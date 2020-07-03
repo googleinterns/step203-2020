@@ -1,10 +1,11 @@
 package com.google.step.datamanager;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Tag;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,30 +36,30 @@ public final class TagManagerDatastoreTest {
   @Test
   public void testGetTag_newTag() {
     Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    Assert.assertEquals(NAME_A, tag.name);
+    assertEquals(NAME_A, tag.name);
   }
 
   @Test
   public void testGetTag_exist() {
     Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    Tag duplicatedTag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    Tag duplicateTag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
 
-    Assert.assertEquals(tag.id, duplicatedTag.id);
-    Assert.assertEquals(tag.name, duplicatedTag.name);
+    assertEquals(tag.id, duplicateTag.id);
+    assertEquals(tag.name, duplicateTag.name);
   }
 
   @Test
   public void testReadTag_success() {
-    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    Tag tabB = tagManagerDatastore.readOrCreateTagByName(NAME_B);
-    Tag tagRead = tagManagerDatastore.readTag(tag.id);
+    Tag tagA = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    tagManagerDatastore.readOrCreateTagByName(NAME_B);
+    Tag tagARead = tagManagerDatastore.readTag(tagA.id);
 
-    Assert.assertEquals(NAME_A, tagRead.name);
+    assertEquals(NAME_A, tagARead.name);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testReadTag_notExist() {
-    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    tagManagerDatastore.readOrCreateTagByName(NAME_A);
     tagManagerDatastore.readTag(1000);
   }
 }
