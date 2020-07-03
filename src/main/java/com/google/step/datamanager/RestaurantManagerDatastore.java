@@ -65,4 +65,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     datastore.put(restaurantEntity);
     return readRestaurant(restaurant.id);
   }
+
+  @Override
+  public void deleteRestaurant(long id) {
+    Key key = KeyFactory.createKey("Restaurant", id);
+    datastore.delete(key);
+  }
 }
