@@ -1,12 +1,12 @@
 package com.google.step.datamanager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.User;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,41 +45,41 @@ public final class UserManagerDatastoreTest {
   @Test
   public void testCreateUser() {
     User user = userManagerDatastore.createUser(EMAIL_A);
-    Assert.assertEquals(EMAIL_A, user.email);
-    Assert.assertEquals(EMAIL_A, user.username);
-    Assert.assertEquals("", user.bio);
-    Assert.assertFalse(user.photoBlobKey.isPresent());
+    assertEquals(EMAIL_A, user.email);
+    assertEquals(EMAIL_A, user.username);
+    assertEquals("", user.bio);
+    assertFalse(user.photoBlobKey.isPresent());
   }
 
   @Test
   public void testReadUserByEmail_firstTime() {
     User user = userManagerDatastore.readOrCreateUserByEmail(EMAIL_B);
-    Assert.assertEquals(EMAIL_B, user.email);
-    Assert.assertEquals(EMAIL_B, user.username);
-    Assert.assertEquals("", user.bio);
-    Assert.assertFalse(user.photoBlobKey.isPresent());
+    assertEquals(EMAIL_B, user.email);
+    assertEquals(EMAIL_B, user.username);
+    assertEquals("", user.bio);
+    assertFalse(user.photoBlobKey.isPresent());
   }
 
   @Test
   public void testReadUserByEmailExists() {
     User user = userManagerDatastore.createUser(EMAIL_B);
     User userSecondTime = userManagerDatastore.readOrCreateUserByEmail(EMAIL_B);
-    Assert.assertEquals(EMAIL_B, userSecondTime.email);
-    Assert.assertEquals(EMAIL_B, userSecondTime.username);
-    Assert.assertEquals("", userSecondTime.bio);
-    Assert.assertEquals(user.id, userSecondTime.id);
-    Assert.assertFalse(userSecondTime.photoBlobKey.isPresent());
+    assertEquals(EMAIL_B, userSecondTime.email);
+    assertEquals(EMAIL_B, userSecondTime.username);
+    assertEquals("", userSecondTime.bio);
+    assertEquals(user.id, userSecondTime.id);
+    assertFalse(userSecondTime.photoBlobKey.isPresent());
   }
 
   @Test
   public void testReadUserById_success() {
     User userA = userManagerDatastore.createUser(EMAIL_A);
     User userARead = userManagerDatastore.readUser(userA.id);
-    Assert.assertEquals(EMAIL_A, userARead.email);
-    Assert.assertEquals(EMAIL_A, userARead.username);
-    Assert.assertEquals("", userARead.bio);
-    Assert.assertEquals(userA.id, userARead.id);
-    Assert.assertFalse(userARead.photoBlobKey.isPresent());
+    assertEquals(EMAIL_A, userARead.email);
+    assertEquals(EMAIL_A, userARead.username);
+    assertEquals("", userARead.bio);
+    assertEquals(userA.id, userARead.id);
+    assertFalse(userARead.photoBlobKey.isPresent());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -101,10 +101,10 @@ public final class UserManagerDatastoreTest {
     User updatedUser = new User(userA.id, userA.email, USERNAME_A, null, BIO_A);
     userManagerDatastore.updateUser(updatedUser);
     User userARead = userManagerDatastore.readUser(userA.id);
-    Assert.assertEquals(EMAIL_A, userARead.email);
-    Assert.assertEquals(USERNAME_A, userARead.username);
-    Assert.assertEquals(BIO_A, userARead.bio);
-    Assert.assertFalse(userARead.photoBlobKey.isPresent());
+    assertEquals(EMAIL_A, userARead.email);
+    assertEquals(USERNAME_A, userARead.username);
+    assertEquals(BIO_A, userARead.bio);
+    assertFalse(userARead.photoBlobKey.isPresent());
   }
 
   @Test
@@ -117,6 +117,6 @@ public final class UserManagerDatastoreTest {
     updatedUser = new User(userB.id, userB.email, USERNAME_B, BIO_B);
     userManagerDatastore.updateUser(updatedUser);
     userBRead = userManagerDatastore.readUser(userB.id);
-    Assert.assertFalse(userBRead.photoBlobKey.isPresent());
+    assertFalse(userBRead.photoBlobKey.isPresent());
   }
 }
