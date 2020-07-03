@@ -31,4 +31,38 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
     return restaurant;
   }
+
+  @Override
+  public Restaurant readRestaurant(long id) {
+    Key key = KeyFactory.createKey("Restaurant", id);
+    Entity restaurantEntity;
+    try {
+      restaurantEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    String name = (String) restaurantEntity.getProperty("name");
+    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
+    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
+    return restaurant;
+  }
+
+  @Override
+  public Restaurant updateRestaurant(Restaurant restaurant) {
+    Key key = KeyFactory.createKey("Restaurant", restaurant.id);
+    Entity restaurantEntity;
+    try {
+      restaurantEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    if (restaurant.name != null) {
+      restaurantEntity.setProperty("name", restaurant.name);
+    }
+    if (restaurant.photoBlobkey != null) {
+      restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
+    }
+    datastore.put(restaurantEntity);
+    return readRestaurant(restaurant.id);
+  }
 }
