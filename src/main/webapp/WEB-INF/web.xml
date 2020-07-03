@@ -24,10 +24,16 @@
     </servlet>
 
     <servlet-mapping>
+<<<<<<< HEAD
+        <servlet-name>profile</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+=======
         <servlet-name>user</servlet-name>
         <url-pattern>/user/*</url-pattern>
-    <servlet-mapping>
+    </servlet-mapping>
       
+>>>>>>> 29e326dcdf7b765ec7352119a74d71658dbfa707
     <servlet-mapping>
         <servlet-name>addDeal</servlet-name>
         <url-pattern>/add-deal</url-pattern>
