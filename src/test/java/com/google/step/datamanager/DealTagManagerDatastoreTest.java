@@ -1,11 +1,13 @@
 package com.google.step.datamanager;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,7 @@ public class DealTagManagerDatastoreTest {
     dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, tagIds);
     Long[] actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A).toArray(new Long[0]);
     Long[] expected = tagIds.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
   }
 
   @Test
@@ -56,7 +58,7 @@ public class DealTagManagerDatastoreTest {
     dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, newTagIds);
     Long[] actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A).toArray(new Long[0]);
     Long[] expected = newTagIds.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
   }
 
   @Test
@@ -67,7 +69,7 @@ public class DealTagManagerDatastoreTest {
     dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, newTagIds);
     Long[] actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A).toArray(new Long[0]);
     Long[] expected = newTagIds.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
   }
 
   @Test
@@ -78,7 +80,7 @@ public class DealTagManagerDatastoreTest {
     dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, newTagIds);
     Long[] actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A).toArray(new Long[0]);
     Long[] expected = newTagIds.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
   }
 
   @Test
@@ -92,12 +94,12 @@ public class DealTagManagerDatastoreTest {
 
     Long[] actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A).toArray(new Long[0]);
     Long[] expected = tagIdsOfA.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
 
     actual = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_C).toArray(new Long[0]);
     expected = tagIdsOfC.toArray(new Long[0]);
-    Assert.assertArrayEquals(expected, actual);
+    assertArrayEquals(expected, actual);
 
-    Assert.assertTrue(dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_D).isEmpty());
+    assertTrue(dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_D).isEmpty());
   }
 }
