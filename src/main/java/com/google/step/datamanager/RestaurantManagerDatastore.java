@@ -21,13 +21,13 @@ public class RestaurantManagerDatastore implements RestaurantManager {
       String name,
       String photoBlobkey) {
     Entity entity = new Entity("Restaurant");
-    entity.setProperty("name", description);
+    entity.setProperty("name", name);
     entity.setProperty("photoBlobkey", photoBlobkey);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Restaurant restaurant = new Deal(id, name, photoBlobkey);
+    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
 
     return restaurant;
   }
