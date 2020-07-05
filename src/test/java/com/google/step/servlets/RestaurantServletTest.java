@@ -96,23 +96,19 @@ public class RestaurantServletTest {
         restaurantServlet.doGet(request, response);
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
-/*
+
     @Test
     public void testDoPost_success() throws Exception {
         //Submitting restaurant
-        List<restaurant> restaurants = new ArrayList<>();
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getParameter("dealId")).thenReturn(Long.toString(DEALID));
-        when(request.getParameter("userId")).thenReturn(Long.toString(USERID_A));
-        when(request.getParameter("content")).thenReturn(CONTENT_A);
-        when(restaurantManager.createrestaurant(DEALID, USERID_A, CONTENT_A)).thenReturn(restaurant_A);
+        when(request.getParameter("name")).thenReturn(NAME_A);
+        when(restaurantManager.createRestaurant(NAME_A, BLOBKEY_A)).thenReturn(RESTAURANT_A);
         restaurantPostServlet.doPost(request, response);
 
-        restaurants.add(restaurant_A);
-        when(request.getPathInfo()).thenReturn("/2");
-        when(restaurantManager.getrestaurants(2)).thenReturn(restaurants);
+        when(request.getPathInfo()).thenReturn("/1");
+        when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
@@ -120,10 +116,9 @@ public class RestaurantServletTest {
 
         restaurantServlet.doGet(request, response);
 
-        String expected = String.format("[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]",
-                          ID_A, DEALID, USERID_A, CONTENT_A);
+        String expected = String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}",
+                          ID_A, NAME_A, BLOBKEY_A);
 
         JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
     }
-    */
 }

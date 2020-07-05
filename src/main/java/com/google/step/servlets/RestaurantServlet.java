@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles individual deals. */
+/** Servlet that handles individual restaurants */
 @WebServlet("/api/restaurant/*")
 public class RestaurantServlet extends HttpServlet {
 

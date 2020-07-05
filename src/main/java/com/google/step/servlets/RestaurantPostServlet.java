@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
-@WebServlet("/api/restaurants")
+@WebServlet("/api/restaurant/*")
 public class RestaurantPostServlet extends HttpServlet {
 
   private RestaurantManager manager = new RestaurantManagerDatastore();
@@ -23,12 +23,11 @@ public class RestaurantPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
-    String photoBlobkey = "TODO";
+    String photoBlobkey = "A_BLOB_KEY";
 
     Restaurant restaurant =
         manager.createRestaurant(name, photoBlobkey);
 
-    // TODO redirect to Restaurant page instead of printing Restaurant
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
+    response.sendRedirect("/restaurant/"+restaurant.id);
   }
 }
