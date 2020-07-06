@@ -72,10 +72,40 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
+  public void testUpdateRestaurantNameNull() throws Exception {
+    Restaurant restaurant_A =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, null, BLOBKEY_A);
+    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
+    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
+    assertEquals(BLOBKEY_A, restaurant_A_Updated.photoBlobkey);
+  }
+
+  @Test
+  public void testUpdateRestaurant_blobKey() throws Exception {
+    Restaurant restaurant_A =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_A, BLOBKEY_B);
+    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
+    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
+    assertEquals(BLOBKEY_B, restaurant_A_Updated.photoBlobkey);
+  }
+
+  @Test
+  public void testUpdateRestaurant_blobKeyNull() throws Exception {
+    Restaurant restaurant_A =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_A, null);
+    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
+    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
+    assertEquals(BLOBKEY_A, restaurant_A_Updated.photoBlobkey);
+  }
+
+  @Test
   public void testDeleteRestaurant() throws Exception {
     Restaurant restaurant_A =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     restaurantManagerDatastore.deleteRestaurant(restaurant_A.id);
-    assertEquals(null, restaurantManagerDatastore.readRestaurant(restaurant_A.id));
+    assertNull(restaurantManagerDatastore.readRestaurant(restaurant_A.id));
   }
 }
