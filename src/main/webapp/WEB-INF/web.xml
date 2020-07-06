@@ -35,20 +35,10 @@
     </servlet-mapping>
 
     <servlet-mapping>
-<<<<<<< HEAD
-        <servlet-name>profile</servlet-name>
-        <url-pattern>/profile</url-pattern>
-    </servlet-mapping>
-=======
         <servlet-name>user</servlet-name>
         <url-pattern>/user/*</url-pattern>
     </servlet-mapping>
-<<<<<<< HEAD
-      
->>>>>>> 29e326dcdf7b765ec7352119a74d71658dbfa707
-=======
 
->>>>>>> 32702b23e84c2f68b30f57cd6653b641e9c0fc7c
     <servlet-mapping>
         <servlet-name>addDeal</servlet-name>
         <url-pattern>/add-deal</url-pattern>
