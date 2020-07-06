@@ -45,13 +45,24 @@ const commentsData = {
   'token': 'bhfsdaog', // token for pagination
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  getDeal(deal);
-  getComments(commentsData);
-});
+/**
+ * Adds a function to window onload event.
+ * @param {function} func The function to be executed.
+ */
+function addLoadEvent(func) {
+  const oldonload = window.onload;
+  if (typeof oldonload == 'function') {
+    window.onload = function() {
+      oldonload();
+      func();
+    };
+  } else {
+    window.onload = func;
+  }
+}
 
 /**
- * Gets individual deal data
+ * Get individual deal data
  * @param {object} dealData
  */
 function getDeal(dealData) {
@@ -74,7 +85,7 @@ function getDeal(dealData) {
 }
 
 /**
- * Gets comments on deal
+ * Get comments for a deal
  * @param {object} commentsData
  */
 function getComments(commentsData) {
@@ -86,16 +97,23 @@ function getComments(commentsData) {
 }
 
 /**
- * Gets individual deal data
+ * Creates comment element
  * @param {object} commentEntity
- * @return {commentElement}
+ * @return {object} commentElement
  */
 function createCommentElement(commentEntity) {
   const commentElement = document.createElement('div');
-  commentElement.className = 'comment border border-info';
+  commentElement.className = 'comment border border-info pb-3 pt-3 mb-3 mt-3';
+
   const textElement = document.createElement('span');
   textElement.innerText = commentEntity.user.username +
   ': ' + commentEntity.text;
+
   commentElement.appendChild(textElement);
   return commentElement;
 }
+
+addLoadEvent(() => {
+  getDeal(deal);
+  getComments(commentsData);
+});
