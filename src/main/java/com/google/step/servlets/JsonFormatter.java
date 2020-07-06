@@ -45,8 +45,8 @@ public class JsonFormatter {
     dealMap.put("start", deal.start.toString());
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
-    dealMap.put("poster", deal.poster); // TODO user brief
-    dealMap.put("restaurant", deal.restaurant); // TODO use restaurant brief
+    dealMap.put("poster", deal.posterId); // TODO user brief
+    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant brief
     dealMap.put("tags", "TODO"); // TODO add tags
     dealMap.put("votes", 0); // TODO add votes
     return dealMap;
@@ -57,8 +57,8 @@ public class JsonFormatter {
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
     dealMap.put("pic", deal.photoBlobkey); // TODO get url
-    dealMap.put("poster", deal.poster); // TODO use user name
-    dealMap.put("restaurant", deal.restaurant); // TODO use restaurant name
+    dealMap.put("poster", deal.posterId); // TODO use user name
+    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes
     return dealMap;
   }
