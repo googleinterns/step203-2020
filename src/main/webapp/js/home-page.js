@@ -115,17 +115,19 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
       rowElement.className='row';
       const numCol = 'col-md-' + 12/numDealPerSlide;
       for (let k = 0; k < numDealPerSlide; k++) {
-        rowElement.innerHTML += '<div class="' +
-          numCol + ' mt-5">' +
-          '<div ' + 'id=deal-card-' + i + ' class="card deal-card h-100">' +
-          '<img class="card-img-top home-deal-img" src="" alt="">' +
-          '<div class="card-body d-flex flex-column">' +
-          '<h5 class="card-title deal-title"></h5>' +
-          '<p class="card-text deal-text"></p>' +
-          '<p class="card-text deal-poster"></p>' +
-          '<a href="#" class="btn btn-primary align-self-end ' +
-          'mt-auto float-right">See More</a>' +
-          '</div></div></div>';
+        rowElement.innerHTML += `
+          <div class="${numCol} mt-5">
+            <div id=deal-card-${i} class="card deal-card h-100">
+              <img class="card-img-top home-deal-img" src="" alt="">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title deal-title"></h5>
+                   <p class="card-text deal-text"></p>
+                   <p class="card-text deal-poster"></p>
+                   <a href="#"
+                   class="btn btn-primary align-self-end mt-auto float-right">
+                   See More
+                    </a>
+              </div>`;
       }
       carouselItemListChild.append(rowElement);
       if (j == 0) {
