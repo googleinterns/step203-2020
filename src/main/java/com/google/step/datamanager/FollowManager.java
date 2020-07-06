@@ -7,17 +7,17 @@ public interface FollowManager {
 
   public void unfollowRestaurant(long followerId, long restaurantId);
 
-  public List<Long> getFollowedRestaurants(long followerId);
+  public List<Long> getFollowedRestaurantIds(long followerId);
 
   public void followUser(long followerId, long userId);
 
   public void unfollowUser(long followerId, long userId);
 
-  public List<Long> getFollowedUsers(long followerId);
+  public List<Long> getFollowedUserIds(long followerId);
 
   public void followTag(long followerId, long tagId);
 
   public void unfollowTag(long followerId, long tagId);
 
-  public List<Long> getFollowedTags(long followerId);
+  public List<Long> getFollowedTagIds(long followerId);
 }

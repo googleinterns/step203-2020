@@ -90,17 +90,17 @@ public class FollowManagerDatastore implements FollowManager {
   }
 
   @Override
-  public List<Long> getFollowedRestaurants(long followerId) {
+  public List<Long> getFollowedRestaurantIds(long followerId) {
     return getFollowedSomething(followerId, RESTAURANT_FIELD_NAME);
   }
 
   @Override
-  public List<Long> getFollowedUsers(long followerId) {
+  public List<Long> getFollowedUserIds(long followerId) {
     return getFollowedSomething(followerId, USER_FIELD_NAME);
   }
 
   @Override
-  public List<Long> getFollowedTags(long followerId) {
+  public List<Long> getFollowedTagIds(long followerId) {
     return getFollowedSomething(followerId, TAG_FIELD_NAME);
   }
 
