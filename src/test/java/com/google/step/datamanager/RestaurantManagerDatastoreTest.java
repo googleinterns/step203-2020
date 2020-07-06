@@ -1,6 +1,7 @@
 package com.google.step.datamanager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -38,7 +39,7 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testCreateRestaurant() {
+  public void testCreateRestaurant_success() throws Exception {
     Restaurant restaurant =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     assertEquals(RESTAURANT_NAME_A, restaurant.name);
@@ -46,7 +47,7 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testReadRestaurant() {
+  public void testReadRestaurant_success() throws Exception {
     Restaurant restaurant_A =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     Restaurant restaurant_A_Test = restaurantManagerDatastore.readRestaurant(restaurant_A.id);
@@ -55,7 +56,13 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testUpdateRestaurantName() {
+  public void testReadRestaurant_notExist() throws Exception {
+    Restaurant restaurant = restaurantManagerDatastore.readRestaurant(1000);
+    assertNull(restaurant);
+  }
+
+  @Test
+  public void testUpdateRestaurantName() throws Exception {
     Restaurant restaurant_A =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_B, BLOBKEY_A);
@@ -65,7 +72,7 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testDeleteRestaurant() {
+  public void testDeleteRestaurant() throws Exception {
     Restaurant restaurant_A =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     restaurantManagerDatastore.deleteRestaurant(restaurant_A.id);
