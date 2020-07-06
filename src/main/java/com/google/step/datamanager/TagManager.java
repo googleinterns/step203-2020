@@ -8,7 +8,7 @@ public interface TagManager {
    * Returns a tag object with the name. Creates a new tag if it does not exist.
    *
    * @param name tag name.
-   * @return tag with the given name;
+   * @return tag with the given name.
    */
   public Tag readOrCreateTagByName(String name);
 
