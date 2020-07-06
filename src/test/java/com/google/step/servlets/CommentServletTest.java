@@ -29,6 +29,10 @@ public class CommentServletTest {
   private static final String CONTENT_A = "Hello world";
   private static final Comment COMMENT_A = new Comment(ID_A, DEALID, USERID_A, CONTENT_A);
 
+  private static final String UPDATE_CONTENT_A = "Update";
+  private static final Comment UPDATE_COMMENT_A =
+      new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+
   private static final long ID_B = 2;
   private static final long userId_B = 4;
   private static final String CONTENT_B = "Hello world2";
@@ -142,5 +146,64 @@ public class CommentServletTest {
             "[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]", ID_A, DEALID, USERID_A, CONTENT_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoPut_success() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/1");
+    when(request.getParameter("content")).thenReturn(UPDATE_CONTENT_A);
+    when(commentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    commentServlet.doPut(request, response);
+
+    String expected =
+        String.format(
+            "{id:%d,dealId:%d,userId:%d,content:\"%s\"}", ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoPut_invalidID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/abcd");
+
+    commentServlet.doPut(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPut_noID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/");
+
+    commentServlet.doPut(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPut_notExist() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/100");
+
+    when(request.getParameter("content")).thenReturn(CONTENT_A);
+    when(commentManager.updateComment(100, CONTENT_A)).thenReturn(null);
+
+    commentServlet.doPut(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
 }

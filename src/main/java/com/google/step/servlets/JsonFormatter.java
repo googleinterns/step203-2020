@@ -22,6 +22,12 @@ public class JsonFormatter {
     return json;
   }
 
+  public static String getCommentJson(Comment comment) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getCommentMap(comment));
+    return json;
+  }
+
   public static String getDealJson(Deal deal) {
     Gson gson = new Gson();
     String json = gson.toJson(getDealMap(deal));
