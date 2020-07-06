@@ -1,8 +1,8 @@
 package com.google.step.servlets;
 
 import com.google.gson.Gson;
-import com.google.step.model.Deal;
 import com.google.step.model.Comment;
+import com.google.step.model.Deal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ public class JsonFormatter {
   public static String getCommentsJson(List<Comment> comments) {
     Gson gson = new Gson();
     List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
-    for (Comment comment: comments) {
+    for (Comment comment : comments) {
       commentMapList.add(getCommentMap(comment));
     }
     String json = gson.toJson(commentMapList);

@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.List;  
-
 @WebServlet("/api/comments/")
 public class CommentServletPost extends HttpServlet {
 
@@ -23,7 +21,7 @@ public class CommentServletPost extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long dealId;
-    long userId; 
+    long userId;
     String content;
     try {
       dealId = Long.parseLong(request.getParameter("dealId"));
@@ -38,6 +36,6 @@ public class CommentServletPost extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
-    response.sendRedirect("/deals/"+ comment.dealId);
+    response.sendRedirect("/deals/" + comment.dealId);
   }
 }

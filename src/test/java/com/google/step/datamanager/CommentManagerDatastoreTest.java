@@ -6,14 +6,12 @@ import static org.junit.Assert.assertTrue;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Comment;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.List;
-import java.util.ArrayList;
 
 @RunWith(JUnit4.class)
 public final class CommentManagerDatastoreTest {
@@ -97,7 +95,8 @@ public final class CommentManagerDatastoreTest {
   @Test
   public void testUpdateComment() {
     Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Comment comment_A_Updated = commentManagerDatastore.updateComment(comment_A.id, "Updated comment");
+    Comment comment_A_Updated =
+        commentManagerDatastore.updateComment(comment_A.id, "Updated comment");
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
     Comment comment_A_Test = comments.get(0);
     assertEquals(DEALID, comment_A_Test.dealId);

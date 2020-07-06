@@ -4,12 +4,11 @@ import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.model.Comment;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
 
 /** Servlet that handles individual comments. */
 @WebServlet("/api/comments/*")
@@ -57,7 +56,7 @@ public class CommentServlet extends HttpServlet {
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
 
-  /**Updates a comment with the given id parameter */
+  /** Updates a comment with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
@@ -73,6 +72,6 @@ public class CommentServlet extends HttpServlet {
     }
     content = request.getParameter("content");
     Comment comment = manager.updateComment(id, content);
-    response.sendRedirect("/deals/"+ comment.dealId);
+    response.sendRedirect("/deals/" + comment.dealId);
   }
 }
