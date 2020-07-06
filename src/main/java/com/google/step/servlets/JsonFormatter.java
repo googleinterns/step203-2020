@@ -2,6 +2,7 @@ package com.google.step.servlets;
 
 import com.google.gson.Gson;
 import com.google.step.model.Deal;
+import com.google.step.model.Restaurant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,12 @@ public class JsonFormatter {
   public static String getDealJson(Deal deal) {
     Gson gson = new Gson();
     String json = gson.toJson(getDealMap(deal));
+    return json;
+  }
+
+  public static String getRestaurantJson(Restaurant restaurant) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getRestaurantMap(restaurant));
     return json;
   }
 
@@ -36,5 +43,13 @@ public class JsonFormatter {
     dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes
     return dealMap;
+  }
+
+  private static Map<String, Object> getRestaurantMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
+    return restaurantMap;
   }
 }
