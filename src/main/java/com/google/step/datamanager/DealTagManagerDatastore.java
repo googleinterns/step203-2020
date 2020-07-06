@@ -23,6 +23,21 @@ public class DealTagManagerDatastore implements DealTagManager {
   }
 
   @Override
+  public List<Long> getDealIdsWithTag(long id) {
+    Query query =
+        new Query("DealTag")
+            .setFilter(new Query.FilterPredicate("tagId", Query.FilterOperator.EQUAL, id));
+
+    Iterable<Entity> results = datastore.prepare(query).asIterable();
+    List<Long> dealIds = new ArrayList<>();
+    for (Entity entity : results) {
+      long dealId = (long) entity.getProperty("dealId");
+      dealIds.add(dealId);
+    }
+    return dealIds;
+  }
+
+  @Override
   public void updateTagsOfDeal(long dealId, List<Long> tagIds) {
     HashSet<Long> newTagIds = new HashSet(tagIds);
     Iterable<Entity> results = getDealTagEntitiesOfDeal(dealId);

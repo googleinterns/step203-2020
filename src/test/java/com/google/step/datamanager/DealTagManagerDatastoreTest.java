@@ -102,4 +102,33 @@ public class DealTagManagerDatastoreTest {
 
     assertTrue(dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_D).isEmpty());
   }
+
+  @Test
+  public void getDealsWithTag() {
+    List<Long> tagIdsOfA = Arrays.asList(TAG_ID_A, TAG_ID_B);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, tagIdsOfA);
+    List<Long> tagIdsOfB = Arrays.asList(TAG_ID_A, TAG_ID_B, TAG_ID_D);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_B, tagIdsOfB);
+    List<Long> tagIdsOfC = Arrays.asList(TAG_ID_A, TAG_ID_C, TAG_ID_D);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_C, tagIdsOfC);
+    List<Long> dealIds = dealTagManagerDatastore.getDealIdsWithTag(TAG_ID_A);
+
+    Long[] actual = dealIds.toArray(new Long[0]);
+    Long[] expected = new Long[] {DEAL_ID_A, DEAL_ID_B, DEAL_ID_C};
+
+    assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void getDealsWithTag_tagNotExist() {
+    List<Long> tagIdsOfA = Arrays.asList(TAG_ID_A, TAG_ID_B);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, tagIdsOfA);
+    List<Long> tagIdsOfB = Arrays.asList(TAG_ID_A, TAG_ID_B);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_B, tagIdsOfB);
+    List<Long> tagIdsOfC = Arrays.asList(TAG_ID_A, TAG_ID_C);
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_C, tagIdsOfC);
+    List<Long> dealIds = dealTagManagerDatastore.getDealIdsWithTag(TAG_ID_D);
+
+    assertTrue(dealIds.isEmpty());
+  }
 }

@@ -13,6 +13,14 @@ public interface DealTagManager {
   public List<Long> getTagIdsOfDeal(long id);
 
   /**
+   * Returns ids of deals that have tag with the id.
+   *
+   * @param id id of the tag
+   * @return ids of deals that have tag with the id.
+   */
+  public List<Long> getDealIdsWithTag(long id);
+
+  /**
    * Updates tags of deal with the id to be the list of tags.
    *
    * @param dealId id of the deal.
