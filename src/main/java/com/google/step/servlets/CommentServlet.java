@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /** Servlet that handles individual comments. */
-@WebServlet("/api/comments/")
+@WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
   private CommentManager manager = new CommentManagerDatastore();
