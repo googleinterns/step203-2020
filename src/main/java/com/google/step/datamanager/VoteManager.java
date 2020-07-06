@@ -1,7 +1,7 @@
 package com.google.step.datamanager;
 
 public interface VoteManager {
-  /** Gets the number of votes for a deal, specified by dealId. */
+  /** Gets the number of votes for a deal, specified by {@code dealId}. */
   public int getVotes(long dealId);
 
   /**
