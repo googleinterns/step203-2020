@@ -33,6 +33,9 @@ public class RestaurantServletTest {
     private static final String BLOBKEY_B = "B_BLOB_KEY";
     private static final Restaurant RESTAURANT_B = new Restaurant(ID_B, NAME_B, BLOBKEY_B);
 
+    private static final String UPDATE_NAME_A = "UPDATE";
+    private static final Restaurant UPDATE_RESTAURANT_A = new Restaurant(ID_A, UPDATE_NAME_A, BLOBKEY_A);
+
     private RestaurantManager restaurantManager;
 
     private RestaurantServlet restaurantServlet;
@@ -99,7 +102,6 @@ public class RestaurantServletTest {
 
     @Test
     public void testDoPost_success() throws Exception {
-        //Submitting restaurant
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
