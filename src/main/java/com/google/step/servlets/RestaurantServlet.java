@@ -55,7 +55,7 @@ public class RestaurantServlet extends HttpServlet {
     response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
   }
 
-  /**Updates a restaurant with the given id parameter */
+  /** Updates a restaurant with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
@@ -69,14 +69,14 @@ public class RestaurantServlet extends HttpServlet {
       return;
     }
     String name = request.getParameter("name");
-    String photoBlobkey = "A_BLOB_KEY"; //TODO Blobkey
+    String photoBlobkey = "A_BLOB_KEY"; // TODO Blobkey
     Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
+    Restaurant updatedRestaurant = manager.updateRestaurant(restaurant);
     if (updatedRestaurant == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    }
-    else {
+    } else {
       response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant));
     }
-    response.sendRedirect("/restaurant/"+ id);
+    response.sendRedirect("/restaurant/" + id);
   }
 }
