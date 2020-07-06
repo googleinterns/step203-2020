@@ -3,7 +3,9 @@ package com.google.step.servlets;
 import com.google.gson.Gson;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JsonFormatter {
@@ -17,6 +19,20 @@ public class JsonFormatter {
     Gson gson = new Gson();
     String json = gson.toJson(getRestaurantMap(restaurant));
     return json;
+  }
+
+  public static String getRestaurantListJson(List<Restaurant> restaurants) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getRestaurantMapsList(restaurants));
+    return json;
+  }
+
+  private static List<Map<String, Object>> getRestaurantMapsList(List<Restaurant> restaurants) {
+    List<Map<String, Object>> restaurantsMaps = new ArrayList<>();
+    for (Restaurant restaurant : restaurants) {
+      restaurantsMaps.add(getRestaurantMap(restaurant));
+    }
+    return restaurantsMaps;
   }
 
   private static Map<String, Object> getDealMap(Deal deal) {

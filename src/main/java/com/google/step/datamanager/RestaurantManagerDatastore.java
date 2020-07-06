@@ -68,9 +68,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
       restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
     }
     datastore.put(restaurantEntity);
-    String name = (String) restaurantEntity.getProperty("name");
-    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
-    return new Restaurant(restaurant.id, name, photoBlobkey);
+    return transformEntityToRestaurant(restaurantEntity);
   }
 
   @Override

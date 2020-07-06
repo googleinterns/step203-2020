@@ -33,6 +33,7 @@ public class RestaurantSearchServlet extends HttpServlet {
     }
 
     List<Restaurant> restaurants = manager.searchRestaurant(query);
-    // TODO format restaurants json
+    response.setContentType("application/json;");
+    response.getWriter().println(JsonFormatter.getRestaurantListJson(restaurants));
   }
 }
