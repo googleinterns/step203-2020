@@ -121,13 +121,15 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
               <img class="card-img-top home-deal-img" src="" alt="">
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title deal-title"></h5>
-                   <p class="card-text deal-text"></p>
-                   <p class="card-text deal-poster"></p>
-                   <a href="#"
-                   class="btn btn-primary align-self-end mt-auto float-right">
-                   See More
-                    </a>
-              </div>`;
+                  <p class="card-text deal-text"></p>
+                  <p class="card-text deal-poster"></p>
+                  <a href="#"
+                  class="btn btn-primary align-self-end mt-auto float-right">
+                  See More
+                  </a>
+              </div>
+            </div>
+          </div>`;
       }
       carouselItemListChild.append(rowElement);
       if (j == 0) {
