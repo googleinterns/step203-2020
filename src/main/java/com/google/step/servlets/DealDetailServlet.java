@@ -61,7 +61,7 @@ public class DealDetailServlet extends HttpServlet {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException | IndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
