@@ -17,9 +17,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   }
 
   @Override
-  public Restaurant createRestaurant(
-      String name,
-      String photoBlobkey) {
+  public Restaurant createRestaurant(String name, String photoBlobkey) {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
     entity.setProperty("photoBlobkey", photoBlobkey);

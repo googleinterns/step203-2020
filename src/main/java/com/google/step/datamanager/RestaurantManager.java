@@ -11,5 +11,4 @@ public interface RestaurantManager {
   public Restaurant updateRestaurant(Restaurant restaurant);
 
   public void deleteRestaurant(long id);
-  
 }
