@@ -40,7 +40,7 @@ public final class TagManagerDatastoreTest {
   }
 
   @Test
-  public void testGetTag_exist() {
+  public void testGetTag_existingTag() {
     Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
     Tag duplicateTag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
 
