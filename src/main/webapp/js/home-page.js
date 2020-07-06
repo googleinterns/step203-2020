@@ -5,32 +5,37 @@ const homePage = {
       'name': 'Bubble Tea',
       'votes': 5,
       'poster': 'abc',
+      'image': 'assets/deals/bubble-tea.jpeg',
     },
     {
       'id': 2345,
       'name': 'Dessert',
       'votes': 5,
       'poster': 'bcd',
+      'image': 'assets/deals/dessert.jpeg',
     },
     {
       'id': 3456,
       'name': 'KFC',
       'votes': 5,
       'poster': 'bcd',
+      'image': 'assets/deals/kfc.jpeg',
     },
     {
       'id': 5678,
       'name': 'Pizza',
       'votes': 5,
       'poster': 'bcd',
+      'image': 'assets/deals/pizza.jpeg',
     },
   ],
-  'Restaurant I Follow': [
+  'Restaurants I Follow': [
     {
       'id': 1234,
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'def',
+      'image': 'assets/deals/bubble-tea.jpeg',
     },
   ],
   'Users I Follow': [
@@ -39,6 +44,7 @@ const homePage = {
       'name': 'Starbucks Mocha 1-for-1',
       'votes': 5,
       'poster': 'Starbucks',
+      'image': 'assets/deals/bubble-tea.jpeg',
     },
   ],
   'Tags I Follow': [
@@ -48,6 +54,7 @@ const homePage = {
       'votes': 5,
       'poster': 'def',
       'tags': ['coffee', '1-for-1'],
+      'image': 'assets/deals/bubble-tea.jpeg',
     },
   ],
 };
@@ -62,17 +69,26 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {object} homePage
  */
 function createHomePage(homePage) {
-  const popularDealsData = homePage['Popular Deals'];
-  const dealCardElements = document.querySelectorAll('.deal-card');
-  for (let i = 0; i < dealCardElements.length; i++) {
-    const childElements = dealCardElements[i].children;
-    const dealBody = childElements[1];
-    const dealTitle = dealBody.children[0];
-    dealTitle.innerText = popularDealsData[i].name;
-    const dealPoster = dealBody.children[2];
-    dealPoster.innerText = popularDealsData[i].poster;
-    const dealLink = dealBody.children[3];
-    dealLink.href = '/deals/' + popularDealsData[i].id;
+  const homePageSections = ['Popular Deals', 'Restaurants I Follow',
+    'Users I Follow', 'Tags I Follow'];
+  const carouselElements = document.querySelectorAll('.carousel.slide');
+  for (let i = 0; i < carouselElements.length; i++) {
+    const homePageData = homePage[homePageSections[i]];
+    const dealCardId = 'deal-card-'+i;
+    const dealCardElements =
+      document.querySelectorAll('#'+dealCardId+'.deal-card');
+    for (let j = 0; j < homePageData.length; j++) {
+      const childElements = dealCardElements[j].children;
+      const dealImage = childElements[0];
+      dealImage.src = homePageData[j].image;
+      const dealBody = childElements[1];
+      const dealTitle = dealBody.children[0];
+      dealTitle.innerText = homePageData[j].name;
+      const dealPoster = dealBody.children[2];
+      dealPoster.innerText = homePageData[j].poster;
+      const dealLink = dealBody.children[3];
+      dealLink.href = '/deals/' + homePageData[j].id;
+    }
   }
 }
 
@@ -101,7 +117,7 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
       for (let k = 0; k < numDealPerSlide; k++) {
         rowElement.innerHTML += '<div class="' +
           numCol + ' mt-5">' +
-          '<div ' + 'id=' + i + ' class="card deal-card h-100">' +
+          '<div ' + 'id=deal-card-' + i + ' class="card deal-card h-100">' +
           '<img class="card-img-top home-deal-img" src="" alt="">' +
           '<div class="card-body d-flex flex-column">' +
           '<h5 class="card-title deal-title"></h5>' +
