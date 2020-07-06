@@ -24,8 +24,8 @@ public class DealSearchServlet extends HttpServlet {
   /**
    * Searches for deals with certain description and tags.
    *
-   * <p>Request format: ?q=my+query&tags=123,456, where q is the query string, and tags is a comma
-   * separated list of tag IDs
+   * <p>Request format: ?query=my+query&tags=123,456, where query is the query string, and tags is a
+   * comma separated list of tag IDs
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
