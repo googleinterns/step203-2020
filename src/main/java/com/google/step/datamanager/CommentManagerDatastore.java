@@ -74,7 +74,10 @@ public class CommentManagerDatastore implements CommentManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    commentEntity.setProperty("content", content);
+    if (content == null) {
+      return;
+    }
+    commentEntity.setProperty("content", content
     datastore.put(commentEntity);
     long dealId = (long) commentEntity.getProperty("deal");
     long userId = (long) commentEntity.getProperty("user");

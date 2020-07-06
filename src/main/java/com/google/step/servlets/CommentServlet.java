@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /** Servlet that handles individual comments. */
-@WebServlet("/api/comments/*")
+@WebServlet("/api/comments/")
 public class CommentServlet extends HttpServlet {
 
   private CommentManager manager = new CommentManagerDatastore();
@@ -64,7 +64,6 @@ public class CommentServlet extends HttpServlet {
     String content;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-      content = request.getParameter("content");
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -72,6 +71,7 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    content = request.getParameter("content");
     Comment comment = manager.updateComment(id, content);
     response.sendRedirect("/deals/"+ comment.dealId);
   }

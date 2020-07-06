@@ -25,7 +25,7 @@ public class JsonFormatter {
     return json;
   }
 
-  public static Map<String, Object> getCommentMap(Comment comment) {
+  private static Map<String, Object> getCommentMap(Comment comment) {
     Map<String, Object> commentMap = new HashMap<>();
     commentMap.put("id", comment.id);
     commentMap.put("dealId", comment.dealId);

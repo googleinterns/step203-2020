@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;  
 
-@WebServlet("/api/comments/*")
+@WebServlet("/api/comments/")
 public class CommentServletPost extends HttpServlet {
 
   private CommentManager manager = new CommentManagerDatastore();
