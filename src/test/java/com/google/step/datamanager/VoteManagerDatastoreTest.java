@@ -15,7 +15,6 @@ public final class VoteManagerDatastoreTest {
 
   private static final long USER_ID_A = 123;
   private static final long USER_ID_B = 456;
-  private static final long USER_ID_C = 789;
 
   private static final long DEAL_ID_A = 111;
   private static final long DEAL_ID_B = 222;
@@ -36,28 +35,48 @@ public final class VoteManagerDatastoreTest {
   }
 
   @Test
-  public void testVote() {
-    // // original should have 0 votes
+  public void getVotes_returnsZeroAtFirst() {
     assertEquals(manager.getVotes(DEAL_ID_A), 0);
+  }
 
-    // vote count should increase when someone votes
+  @Test
+  public void vote_incrementsVotesCorrectly() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
     assertEquals(manager.getVotes(DEAL_ID_A), 1);
     manager.vote(USER_ID_B, DEAL_ID_A, 1);
     assertEquals(manager.getVotes(DEAL_ID_A), 2);
+  }
 
-    // vote count should not increase when same person votes
+  @Test
+  public void vote_doesNotIncrementForDuplicateVoteFromUser() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 2);
+    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    manager.vote(USER_ID_A, DEAL_ID_A, 1);
+    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+  }
 
-    // vote count should decrease when someone votes -1
+  @Test
+  public void vote_decrementVotesCorrectly() {
     manager.vote(USER_ID_A, DEAL_ID_A, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 0);
+    assertEquals(manager.getVotes(DEAL_ID_A), -1);
+    manager.vote(USER_ID_B, DEAL_ID_A, -1);
+    assertEquals(manager.getVotes(DEAL_ID_A), -2);
+  }
 
-    // voting on another deal should not affect vote count for first deal
-    manager.vote(USER_ID_C, DEAL_ID_B, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 0);
+  @Test
+  public void vote_doesNotAffectOtherDeals() {
+    manager.vote(USER_ID_A, DEAL_ID_A, 1);
+    manager.vote(USER_ID_A, DEAL_ID_B, -1);
+    assertEquals(manager.getVotes(DEAL_ID_A), 1);
     assertEquals(manager.getVotes(DEAL_ID_B), -1);
+  }
+
+  @Test
+  public void vote_userChangeDirection() {
+    manager.vote(USER_ID_A, DEAL_ID_A, 1);
+    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    manager.vote(USER_ID_A, DEAL_ID_A, -1);
+    assertEquals(manager.getVotes(DEAL_ID_A), -1);
   }
 
   @Test
