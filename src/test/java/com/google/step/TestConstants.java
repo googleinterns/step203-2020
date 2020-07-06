@@ -1,6 +1,6 @@
 package com.google.step;
 
-public class TestUtil {
+public class TestConstants {
   // User
   public static final long USER_ID_A = 1;
   public static final long USER_ID_B = 2;
