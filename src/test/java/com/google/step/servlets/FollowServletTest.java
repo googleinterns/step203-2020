@@ -27,6 +27,7 @@ public class FollowServletTest {
   private static final String TAGS_PATH = "/tags/" + ID;
   private static final String USERS_PATH = "/users/" + ID;
 
+  private static final String PATH_MISSING_ID = "/";
   private static final String PATH_INVALID_NAME = "/trash/123";
   private static final String PATH_INVALID_ID = "/tags/123/trash";
 
@@ -108,6 +109,18 @@ public class FollowServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getPathInfo()).thenReturn(PATH_INVALID_ID);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_missingId_badRequest() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn(PATH_MISSING_ID);
 
     servlet.doPost(request, response);
 
