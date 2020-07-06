@@ -56,7 +56,7 @@ public final class VoteManagerDatastoreTest {
   }
 
   @Test
-  public void vote_decrementVotesCorrectly() {
+  public void vote_decrementsVotesCorrectly() {
     manager.vote(USER_ID_A, DEAL_ID_A, -1);
     assertEquals(manager.getVotes(DEAL_ID_A), -1);
     manager.vote(USER_ID_B, DEAL_ID_A, -1);
@@ -77,6 +77,14 @@ public final class VoteManagerDatastoreTest {
     assertEquals(manager.getVotes(DEAL_ID_A), 1);
     manager.vote(USER_ID_A, DEAL_ID_A, -1);
     assertEquals(manager.getVotes(DEAL_ID_A), -1);
+  }
+
+  @Test
+  public void vote_userUndoesVote() {
+    manager.vote(USER_ID_A, DEAL_ID_A, 1);
+    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    manager.vote(USER_ID_A, DEAL_ID_A, 0);
+    assertEquals(manager.getVotes(DEAL_ID_A), 0);
   }
 
   @Test
