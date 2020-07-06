@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DealSearchManagerIndex implements DealSearchManager {
-  Index index;
+  private final Index index;
 
   public DealSearchManagerIndex() {
     IndexSpec indexSpec = IndexSpec.newBuilder().setName("Deal").build();

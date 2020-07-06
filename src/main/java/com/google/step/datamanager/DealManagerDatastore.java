@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
-  DealSearchManager searchManager;
+  private final DealSearchManager searchManager;
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
