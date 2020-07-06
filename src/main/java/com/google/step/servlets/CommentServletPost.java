@@ -32,10 +32,6 @@ public class CommentServletPost extends HttpServlet {
       return;
     }
     Comment comment = manager.createComment(dealId, userId, content);
-    if (comment == null) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return;
-    }
     response.sendRedirect("/deals/" + comment.dealId);
   }
 }
