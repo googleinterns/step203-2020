@@ -82,8 +82,15 @@ public class CommentServletTest {
     when(request.getParameter("dealId")).thenReturn("1000");
     when(commentManager.getComments(1000)).thenReturn(new ArrayList<>());
 
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
     commentServlet.doGet(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+    String expected = "[]";
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
@@ -93,6 +100,7 @@ public class CommentServletTest {
     when(request.getParameter("deaId")).thenReturn("abcd");
 
     commentServlet.doGet(request, response);
+
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 

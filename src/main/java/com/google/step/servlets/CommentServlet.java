@@ -48,10 +48,6 @@ public class CommentServlet extends HttpServlet {
       return;
     }
     List<Comment> comments = manager.getComments(dealId);
-    if (comments.isEmpty()) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return;
-    }
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }

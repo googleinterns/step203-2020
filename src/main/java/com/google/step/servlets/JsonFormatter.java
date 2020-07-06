@@ -10,6 +10,9 @@ import java.util.Map;
 
 public class JsonFormatter {
   public static String getCommentsJson(List<Comment> comments) {
+    if (comments.size() == 0) {
+      return "[]";
+    }
     Gson gson = new Gson();
     List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
     for (Comment comment : comments) {
