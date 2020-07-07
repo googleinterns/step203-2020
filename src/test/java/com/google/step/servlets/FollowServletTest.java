@@ -33,7 +33,7 @@ public class FollowServletTest {
   }
 
   @Test
-  public void testDoPost_restaurant_sucess() throws IOException {
+  public void testDoPost_restaurant_success() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -50,7 +50,7 @@ public class FollowServletTest {
   }
 
   @Test
-  public void testDoPost_tag_sucess() throws IOException {
+  public void testDoPost_tag_success() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -67,7 +67,7 @@ public class FollowServletTest {
   }
 
   @Test
-  public void testDoPost_user_sucess() throws IOException {
+  public void testDoPost_user_success() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
