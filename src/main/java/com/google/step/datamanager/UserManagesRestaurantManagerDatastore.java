@@ -18,7 +18,12 @@ public class UserManagesRestaurantManagerDatastore implements UserManagesRestaur
 
   @Override
   public void addUserManagesRestaurant(long userId, long restaurantId) {
-    Entity entity = new Entity("UserRestaurant");
+    Entity entity = getUserRestaurantEntity(userId, restaurantId);
+    if (entity != null) {
+      return;
+    }
+
+    entity = new Entity("UserRestaurant");
     entity.setProperty("userId", userId);
     entity.setProperty("restaurantId", restaurantId);
 
@@ -27,6 +32,21 @@ public class UserManagesRestaurantManagerDatastore implements UserManagesRestaur
 
   @Override
   public void deleteUserManagesRestaurant(long userId, long restaurantId) {
+    Entity entity = getUserRestaurantEntity(userId, restaurantId);
+
+    if (entity != null) {
+      datastore.delete(entity.getKey());
+    }
+  }
+
+  /**
+   * Returns a UserRestaurant entity with the given user id and restaurant id.
+   *
+   * @param userId id of user
+   * @param restaurantId id of restaurant
+   * @return a UserRestaurant entity with the given user id and restaurant id.
+   */
+  private Entity getUserRestaurantEntity(long userId, long restaurantId) {
     Filter filter =
         CompositeFilterOperator.and(
             new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId),
@@ -34,10 +54,7 @@ public class UserManagesRestaurantManagerDatastore implements UserManagesRestaur
     Query query = new Query("UserRestaurant").setFilter(filter);
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
-
-    if (entity != null) {
-      datastore.delete(entity.getKey());
-    }
+    return entity;
   }
 
   @Override
