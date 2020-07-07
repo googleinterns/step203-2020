@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/upload-deals-url")
 public class DealPostUrlServlet extends HttpServlet {
 
-  /** Posts the deal with the given id parameter */
+  /** Gets URL for posting deals */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
