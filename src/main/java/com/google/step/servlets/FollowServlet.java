@@ -85,17 +85,14 @@ public class FollowServlet extends HttpServlet {
    * possible, returns -1;
    */
   private long getId(String pathInfo) {
-    int index = pathInfo.indexOf('/');
-    if (index == -1) {
+    String[] splitPath = pathInfo.split("/");
+    if (splitPath.length != 2) {
       return -1;
     }
-    String rest = pathInfo.substring(index + 1);
-    long id;
     try {
-      id = Long.parseLong(rest);
+      return Long.parseLong(splitPath[1]);
     } catch (NumberFormatException e) {
       return -1;
     }
-    return id;
   }
 }
