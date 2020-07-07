@@ -1,5 +1,13 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.DATE_A;
+import static com.google.step.TestConstants.DATE_B;
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DESCRIPTION_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
+import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,24 +31,18 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class DealPostServletTest {
 
-  private static final long ID_A = 1;
-
-  private static final String DESCRIPTION = "starbucks mocha 1-for-1";
-
-  private static final String BLOBKEY = "a_blob_key";
-
-  private static final String DATE_A = "2020-01-01";
-  private static final String DATE_B = "2020-01-02";
-
-  private static final String SOURCE = "www.example.com";
-
-  private static final long POSTER_ID = 10;
-
-  private static final long RESTAURANT_ID_NUM = 11;
-  private static final String RESTAURANT_ID = "11";
+  private static final String RESTAURANT_ID_A_STRING = Long.toString(RESTAURANT_ID_A);
 
   private static final Deal DEAL =
-      new Deal(ID_A, DESCRIPTION, BLOBKEY, DATE_A, DATE_B, SOURCE, POSTER_ID, RESTAURANT_ID_NUM);
+      new Deal(
+          DEAL_ID_A,
+          DESCRIPTION_A,
+          BLOBKEY_A,
+          DATE_A,
+          DATE_B,
+          SOURCE_A,
+          USER_ID_A,
+          RESTAURANT_ID_A);
 
   private DealPostServlet servlet;
   private DealManager dealManager;
@@ -56,25 +58,25 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
     when(dealManager.createDeal(
-            eq(DESCRIPTION),
+            eq(DESCRIPTION_A),
             anyString(),
             eq(DATE_A),
             eq(DATE_B),
-            eq(SOURCE),
+            eq(SOURCE_A),
             anyLong(),
-            eq(RESTAURANT_ID_NUM)))
+            eq(RESTAURANT_ID_A)))
         .thenReturn(DEAL);
 
     servlet.doPost(request, response);
@@ -88,11 +90,11 @@ public class DealPostServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("description")).thenReturn(null);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -109,11 +111,11 @@ public class DealPostServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("description")).thenReturn("");
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -129,12 +131,12 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(null);
     when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -150,12 +152,12 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn("trash");
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -171,12 +173,12 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn("2020-1-1");
     when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -192,12 +194,12 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_B);
     when(request.getParameter("end")).thenReturn(DATE_A);
-    when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
+    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -213,11 +215,11 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
+    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_B);
     when(request.getParameter("end")).thenReturn(DATE_A);
-    when(request.getParameter("source")).thenReturn(SOURCE);
+    when(request.getParameter("source")).thenReturn(SOURCE_A);
     when(request.getParameter("restaurant")).thenReturn("aaa");
 
     StringWriter stringWriter = new StringWriter();
