@@ -17,9 +17,9 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalSearchServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Deal;
 import org.junit.After;
@@ -32,10 +32,10 @@ import org.junit.runners.JUnit4;
 public final class DealManagerDatastoreTest {
 
   private final LocalServiceTestHelper helper =
-      new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig(), new LocalSearchServiceTestConfig());
+      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  private final DealSearchManager searchManager = mock(DealSearchManager.class);
 
-  private final DealManagerDatastore dealManagerDatastore = new DealManagerDatastore();
+  private final DealManagerDatastore dealManagerDatastore = new DealManagerDatastore(searchManager);
 
   @Before
   public void setUp() {
@@ -48,7 +48,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testCreateDeal_success() {
+  public void testCreate_success() {
     Deal deal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
@@ -62,7 +62,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testReadDeal_success() {
+  public void testRead_success() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
@@ -77,13 +77,13 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testReadDeal_invalidId_returnsNull() {
+  public void testRead_invalidId_returnsNull() {
     Deal deal = dealManagerDatastore.readDeal(DEAL_ID_A);
     assertNull(deal);
   }
 
   @Test
-  public void testDeleteDeal() {
+  public void testDelete() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
@@ -93,14 +93,14 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testUpdateDeal_invalidId_returnsNull() {
+  public void testUpdate_invalidId_returnsNull() {
     Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1);
     Deal updatedDeal = dealManagerDatastore.updateDeal(deal);
     assertNull(updatedDeal);
   }
 
   @Test
-  public void testUpdateDescriptionOnly() {
+  public void testUpdate_descriptionOnly() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
@@ -118,7 +118,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testUpdatePoster_NoChange() {
+  public void testUpdate_poster_noChange() {
     // method should not allow updating of poster
     Deal createdDeal =
         dealManagerDatastore.createDeal(
@@ -129,7 +129,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testUpdateAllFields() {
+  public void testUpdate_allFields() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
