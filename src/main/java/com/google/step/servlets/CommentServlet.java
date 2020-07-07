@@ -14,10 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
-  private CommentManager manager = new CommentManagerDatastore();
+  private CommentManager manager;
 
   public CommentServlet(CommentManager commentManager) {
     manager = commentManager;
+  }
+
+  public CommentServlet() {
+    manager = new CommentManagerDatastore();
   }
 
   /** Deletes the comment with the given id parameter */
@@ -28,9 +32,6 @@ public class CommentServlet extends HttpServlet {
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
     } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -60,9 +61,6 @@ public class CommentServlet extends HttpServlet {
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
     } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }

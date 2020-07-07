@@ -12,10 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/comments/")
 public class CommentPostServlet extends HttpServlet {
 
-  private CommentManager manager = new CommentManagerDatastore();
+  private CommentManager manager;
 
   public CommentPostServlet(CommentManager commentManager) {
     manager = commentManager;
+  }
+
+  public CommentPostServlet() {
+    manager = new CommentManagerDatastore();
   }
   /** Posts a comment for the deal with the given id parameter */
   @Override
@@ -26,11 +30,11 @@ public class CommentPostServlet extends HttpServlet {
     try {
       dealId = Long.parseLong(request.getParameter("dealId"));
       userId = Long.parseLong(request.getParameter("userId"));
-      content = request.getParameter("content");
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    content = request.getParameter("content");
     Comment comment = manager.createComment(dealId, userId, content);
     response.sendRedirect("/deals/" + comment.dealId);
   }
