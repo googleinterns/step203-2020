@@ -120,7 +120,7 @@ public class DealTagManagerDatastoreTest {
   }
 
   @Test
-  public void getDealsWithTag_tagNotExist() {
+  public void getDealsWithTag_tagDoesNotExist() {
     List<Long> tagIdsOfA = Arrays.asList(TAG_ID_A, TAG_ID_B);
     dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, tagIdsOfA);
     List<Long> tagIdsOfB = Arrays.asList(TAG_ID_A, TAG_ID_B);
