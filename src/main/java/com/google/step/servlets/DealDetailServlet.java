@@ -70,11 +70,11 @@ public class DealDetailServlet extends HttpServlet {
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");
-    long poster = -1;
-    long restaurant = -1;
+    long posterId = -1;
+    long restaurantId = -1;
     if (request.getParameter("restaurant") != null) {
       try {
-        restaurant = Long.parseLong(request.getParameter("restaurant"));
+        restaurantId = Long.parseLong(request.getParameter("restaurant"));
       } catch (NumberFormatException e) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
@@ -92,7 +92,7 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, poster, restaurant);
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
     manager.updateDeal(deal);
     response.setStatus(HttpServletResponse.SC_OK);
   }
