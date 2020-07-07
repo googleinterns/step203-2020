@@ -77,6 +77,5 @@ public class RestaurantServlet extends HttpServlet {
     } else {
       response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant));
     }
-    response.sendRedirect("/restaurant/" + id);
   }
 }
