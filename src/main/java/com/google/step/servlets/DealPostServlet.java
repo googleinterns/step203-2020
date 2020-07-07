@@ -17,6 +17,10 @@ public class DealPostServlet extends HttpServlet {
 
   private final DealManager manager;
 
+  public DealPostServlet(DealManager manager) {
+    this.manager = manager;
+  }
+
   public DealPostServlet() {
     manager = new DealManagerDatastore();
   }
@@ -24,7 +28,6 @@ public class DealPostServlet extends HttpServlet {
   /** Posts the deal with the given id parameter */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    System.out.println("post deal");
     String description = request.getParameter("description");
     String photoBlobkey = "TODO"; // TODO connect to blobstore
     String start = request.getParameter("start");
