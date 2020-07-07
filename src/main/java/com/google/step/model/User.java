@@ -43,12 +43,17 @@ public class User {
     if (obj == null || !(obj instanceof User)) {
       return false;
     }
-    User user = (User) obj;
-    return user.id == this.id
-        && ((user.username == null && this.username == null) || user.username.equals(this.username))
-        && ((user.bio == null && this.bio == null) || user.bio.equals(this.bio))
-        && ((user.email == null && this.email == null) || user.email.equals(this.email))
-        && ((user.photoBlobKey == null && this.photoBlobKey == null)
-            || user.photoBlobKey.equals(this.photoBlobKey));
+    User other = (User) obj;
+    if (other == this) {
+      return true;
+    }
+
+    return other.id == this.id
+        && ((other.username == null && this.username == null)
+            || other.username.equals(this.username))
+        && ((other.bio == null && this.bio == null) || other.bio.equals(this.bio))
+        && ((other.email == null && this.email == null) || other.email.equals(this.email))
+        && ((other.photoBlobKey == null && this.photoBlobKey == null)
+            || other.photoBlobKey.equals(this.photoBlobKey));
   }
 }
