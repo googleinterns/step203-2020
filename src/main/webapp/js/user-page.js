@@ -1,127 +1,10 @@
 /* eslint-disable no-unused-vars */
-const user =
-{
-  'id': 1234,
-  'name': 'Aaron Tan',
-  'username': 'aarontan',
-  'email': 'aaront@example.com',
-  'picture': 'images/profile_pic.svg',
-  'bio': 'a short bio of aaron tan',
-  'dealsUploaded': [
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'images/profile_pic.svg',
-    },
-  ],
-  'followers': [
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'following': [
-    {
-      'id': 1234,
-      'name': 'Alice Chen',
-      'username': 'alicechen',
-      'picture': 'images/profile_pic.svg',
-    },
-    {
-      'id': 2345,
-      'name': 'Starbucks',
-      'username': 'starbucks',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'restaurantsFollowed': [
-    {
-      'id': 2345,
-      'name': 'Starbucks',
-      'picture': 'images/profile_pic.svg',
-    },
-  ],
-  'tagsFollowed': [
-    {
-      'id': 23452,
-      'name': 'coffee',
-    },
-    {
-      'id': 23452,
-      'name': 'sushi',
-    },
-  ],
-};
 
 /**
  * Configures user's profile.
  * @param {object} user The user profile.
  */
 function configureUserProfile(user) {
-  const nameContainer = document.getElementById('name');
-  nameContainer.innerText = user.name;
   const usernameContainer = document.getElementById('username');
   usernameContainer.innerText = user.username;
   const emailContainer = document.getElementById('email');
@@ -130,12 +13,6 @@ function configureUserProfile(user) {
   bioContainer.innerText = user.bio;
   const profileImage = document.getElementById('profile-photo');
   profileImage.src = user.picture;
-
-  configureDealsPublishedBy(user);
-  configureUserFollowers(user);
-  configureUsersFollowedBy(user);
-  configureRestaurantsFollowedBy(user);
-  configureTagsFollowedBy(user);
 }
 
 /**
@@ -312,9 +189,23 @@ function configureTagsFollowedBy(user) {
  */
 function configureProfileEditButton(user) {
   const profileEditButton = document.getElementById('edit-profile-btn');
+  profileEditButton.hidden = false;
   profileEditButton.onclick = function() {
     showProfileEditingForm(user);
   };
+}
+
+/**
+ * Configures a button for following/unfollowing the user.
+ * @param {object} user The user who will be followed or unfollowed.
+ * @param {number} userLoggedInId The id of the current user who will
+ *  follow or unfollow.
+ */
+function configureFollowButton(user, userLoggedInId) {
+  const followButton = document.getElementById('follow-btn');
+  followButton.hidden = false;
+  followButton.innerText = 'unfollow';
+  // TODO: Check follow relationship, btn onclick
 }
 
 /**
@@ -336,10 +227,6 @@ function showProfileEditingForm(user) {
   if (typeof user.username != 'undefined') {
     const usernameInput = document.getElementById('username-input');
     usernameInput.value = user.username;
-  }
-  if (typeof user.name != 'undefined') {
-    const nameInput = document.getElementById('name-input');
-    nameInput.value = user.username;
   }
   if (typeof user.bio != 'undefined') {
     const bioInput = document.getElementById('bio-input');
@@ -380,7 +267,37 @@ function cancelProfileEditing() {
   profileForm.hidden = true;
 }
 
+/**
+ * Configures buttons based the user profile and the current logged
+ * in user if any.
+ * @param {object} user The user whose profile is shown.
+ */
+function configureButtons(user) {
+  fetch('/api/authentication')
+      .then((response) =>(response.json()))
+      .then((loginStatus) => {
+        if (loginStatus.isLoggedIn) {
+          if (loginStatus.id == user.id) {
+            configureProfileEditButton(user);
+          } else {
+            configureFollowButton(user, loginStatus.id);
+          }
+        }
+      });
+}
+/**
+ * Initializes the user profile based on the id.
+ */
+function init() {
+  const id = window.location.pathname.substring(6); // Remove '/user/'
+  fetch('/api/users/' + id)
+      .then((response) => response.json())
+      .then((user) => {
+        configureButtons(user);
+        configureUserProfile(user);
+      });
+}
+
 addLoadEvent(() => {
-  configureUserProfile(user);
-  configureProfileEditButton(user);
+  init();
 });
