@@ -82,6 +82,7 @@ public class DealPostServletTest {
     servlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(response).setStatus(HttpServletResponse.SC_OK);
   }
 
   @Test

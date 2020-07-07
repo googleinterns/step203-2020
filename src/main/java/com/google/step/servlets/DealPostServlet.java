@@ -62,6 +62,7 @@ public class DealPostServlet extends HttpServlet {
     Deal deal =
         manager.createDeal(description, photoBlobkey, start, end, source, posterId, restaurantId);
 
+    response.setStatus(HttpServletResponse.SC_OK);
     // TODO redirect to deal page instead of printing deal
     response.getWriter().println(JsonFormatter.getDealJson(deal));
   }
