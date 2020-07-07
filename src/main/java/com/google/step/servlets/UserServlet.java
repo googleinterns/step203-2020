@@ -20,6 +20,15 @@ public class UserServlet extends HttpServlet {
 
   private UserManager userManager = new UserManagerDatastore();
 
+  public UserServlet(UserManager userManager) {
+    super();
+    this.userManager = userManager;
+  }
+
+  public UserServlet() {
+    super();
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
