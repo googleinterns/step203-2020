@@ -7,16 +7,17 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
   <title>Profile</title>
-  <script src="js/user.js"></script>
-  <link href="css/deal.css" rel="stylesheet" />
-  <link href="tagsinput/tagsinput.css" rel="stylesheet" />
+  <script src="/js/util.js"></script>
+  <script src="/js/user-page.js"></script>
+  <link href="/css/deal.css" rel="stylesheet" />
+  <link href="/tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
-  <link href="css/styles.css" rel="stylesheet" />
+  <link href="/css/styles.css" rel="stylesheet" />
 </head>
 
 
@@ -27,8 +28,8 @@
       <div id="profile" class="row mb-5">
         <div class="col-sm-4 col-lg-3">
           <img id="profile-photo" class="img-fluid mb-4" alt="profile-photo"/>
-          <button id="follow-btn" type="button" class="btn btn-primary">Follow</button>
-          <button id="edit-profile-btn" type="button" class="btn btn-primary">
+          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+          <button id="edit-profile-btn" type="button" class="btn btn-primary" hidden>
             Edit profile
           </button>
         </div>
@@ -36,15 +37,11 @@
           <h3 id="username">
           </h3>
           <h6 class="text-secondary">
-            Name: <span id="name"></span>
-          </h6>
-          <h6 class="text-secondary">
             Email: <span id="email"></span>
           </65>
           <div class="mt-2">
             Bio: <span id="bio"></span>
           </div>
-
           <div id="tags" class="mt-2">
           </div>
         </div>
@@ -68,12 +65,6 @@
                 name="picture"
                 id="profile-photo-file" 
                 onchange="profilePhotoPreview(this);">
-          </div>
-          <div class="form-group row">
-            <label for="name-input" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="name" id="name-input">
-            </div>
           </div>
           <div class="form-group row">
             <label for="email-input" class="col-sm-2 col-form-label">Email</label>
@@ -122,9 +113,9 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <!-- Third party plugin JS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-  <script src="tagsinput/tagsinput.js"></script>
+  <script src="/tagsinput/tagsinput.js"></script>
   <!-- Core theme JS-->
-  <script src="js/scripts.js"></script>
+  <script src="/js/scripts.js"></script>
 </body>
 
 </html>
