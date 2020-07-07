@@ -18,7 +18,7 @@
     </servlet>
     
     <servlet>
-        <servlet-name>user</servlet-name>
+        <servlet-name>userPage</servlet-name>
         <jsp-file>/WEB-INF/jsp/user.jsp</jsp-file>
     </servlet>
 
@@ -33,7 +33,7 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>user</servlet-name>
+        <servlet-name>userPage</servlet-name>
         <url-pattern>/user/*</url-pattern>
     </servlet-mapping>
 

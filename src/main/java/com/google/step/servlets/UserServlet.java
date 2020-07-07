@@ -31,7 +31,6 @@ public class UserServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json");
     long id;
     try {
       String idString = request.getPathInfo().substring(1); // Remove '/'
@@ -40,8 +39,10 @@ public class UserServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    User user = userManager.readUser(id);
-    if (user == null) {
+    User user;
+    try {
+      user = userManager.readUser(id);
+    } catch (IllegalArgumentException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -54,6 +55,7 @@ public class UserServlet extends HttpServlet {
         new ArrayList<>(); // followManager.getRestaurantsFollowedByUser(id);
 
     String json = JsonFormatter.getUserJson(user, deals, following, followers, tags, restaurants);
+    response.setContentType("application/json");
     response.getWriter().println(json);
   }
 }
