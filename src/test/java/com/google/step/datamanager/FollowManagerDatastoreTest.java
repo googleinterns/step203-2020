@@ -1,6 +1,17 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_B;
+import static com.google.step.TestConstants.RESTAURANT_ID_C;
+import static com.google.step.TestConstants.TAG_ID_A;
+import static com.google.step.TestConstants.TAG_ID_B;
+import static com.google.step.TestConstants.TAG_ID_C;
+import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestConstants.USER_ID_B;
+import static com.google.step.TestConstants.USER_ID_C;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -14,13 +25,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class FollowManagerDatastoreTest {
-
-  private static final long USER_ID_A = 123;
-  private static final long USER_ID_B = 456;
-  private static final long USER_ID_C = 789;
-
-  private static final long RESTAURANT_ID = 111;
-  private static final long TAG_ID = 222;
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -38,41 +42,98 @@ public final class FollowManagerDatastoreTest {
   }
 
   @Test
-  public void testFollow() {
-    // test follow no one
+  public void testGetFollowedUserIdsDefault_noUserIdsReturned() {
     assertEquals(new ArrayList<>(), manager.getFollowedUserIds(USER_ID_A));
+  }
 
-    // test follow users
+  @Test
+  public void testGetFollowedRestaurantIdsDefault_noRestaurantIdsReturned() {
+    assertEquals(new ArrayList<>(), manager.getFollowedRestaurantIds(USER_ID_A));
+  }
+
+  @Test
+  public void testGetFollowedTagIdsDefault_noTagIdsReturned() {
+    assertEquals(new ArrayList<>(), manager.getFollowedTagIds(USER_ID_A));
+  }
+
+  @Test
+  public void testFollowUser_returnsAllFollowedUsers() {
+    // Act
     manager.followUser(USER_ID_A, USER_ID_B);
     manager.followUser(USER_ID_A, USER_ID_C);
-    List<Long> list_users = new ArrayList<>();
-    list_users.add(USER_ID_B);
-    list_users.add(USER_ID_C);
-    assertEquals(list_users, manager.getFollowedUserIds(USER_ID_A));
+    List<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
 
-    // test unfollow user
+    // Assert
+    assertEquals(2, followedUsers.size());
+    assertThat(followedUsers, hasItems(USER_ID_B, USER_ID_C));
+  }
+
+  @Test
+  public void testUnfollowUser_unfollowedUsersNotReturned() {
+    // Arrange
+    manager.followUser(USER_ID_A, USER_ID_B);
+    manager.followUser(USER_ID_A, USER_ID_C);
+
+    // Act
     manager.unfollowUser(USER_ID_A, USER_ID_C);
-    list_users.remove((Long) USER_ID_C);
-    assertEquals(list_users, manager.getFollowedUserIds(USER_ID_A));
+    List<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
 
-    // test follow restaurant
-    manager.followRestaurant(USER_ID_B, RESTAURANT_ID);
-    List<Long> list_restaurant = new ArrayList<>();
-    list_restaurant.add(RESTAURANT_ID);
-    assertEquals(list_restaurant, manager.getFollowedRestaurantIds(USER_ID_B));
+    // Assert
+    assertEquals(1, followedUsers.size());
+    assertThat(followedUsers, hasItems(USER_ID_B));
+  }
 
-    // test unfollow restaurant
-    manager.unfollowRestaurant(USER_ID_B, RESTAURANT_ID);
-    assertEquals(new ArrayList<>(), manager.getFollowedUserIds(USER_ID_B));
+  @Test
+  public void testFollowRestaurant_returnsAllFollowedRestaurants() {
+    // Act
+    manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B);
+    manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_C);
+    List<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
 
-    // test follow tag
-    manager.followTag(USER_ID_B, TAG_ID);
-    List<Long> list_tag = new ArrayList<>();
-    list_tag.add(TAG_ID);
-    assertEquals(list_tag, manager.getFollowedTagIds(USER_ID_B));
+    // Assert
+    assertEquals(2, followedRestaurants.size());
+    assertThat(followedRestaurants, hasItems(RESTAURANT_ID_B, RESTAURANT_ID_C));
+  }
 
-    // test unfollow tag
-    manager.unfollowTag(USER_ID_B, RESTAURANT_ID);
-    assertEquals(new ArrayList<>(), manager.getFollowedUserIds(USER_ID_B));
+  @Test
+  public void testUnfollowRestaurant_unfollowedRestaurantsNotReturned() {
+    // Arrange
+    manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B);
+    manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_C);
+
+    // Act
+    manager.unfollowRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_C);
+    List<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
+
+    // Assert
+    assertEquals(1, followedRestaurants.size());
+    assertThat(followedRestaurants, hasItems(RESTAURANT_ID_B));
+  }
+
+  @Test
+  public void testFollowTag_returnsAllFollowedTags() {
+    // Act
+    manager.followTag(TAG_ID_A, TAG_ID_B);
+    manager.followTag(TAG_ID_A, TAG_ID_C);
+    List<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
+
+    // Assert
+    assertEquals(2, followedTags.size());
+    assertThat(followedTags, hasItems(TAG_ID_B, TAG_ID_C));
+  }
+
+  @Test
+  public void testUnfollowTag_unfollowedTagsNotReturned() {
+    // Arrange
+    manager.followTag(TAG_ID_A, TAG_ID_B);
+    manager.followTag(TAG_ID_A, TAG_ID_C);
+
+    // Act
+    manager.unfollowTag(TAG_ID_A, TAG_ID_C);
+    List<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
+
+    // Assert
+    assertEquals(1, followedTags.size());
+    assertThat(followedTags, hasItems(TAG_ID_B));
   }
 }
