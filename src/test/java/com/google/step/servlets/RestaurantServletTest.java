@@ -1,7 +1,9 @@
 package com.google.step.servlets;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -188,5 +190,44 @@ public class RestaurantServletTest {
     restaurantServlet.doPut(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+  }
+
+  /** Successfully deletes a restaurant */
+  @Test
+  public void testDoDelete_success() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/1");
+
+    restaurantServlet.doDelete(request, response);
+
+    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(restaurantManager).deleteRestaurant(anyLong());
+  }
+
+  /** Invalid ID is given for deleting e.g. String */
+  @Test
+  public void testDoDelete_invalidID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/abcd");
+
+    restaurantServlet.doDelete(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoDelete_noID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/");
+
+    restaurantServlet.doDelete(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
