@@ -16,6 +16,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     datastore = DatastoreServiceFactory.getDatastoreService();
   }
 
+  /** Creates a new restaurant entity */
   @Override
   public Restaurant createRestaurant(String name, String photoBlobkey) {
     Entity entity = new Entity("Restaurant");
@@ -30,6 +31,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     return restaurant;
   }
 
+  /** Gets info on a restaurant given an id */
   @Override
   public Restaurant readRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);
@@ -45,6 +47,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     return restaurant;
   }
 
+  /** Updates restaurant info given an id */
   @Override
   public Restaurant updateRestaurant(Restaurant restaurant) {
     Key key = KeyFactory.createKey("Restaurant", restaurant.id);
@@ -64,6 +67,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     return readRestaurant(restaurant.id);
   }
 
+  /** Deletes restaurant given an id */
   @Override
   public void deleteRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);

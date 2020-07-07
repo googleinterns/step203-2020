@@ -48,11 +48,11 @@ public final class RestaurantManagerDatastoreTest {
 
   @Test
   public void testReadRestaurant_success() throws Exception {
-    Restaurant restaurant_A =
+    Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    Restaurant restaurant_A_Test = restaurantManagerDatastore.readRestaurant(restaurant_A.id);
-    assertEquals(RESTAURANT_NAME_A, restaurant_A_Test.name);
-    assertEquals(BLOBKEY_A, restaurant_A_Test.photoBlobkey);
+    Restaurant restaurantA_Test = restaurantManagerDatastore.readRestaurant(restaurantA.id);
+    assertEquals(RESTAURANT_NAME_A, restaurantA_Test.name);
+    assertEquals(BLOBKEY_A, restaurantA_Test.photoBlobkey);
   }
 
   @Test
@@ -62,50 +62,30 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testUpdateRestaurantName() throws Exception {
-    Restaurant restaurant_A =
+  public void testUpdateRestaurant_name() throws Exception {
+    Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_B, BLOBKEY_A);
-    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
-    assertEquals(RESTAURANT_NAME_B, restaurant_A_Updated.name);
-    assertEquals(BLOBKEY_A, restaurant_A_Updated.photoBlobkey);
-  }
-
-  @Test
-  public void testUpdateRestaurantNameNull() throws Exception {
-    Restaurant restaurant_A =
-        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, null, BLOBKEY_A);
-    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
-    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
-    assertEquals(BLOBKEY_A, restaurant_A_Updated.photoBlobkey);
+    Restaurant restaurantA_New = new Restaurant(restaurantA.id, RESTAURANT_NAME_B, null);
+    Restaurant restaurantA_Updated = restaurantManagerDatastore.updateRestaurant(restaurantA_New);
+    assertEquals(RESTAURANT_NAME_B, restaurantA_Updated.name);
+    assertEquals(BLOBKEY_A, restaurantA_Updated.photoBlobkey);
   }
 
   @Test
   public void testUpdateRestaurant_blobKey() throws Exception {
-    Restaurant restaurant_A =
+    Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_A, BLOBKEY_B);
-    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
-    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
-    assertEquals(BLOBKEY_B, restaurant_A_Updated.photoBlobkey);
-  }
-
-  @Test
-  public void testUpdateRestaurant_blobKeyNull() throws Exception {
-    Restaurant restaurant_A =
-        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    Restaurant restaurant_A_New = new Restaurant(restaurant_A.id, RESTAURANT_NAME_A, null);
-    Restaurant restaurant_A_Updated = restaurantManagerDatastore.updateRestaurant(restaurant_A_New);
-    assertEquals(RESTAURANT_NAME_A, restaurant_A_Updated.name);
-    assertEquals(BLOBKEY_A, restaurant_A_Updated.photoBlobkey);
+    Restaurant restaurantA_New = new Restaurant(restaurantA.id, null, BLOBKEY_B);
+    Restaurant restaurantA_Updated = restaurantManagerDatastore.updateRestaurant(restaurantA_New);
+    assertEquals(RESTAURANT_NAME_A, restaurantA_Updated.name);
+    assertEquals(BLOBKEY_B, restaurantA_Updated.photoBlobkey);
   }
 
   @Test
   public void testDeleteRestaurant() throws Exception {
-    Restaurant restaurant_A =
+    Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
-    restaurantManagerDatastore.deleteRestaurant(restaurant_A.id);
-    assertNull(restaurantManagerDatastore.readRestaurant(restaurant_A.id));
+    restaurantManagerDatastore.deleteRestaurant(restaurantA.id);
+    assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
   }
 }
