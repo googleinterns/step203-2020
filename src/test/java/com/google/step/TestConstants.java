@@ -51,14 +51,11 @@ public class TestConstants {
 
   public static final String DESCRIPTION_A = "starbucks mocha 1-for-1";
   public static final String DESCRIPTION_B = "KFC chick buy 5 free 10";
-  public static final String DESCRIPTION_EMPTY = "";
 
   public static final String DATE_A = "2020-01-01";
   public static final String DATE_B = "2020-01-02";
   public static final String DATE_C = "2020-01-03";
   public static final String DATE_D = "2020-01-04";
-  public static final String DATE_INVALID = "trash";
-  public static final String DATE_WRONG_FORMAT = "2020-1-1";
 
   public static final String SOURCE_A = "www.example.com";
   public static final String SOURCE_B = "www.somethingelse.com";
