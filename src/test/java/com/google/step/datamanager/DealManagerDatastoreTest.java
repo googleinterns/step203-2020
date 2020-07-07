@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalSearchServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Deal;
 import org.junit.After;
@@ -32,7 +33,7 @@ public final class DealManagerDatastoreTest {
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
-          new LocalDatastoreServiceTestConfig().setApplyAllHighRepJobPolicy());
+          new LocalDatastoreServiceTestConfig(), new LocalSearchServiceTestConfig());
 
   private final DealManagerDatastore dealManagerDatastore = new DealManagerDatastore();
 
