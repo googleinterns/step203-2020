@@ -23,7 +23,11 @@ public class User {
     this.username = username;
     this.email = email;
     this.bio = bio;
-    this.photoBlobKey = Optional.of(photoBlobKey);
+    if (photoBlobKey != null) {
+      this.photoBlobKey = Optional.of(photoBlobKey);
+    } else {
+      this.photoBlobKey = null;
+    }
   }
 
   public User(long id, String email, String username, String bio) {
