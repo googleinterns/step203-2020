@@ -4,8 +4,8 @@ import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.model.Deal;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +61,7 @@ public class DealDetailServlet extends HttpServlet {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException | IndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -98,10 +98,10 @@ public class DealDetailServlet extends HttpServlet {
   }
 
   private boolean isValidDate(String date) {
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     try {
-      format.parse(date);
-    } catch (ParseException e) {
+      formatter.parse(date);
+    } catch (DateTimeParseException e) {
       return false;
     }
     return true;
