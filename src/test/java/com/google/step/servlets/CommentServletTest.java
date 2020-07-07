@@ -1,6 +1,9 @@
 package com.google.step.servlets;
 
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,9 +37,9 @@ public class CommentServletTest {
       new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
 
   private static final long ID_B = 2;
-  private static final long userId_B = 4;
+  private static final long USERID_B = 4;
   private static final String CONTENT_B = "Hello world2";
-  private static final Comment COMMENT_B = new Comment(ID_B, DEALID, userId_B, CONTENT_B);
+  private static final Comment COMMENT_B = new Comment(ID_B, DEALID, USERID_B, CONTENT_B);
 
   private CommentManager commentManager;
 
@@ -73,7 +76,7 @@ public class CommentServletTest {
             "{id:%d,dealId:%d,userId:%d,content:\"%s\"}", ID_A, DEALID, USERID_A, CONTENT_A);
     String commentB =
         String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\"}", ID_B, DEALID, userId_B, CONTENT_B);
+            "{id:%d,dealId:%d,userId:%d,content:\"%s\"}", ID_B, DEALID, USERID_B, CONTENT_B);
     String expected = "[" + commentA + "," + commentB + "]";
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
@@ -120,7 +123,6 @@ public class CommentServletTest {
 
   @Test
   public void testDoPost_success() throws Exception {
-    // Submitting comment
     List<Comment> comments = new ArrayList<>();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -131,21 +133,8 @@ public class CommentServletTest {
     when(commentManager.createComment(DEALID, USERID_A, CONTENT_A)).thenReturn(COMMENT_A);
     commentServletPost.doPost(request, response);
 
-    comments.add(COMMENT_A);
-    when(request.getPathInfo()).thenReturn("/2");
-    when(commentManager.getComments(2)).thenReturn(comments);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    commentServlet.doGet(request, response);
-
-    String expected =
-        String.format(
-            "[{id:%d,dealId:%d,userId:%d,content:\"%s\"}]", ID_A, DEALID, USERID_A, CONTENT_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(commentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));
   }
 
   @Test
@@ -205,5 +194,42 @@ public class CommentServletTest {
     commentServlet.doPut(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+  }
+
+  @Test
+  public void testDoDelete_success() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/1");
+
+    commentServlet.doDelete(request, response);
+
+    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(commentManager).deleteComment(anyLong());
+  }
+
+  @Test
+  public void testDoDelete_invalidID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/abcd");
+
+    commentServlet.doDelete(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoDelete_noID() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/");
+
+    commentServlet.doDelete(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
