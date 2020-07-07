@@ -17,9 +17,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   }
 
   @Override
-  public Restaurant createRestaurant(
-      String name,
-      String photoBlobkey) {
+  public Restaurant createRestaurant(String name, String photoBlobkey) {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
     entity.setProperty("photoBlobkey", photoBlobkey);
@@ -63,9 +61,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
       restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
     }
     datastore.put(restaurantEntity);
-    String name = (String) restaurantEntity.getProperty("name");
-    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
-    return new Restaurant(restaurant.id, name, photoBlobkey);
+    return readRestaurant(restaurant.id);
   }
 
   @Override
