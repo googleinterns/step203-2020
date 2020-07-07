@@ -23,14 +23,6 @@ public class FollowServletTest {
 
   private static final long ID = 123;
 
-  private static final String RESTAURANT_PATH = "/restaurants/" + ID;
-  private static final String TAGS_PATH = "/tags/" + ID;
-  private static final String USERS_PATH = "/users/" + ID;
-
-  private static final String PATH_MISSING_ID = "/";
-  private static final String PATH_INVALID_NAME = "/trash/123";
-  private static final String PATH_INVALID_ID = "/tags/123/trash";
-
   private FollowServlet servlet;
   private FollowManager followManager;
 
@@ -45,7 +37,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(RESTAURANT_PATH);
+    when(request.getPathInfo()).thenReturn("/restaurants/" + ID);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -62,7 +54,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(TAGS_PATH);
+    when(request.getPathInfo()).thenReturn("/tags/" + ID);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -79,7 +71,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(USERS_PATH);
+    when(request.getPathInfo()).thenReturn("/users/" + ID);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -96,7 +88,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(PATH_INVALID_NAME);
+    when(request.getPathInfo()).thenReturn("/trash/123");
 
     servlet.doPost(request, response);
 
@@ -108,7 +100,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(PATH_INVALID_ID);
+    when(request.getPathInfo()).thenReturn("/tags/123/trash");
 
     servlet.doPost(request, response);
 
@@ -120,7 +112,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn(PATH_MISSING_ID);
+    when(request.getPathInfo()).thenReturn("/");
 
     servlet.doPost(request, response);
 
