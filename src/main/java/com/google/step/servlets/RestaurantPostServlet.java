@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
-@WebServlet("/api/restaurant/*")
+@WebServlet("/api/restaurant")
 public class RestaurantPostServlet extends HttpServlet {
 
   private RestaurantManager manager;
