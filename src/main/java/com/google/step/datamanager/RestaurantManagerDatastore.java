@@ -64,7 +64,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
       restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
     }
     datastore.put(restaurantEntity);
-    return readRestaurant(restaurant.id);
+    return transformEntitytoRestaurant(restaurantEntity);
   }
 
   /** Deletes restaurant given an id */
@@ -72,5 +72,19 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   public void deleteRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);
     datastore.delete(key);
+  }
+
+  /**
+   * Returns a User object transformed from a user entity.
+   *
+   * @param entity User entity.
+   * @return a User object transformed from the entity.
+   */
+  private Restaurant transformEntitytoRestaurant(Entity restaurantEntity) {
+    String name = (String) restaurantEntity.getProperty("name");
+    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
+    long id = restaurantEntity.getKey().getId();
+    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
+    return restaurant;
   }
 }
