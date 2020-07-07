@@ -81,6 +81,15 @@ public class DealPostServletTest {
 
     servlet.doPost(request, response);
 
+    verify(dealManager)
+        .createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A));
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(response).setStatus(HttpServletResponse.SC_OK);
   }
