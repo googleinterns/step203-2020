@@ -54,7 +54,7 @@ public class DealPostServletTest {
   }
 
   @Test
-  public void testDoPost_sucess() throws IOException {
+  public void testDoPost_success() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
