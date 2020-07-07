@@ -13,10 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/restaurant/*")
 public class RestaurantPostServlet extends HttpServlet {
 
-  private RestaurantManager manager = new RestaurantManagerDatastore();
+  private RestaurantManager manager;
 
   public RestaurantPostServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
+  }
+
+  public RestaurantPostServlet() {
+    manager = new RestaurantManagerDatastore();
   }
 
   /** Posts the restaurant with the given id parameter */
@@ -25,9 +29,8 @@ public class RestaurantPostServlet extends HttpServlet {
     String name = request.getParameter("name");
     String photoBlobkey = "A_BLOB_KEY";
 
-    Restaurant restaurant =
-        manager.createRestaurant(name, photoBlobkey);
+    Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
 
-    response.sendRedirect("/restaurant/"+restaurant.id);
+    response.sendRedirect("/restaurant/" + restaurant.id);
   }
 }

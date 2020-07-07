@@ -13,10 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/restaurant/*")
 public class RestaurantServlet extends HttpServlet {
 
-  private RestaurantManager manager = new RestaurantManagerDatastore();
+  private RestaurantManager manager;
 
   public RestaurantServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
+  }
+
+  public RestaurantServlet() {
+    manager = new RestaurantManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
