@@ -118,4 +118,16 @@ public class FollowServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
+
+  @Test
+  public void testDoPost_emptyPath_badRequest() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("");
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
 }
