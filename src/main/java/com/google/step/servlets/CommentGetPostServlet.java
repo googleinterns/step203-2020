@@ -4,6 +4,7 @@ import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.model.Comment;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
