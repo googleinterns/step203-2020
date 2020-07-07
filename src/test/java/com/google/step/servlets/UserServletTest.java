@@ -27,16 +27,20 @@ public class UserServletTest {
   private static final long ID_B = 2;
 
   private static final String EMAIL_A = "testa@example.com";
+  private static final String EMAIL_B = "testb@example.com";
 
   private static final String USERNAME_A = "Alice";
   private static final String USERNAME_A_NEW = "AliceW";
+  private static final String USERNAME_B = "Bob";
 
   private static final String BLOBKEY_A = "a_blob_key";
 
   private static final String BIO_A = "Hello world.";
   private static final String BIO_A_NEW = "Hi, I'm Alice";
+  private static final String BIO_B = "Hello world.";
 
   private static final User USER_A = new User(ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
+  private static final User USER_B = new User(ID_B, EMAIL_B, USERNAME_B, BIO_B);
 
   private UserServlet servlet;
   private UserManager userManager;
@@ -130,8 +134,9 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
+    when(userManager.readUser(1)).thenReturn(USER_A);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_A));
-    when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
     User updatedUser = new User(ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
@@ -151,8 +156,9 @@ public class UserServletTest {
     when(userService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
+    when(userManager.readUser(2)).thenReturn(USER_B);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_B));
-    when(userManager.readOrCreateUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -70,25 +70,25 @@ public class UserServlet extends HttpServlet {
       return;
     }
 
-    String idString;
+    long id;
     try {
-      idString = request.getPathInfo().substring(1);
-    } catch (IndexOutOfBoundsException e) {
+      String idString = request.getPathInfo().substring(1);
+      id = Long.parseLong(idString);
+    } catch (IndexOutOfBoundsException | NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
     String userEmail = userService.getCurrentUser().getEmail();
-    String username = (String) request.getParameter("username");
-    String bio = (String) request.getParameter("bio");
-
-    User user = userManager.readOrCreateUserByEmail(userEmail);
-
-    if (!idString.equals(String.valueOf(user.id))) {
+    User user = userManager.readUser(id);
+    if (!userEmail.equals(user.email)) {
       // Inconsistent request with login status
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
+    String username = (String) request.getParameter("username");
+    String bio = (String) request.getParameter("bio");
     User updatedUser = new User(user.id, null, username, null, bio);
 
     userManager.updateUser(updatedUser);
