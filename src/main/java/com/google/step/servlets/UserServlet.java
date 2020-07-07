@@ -81,7 +81,7 @@ public class UserServlet extends HttpServlet {
 
     String userEmail = userService.getCurrentUser().getEmail();
     User user = userManager.readUser(id);
-    if (userEmail != user.email) {
+    if (!userEmail.equals(user.email)) {
       // Inconsistent request with login status
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
