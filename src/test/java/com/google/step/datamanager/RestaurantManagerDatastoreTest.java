@@ -1,5 +1,9 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.BLOBKEY_B;
+import static com.google.step.TestConstants.RESTAURANT_NAME_A;
+import static com.google.step.TestConstants.RESTAURANT_NAME_B;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -14,12 +18,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class RestaurantManagerDatastoreTest {
-
-  private static final String RESTAURANT_NAME_A = "A";
-  private static final String BLOBKEY_A = "a_blob_key";
-
-  private static final String RESTAURANT_NAME_B = "B";
-  private static final String BLOBKEY_B = "b_blob_key";
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
