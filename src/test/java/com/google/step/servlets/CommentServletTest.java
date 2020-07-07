@@ -45,13 +45,13 @@ public class CommentServletTest {
 
   private CommentServlet commentServlet;
 
-  private CommentPostServlet commentPostServlet;
+  private CommentGetPostServlet commentGetPostServlet;
 
   @Before
   public void setUp() {
     commentManager = mock(CommentManager.class);
     commentServlet = new CommentServlet(commentManager);
-    commentPostServlet = new CommentPostServlet(commentManager);
+    commentGetPostServlet = new CommentGetPostServlet(commentManager);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class CommentServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    commentServlet.doGet(request, response);
+    commentGetPostServlet.doGet(request, response);
 
     String commentA =
         String.format(
@@ -93,7 +93,7 @@ public class CommentServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    commentServlet.doGet(request, response);
+    commentGetPostServlet.doGet(request, response);
 
     String expected = "[]";
 
@@ -106,7 +106,7 @@ public class CommentServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getParameter("deaId")).thenReturn("abcd");
 
-    commentServlet.doGet(request, response);
+    commentGetPostServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -117,7 +117,7 @@ public class CommentServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getParameter("dealId")).thenReturn("");
 
-    commentServlet.doGet(request, response);
+    commentGetPostServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
@@ -131,7 +131,7 @@ public class CommentServletTest {
     when(request.getParameter("userId")).thenReturn(Long.toString(USERID_A));
     when(request.getParameter("content")).thenReturn(CONTENT_A);
     when(commentManager.createComment(DEALID, USERID_A, CONTENT_A)).thenReturn(COMMENT_A);
-    commentPostServlet.doPost(request, response);
+    commentGetPostServlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(commentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));

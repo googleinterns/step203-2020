@@ -10,17 +10,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/api/comments/")
-public class CommentPostServlet extends HttpServlet {
+public class CommentGetPostServlet extends HttpServlet {
 
   private CommentManager manager;
 
-  public CommentPostServlet(CommentManager commentManager) {
+  public CommentGetPostServlet(CommentManager commentManager) {
     manager = commentManager;
   }
 
-  public CommentPostServlet() {
+  public CommentGetPostServlet() {
     manager = new CommentManagerDatastore();
   }
+
+  /** Gets the comments for the deal with the given id parameter */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long dealId;
+    try {
+      dealId = Long.parseLong(request.getParameter("dealId"));
+    } catch (NumberFormatException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    List<Comment> comments = manager.getComments(dealId);
+    response.setContentType("application/json;");
+    response.getWriter().println(JsonFormatter.getCommentsJson(comments));
+  }
+
   /** Posts a comment for the deal with the given id parameter */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

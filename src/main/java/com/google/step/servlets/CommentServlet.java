@@ -4,7 +4,6 @@ import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.model.Comment;
 import java.io.IOException;
-import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,21 +35,6 @@ public class CommentServlet extends HttpServlet {
       return;
     }
     manager.deleteComment(id);
-  }
-
-  /** Gets the comments for the deal with the given id parameter */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long dealId;
-    try {
-      dealId = Long.parseLong(request.getParameter("dealId"));
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
-    List<Comment> comments = manager.getComments(dealId);
-    response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
 
   /** Updates a comment with the given id parameter */
