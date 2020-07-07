@@ -13,6 +13,12 @@ function configureUserProfile(user) {
   bioContainer.innerText = user.bio;
   const profileImage = document.getElementById('profile-photo');
   profileImage.src = user.picture;
+
+  configureDealsPublishedBy(user);
+  configureUserFollowers(user);
+  configureUsersFollowedBy(user);
+  configureRestaurantsFollowedBy(user);
+  configureTagsFollowedBy(user);
 }
 
 /**
