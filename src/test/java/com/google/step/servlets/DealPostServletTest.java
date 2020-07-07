@@ -26,14 +26,11 @@ public class DealPostServletTest {
   private static final long ID_A = 1;
 
   private static final String DESCRIPTION = "starbucks mocha 1-for-1";
-  private static final String DESCRIPTION_EMPTY = "";
 
   private static final String BLOBKEY = "a_blob_key";
 
   private static final String DATE_A = "2020-01-01";
   private static final String DATE_B = "2020-01-02";
-  private static final String DATE_INVALID = "trash";
-  private static final String DATE_WRONG_FORMAT = "2020-1-1";
 
   private static final String SOURCE = "www.example.com";
 
@@ -41,7 +38,6 @@ public class DealPostServletTest {
 
   private static final long RESTAURANT_ID_NUM = 11;
   private static final String RESTAURANT_ID = "11";
-  private static final String RESTAURANT_ID_INVALID = "aaa";
 
   private static final Deal DEAL =
       new Deal(ID_A, DESCRIPTION, BLOBKEY, DATE_A, DATE_B, SOURCE, POSTER_ID, RESTAURANT_ID_NUM);
@@ -112,7 +108,7 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_EMPTY);
+    when(request.getParameter("description")).thenReturn("");
     when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
@@ -157,7 +153,7 @@ public class DealPostServletTest {
     when(request.getParameter("description")).thenReturn(DESCRIPTION);
     when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
     when(request.getParameter("start")).thenReturn(DATE_A);
-    when(request.getParameter("end")).thenReturn(DATE_INVALID);
+    when(request.getParameter("end")).thenReturn("trash");
     when(request.getParameter("source")).thenReturn(SOURCE);
     when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
 
@@ -177,7 +173,7 @@ public class DealPostServletTest {
 
     when(request.getParameter("description")).thenReturn(DESCRIPTION);
     when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY);
-    when(request.getParameter("start")).thenReturn(DATE_WRONG_FORMAT);
+    when(request.getParameter("start")).thenReturn("2020-1-1");
     when(request.getParameter("end")).thenReturn(DATE_B);
     when(request.getParameter("source")).thenReturn(SOURCE);
     when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID);
@@ -222,7 +218,7 @@ public class DealPostServletTest {
     when(request.getParameter("start")).thenReturn(DATE_B);
     when(request.getParameter("end")).thenReturn(DATE_A);
     when(request.getParameter("source")).thenReturn(SOURCE);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_INVALID);
+    when(request.getParameter("restaurant")).thenReturn("aaa");
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
