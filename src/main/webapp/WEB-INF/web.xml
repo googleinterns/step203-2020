@@ -6,6 +6,10 @@
     <jsp-file>/WEB-INF/jsp/home.jsp</jsp-file>
   </servlet>
   <servlet>
+      <servlet-name>deals</servlet-name>
+      <jsp-file>/WEB-INF/jsp/deals.jsp</jsp-file>
+  </servlet>
+  <servlet>
     <servlet-name>addDeal</servlet-name>
     <jsp-file>/WEB-INF/jsp/add-deal.jsp</jsp-file>
   </servlet>
@@ -13,9 +17,14 @@
     <servlet-name>userPage</servlet-name>
     <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
   </servlet>
+
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>deals</servlet-name>
+    <url-pattern>/deals/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>userPage</servlet-name>
