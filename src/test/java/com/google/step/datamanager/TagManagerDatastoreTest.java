@@ -1,5 +1,7 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
 import static org.junit.Assert.assertEquals;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -13,9 +15,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class TagManagerDatastoreTest {
-
-  private static final String NAME_A = "1for1";
-  private static final String NAME_B = "tea";
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
@@ -35,14 +34,14 @@ public final class TagManagerDatastoreTest {
 
   @Test
   public void testGetTag_newTag() {
-    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    assertEquals(NAME_A, tag.name);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
+    assertEquals(TAG_NAME_A, tag.name);
   }
 
   @Test
   public void testGetTag_existingTag() {
-    Tag tag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    Tag duplicateTag = tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    Tag tag = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
+    Tag duplicateTag = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
 
     assertEquals(tag.id, duplicateTag.id);
     assertEquals(tag.name, duplicateTag.name);
@@ -50,16 +49,16 @@ public final class TagManagerDatastoreTest {
 
   @Test
   public void testReadTag_success() {
-    Tag tagA = tagManagerDatastore.readOrCreateTagByName(NAME_A);
-    tagManagerDatastore.readOrCreateTagByName(NAME_B);
+    Tag tagA = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
+    tagManagerDatastore.readOrCreateTagByName(TAG_NAME_B);
     Tag tagARead = tagManagerDatastore.readTag(tagA.id);
 
-    assertEquals(NAME_A, tagARead.name);
+    assertEquals(TAG_NAME_A, tagARead.name);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testReadTag_notExist() {
-    tagManagerDatastore.readOrCreateTagByName(NAME_A);
+    tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
     tagManagerDatastore.readTag(1000);
   }
 }
