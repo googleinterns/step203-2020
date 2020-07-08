@@ -28,11 +28,6 @@ public class RestaurantServletTest {
   private static final String BLOBKEY_A = "A_BLOB_KEY";
   private static final Restaurant RESTAURANT_A = new Restaurant(ID_A, NAME_A, BLOBKEY_A);
 
-  private static final long ID_B = 2;
-  private static final String NAME_B = "B";
-  private static final String BLOBKEY_B = "B_BLOB_KEY";
-  private static final Restaurant RESTAURANT_B = new Restaurant(ID_B, NAME_B, BLOBKEY_B);
-
   private static final String UPDATE_NAME_A = "UPDATE";
   private static final Restaurant UPDATE_RESTAURANT_A =
       new Restaurant(ID_A, UPDATE_NAME_A, BLOBKEY_A);
@@ -41,13 +36,10 @@ public class RestaurantServletTest {
 
   private RestaurantServlet restaurantServlet;
 
-  private RestaurantPostServlet restaurantPostServlet;
-
   @Before
   public void setUp() {
     restaurantManager = mock(RestaurantManager.class);
     restaurantServlet = new RestaurantServlet(restaurantManager);
-    restaurantPostServlet = new RestaurantPostServlet(restaurantManager);
   }
 
   /** Successfully returns a restaurant */
@@ -103,31 +95,6 @@ public class RestaurantServletTest {
 
     restaurantServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-  }
-
-  /** Successfully creates a new restaurant */
-  @Test
-  public void testDoPost_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    when(request.getParameter("name")).thenReturn(NAME_A);
-    when(restaurantManager.createRestaurant(NAME_A, BLOBKEY_A)).thenReturn(RESTAURANT_A);
-    restaurantPostServlet.doPost(request, response);
-
-    when(request.getPathInfo()).thenReturn("/1");
-    when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    restaurantServlet.doGet(request, response);
-
-    String expected =
-        String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}", ID_A, NAME_A, BLOBKEY_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   /** Successfully updates a restaurant */

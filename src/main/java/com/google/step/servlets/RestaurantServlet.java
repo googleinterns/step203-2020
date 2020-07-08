@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles individual restaurants */
-@WebServlet("/api/restaurant/*")
+@WebServlet("/api/restaurants/*")
 public class RestaurantServlet extends HttpServlet {
 
   private RestaurantManager manager;
@@ -43,10 +43,7 @@ public class RestaurantServlet extends HttpServlet {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
+    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -65,10 +62,7 @@ public class RestaurantServlet extends HttpServlet {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
+    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }

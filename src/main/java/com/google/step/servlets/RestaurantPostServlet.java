@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
-@WebServlet("/api/restaurant")
+@WebServlet("/api/restaurants")
 public class RestaurantPostServlet extends HttpServlet {
 
   private RestaurantManager manager;
@@ -31,6 +31,6 @@ public class RestaurantPostServlet extends HttpServlet {
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
 
-    response.sendRedirect("/restaurant/" + restaurant.id);
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
   }
 }
