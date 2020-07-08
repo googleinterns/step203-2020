@@ -53,6 +53,7 @@
           <img id="profile-photo-preview" class="img-fluid mb-4" alt="profile-photo" />
         </div>
         <div class="col-sm-8 col-lg-9">
+          <input hidden name="id" id="id-input" />
           <div class="form-group row">
             <label for="username-input" class="col-sm-2 col-form-label">Username</label>
             <div class="col-sm-10">
@@ -75,7 +76,7 @@
           <div class="form-group row">
             <label for="profile-photo-input" class="col-form-label col-sm-2">Bio</label>
             <div class="col-sm-10">
-              <input type="file" class="form-control-file" name=" picture" id="profile-photo-file"
+              <input type="file" class="form-control-file" name="picture" id="profile-photo-file"
                 onchange="profilePhotoPreview(this);">
             </div>
           </div>

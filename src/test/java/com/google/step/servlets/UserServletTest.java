@@ -15,12 +15,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
+import org.mockito.BDDMockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ImageUploader.class)
 public class UserServletTest {
 
   private static final long ID_A = 1;
@@ -34,6 +38,7 @@ public class UserServletTest {
   private static final String USERNAME_B = "Bob";
 
   private static final String BLOBKEY_A = "a_blob_key";
+  private static final String BLOBKEY_URL_A = "/api/images/" + BLOBKEY_A;
 
   private static final String BIO_A = "Hello world.";
   private static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -70,13 +75,13 @@ public class UserServletTest {
 
     String expected =
         String.format(
-            "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",photoBlobKey:\"%s\","
+            "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",picture:\"%s\","
                 + "dealsUploaded:[],"
                 + "following:[],"
                 + "followers:[],"
                 + "tagsFollowed:[],"
                 + "restaurantsFollowed:[]}",
-            ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_A);
+            ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -137,9 +142,37 @@ public class UserServletTest {
     when(userManager.readUser(1)).thenReturn(USER_A);
     when(request.getParameter("id")).thenReturn(String.valueOf(ID_A));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    PowerMockito.mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
+        .willReturn(BLOBKEY_A);
 
     servlet.doPost(request, response);
-    User updatedUser = new User(ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
+    User updatedUser = new User(ID_A, null, USERNAME_A_NEW, BLOBKEY_A, BIO_A_NEW);
+    ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+    verify(userManager).updateUser(captor.capture());
+    assertEquals(updatedUser, captor.getValue());
+    verify(response).sendRedirect("/user/" + ID_A);
+  }
+
+  @Test
+  public void testDoPost_doNotUpdatePhoto() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    com.google.appengine.api.users.User currentUser =
+        new com.google.appengine.api.users.User(EMAIL_A, "");
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
+    when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
+    when(userManager.readUser(1)).thenReturn(USER_A);
+    when(request.getParameter("id")).thenReturn(String.valueOf(ID_A));
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    PowerMockito.mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "profile-photo-file"))
+        .willReturn(null);
+
+    servlet.doPost(request, response);
+    User updatedUser = new User(ID_A, null, USERNAME_A_NEW, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
     verify(userManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());

@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import static com.google.step.servlets.ImageUploader.getUploadedImageBlobkey;
+
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.UserManager;
@@ -94,7 +96,14 @@ public class UserServlet extends HttpServlet {
 
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    User updatedUser = new User(user.id, null, username, null, bio);
+    String photoBlobKey = getUploadedImageBlobkey(request, "picture");
+
+    User updatedUser;
+    if (photoBlobKey != null) {
+      updatedUser = new User(user.id, null, username, photoBlobKey, bio);
+    } else {
+      updatedUser = new User(user.id, null, username, bio);
+    }
 
     userManager.updateUser(updatedUser);
     response.sendRedirect("/user/" + user.id);

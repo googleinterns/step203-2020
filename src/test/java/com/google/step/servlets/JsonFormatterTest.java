@@ -29,8 +29,11 @@ public class JsonFormatterTest {
   private static final String USERNAME_B = "Bob";
   private static final String USERNAME_C = "Charlie";
 
+  private static final String URL_PREFIX = "/api/images/";
   private static final String BLOBKEY_A = "a_blob_key";
+  private static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   private static final String BLOBKEY_B = "a_blob_key_b";
+  private static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
 
   private static final String BIO_A = "Hello world.";
   private static final String BIO_B = "Hello, I'm Bob!";
@@ -41,8 +44,7 @@ public class JsonFormatterTest {
   private static final User USER_C = new User(ID_C, EMAIL_C, USERNAME_C, BIO_C);
 
   private static final String USER_B_BRIEF_JSON =
-      String.format(
-          "{id: %d, username: \"%s\", photoBlobKey: \"%s\"}", ID_B, USERNAME_B, BLOBKEY_B);
+      String.format("{id: %d, username: \"%s\", picture: \"%s\"}", ID_B, USERNAME_B, BLOBKEY_URL_B);
   private static final String USER_C_BRIEF_JSON =
       String.format("{id: %d, username: \"%s\"}", ID_C, USERNAME_C);
 
@@ -58,13 +60,13 @@ public class JsonFormatterTest {
         JsonFormatter.getUserJson(USER_A, deals, following, followers, tags, restaurants);
     String expected =
         String.format(
-            "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",photoBlobKey:\"%s\","
+            "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",picture:\"%s\","
                 + "dealsUploaded:[],"
                 + "following:[%s],"
                 + "followers:[%s],"
                 + "tagsFollowed:[],"
                 + "restaurantsFollowed:[]}",
-            ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_A, USER_B_BRIEF_JSON, USER_C_BRIEF_JSON);
+            ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_URL_A, USER_B_BRIEF_JSON, USER_C_BRIEF_JSON);
     try {
       JSONAssert.assertEquals(expected, userJson, JSONCompareMode.STRICT);
     } catch (JSONException e) {
