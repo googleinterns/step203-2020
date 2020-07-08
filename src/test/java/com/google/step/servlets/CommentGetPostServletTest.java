@@ -37,14 +37,14 @@ public class CommentGetPostServletTest {
   private static final String CONTENT_B = "Hello world2";
   private static final Comment COMMENT_B = new Comment(ID_B, DEALID, USERID_B, CONTENT_B);
 
-  private CommentManager commentManager;
+  private CommentManager mockCommentManager;
 
   private CommentGetPostServlet commentGetPostServlet;
 
   @Before
   public void setUp() {
-    commentManager = mock(CommentManager.class);
-    commentGetPostServlet = new CommentGetPostServlet(commentManager);
+    mockCommentManager = mock(CommentManager.class);
+    commentGetPostServlet = new CommentGetPostServlet(mockCommentManager);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class CommentGetPostServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("dealId")).thenReturn("2");
-    when(commentManager.getComments(2)).thenReturn(comments);
+    when(mockCommentManager.getComments(2)).thenReturn(comments);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -80,7 +80,7 @@ public class CommentGetPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getParameter("dealId")).thenReturn("1000");
-    when(commentManager.getComments(1000)).thenReturn(new ArrayList<>());
+    when(mockCommentManager.getComments(1000)).thenReturn(new ArrayList<>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -123,10 +123,10 @@ public class CommentGetPostServletTest {
     when(request.getParameter("dealId")).thenReturn(Long.toString(DEALID));
     when(request.getParameter("userId")).thenReturn(Long.toString(USERID_A));
     when(request.getParameter("content")).thenReturn(CONTENT_A);
-    when(commentManager.createComment(DEALID, USERID_A, CONTENT_A)).thenReturn(COMMENT_A);
+    when(mockCommentManager.createComment(DEALID, USERID_A, CONTENT_A)).thenReturn(COMMENT_A);
     commentGetPostServlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(commentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));
+    verify(mockCommentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));
   }
 }

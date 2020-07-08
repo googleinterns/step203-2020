@@ -31,14 +31,14 @@ public class CommentServletTest {
   private static final Comment UPDATE_COMMENT_A =
       new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
 
-  private CommentManager commentManager;
+  private CommentManager mockCommentManager;
 
   private CommentServlet commentServlet;
 
   @Before
   public void setUp() {
-    commentManager = mock(CommentManager.class);
-    commentServlet = new CommentServlet(commentManager);
+    mockCommentManager = mock(CommentManager.class);
+    commentServlet = new CommentServlet(mockCommentManager);
   }
 
   @Test
@@ -48,7 +48,7 @@ public class CommentServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(request.getParameter("content")).thenReturn(UPDATE_CONTENT_A);
-    when(commentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
+    when(mockCommentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -93,7 +93,7 @@ public class CommentServletTest {
     when(request.getPathInfo()).thenReturn("/100");
 
     when(request.getParameter("content")).thenReturn(CONTENT_A);
-    when(commentManager.updateComment(100, CONTENT_A)).thenReturn(null);
+    when(mockCommentManager.updateComment(100, CONTENT_A)).thenReturn(null);
 
     commentServlet.doPut(request, response);
 
@@ -110,7 +110,7 @@ public class CommentServletTest {
     commentServlet.doDelete(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(commentManager).deleteComment(anyLong());
+    verify(mockCommentManager).deleteComment(anyLong());
   }
 
   @Test
