@@ -49,11 +49,11 @@
         <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Comments</a>
       </div>
       <div class="d-flex justify-content-end">
-        <button type="button" id="upvote-btn" class="btn">
+        <button type="button" id="upvote-btn" class="btn" onclick="handleUpvote()">
           <span class="fas fa-angle-up"></span>
         </button>
         <span id="votes-num" class="my-auto">0</span>
-        <button type="button" id="downvote-btn" class="btn">
+        <button type="button" id="downvote-btn" class="btn" onclick="handleDownvote()">
           <span class="fas fa-angle-down"></span>
         </button>
       </div>

@@ -15,6 +15,8 @@ const commentsData = {
   'token': 'bhfsdaog', // token for pagination
 };
 
+let votes = 0;
+
 /**
  * Loads the deal onto the page
  * @param {object} deal
@@ -46,6 +48,7 @@ function loadDealDataToPage(deal) {
   dealSource.href = deal.source;
 
   const voteElement = document.getElementById('votes-num');
+  votes = deal.votes;
   voteElement.innerText = deal.votes;
 }
 
@@ -76,6 +79,48 @@ function createCommentElement(commentEntity) {
 
   commentElement.appendChild(textElement);
   return commentElement;
+}
+
+let myVote = 0;
+/**
+ * Updates vote UI based on global variable myVote
+ */
+function updateMyVote() {
+  const upvoteBtn = document.getElementById('upvote-btn');
+  const downvoteBtn = document.getElementById('downvote-btn');
+  upvoteBtn.classList.remove('active');
+  downvoteBtn.classList.remove('active');
+  if (myVote > 0) {
+    upvoteBtn.classList.add('active');
+  } else if (myVote < 0) {
+    downvoteBtn.classList.add('active');
+  }
+  const voteElement = document.getElementById('votes-num');
+  voteElement.innerText = votes + myVote;
+}
+
+/**
+ * Called when the user clicks the upvote button
+ */
+function handleUpvote() {
+  if (myVote == 1) {
+    myVote = 0;
+  } else {
+    myVote = 1;
+  }
+  updateMyVote();
+}
+
+/**
+ * Called when the user clicks the downvote button
+ */
+function handleDownvote() {
+  if (myVote == -1) {
+    myVote = 0;
+  } else {
+    myVote = -1;
+  }
+  updateMyVote();
 }
 
 /**
