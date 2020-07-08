@@ -44,6 +44,9 @@ function loadDealDataToPage(deal) {
   const dealSource = document.getElementById('deal-source');
   dealSource.innerText = deal.source;
   dealSource.href = deal.source;
+
+  const voteElement = document.getElementById('votes-num');
+  voteElement.innerText = deal.votes;
 }
 
 /**

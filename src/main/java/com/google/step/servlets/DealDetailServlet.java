@@ -4,6 +4,8 @@ import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
+import com.google.step.datamanager.VoteManager;
+import com.google.step.datamanager.VoteManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -22,10 +24,12 @@ public class DealDetailServlet extends HttpServlet {
 
   private final DealManager dealManager;
   private final UserManager userManager;
+  private final VoteManager voteManager;
 
   public DealDetailServlet() {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
+    voteManager = new VoteManagerDatastore();
   }
 
   /** Deletes the deal with the given id parameter */
@@ -67,8 +71,7 @@ public class DealDetailServlet extends HttpServlet {
     // TODO get real tags
     List<Tag> tags = new ArrayList<>();
 
-    // TODO get real votes
-    int votes = 123;
+    int votes = voteManager.getVotes(deal.id);
 
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getDealJson(deal, restaurant, poster, tags, votes));

@@ -17,6 +17,20 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="/css/styles.css" rel="stylesheet" />
+  <style>
+    #downvote-btn:hover {
+      color: #dc3545;
+    }
+    #downvote-btn.active {
+      color: #dc3545;
+    }
+    #upvote-btn:hover {
+      color: #28a745;
+    }
+    #upvote-btn.active {
+      color: #28a745;
+    }
+  </style>
 </head>
 
 <body id="page-top">
@@ -35,12 +49,12 @@
         <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Comments</a>
       </div>
       <div class="d-flex justify-content-end">
-        <button type="button" id="upvote-btn" class="btn text-danger">
+        <button type="button" id="upvote-btn" class="btn">
           <span class="fas fa-angle-up"></span>
         </button>
-        <span id="votes-num" class="my-auto">20</span>
+        <span id="votes-num" class="my-auto">0</span>
         <button type="button" id="downvote-btn" class="btn">
-          <span class="fas fa-angle-down text-success"></span>
+          <span class="fas fa-angle-down"></span>
         </button>
       </div>
     </nav>
