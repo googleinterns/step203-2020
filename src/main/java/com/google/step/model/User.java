@@ -37,4 +37,23 @@ public class User {
     this.bio = bio;
     this.photoBlobKey = Optional.empty();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof User)) {
+      return false;
+    }
+    User other = (User) obj;
+    if (other == this) {
+      return true;
+    }
+
+    return other.id == this.id
+        && ((other.username == null && this.username == null)
+            || other.username.equals(this.username))
+        && ((other.bio == null && this.bio == null) || other.bio.equals(this.bio))
+        && ((other.email == null && this.email == null) || other.email.equals(this.email))
+        && ((other.photoBlobKey == null && this.photoBlobKey == null)
+            || other.photoBlobKey.equals(this.photoBlobKey));
+  }
 }

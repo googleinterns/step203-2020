@@ -11,6 +11,8 @@ import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -75,5 +77,57 @@ public class DealDetailServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getDealJson(deal, restaurant, poster, tags, votes));
+  }
+
+  /** Updates the deal with the given id parameter */
+  @Override
+  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long id;
+    try {
+      id = Long.parseLong(request.getPathInfo().substring(1));
+    } catch (NumberFormatException | IndexOutOfBoundsException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    String description = request.getParameter("description");
+    String photoBlobkey = null; // TODO connect to blobstore
+    String start = request.getParameter("start");
+    String end = request.getParameter("end");
+    String source = request.getParameter("source");
+    long posterId = -1;
+    long restaurantId = -1;
+    if (request.getParameter("restaurant") != null) {
+      try {
+        restaurantId = Long.parseLong(request.getParameter("restaurant"));
+      } catch (NumberFormatException e) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      // TODO validate that restaurant ID exists
+    }
+
+    // validate dates
+    if (!isValidDate(start) || !isValidDate(end)) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    if (start.compareTo(end) > 0) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    dealManager.updateDeal(deal);
+    response.setStatus(HttpServletResponse.SC_OK);
+  }
+
+  private boolean isValidDate(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    try {
+      formatter.parse(date);
+    } catch (DateTimeParseException e) {
+      return false;
+    }
+    return true;
   }
 }
