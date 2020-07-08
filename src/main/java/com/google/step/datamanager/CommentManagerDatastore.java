@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Comment;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,9 @@ public class CommentManagerDatastore implements CommentManager {
   @Override
   public Comment createComment(long dealId, long userId, String content) {
     Entity entity = new Entity("Comment");
+
+    String timestamp = LocalDateTime.now(ZoneId.of("Asia/Singapore")).toString();
+    entity.setProperty("timestamp", timestamp);
     entity.setProperty("deal", dealId);
     entity.setProperty("user", userId);
     entity.setProperty("content", content);
@@ -33,9 +38,7 @@ public class CommentManagerDatastore implements CommentManager {
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Comment comment = new Comment(id, dealId, userId, content);
-
-    return comment;
+    return new Comment(id, dealId, userId, content, timestamp);
   }
 
   /** Gets the list of comments with the given dealId */
@@ -86,6 +89,7 @@ public class CommentManagerDatastore implements CommentManager {
     long dealId = (long) commentEntity.getProperty("deal");
     long userId = (long) commentEntity.getProperty("user");
     String content = (String) commentEntity.getProperty("content");
-    return new Comment(id, dealId, userId, content);
+    String timestamp = (String) commentEntity.getProperty("timestamp");
+    return new Comment(id, dealId, userId, content, timestamp);
   }
 }
