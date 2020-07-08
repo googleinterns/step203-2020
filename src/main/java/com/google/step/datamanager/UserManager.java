@@ -6,13 +6,13 @@ import com.google.step.model.User;
 public interface UserManager {
 
   /**
-   * Returns a User object when the user with the given email. Creates a User object if it does not
-   * exist.
+   * Returns a User object with the given email if it exists.
    *
    * @param email email of the user.
    * @return User object with the email.
+   * @throws IllegalArgumentException if the user object does not exist.
    */
-  public User readOrCreateUserByEmail(String email);
+  public User readUserByEmail(String email) throws IllegalArgumentException;
 
   /**
    * Creates a User object with the given email.
