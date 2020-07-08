@@ -53,14 +53,14 @@ public final class CommentManagerDatastoreTest {
     commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
     commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment commentATest = comments.get(0);
-    Comment commentBTest = comments.get(1);
-    assertEquals(DEALID, commentATest.dealId);
-    assertEquals(USERID_A, commentATest.userId);
-    assertEquals(CONTENT_A, commentATest.content);
-    assertEquals(DEALID, commentBTest.dealId);
-    assertEquals(USERID_B, commentBTest.userId);
-    assertEquals(CONTENT_B, commentBTest.content);
+    Comment commentAResult = comments.get(0);
+    Comment commentBResult = comments.get(1);
+    assertEquals(DEALID, commentAResult.dealId);
+    assertEquals(USERID_A, commentAResult.userId);
+    assertEquals(CONTENT_A, commentAResult.content);
+    assertEquals(DEALID, commentBResult.dealId);
+    assertEquals(USERID_B, commentBResult.userId);
+    assertEquals(CONTENT_B, commentBResult.content);
   }
 
   @Test
@@ -85,10 +85,10 @@ public final class CommentManagerDatastoreTest {
     commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
     commentManagerDatastore.deleteComment(commentA.id);
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment commentBTest = comments.get(0);
-    assertEquals(DEALID, commentBTest.dealId);
-    assertEquals(USERID_B, commentBTest.userId);
-    assertEquals(CONTENT_B, commentBTest.content);
+    Comment commentBResult = comments.get(0);
+    assertEquals(DEALID, commentBResult.dealId);
+    assertEquals(USERID_B, commentBResult.userId);
+    assertEquals(CONTENT_B, commentBResult.content);
     assertEquals(1, comments.size());
   }
 
@@ -97,9 +97,9 @@ public final class CommentManagerDatastoreTest {
     Comment commentA = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
     commentManagerDatastore.updateComment(commentA.id, "Updated comment");
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment commentATest = comments.get(0);
-    assertEquals(DEALID, commentATest.dealId);
-    assertEquals(USERID_A, commentATest.userId);
-    assertEquals("Updated comment", commentATest.content);
+    Comment commentAResult = comments.get(0);
+    assertEquals(DEALID, commentAResult.dealId);
+    assertEquals(USERID_A, commentAResult.userId);
+    assertEquals("Updated comment", commentAResult.content);
   }
 }
