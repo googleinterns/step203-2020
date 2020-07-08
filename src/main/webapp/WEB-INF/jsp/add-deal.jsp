@@ -72,6 +72,7 @@
                   </div>
                 </div>
               </div>
+              <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div>
             </div>
 
             <div class="form-group">
