@@ -46,10 +46,7 @@ public class CommentManagerDatastore implements CommentManager {
     PreparedQuery pq = datastore.prepare(query);
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : pq.asIterable()) {
-      long id = entity.getKey().getId();
-      long userId = (long) entity.getProperty("user");
-      String content = (String) entity.getProperty("content");
-      comments.add(new Comment(id, dealId, userId, content));
+      comments.add(transformEntitytoComment(entity));
     }
     return comments;
   }
@@ -75,9 +72,20 @@ public class CommentManagerDatastore implements CommentManager {
       commentEntity.setProperty("content", content);
     }
     datastore.put(commentEntity);
+    return transformEntitytoComment(commentEntity);
+  }
+
+  /**
+   * Returns a Comment object transformed from a comment entity.
+   *
+   * @param entity Comment entity.
+   * @return a Comment object transformed from the entity.
+   */
+  private Comment transformEntitytoComment(Entity commentEntity) {
+    long id = commentEntity.getKey().getId();
     long dealId = (long) commentEntity.getProperty("deal");
     long userId = (long) commentEntity.getProperty("user");
-    content = (String) commentEntity.getProperty("content");
+    String content = (String) commentEntity.getProperty("content");
     return new Comment(id, dealId, userId, content);
   }
 }
