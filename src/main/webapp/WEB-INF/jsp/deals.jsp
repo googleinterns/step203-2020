@@ -26,7 +26,7 @@
     <div class="row mb-5 mt-5">
       <div class="col-md-8">
         <h2 class="masthead-heading mb-6" id = "deal-title">title</h2>
-        <img src="" class="deal-img" />
+        <img id="deal-image" src="" class="deal-img" />
       </div>
     </div>
     <nav>

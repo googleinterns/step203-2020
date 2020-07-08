@@ -16,31 +16,34 @@ const commentsData = {
 };
 
 /**
- * Get individual deal data
- * @param {object} dealData
+ * Loads the deal onto the page
+ * @param {object} deal
  */
-function loadDealDataToPage(dealData) {
+function loadDealDataToPage(deal) {
   const dealTitleElement = document.getElementById('deal-title');
-  dealTitleElement.innerText = dealData.description;
+  dealTitleElement.innerText = deal.description;
+
+  const dealImageElement = document.getElementById('deal-image');
+  dealImageElement.src = deal.image;
 
   const dealInfoElement = document.getElementById('deal-info');
-  dealInfoElement.innerText = dealData.description;
+  dealInfoElement.innerText = deal.description;
 
   const dealRestaurantElement = document.getElementById('restaurant-info');
-  dealRestaurantElement.innerText = dealData.restaurant.name;
+  dealRestaurantElement.innerText = deal.restaurant.name;
 
   const dealValidStart = document.getElementById('start-date');
-  dealValidStart.innerText = dealData.start;
+  dealValidStart.innerText = deal.start;
   const dealValidEnd = document.getElementById('end-date');
-  dealValidEnd.innerText = dealData.end;
+  dealValidEnd.innerText = deal.end;
 
   const dealPoster = document.getElementById('user-poster');
-  dealPoster.href = '/user/' + dealData.poster.id;
-  dealPoster.innerText = dealData.poster.username;
+  dealPoster.href = '/user/' + deal.poster.id;
+  dealPoster.innerText = deal.poster.username;
 
   const dealSource = document.getElementById('deal-source');
-  dealSource.innerText = dealData.source;
-  dealSource.href = dealData.source;
+  dealSource.innerText = deal.source;
+  dealSource.href = deal.source;
 }
 
 /**
