@@ -52,7 +52,6 @@ public class CommentServlet extends HttpServlet {
     Comment updatedComment = manager.updateComment(id, content);
     if (updatedComment == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return;
     } else {
       response.getWriter().println(JsonFormatter.getCommentJson(updatedComment));
     }
