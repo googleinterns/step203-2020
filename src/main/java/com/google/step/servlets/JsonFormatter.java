@@ -18,11 +18,17 @@ public class JsonFormatter {
     return json;
   }
 
+  public static String getDealListJson(List<Deal> deals) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getDealListBriefMaps(deals));
+    return json;
+  }
+
   private static Map<String, Object> getDealMap(Deal deal) {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("pic", deal.photoBlobkey); // TODO get url
+    dealMap.put("image", deal.photoBlobkey); // TODO get url
     dealMap.put("start", deal.start.toString());
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
@@ -37,7 +43,7 @@ public class JsonFormatter {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("pic", deal.photoBlobkey); // TODO get url
+    dealMap.put("image", deal.photoBlobkey); // TODO get url
     dealMap.put("poster", deal.posterId); // TODO use user name
     dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes

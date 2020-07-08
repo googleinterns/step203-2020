@@ -21,7 +21,19 @@
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
   <div class="container">
-    <input type="search">
+    <section class="page-section" id="restaurants-you-follow">
+      <h2 class="page-section-heading text-center text-secondary mb-4">Search Results</h2>
+      <form action="/search">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-search" aria-hidden="true"></i></span>
+            <!-- <i class="fas fa-search" aria-hidden="true"></i> -->
+          </div>
+          <input id="search-input" name="query" class="form-control" type="search" placeholder="Search" aria-label="Search">
+        </div>
+      </form>
+      <div id="results" class="card-columns"></div>
+    </section>
   </div>
   <%@include file="/WEB-INF/components/footer.html"%>
   <!-- Bootstrap core JS-->
@@ -31,6 +43,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <!-- Core theme JS-->
   <script src="js/scripts.js"></script>
+  <!-- Page JS -->
+  <script src="js/search.js"></script>
 </body>
 
 </html>
