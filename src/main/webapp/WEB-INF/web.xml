@@ -13,6 +13,11 @@
     <servlet-name>userPage</servlet-name>
     <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
   </servlet>
+  <servlet>
+    <servlet-name>search</servlet-name>
+    <jsp-file>/WEB-INF/jsp/search.jsp</jsp-file>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
@@ -24,5 +29,9 @@
   <servlet-mapping>
     <servlet-name>addDeal</servlet-name>
     <url-pattern>/add-deal</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>search</servlet-name>
+    <url-pattern>/search</url-pattern>
   </servlet-mapping>
 </web-app>
