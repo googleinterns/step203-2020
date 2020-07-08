@@ -54,7 +54,7 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
-  public void testReadRestaurant_notExist() throws Exception {
+  public void testReadRestaurant_doesNotExist() throws Exception {
     Restaurant restaurant = restaurantManagerDatastore.readRestaurant(1000);
     assertNull(restaurant);
   }

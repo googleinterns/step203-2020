@@ -39,10 +39,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    String name = (String) restaurantEntity.getProperty("name");
-    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
-
-    return new Restaurant(id, name, photoBlobkey);
+    return transformEntitytoRestaurant(restaurantEntity);
   }
 
   /** Updates restaurant info given an id */
@@ -73,10 +70,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   }
 
   /**
-   * Returns a User object transformed from a user entity.
+   * Returns a Restaurant object transformed from a restaurant entity.
    *
-   * @param entity User entity.
-   * @return a User object transformed from the entity.
+   * @param entity Restaurant entity.
+   * @return a Restaurant object transformed from the entity.
    */
   private Restaurant transformEntitytoRestaurant(Entity restaurantEntity) {
     String name = (String) restaurantEntity.getProperty("name");
