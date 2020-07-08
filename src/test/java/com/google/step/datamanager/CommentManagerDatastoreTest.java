@@ -50,57 +50,56 @@ public final class CommentManagerDatastoreTest {
 
   @Test
   public void testGetComments() {
-    Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Comment comment_B = commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
+    commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
+    commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment comment_A_Test = comments.get(0);
-    Comment comment_B_Test = comments.get(1);
-    assertEquals(DEALID, comment_A_Test.dealId);
-    assertEquals(USERID_A, comment_A_Test.userId);
-    assertEquals(CONTENT_A, comment_A_Test.content);
-    assertEquals(DEALID, comment_B_Test.dealId);
-    assertEquals(USERID_B, comment_B_Test.userId);
-    assertEquals(CONTENT_B, comment_B_Test.content);
+    Comment commentATest = comments.get(0);
+    Comment commentBTest = comments.get(1);
+    assertEquals(DEALID, commentATest.dealId);
+    assertEquals(USERID_A, commentATest.userId);
+    assertEquals(CONTENT_A, commentATest.content);
+    assertEquals(DEALID, commentBTest.dealId);
+    assertEquals(USERID_B, commentBTest.userId);
+    assertEquals(CONTENT_B, commentBTest.content);
   }
 
   @Test
   public void testDeleteSingleComment() {
-    Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    commentManagerDatastore.deleteComment(comment_A.id);
+    Comment commentA = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
+    commentManagerDatastore.deleteComment(commentA.id);
     assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
   }
 
   @Test
   public void testDeleteBothComments() {
-    Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Comment comment_B = commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
-    commentManagerDatastore.deleteComment(comment_A.id);
-    commentManagerDatastore.deleteComment(comment_B.id);
+    Comment commentA = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
+    Comment commentB = commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
+    commentManagerDatastore.deleteComment(commentA.id);
+    commentManagerDatastore.deleteComment(commentB.id);
     assertTrue(commentManagerDatastore.getComments(DEALID).isEmpty());
   }
 
   @Test
   public void testDeleteOnlyOneComment() {
-    Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Comment comment_B = commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
-    commentManagerDatastore.deleteComment(comment_A.id);
+    Comment commentA = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
+    commentManagerDatastore.createComment(DEALID, USERID_B, CONTENT_B);
+    commentManagerDatastore.deleteComment(commentA.id);
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment comment_B_Test = comments.get(0);
-    assertEquals(DEALID, comment_B_Test.dealId);
-    assertEquals(USERID_B, comment_B_Test.userId);
-    assertEquals(CONTENT_B, comment_B_Test.content);
+    Comment commentBTest = comments.get(0);
+    assertEquals(DEALID, commentBTest.dealId);
+    assertEquals(USERID_B, commentBTest.userId);
+    assertEquals(CONTENT_B, commentBTest.content);
     assertEquals(1, comments.size());
   }
 
   @Test
   public void testUpdateComment() {
-    Comment comment_A = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
-    Comment comment_A_Updated =
-        commentManagerDatastore.updateComment(comment_A.id, "Updated comment");
+    Comment commentA = commentManagerDatastore.createComment(DEALID, USERID_A, CONTENT_A);
+    commentManagerDatastore.updateComment(commentA.id, "Updated comment");
     List<Comment> comments = commentManagerDatastore.getComments(DEALID);
-    Comment comment_A_Test = comments.get(0);
-    assertEquals(DEALID, comment_A_Test.dealId);
-    assertEquals(USERID_A, comment_A_Test.userId);
-    assertEquals("Updated comment", comment_A_Test.content);
+    Comment commentATest = comments.get(0);
+    assertEquals(DEALID, commentATest.dealId);
+    assertEquals(USERID_A, commentATest.userId);
+    assertEquals("Updated comment", commentATest.content);
   }
 }
