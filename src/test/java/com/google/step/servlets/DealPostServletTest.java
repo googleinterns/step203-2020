@@ -5,9 +5,12 @@ import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,7 +18,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,24 +51,38 @@ public class DealPostServletTest {
 
   private DealPostServlet servlet;
   private DealManager dealManager;
+  private UserService userService;
+  private UserManager userManager;
+  HttpServletRequest request;
 
   @Before
   public void setUp() {
+    request = mock(HttpServletRequest.class);
     dealManager = mock(DealManager.class);
-    servlet = new DealPostServlet(dealManager);
-  }
+    userService = mock(UserService.class);
+    userManager = mock(UserManager.class);
+    User user = mock(User.class);
 
-  @Test
-  public void testDoPost_success() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
+    // default request parameter for sucess case
     when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
     when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
     when(request.getParameter("source")).thenReturn(SOURCE_A);
     when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
+
+    // behaviour when user is logged in
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(user);
+    when(user.getEmail()).thenReturn(EMAIL_A);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
+    servlet = new DealPostServlet(dealManager, userManager, userService);
+  }
+
+  @Test
+  public void testDoPost_success() throws IOException {
+    HttpServletResponse response = mock(HttpServletResponse.class);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -89,20 +109,14 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A));
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(response).sendRedirect(any());
   }
 
   @Test
   public void testDoPost_descriptionNull_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("description")).thenReturn(null);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
-    when(request.getParameter("start")).thenReturn(DATE_A);
-    when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -115,15 +129,9 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_descriptionEmpty_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("description")).thenReturn("");
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
-    when(request.getParameter("start")).thenReturn(DATE_A);
-    when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -139,12 +147,7 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(null);
-    when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -160,12 +163,7 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
-    when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn("trash");
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -181,12 +179,7 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn("2020-1-1");
-    when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -202,12 +195,8 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_B);
     when(request.getParameter("end")).thenReturn(DATE_A);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -223,11 +212,6 @@ public class DealPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
-    when(request.getParameter("start")).thenReturn(DATE_B);
-    when(request.getParameter("end")).thenReturn(DATE_A);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
     when(request.getParameter("restaurant")).thenReturn("aaa");
 
     StringWriter stringWriter = new StringWriter();

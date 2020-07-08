@@ -7,6 +7,7 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
   <title>Add Deal</title>
+  <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <!-- Google fonts-->
