@@ -94,27 +94,26 @@
           <button type="button" class="btn btn-primary mx-2" onclick="cancelProfileEditing();">Cancel</button>
         </div>
       </form>
-    </div>
 
-    <nav>
-      <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active" id="nav-deals-tab" data-toggle="tab" href="#deals" role="tab"
-          aria-controls="deals" aria-selected="true">Deals</a>
-        <a class="nav-item nav-link" id="nav-followers-tab" data-toggle="tab" href="#followers" role="tab"
-          aria-controls="followers" aria-selected="false">Followers</a>
-        <a class="nav-item nav-link" id="nav-following-tab" data-toggle="tab" href="#following" role="tab"
-          aria-controls="following" aria-selected="false">Following</a>
-        <a class="nav-item nav-link" id="nav-restaurants-tab" data-toggle="tab" href="#restaurants" role="tab"
-          aria-controls="restaurants" aria-selected="false">Restaurants Followed</a>
+      <nav>
+        <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-deals-tab" data-toggle="tab" href="#deals" role="tab"
+            aria-controls="deals" aria-selected="true">Deals</a>
+          <a class="nav-item nav-link" id="nav-followers-tab" data-toggle="tab" href="#followers" role="tab"
+            aria-controls="followers" aria-selected="false">Followers</a>
+          <a class="nav-item nav-link" id="nav-following-tab" data-toggle="tab" href="#following" role="tab"
+            aria-controls="following" aria-selected="false">Following</a>
+          <a class="nav-item nav-link" id="nav-restaurants-tab" data-toggle="tab" href="#restaurants" role="tab"
+            aria-controls="restaurants" aria-selected="false">Restaurants Followed</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="deals" role="tabpanel" aria-labelledby="nav-deals-tab"></div>
+        <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="nav-followers-tab"></div>
+        <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="nav-following-tab"></div>
+        <div class="tab-pane fade" id="restaurants" role="tabpanel" aria-labelledby="nav-restaurants-tab"></div>
       </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="deals" role="tabpanel" aria-labelledby="nav-deals-tab"></div>
-      <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="nav-followers-tab"></div>
-      <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="nav-following-tab"></div>
-      <div class="tab-pane fade" id="restaurants" role="tabpanel" aria-labelledby="nav-restaurants-tab"></div>
     </div>
-  </div>
   </div>
   <%@include file="/WEB-INF/components/footer.html"%>
   <!-- Bootstrap core JS-->
