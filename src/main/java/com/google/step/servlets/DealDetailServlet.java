@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.UserManager;
+import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -18,10 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/deals/*")
 public class DealDetailServlet extends HttpServlet {
 
-  private final DealManager manager;
+  private final DealManager dealManager;
+  private final UserManager userManager;
 
   public DealDetailServlet() {
-    manager = new DealManagerDatastore();
+    dealManager = new DealManagerDatastore();
+    userManager = new UserManagerDatastore();
   }
 
   /** Deletes the deal with the given id parameter */
@@ -36,7 +40,7 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    manager.deleteDeal(id);
+    dealManager.deleteDeal(id);
   }
 
   /** Gets the deal with the given id parameter */
@@ -49,7 +53,7 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    Deal deal = manager.readDeal(id);
+    Deal deal = dealManager.readDeal(id);
     if (deal == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
@@ -58,8 +62,7 @@ public class DealDetailServlet extends HttpServlet {
     // TODO get real restaurant
     Restaurant restaurant = new Restaurant(deal.restaurantId, "Restaurant Name", "ablobkey");
 
-    // TODO get real poster
-    User poster = new User(deal.posterId, "a@a.com");
+    User poster = userManager.readUser(deal.posterId);
 
     // TODO get real tags
     List<Tag> tags = new ArrayList<>();
