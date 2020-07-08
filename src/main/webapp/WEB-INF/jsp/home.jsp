@@ -9,13 +9,11 @@
   <title>Deal Finder</title>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="../../js/home-page.js"></script>
+  <script src="/js/home-page.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <!-- Third party plugin JS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-  <!-- Core theme JS-->
-  <script src="js/scripts.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
@@ -32,7 +30,7 @@
       <!-- Masthead Heading-->
       <h1 class="masthead-heading text-uppercase mb-2">Deal Finder</h1>
       <!-- Search Bar-->
-      <form class="form-inline active-pink-3 active-pink-4">
+      <form class="form-inline">
         <i class="fas fa-search" aria-hidden="true"></i>
         <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
       </form>
@@ -56,4 +54,5 @@
   </section>
   <%@include file="/WEB-INF/components/footer.html"%>
 </body>
+<script src="js/scripts.js"></script>
 </html>
