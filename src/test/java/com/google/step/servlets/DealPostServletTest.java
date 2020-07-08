@@ -15,7 +15,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,11 +47,15 @@ public class DealPostServletTest {
 
   private DealPostServlet servlet;
   private DealManager dealManager;
+  private UserService userService;
+  private UserManager userManager;
 
   @Before
   public void setUp() {
     dealManager = mock(DealManager.class);
-    servlet = new DealPostServlet(dealManager);
+    userService = mock(UserService.class);
+    userManager = mock(UserManager.class);
+    servlet = new DealPostServlet(dealManager, userManager, userService);
   }
 
   @Test
