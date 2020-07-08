@@ -56,6 +56,5 @@ public class CommentServlet extends HttpServlet {
     } else {
       response.getWriter().println(JsonFormatter.getCommentJson(updatedComment));
     }
-    response.sendRedirect("/deals/" + updatedComment.dealId);
   }
 }
