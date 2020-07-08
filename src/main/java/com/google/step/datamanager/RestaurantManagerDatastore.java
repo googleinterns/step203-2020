@@ -26,9 +26,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
-
-    return restaurant;
+    return new Restaurant(id, name, photoBlobkey);
   }
 
   /** Gets info on a restaurant given an id */
@@ -43,8 +41,8 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     }
     String name = (String) restaurantEntity.getProperty("name");
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
-    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
-    return restaurant;
+
+    return new Restaurant(id, name, photoBlobkey);
   }
 
   /** Updates restaurant info given an id */
@@ -84,7 +82,6 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     String name = (String) restaurantEntity.getProperty("name");
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
     long id = restaurantEntity.getKey().getId();
-    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
-    return restaurant;
+    return new Restaurant(id, name, photoBlobkey);
   }
 }
