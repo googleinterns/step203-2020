@@ -1,33 +1,3 @@
-const deal = {
-  'id': 1234,
-  'name': 'Starbucks Mocha 1-for-1',
-  'restaurant': {
-    'id': 1234,
-    'name': 'Starbucks',
-  },
-  'tags': [
-    {
-      'id': 1234,
-      'name': '1-for-1',
-    },
-    {
-      'id': 1234,
-      'name': 'mocha',
-    },
-  ],
-  'poster': {
-    'id': 1234,
-    'name': 'Alice Chen',
-    'username': 'alicechen',
-    'profile-pic': '/some-url-12345.jpg',
-  },
-  'source': 'https://www.starbucks.com.sg/',
-  'description': 'Starbucks Mocha 1-for-1',
-  'start': '23/06/2020',
-  'end': '25/06/2020',
-  'votes': 5,
-};
-
 const commentsData = {
   'comments': [
     {
@@ -46,39 +16,28 @@ const commentsData = {
 };
 
 /**
- * Adds a function to window onload event.
- * @param {function} func The function to be executed.
- */
-function addLoadEvent(func) {
-  const oldonload = window.onload;
-  if (typeof oldonload == 'function') {
-    window.onload = function() {
-      oldonload();
-      func();
-    };
-  } else {
-    window.onload = func;
-  }
-}
-
-/**
  * Get individual deal data
  * @param {object} dealData
  */
-function getDeal(dealData) {
+function loadDealDataToPage(dealData) {
   const dealTitleElement = document.getElementById('deal-title');
-  dealTitleElement.innerText = dealData.name;
+  dealTitleElement.innerText = dealData.description;
+
   const dealInfoElement = document.getElementById('deal-info');
   dealInfoElement.innerText = dealData.description;
+
   const dealRestaurantElement = document.getElementById('restaurant-info');
   dealRestaurantElement.innerText = dealData.restaurant.name;
+
   const dealValidStart = document.getElementById('start-date');
   dealValidStart.innerText = dealData.start;
   const dealValidEnd = document.getElementById('end-date');
   dealValidEnd.innerText = dealData.end;
+
   const dealPoster = document.getElementById('user-poster');
   dealPoster.href = '/user/' + dealData.poster.id;
   dealPoster.innerText = dealData.poster.username;
+
   const dealSource = document.getElementById('deal-source');
   dealSource.innerText = dealData.source;
   dealSource.href = dealData.source;
@@ -113,7 +72,21 @@ function createCommentElement(commentEntity) {
   return commentElement;
 }
 
+/**
+ * Calls backend for data on deal
+ */
+function initDeal() {
+  const myPath = window.location.pathname; // path is /deals/<id>
+  const myId = myPath.substr(7);
+  $.ajax({
+    url: '/api/deals/' + myId,
+  }).done((deal) => {
+    loadDealDataToPage(deal);
+  });
+}
+
 addLoadEvent(() => {
-  getDeal(deal);
+  initDeal();
+  // loadDealDataToPage(deal);
   getComments(commentsData);
 });

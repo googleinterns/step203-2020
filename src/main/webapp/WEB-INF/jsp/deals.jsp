@@ -10,7 +10,7 @@
   <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="../../js/go-to-deal.js"></script>
+  <script src="/js/go-to-deal.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
@@ -25,8 +25,8 @@
   <div class="container">
     <div class="row mb-5 mt-5">
       <div class="col-md-8">
-        <h2 class="masthead-heading mb-6" id = "deal-title">Buy 5 Free 10</h2>
-        <img src="../../assets/deals/starbucks.jpg" class="deal-img" />
+        <h2 class="masthead-heading mb-6" id = "deal-title">title</h2>
+        <img src="" class="deal-img" />
       </div>
     </div>
     <nav>
