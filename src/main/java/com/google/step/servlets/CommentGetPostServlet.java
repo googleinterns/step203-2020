@@ -42,11 +42,10 @@ public class CommentGetPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long dealId;
-    long userId;
+    long userId = 3; // TODO get authenticated user id
     String content;
     try {
       dealId = Long.parseLong(request.getParameter("dealId"));
-      userId = Long.parseLong(request.getParameter("userId"));
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;

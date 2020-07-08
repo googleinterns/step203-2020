@@ -121,7 +121,6 @@ public class CommentGetPostServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("dealId")).thenReturn(Long.toString(DEALID));
-    when(request.getParameter("userId")).thenReturn(Long.toString(USERID_A));
     when(request.getParameter("content")).thenReturn(CONTENT_A);
     when(mockCommentManager.createComment(DEALID, USERID_A, CONTENT_A)).thenReturn(COMMENT_A);
     commentGetPostServlet.doPost(request, response);
