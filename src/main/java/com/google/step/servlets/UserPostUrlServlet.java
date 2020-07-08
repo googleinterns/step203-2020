@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles users. */
+/** Servlet that handles usr upload url. */
 @WebServlet("/api/user-post-url")
 public class UserPostUrlServlet extends HttpServlet {
 
