@@ -59,10 +59,21 @@ const homePage = {
   ],
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  createCarouselElements([2, 2, 3, 3], 4);
-  createHomePage(homePage);
-});
+/**
+ * Adds a function to window onload event.
+ * @param {function} func The function to be executed.
+ */
+function addLoadEvent(func) {
+  const oldonload = window.onload;
+  if (typeof oldonload == 'function') {
+    window.onload = function() {
+      oldonload();
+      func();
+    };
+  } else {
+    window.onload = func;
+  }
+}
 
 /**
  * Creates deal elements on home page
@@ -143,3 +154,8 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
     carouselElements[i].children[3].href='#carousel-'+i;
   }
 }
+
+addLoadEvent(() => {
+  createCarouselElements([2, 2, 3, 3], 4);
+  createHomePage(homePage);
+});
