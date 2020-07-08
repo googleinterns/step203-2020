@@ -135,7 +135,7 @@ public class UserServletTest {
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
     when(userManager.readUser(1)).thenReturn(USER_A);
-    when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_A));
+    when(request.getParameter("id")).thenReturn(String.valueOf(ID_A));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);
@@ -157,7 +157,7 @@ public class UserServletTest {
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
     when(userManager.readUser(2)).thenReturn(USER_B);
-    when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_B));
+    when(request.getParameter("id")).thenReturn(String.valueOf(ID_B));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);

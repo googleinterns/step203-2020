@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles users. */
-@WebServlet("/api/users/*")
+@WebServlet("/api/user-post-url")
 public class UserPostUrlServlet extends HttpServlet {
 
   @Override

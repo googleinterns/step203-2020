@@ -47,71 +47,73 @@
         </div>
       </div>
 
-      <div id="profile-edit-forms" class="row mb-5" hidden>
+
+      <form id="profile-form" action="/api/users" method="POST" enctype="multipart/form-data" class="row mb-5" hidden>
         <div class="col-sm-4 col-lg-3">
           <img id="profile-photo-preview" class="img-fluid mb-4" alt="profile-photo" />
-
-          <form id="photo-form">
-            <label for="profile-photo-input" class="form-label">Profile photo</label>
-            <br>
-            <input type="file" class="form-control-file" name=" picture" id="profile-photo-file" onchange="profilePhotoPreview(this);">
-          </form>
         </div>
         <div class="col-sm-8 col-lg-9">
-          <form id="profile-form" action="/api/users" method="POST">
-            <div class="form-group row">
-              <label for="username-input" class="col-sm-2 col-form-label">Username</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" id="username-input"
-                  placeholder="Enter a username" required>
-              </div>
+          <div class="form-group row">
+            <label for="username-input" class="col-sm-2 col-form-label">Username</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="username" id="username-input" placeholder="Enter a username"
+                required>
             </div>
-            <div class="form-group row">
-              <label for="email-input" class="col-sm-2 col-form-label">Email</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" name="email" id="email-input" readonly>
-              </div>
+          </div>
+          <div class="form-group row">
+            <label for="email-input" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="email" id="email-input" readonly>
             </div>
-            <div class="form-group row">
-              <label for="bio-input" class="col-form-label col-sm-2">Bio</label>
-              <div class="col-sm-10">
-                <textarea class="form-control" name="bio" id="bio-input" maxlength="150"></textarea>
-              </div>
+          </div>
+          <div class="form-group row">
+            <label for="bio-input" class="col-form-label col-sm-2">Bio</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="bio" id="bio-input" maxlength="150"></textarea>
             </div>
-            <div class="form-group row">
-              <label for="tags-input" class="col-form-label col-sm-2">Tags</label>
-              <div class="col-sm-10">
-                <input id="tags-input" class="form-control" name="tags" type="text" data-role="tagsinput">
-                <small class="form-text text-muted">
-                  Start typing and hit enter to enter tags.
-                </small>
-              </div>
+          </div>
+          <div class="form-group row">
+            <label for="profile-photo-input" class="col-form-label col-sm-2">Bio</label>
+            <div class="col-sm-10">
+              <input type="file" class="form-control-file" name=" picture" id="profile-photo-file"
+                onchange="profilePhotoPreview(this);">
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-primary mx-2" onclick="cancelProfileEditing();">Cancel</button>
-          </form>
-        </div>
-      </div>
+          </div>
 
-      <nav>
-        <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" id="nav-deals-tab" data-toggle="tab" href="#deals" role="tab"
-            aria-controls="deals" aria-selected="true">Deals</a>
-          <a class="nav-item nav-link" id="nav-followers-tab" data-toggle="tab" href="#followers" role="tab"
-            aria-controls="followers" aria-selected="false">Followers</a>
-          <a class="nav-item nav-link" id="nav-following-tab" data-toggle="tab" href="#following" role="tab"
-            aria-controls="following" aria-selected="false">Following</a>
-          <a class="nav-item nav-link" id="nav-restaurants-tab" data-toggle="tab" href="#restaurants" role="tab"
-            aria-controls="restaurants" aria-selected="false">Restaurants Followed</a>
+          <div class="form-group row">
+            <label for="tags-input" class="col-form-label col-sm-2">Tags</label>
+            <div class="col-sm-10">
+              <input id="tags-input" class="form-control" name="tags" type="text" data-role="tagsinput">
+              <small class="form-text text-muted">
+                Start typing and hit enter to enter tags.
+              </small>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-primary mx-2" onclick="cancelProfileEditing();">Cancel</button>
         </div>
-      </nav>
-      <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="deals" role="tabpanel" aria-labelledby="nav-deals-tab"></div>
-        <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="nav-followers-tab"></div>
-        <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="nav-following-tab"></div>
-        <div class="tab-pane fade" id="restaurants" role="tabpanel" aria-labelledby="nav-restaurants-tab"></div>
-      </div>
+      </form>
     </div>
+
+    <nav>
+      <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-deals-tab" data-toggle="tab" href="#deals" role="tab"
+          aria-controls="deals" aria-selected="true">Deals</a>
+        <a class="nav-item nav-link" id="nav-followers-tab" data-toggle="tab" href="#followers" role="tab"
+          aria-controls="followers" aria-selected="false">Followers</a>
+        <a class="nav-item nav-link" id="nav-following-tab" data-toggle="tab" href="#following" role="tab"
+          aria-controls="following" aria-selected="false">Following</a>
+        <a class="nav-item nav-link" id="nav-restaurants-tab" data-toggle="tab" href="#restaurants" role="tab"
+          aria-controls="restaurants" aria-selected="false">Restaurants Followed</a>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="deals" role="tabpanel" aria-labelledby="nav-deals-tab"></div>
+      <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="nav-followers-tab"></div>
+      <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="nav-following-tab"></div>
+      <div class="tab-pane fade" id="restaurants" role="tabpanel" aria-labelledby="nav-restaurants-tab"></div>
+    </div>
+  </div>
   </div>
   <%@include file="/WEB-INF/components/footer.html"%>
   <!-- Bootstrap core JS-->

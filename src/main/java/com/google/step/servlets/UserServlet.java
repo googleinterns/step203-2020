@@ -70,10 +70,14 @@ public class UserServlet extends HttpServlet {
       return;
     }
 
+    String idString = request.getParameter("id");
+    if (idString == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     long id;
     User user;
     try {
-      String idString = request.getPathInfo().substring(1);
       id = Long.parseLong(idString);
       user = userManager.readUser(id);
     } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
