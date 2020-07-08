@@ -5,9 +5,12 @@ import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.UserManager;
@@ -55,6 +59,14 @@ public class DealPostServletTest {
     dealManager = mock(DealManager.class);
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
+    User user = mock(User.class);
+
+    // behaviour when user is logged in
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(user);
+    when(user.getEmail()).thenReturn(EMAIL_A);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
     servlet = new DealPostServlet(dealManager, userManager, userService);
   }
 
@@ -95,7 +107,7 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A));
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(response).sendRedirect(any());
   }
 
   @Test
