@@ -21,7 +21,7 @@
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
   <div class="container">
-    <section class="page-section" id="restaurants-you-follow">
+    <section class="page-section">
       <h2 class="page-section-heading text-center text-secondary mb-4">Search Results</h2>
       <form action="/search">
         <div class="input-group mb-3">
