@@ -120,10 +120,10 @@ public final class DealSearchManagerIndexTest {
 
   @Test
   public void testSearch_tags() {
-    dealSearchManager.putDeal(DEAL_A, Arrays.asList((long) 1));
-    dealSearchManager.putDeal(DEAL_B, Arrays.asList((long) 1, (long) 2));
+    dealSearchManager.putDeal(DEAL_A, Arrays.asList(1L));
+    dealSearchManager.putDeal(DEAL_B, Arrays.asList(1L, 2L));
 
-    List<Long> searchResults = dealSearchManager.search("", Arrays.asList((long) 2));
+    List<Long> searchResults = dealSearchManager.search("", Arrays.asList(2L));
 
     assertTrue(searchResults.size() == 1);
     assertTrue(searchResults.get(0) == DEAL_B.id);
@@ -148,11 +148,11 @@ public final class DealSearchManagerIndexTest {
             USER_ID_B,
             RESTAURANT_ID_B);
 
-    dealSearchManager.putDeal(deal1, Arrays.asList((long) 1));
-    dealSearchManager.putDeal(deal2, Arrays.asList((long) 2));
-    dealSearchManager.putDeal(deal3, Arrays.asList((long) 1));
+    dealSearchManager.putDeal(deal1, Arrays.asList(1L));
+    dealSearchManager.putDeal(deal2, Arrays.asList(2L));
+    dealSearchManager.putDeal(deal3, Arrays.asList(1L));
 
-    List<Long> searchResults = dealSearchManager.search("keyword", Arrays.asList((long) 1));
+    List<Long> searchResults = dealSearchManager.search("keyword", Arrays.asList(1L));
 
     assertTrue(searchResults.size() == 1);
     assertTrue(searchResults.get(0) == deal1.id);
