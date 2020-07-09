@@ -10,13 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
-@WebServlet("/api/restaurant/*")
+@WebServlet("/api/restaurants")
 public class RestaurantPostServlet extends HttpServlet {
 
-  private RestaurantManager manager = new RestaurantManagerDatastore();
+  private RestaurantManager manager;
 
   public RestaurantPostServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
+  }
+
+  public RestaurantPostServlet() {
+    manager = new RestaurantManagerDatastore();
   }
 
   /** Posts the restaurant with the given id parameter */
@@ -25,9 +29,8 @@ public class RestaurantPostServlet extends HttpServlet {
     String name = request.getParameter("name");
     String photoBlobkey = "A_BLOB_KEY";
 
-    Restaurant restaurant =
-        manager.createRestaurant(name, photoBlobkey);
+    Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
 
-    response.sendRedirect("/restaurant/"+restaurant.id);
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
   }
 }

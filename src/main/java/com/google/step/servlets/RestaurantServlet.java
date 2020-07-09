@@ -10,13 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles individual restaurants */
-@WebServlet("/api/restaurant/*")
+@WebServlet("/api/restaurants/*")
 public class RestaurantServlet extends HttpServlet {
 
-  private RestaurantManager manager = new RestaurantManagerDatastore();
+  private RestaurantManager manager;
 
   public RestaurantServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
+  }
+
+  public RestaurantServlet() {
+    manager = new RestaurantManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
@@ -39,10 +43,7 @@ public class RestaurantServlet extends HttpServlet {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
+    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -55,28 +56,24 @@ public class RestaurantServlet extends HttpServlet {
     response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
   }
 
-  /**Updates a restaurant with the given id parameter */
+  /** Updates a restaurant with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
-    } catch (NumberFormatException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    } catch (StringIndexOutOfBoundsException e) {
+    } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
     String name = request.getParameter("name");
-    String photoBlobkey = "A_BLOB_KEY"; //TODO Blobkey
+    String photoBlobkey = "A_BLOB_KEY"; // TODO Blobkey
     Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
+    Restaurant updatedRestaurant = manager.updateRestaurant(restaurant);
     if (updatedRestaurant == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    }
-    else {
+    } else {
       response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant));
     }
-    response.sendRedirect("/restaurant/"+ id);
   }
 }
