@@ -38,22 +38,21 @@
           </h3>
           <h6 class="text-secondary">
             Email: <span id="email"></span>
-            </65>
-            <div class="mt-2">
-              Bio: <span id="bio"></span>
-            </div>
-            <div id="tags" class="mt-2">
-            </div>
+          </h6>
+          <div class="mt-2">
+            Bio: <span id="bio"></span>
+          </div>
+          <div id="tags" class="mt-2">
+          </div>
         </div>
       </div>
 
 
-      <form id="profile-form" action="/api/users" method="POST" enctype="multipart/form-data" class="row mb-5" hidden>
+      <form id="profile-form" method="POST" enctype="multipart/form-data" class="row mb-5" hidden>
         <div class="col-sm-4 col-lg-3">
           <img id="profile-photo-preview" class="img-fluid mb-4" alt="profile-photo" />
         </div>
         <div class="col-sm-8 col-lg-9">
-          <input hidden name="id" id="id-input" />
           <div class="form-group row">
             <label for="username-input" class="col-sm-2 col-form-label">Username</label>
             <div class="col-sm-10">

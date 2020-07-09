@@ -131,7 +131,7 @@ public class UserServletTest {
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
     when(userManager.readUser(1)).thenReturn(USER_A);
-    when(request.getParameter("id")).thenReturn(String.valueOf(USER_ID_A));
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
     PowerMockito.mockStatic(ImageUploader.class);
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
@@ -156,14 +156,14 @@ public class UserServletTest {
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
     when(userManager.readUser(1)).thenReturn(USER_A);
-    when(request.getParameter("id")).thenReturn(String.valueOf(USER_ID_A));
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
     PowerMockito.mockStatic(ImageUploader.class);
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "profile-photo-file"))
         .willReturn(null);
 
     servlet.doPost(request, response);
-    User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, BIO_A_NEW);
+    User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
     verify(userManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());
@@ -181,7 +181,7 @@ public class UserServletTest {
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
     when(userManager.readUser(2)).thenReturn(USER_B);
-    when(request.getParameter("id")).thenReturn(String.valueOf(USER_ID_B));
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_B));
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet.doPost(request, response);

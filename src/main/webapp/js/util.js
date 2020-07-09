@@ -19,9 +19,8 @@ function addLoadEvent(func) {
  * Configures login status in header.
  */
 function configureHeaderLoginStatus() {
-  fetch('/api/authentication')
-      .then((response) => response.json())
-      .then((loginStatus) => {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
         const loginStatusLink = document.getElementById('login-status-link');
         const headerUsername = document.getElementById('header-username');
         if (loginStatus.isLoggedIn) {

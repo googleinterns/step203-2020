@@ -105,7 +105,7 @@ public class UserManagerDatastore implements UserManager {
       entity.setProperty("bio", user.bio);
     }
     if (user.photoBlobKey != null) {
-      discardUserEntity(entity);
+      discardImageOfUserEntity(entity);
       if (user.photoBlobKey.isPresent()) {
         entity.setProperty("photoBlobKey", user.photoBlobKey.get());
       } else {
@@ -118,17 +118,17 @@ public class UserManagerDatastore implements UserManager {
   @Override
   public void deleteUser(long id) {
     Entity entity = getUserEntity(id);
-    discardUserEntity(entity);
+    discardImageOfUserEntity(entity);
     datastore.delete(entity.getKey());
   }
 
   /**
-   * Discards the user entity. If the user entity has a blob key, remove the file identified by the
-   * blob key.
+   * Discards the image of the user entity. If the user entity has a blob key, remove the file
+   * identified by the blob key.
    *
    * @param entity the user entity.
    */
-  private void discardUserEntity(Entity entity) {
+  private void discardImageOfUserEntity(Entity entity) {
     if (entity.hasProperty("photoBlobKey")) {
       deleteImage((String) entity.getProperty("photoBlobKey"));
     }

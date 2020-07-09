@@ -72,14 +72,10 @@ public class UserServlet extends HttpServlet {
       return;
     }
 
-    String idString = request.getParameter("id");
-    if (idString == null) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
     long id;
     User user;
     try {
+      String idString = request.getPathInfo().substring(1); // remove '/'
       id = Long.parseLong(idString);
       user = userManager.readUser(id);
     } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
@@ -102,7 +98,7 @@ public class UserServlet extends HttpServlet {
     if (photoBlobKey != null) {
       updatedUser = new User(user.id, null, username, photoBlobKey, bio);
     } else {
-      updatedUser = new User(user.id, null, username, bio);
+      updatedUser = new User(user.id, null, username, null, bio);
     }
 
     userManager.updateUser(updatedUser);
