@@ -288,9 +288,8 @@ function cancelProfileEditing() {
  * @param {object} user The user whose profile is shown.
  */
 function configureButtons(user) {
-  fetch('/api/authentication')
-      .then((response) =>(response.json()))
-      .then((loginStatus) => {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
         if (loginStatus.isLoggedIn) {
           if (loginStatus.id == user.id) {
             configureProfileEditButton(user);
@@ -306,15 +305,13 @@ function configureButtons(user) {
  */
 function init() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
-  fetch('/api/users/' + id)
-      .then((response) => response.json())
-      .then((user) => {
+  $.ajax('/api/users/' + id)
+      .done((user) => {
         configureButtons(user);
         configureUserProfile(user);
       });
-  fetch('/api/user-post-url/' + id)
-      .then((response) => response.text())
-      .then((url) => {
+  $.ajax('/api/user-post-url/' + id)
+      .done((url) => {
         setProfileFormUrl(url);
       });
 }
