@@ -21,6 +21,6 @@ public class UserPostUrlServlet extends HttpServlet {
       return;
     }
     response.setContentType("text/html");
-    response.getWriter().println(ImageUploader.getUploadUrl("/api/users/" + String.valueOf(id)));
+    response.getWriter().println(ImageUploader.getUploadUrl("/api/users/" + id);
   }
 }
