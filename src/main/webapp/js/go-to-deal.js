@@ -22,6 +22,9 @@ let votes = 0;
  * @param {object} deal
  */
 function loadDealDataToPage(deal) {
+  $('#deal-loading').hide();
+  $('#deal-page').show();
+
   const dealTitleElement = document.getElementById('deal-title');
   dealTitleElement.innerText = deal.description;
 
@@ -124,16 +127,26 @@ function handleDownvote() {
 }
 
 /**
+ * Display Deal Not Found on the page
+ */
+function showNotFound() {
+  $('#deal-loading').hide();
+  $('#deal-notfound').show();
+}
+
+/**
  * Calls backend for data on deal
  */
 function initDeal() {
   const myPath = window.location.pathname; // path is /deals/<id>
   const myId = myPath.substr(7);
-  $.ajax({
-    url: '/api/deals/' + myId,
-  }).done((deal) => {
-    loadDealDataToPage(deal);
-  });
+  $.ajax('/api/deals/' + myId)
+      .done((deal) => {
+        loadDealDataToPage(deal);
+      })
+      .fail(() => {
+        showNotFound();
+      });
 }
 
 addLoadEvent(() => {
