@@ -43,7 +43,7 @@ public class CommentManagerDatastore implements CommentManager {
 
   /** Gets the list of comments with the given dealId */
   @Override
-  public List<Comment> getComments(long dealId) {
+  public List<Comment> getCommentsForDeal(long dealId) {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
     Query query = new Query("Comment").setFilter(propertyFilter);
     PreparedQuery pq = datastore.prepare(query);
