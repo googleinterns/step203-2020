@@ -28,7 +28,7 @@ public class JsonFormatter {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("image", deal.photoBlobkey); // TODO get url
+    dealMap.put("image", getImageUrl(deal.photoBlobkey));
     dealMap.put("start", deal.start.toString());
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
@@ -43,7 +43,7 @@ public class JsonFormatter {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("image", deal.photoBlobkey); // TODO get url
+    dealMap.put("image", getImageUrl(deal.photoBlobkey)); // TODO get url
     dealMap.put("poster", deal.posterId); // TODO use user name
     dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes
@@ -150,5 +150,9 @@ public class JsonFormatter {
   private static List<Map<String, Object>> getRestaurantListBriefMaps(
       List<Restaurant> restaurants) {
     return new ArrayList<>();
+  }
+
+  private static String getImageUrl(String blobKey) {
+    return "/api/images/" + blobKey;
   }
 }
