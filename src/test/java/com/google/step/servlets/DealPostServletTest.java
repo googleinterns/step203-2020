@@ -70,7 +70,7 @@ public class DealPostServletTest {
     dealManager = mock(DealManager.class);
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
-    User user = mock(User.class);
+    User currentUser = new User(EMAIL_A, "");
 
     // default request parameter for success case
     when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
@@ -81,8 +81,7 @@ public class DealPostServletTest {
 
     // behaviour when user is logged in
     when(userService.isUserLoggedIn()).thenReturn(true);
-    when(userService.getCurrentUser()).thenReturn(user);
-    when(user.getEmail()).thenReturn(EMAIL_A);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     servlet = new DealPostServlet(dealManager, userManager, userService);
