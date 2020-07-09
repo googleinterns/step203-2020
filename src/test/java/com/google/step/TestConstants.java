@@ -17,6 +17,7 @@ public class TestConstants {
 
   public static final String BLOBKEY_A = "a_blob_key";
   public static final String BLOBKEY_B = "a_blob_key_b";
+  public static final String BLOBKEY_C = "a_blob_key_c";
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -51,6 +52,7 @@ public class TestConstants {
 
   public static final String DESCRIPTION_A = "starbucks mocha 1-for-1";
   public static final String DESCRIPTION_B = "KFC chick buy 5 free 10";
+  public static final String DESCRIPTION_C = "bubble tea 50% off";
 
   public static final String DATE_A = "2020-01-01";
   public static final String DATE_B = "2020-01-02";
@@ -59,6 +61,7 @@ public class TestConstants {
 
   public static final String SOURCE_A = "www.example.com";
   public static final String SOURCE_B = "www.somethingelse.com";
+  public static final String SOURCE_C = "www.helloworld.com";
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;

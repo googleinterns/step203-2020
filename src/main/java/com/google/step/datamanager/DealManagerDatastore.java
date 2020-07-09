@@ -13,6 +13,8 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,7 +117,6 @@ public class DealManagerDatastore implements DealManager {
     }
     if (deal.description != null) {
       dealEntity.setProperty("description", deal.description);
-      System.out.println(deal.description);
     }
     if (deal.photoBlobkey != null) {
       dealEntity.setProperty("photoBlobkey", deal.photoBlobkey);
@@ -186,7 +187,15 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    return new ArrayList<Deal>();
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return voteManager.getVotes(deal2.id) - voteManager.getVotes(deal1.id); // Descending
+          }
+        });
+    return deals;
   }
 
   @Override

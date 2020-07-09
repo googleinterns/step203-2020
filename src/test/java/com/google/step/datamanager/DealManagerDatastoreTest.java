@@ -2,6 +2,7 @@ package com.google.step.datamanager;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_B;
+import static com.google.step.TestConstants.BLOBKEY_C;
 import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DATE_C;
@@ -9,26 +10,31 @@ import static com.google.step.TestConstants.DATE_D;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.DESCRIPTION_B;
+import static com.google.step.TestConstants.DESCRIPTION_C;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_B;
+import static com.google.step.TestConstants.RESTAURANT_ID_C;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.SOURCE_B;
+import static com.google.step.TestConstants.SOURCE_C;
 import static com.google.step.TestConstants.TAG_ID_A;
 import static com.google.step.TestConstants.TAG_ID_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Deal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +48,7 @@ public final class DealManagerDatastoreTest {
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
   private final FollowManager followManager = new FollowManagerDatastore();
-  private final VoteManager voteManager = mock(VoteManager.class);
+  private final VoteManager voteManager = new VoteManagerDatastore();
   private final DealTagManager dealTagManager = new DealTagManagerDatastore();
   private final DealSearchManager dealSearchManager = mock(DealSearchManager.class);
   private final DealManager dealManagerDatastore =
@@ -185,13 +191,13 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the users followed by USER_ID_A
     List<Deal> dealsForA = dealManagerDatastore.getDealsPublishedByFollowedUsers(USER_ID_A);
     assertEquals(2, dealsForA.size());
-    assertThat(dealsForA.get(0), samePropertyValuesAs(dealB));
-    assertThat(dealsForA.get(1), samePropertyValuesAs(dealC));
+    assertTrue(sameAttributeValues(dealsForA.get(0), dealB));
+    assertTrue(sameAttributeValues(dealsForA.get(1), dealC));
 
     // Get deals published by the users followed by USER_ID_B
     List<Deal> dealsB = dealManagerDatastore.getDealsPublishedByFollowedUsers(USER_ID_B);
     assertEquals(1, dealsB.size());
-    assertThat(dealsB.get(0), samePropertyValuesAs(dealA));
+    assertTrue(sameAttributeValues(dealsB.get(0), dealA));
   }
 
   @Test
@@ -211,8 +217,8 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the restaurants followed by USER_ID_B
     List<Deal> deals = dealManagerDatastore.getDealsPublishedByFollowedRestaurants(USER_ID_B);
     assertEquals(2, deals.size());
-    assertThat(deals.get(0), samePropertyValuesAs(dealA));
-    assertThat(deals.get(1), samePropertyValuesAs(dealB));
+    assertTrue(sameAttributeValues(deals.get(0), dealA));
+    assertTrue(sameAttributeValues(deals.get(1), dealB));
   }
 
   @Test
@@ -242,18 +248,74 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the tags followed by USER_ID_A
     List<Deal> dealsForA = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_A);
     assertEquals(2, dealsForA.size());
-    assertThat(dealsForA.get(0), samePropertyValuesAs(dealA));
-    assertThat(dealsForA.get(1), samePropertyValuesAs(dealB));
+    assertTrue(sameAttributeValues(dealsForA.get(0), dealA));
+    assertTrue(sameAttributeValues(dealsForA.get(1), dealB));
 
     // Get deals published by the tags followed by USER_ID_B
     List<Deal> dealsForB = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_B);
     assertEquals(1, dealsForB.size());
-    assertThat(dealsForB.get(0), samePropertyValuesAs(dealA));
+    assertTrue(sameAttributeValues(dealsForB.get(0), dealA));
 
     // Get deals published by the tags followed by USER_ID_C
     List<Deal> dealsForC = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_C);
     assertEquals(2, dealsForC.size());
-    assertThat(dealsForC.get(0), samePropertyValuesAs(dealA));
-    assertThat(dealsForC.get(1), samePropertyValuesAs(dealB));
+    assertTrue(sameAttributeValues(dealsForC.get(0), dealA));
+    assertTrue(sameAttributeValues(dealsForC.get(1), dealB));
+  }
+
+  @Test
+  public void testSortDealsByVotes() {
+    // Create 3 Deals
+    Deal dealA =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+    Deal dealB =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_B, BLOBKEY_B, DATE_B, DATE_C, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+    Deal dealC =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_C, BLOBKEY_C, DATE_C, DATE_D, SOURCE_C, USER_ID_C, RESTAURANT_ID_C);
+
+    // Add votes to the deals
+
+    // 1 net upvote for dealA
+    voteManager.vote(USER_ID_A, dealA.id, 1);
+    voteManager.vote(USER_ID_B, dealA.id, -1);
+    voteManager.vote(USER_ID_C, dealA.id, 1);
+
+    // 3 net upvotes for dealB
+    voteManager.vote(USER_ID_A, dealB.id, 1);
+    voteManager.vote(USER_ID_B, dealB.id, 1);
+    voteManager.vote(USER_ID_C, dealB.id, 1);
+
+    // 1 net downvote for dealC
+    voteManager.vote(USER_ID_A, dealC.id, -1);
+    voteManager.vote(USER_ID_B, dealC.id, -1);
+    voteManager.vote(USER_ID_C, dealC.id, 1);
+
+    List<Deal> dealList = new ArrayList<>();
+    dealList.add(dealA);
+    dealList.add(dealB);
+    dealList.add(dealC);
+
+    // Expected: B, A, C (Descending order of votes)
+    List<Deal> expectedList = new ArrayList<>();
+    expectedList.add(dealB);
+    expectedList.add(dealA);
+    expectedList.add(dealC);
+
+    List<Deal> dealSorted = dealManagerDatastore.sortDealsBasedOnVotes(dealList);
+    assertThat(dealSorted, IsIterableContainingInOrder.contains(expectedList.toArray()));
+  }
+
+  private boolean sameAttributeValues(Deal dealA, Deal dealB) {
+    return dealA.id == dealB.id
+        && dealA.description.equals(dealB.description)
+        && dealA.photoBlobkey.equals(dealB.photoBlobkey)
+        && dealA.start.equals(dealB.start)
+        && dealA.end.equals(dealB.end)
+        && dealA.source.equals(dealB.source)
+        && dealA.posterId == dealB.posterId
+        && dealA.restaurantId == dealB.restaurantId;
   }
 }
