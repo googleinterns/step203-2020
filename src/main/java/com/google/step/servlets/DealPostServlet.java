@@ -44,9 +44,8 @@ public class DealPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
-    System.out.println("post deal");
     String description = request.getParameter("description");
-    String photoBlobkey = "TODO"; // TODO connect to blobstore
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");
