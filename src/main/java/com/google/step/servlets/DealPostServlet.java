@@ -45,7 +45,7 @@ public class DealPostServlet extends HttpServlet {
       return;
     }
     String description = request.getParameter("description");
-    String photoBlobkey = "TODO"; // TODO connect to blobstore
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");

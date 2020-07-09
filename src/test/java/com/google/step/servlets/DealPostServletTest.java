@@ -31,9 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.BDDMockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ImageUploader.class)
 public class DealPostServletTest {
 
   private static final String RESTAURANT_ID_A_STRING = Long.toString(RESTAURANT_ID_A);
@@ -49,23 +53,27 @@ public class DealPostServletTest {
           USER_ID_A,
           RESTAURANT_ID_A);
 
+  private HttpServletRequest request;
   private DealPostServlet servlet;
   private DealManager dealManager;
   private UserService userService;
   private UserManager userManager;
-  HttpServletRequest request;
 
   @Before
   public void setUp() {
     request = mock(HttpServletRequest.class);
+
+    PowerMockito.mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(eq(request), anyString()))
+        .willReturn(BLOBKEY_A);
+
     dealManager = mock(DealManager.class);
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
     User user = mock(User.class);
 
-    // default request parameter for sucess case
+    // default request parameter for success case
     when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("photoBlobkey")).thenReturn(BLOBKEY_A);
     when(request.getParameter("start")).thenReturn(DATE_A);
     when(request.getParameter("end")).thenReturn(DATE_B);
     when(request.getParameter("source")).thenReturn(SOURCE_A);
