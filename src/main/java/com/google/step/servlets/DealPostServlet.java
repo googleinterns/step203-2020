@@ -29,14 +29,14 @@ public class DealPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String description = request.getParameter("description");
-    String photoBlobkey = "TODO"; // TODO connect to blobstore
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");
-    long poster = 1234; // TODO get authenticated user
-    long restaurant;
+    long posterId = 1234; // TODO get authenticated user
+    long restaurantId;
     try {
-      restaurant = Long.parseLong(request.getParameter("restaurant"));
+      restaurantId = Long.parseLong(request.getParameter("restaurant"));
     } catch (NumberFormatException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -60,8 +60,9 @@ public class DealPostServlet extends HttpServlet {
     }
 
     Deal deal =
-        manager.createDeal(description, photoBlobkey, start, end, source, poster, restaurant);
+        manager.createDeal(description, photoBlobkey, start, end, source, posterId, restaurantId);
 
+    response.setStatus(HttpServletResponse.SC_OK);
     // TODO redirect to deal page instead of printing deal
     response.getWriter().println(JsonFormatter.getDealJson(deal));
   }

@@ -46,6 +46,18 @@ form.addEventListener('submit', (event) => {
   });
 });
 
+/*
+ * Sets the form URL
+ */
+form.style.display = 'none';
+$.ajax({
+  url: '/api/upload-deals-url',
+  method: 'GET',
+}).done((url) => {
+  form.action = url;
+  form.style.display = 'block';
+});
+
 /**
  * Custom validation for form
  * @return {boolean}
@@ -75,7 +87,6 @@ function checkDatesOrdered() {
  * @param {object} restaurant
  */
 function selectRestaurant(restaurant) {
-  console.log(restaurant);
   const restaurantDiv = $('#restaurant-selected')[0];
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
