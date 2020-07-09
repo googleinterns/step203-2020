@@ -23,6 +23,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     datastore = DatastoreServiceFactory.getDatastoreService();
   }
 
+  /** Creates a new restaurant entity */
   @Override
   public Restaurant createRestaurant(String name, String photoBlobkey) {
     Entity entity = new Entity("Restaurant");
@@ -33,11 +34,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
-
-    return restaurant;
+    return new Restaurant(id, name, photoBlobkey);
   }
 
+  /** Gets info on a restaurant given an id */
   @Override
   public Restaurant readRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);
@@ -47,10 +47,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-
     return transformEntityToRestaurant(restaurantEntity);
   }
 
+  /** Updates restaurant info given an id */
   @Override
   public Restaurant updateRestaurant(Restaurant restaurant) {
     Key key = KeyFactory.createKey("Restaurant", restaurant.id);
@@ -71,6 +71,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     return transformEntityToRestaurant(restaurantEntity);
   }
 
+  /** Deletes restaurant given an id */
   @Override
   public void deleteRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);
@@ -101,10 +102,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
    * @param entity Restaurant entity.
    * @return a Restaurant object transformed from the entity.
    */
-  private Restaurant transformEntityToRestaurant(Entity entity) {
-    String name = (String) entity.getProperty("name");
-    String photoBlobkey = (String) entity.getProperty("photoBlobkey");
-    Restaurant restaurant = new Restaurant(entity.getKey().getId(), name, photoBlobkey);
-    return restaurant;
+  private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
+    String name = (String) restaurantEntity.getProperty("name");
+    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
+    long id = restaurantEntity.getKey().getId();
+    return new Restaurant(id, name, photoBlobkey);
   }
 }
