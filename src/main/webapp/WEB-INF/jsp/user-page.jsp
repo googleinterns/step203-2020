@@ -38,12 +38,12 @@
           </h3>
           <h6 class="text-secondary">
             Email: <span id="email"></span>
-            </65>
-            <div class="mt-2">
-              Bio: <span id="bio"></span>
-            </div>
-            <div id="tags" class="mt-2">
-            </div>
+          </h6>
+          <div class="mt-2">
+            Bio: <span id="bio"></span>
+          </div>
+          <div id="tags" class="mt-2">
+          </div>
         </div>
       </div>
 
