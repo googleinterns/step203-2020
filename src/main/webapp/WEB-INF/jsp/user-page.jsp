@@ -48,7 +48,7 @@
       </div>
 
 
-      <form id="profile-form" action="/api/users" method="POST" enctype="multipart/form-data" class="row mb-5" hidden>
+      <form id="profile-form" method="POST" enctype="multipart/form-data" class="row mb-5" hidden>
         <div class="col-sm-4 col-lg-3">
           <img id="profile-photo-preview" class="img-fluid mb-4" alt="profile-photo" />
         </div>
