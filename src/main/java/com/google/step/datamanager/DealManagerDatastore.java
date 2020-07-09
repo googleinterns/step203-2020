@@ -13,8 +13,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,7 +167,6 @@ public class DealManagerDatastore implements DealManager {
   }
 
   /** Retrieves deals posted by tags followed by user */
-  //
   @Override
   public List<Deal> getDealsPublishedByFollowedTags(long userId) {
     List<Deal> dealResults = new ArrayList<>();
@@ -189,14 +186,16 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return voteManager.getVotes(deal2.id) - voteManager.getVotes(deal1.id); // Descending
-          }
-        });
-    return deals;
+    return new ArrayList<Deal>();
+  }
+
+  @Override
+  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
+    return new ArrayList<Deal>();
+  }
+
+  @Override
+  public List<Deal> getTrendingDeals() {
+    return new ArrayList<Deal>();
   }
 }

@@ -104,7 +104,8 @@ public class FollowManagerDatastore implements FollowManager {
     return getFollowedSomething(followerId, TAG_FIELD_NAME);
   }
 
-  private List<Long> getFollowedSomething(long followerId, String fieldName) {
+  @Override
+  public List<Long> getFollowedSomething(long followerId, String fieldName) {
     Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
     Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
     Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);

@@ -19,6 +19,7 @@ public interface DealManager {
 
   public void deleteDeal(long id);
 
+  /** Gets trending deals based on an integrated criteria of votes, comments, freshness */
   public List<Deal> getTrendingDeals();
 
   public List<Deal> getDealsPublishedByFollowedUsers(long userId);
