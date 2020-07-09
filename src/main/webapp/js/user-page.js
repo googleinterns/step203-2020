@@ -234,8 +234,6 @@ function showProfileEditingForm(user) {
   profileEditForm.hidden = false;
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
-  const idInput = document.getElementById('id-input');
-  idInput.value = user.id;
   if (typeof user.picture != 'undefined') {
     const profilePhotoPreview =
       document.getElementById('profile-photo-preview');
@@ -314,7 +312,7 @@ function init() {
         configureButtons(user);
         configureUserProfile(user);
       });
-  fetch('/api/user-post-url')
+  fetch('/api/user-post-url/' + id)
       .then((response) => response.text())
       .then((url) => {
         setProfileFormUrl(url);
