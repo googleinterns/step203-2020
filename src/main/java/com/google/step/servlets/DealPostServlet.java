@@ -29,7 +29,7 @@ public class DealPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String description = request.getParameter("description");
-    String photoBlobkey = "TODO"; // TODO connect to blobstore
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
     String start = request.getParameter("start");
     String end = request.getParameter("end");
     String source = request.getParameter("source");
