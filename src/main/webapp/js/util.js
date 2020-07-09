@@ -14,3 +14,27 @@ function addLoadEvent(func) {
     window.onload = func;
   }
 }
+
+/**
+ * Configures login status in header.
+ */
+function configureHeaderLoginStatus() {
+  fetch('/api/authentication')
+      .then((response) => response.json())
+      .then((loginStatus) => {
+        const loginStatusLink = document.getElementById('login-status-link');
+        const headerUsername = document.getElementById('header-username');
+        if (loginStatus.isLoggedIn) {
+          loginStatusLink.href = loginStatus.logoutUrl;
+          loginStatusLink.innerText = 'Logout';
+          headerUsername.innerText = loginStatus.username;
+          headerUsername.href = '/user/' + loginStatus.id;
+        } else {
+          loginStatusLink.href = loginStatus.loginUrl;
+          loginStatusLink.innerText = 'Login';
+          headerUsername.innerText = '';
+        }
+      });
+}
+
+addLoadEvent(configureHeaderLoginStatus);
