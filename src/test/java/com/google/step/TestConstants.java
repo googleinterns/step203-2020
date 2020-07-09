@@ -1,5 +1,7 @@
 package com.google.step;
 
+import com.google.step.model.Deal;
+
 public class TestConstants {
   // User
   public static final long USER_ID_A = 1;
@@ -43,7 +45,7 @@ public class TestConstants {
   public static final long TAG_ID_C = 3;
   public static final long TAG_ID_D = 4;
 
-  // Deal
+  // Deal attributes
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
   public static final long DEAL_ID_C = 3;
@@ -71,4 +73,27 @@ public class TestConstants {
   public static final long COMMENT_ID_B = 2;
   public static final long COMMENT_ID_C = 3;
   public static final long COMMENT_ID_D = 4;
+
+  // Deal class
+  public static final Deal DEAL_A =
+      new Deal(
+          DEAL_ID_A,
+          DESCRIPTION_A,
+          BLOBKEY_A,
+          DATE_A,
+          DATE_B,
+          SOURCE_A,
+          USER_ID_A,
+          RESTAURANT_ID_A);
+
+  public static final Deal DEAL_B =
+      new Deal(
+          DEAL_ID_B,
+          DESCRIPTION_B,
+          BLOBKEY_B,
+          DATE_C,
+          DATE_D,
+          SOURCE_B,
+          USER_ID_B,
+          RESTAURANT_ID_B);
 }
