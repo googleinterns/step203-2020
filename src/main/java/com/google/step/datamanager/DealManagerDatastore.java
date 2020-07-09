@@ -7,7 +7,6 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,11 +47,7 @@ public class DealManagerDatastore implements DealManager {
     long id = key.getId();
 
     // gets the tag IDs from the tag names
-    List<Long> tagIds =
-        tagNames.stream()
-            .map(tagName -> tagManager.readOrCreateTagByName(tagName))
-            .map(tag -> tag.id)
-            .collect(Collectors.toList());
+    List<Long> tagIds = getTagIdsFromNames(tagNames);
 
     dealTagManager.updateTagsOfDeal(id, tagIds);
 
@@ -90,7 +85,7 @@ public class DealManagerDatastore implements DealManager {
   }
 
   @Override
-  public Deal updateDeal(Deal deal) {
+  public Deal updateDeal(Deal deal, List<String> tagNames) {
     Key key = KeyFactory.createKey("Deal", deal.id);
     Entity dealEntity;
     try {
@@ -117,8 +112,19 @@ public class DealManagerDatastore implements DealManager {
     if (deal.restaurantId != -1) {
       dealEntity.setProperty("restaurantId", deal.restaurantId);
     }
+    if (tagNames != null) {
+      List<Long> tagIds = getTagIdsFromNames(tagNames);
+      dealTagManager.updateTagsOfDeal(deal.id, tagIds);
+    }
     datastore.put(dealEntity);
-    searchManager.putDeal(deal, new ArrayList<>());
+    searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
     return readDeal(deal.id);
+  }
+
+  private List<Long> getTagIdsFromNames(List<String> tagNames) {
+    return tagNames.stream()
+        .map(tagName -> tagManager.readOrCreateTagByName(tagName))
+        .map(tag -> tag.id)
+        .collect(Collectors.toList());
   }
 }

@@ -6,6 +6,7 @@ import com.google.step.model.Deal;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -92,8 +93,10 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
+    List<String> tagNames = null; // TODO get from request parameter
+
     Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
-    manager.updateDeal(deal);
+    manager.updateDeal(deal, tagNames);
     response.setStatus(HttpServletResponse.SC_OK);
   }
 
