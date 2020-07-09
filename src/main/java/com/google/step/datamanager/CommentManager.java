@@ -6,7 +6,7 @@ import java.util.List;
 public interface CommentManager {
   public Comment createComment(long dealId, long userId, String content);
 
-  public List<Comment> getComments(long dealId);
+  public List<Comment> getCommentsForDeal(long dealId);
 
   public Comment updateComment(long id, String content);
 
