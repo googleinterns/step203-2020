@@ -151,6 +151,5 @@ function initDeal() {
 
 addLoadEvent(() => {
   initDeal();
-  // loadDealDataToPage(deal);
   getComments(commentsData);
 });
