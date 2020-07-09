@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.User;
+import java.util.ArrayList;
+import java.util.List;
 
 /** A data manager handling datastore operations on user. */
 public class UserManagerDatastore implements UserManager {
@@ -117,5 +119,18 @@ public class UserManagerDatastore implements UserManager {
   public void deleteUser(long id) {
     Key key = KeyFactory.createKey("User", id);
     datastore.delete(key);
+  }
+
+  @Override
+  public List<User> readUsers(List<Long> ids) {
+    List<User> users = new ArrayList<>();
+    for (long id : ids) {
+      try {
+        users.add(readUser(id));
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+    }
+    return users;
   }
 }

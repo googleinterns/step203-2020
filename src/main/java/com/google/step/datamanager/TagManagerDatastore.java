@@ -9,6 +9,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Tag;
+import java.util.ArrayList;
+import java.util.List;
 
 /** A class handling tag operations. */
 public class TagManagerDatastore implements TagManager {
@@ -71,5 +73,18 @@ public class TagManagerDatastore implements TagManager {
     long id = (long) entity.getKey().getId();
 
     return new Tag(id, name);
+  }
+
+  @Override
+  public List<Tag> readTags(List<Long> ids) {
+    List<Tag> tags = new ArrayList<>();
+    for (long id : ids) {
+      try {
+        tags.add(readTag(id));
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+    }
+    return tags;
   }
 }
