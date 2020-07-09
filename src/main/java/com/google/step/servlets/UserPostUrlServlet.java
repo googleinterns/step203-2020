@@ -16,7 +16,7 @@ public class UserPostUrlServlet extends HttpServlet {
     try {
       String idString = request.getPathInfo().substring(1);
       id = Long.parseLong(idString);
-    } catch (NumberFormatException | IndexOutOfBoundsException e) {
+    } catch (NumberFormatException | IndexOutOfBoundsException | NullPointerException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }

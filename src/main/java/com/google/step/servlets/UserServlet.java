@@ -41,7 +41,7 @@ public class UserServlet extends HttpServlet {
     try {
       String idString = request.getPathInfo().substring(1); // Remove '/'
       id = Long.parseLong(idString);
-    } catch (IndexOutOfBoundsException | NumberFormatException e) {
+    } catch (IndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -78,7 +78,7 @@ public class UserServlet extends HttpServlet {
       String idString = request.getPathInfo().substring(1); // remove '/'
       id = Long.parseLong(idString);
       user = userManager.readUser(id);
-    } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+    } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
