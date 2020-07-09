@@ -6,6 +6,8 @@ import com.google.step.model.Deal;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,8 +61,12 @@ public class DealPostServlet extends HttpServlet {
       return;
     }
 
+    // TODO get the tag names from request parameter
+    List<String> tagNames = new ArrayList<>();
+
     Deal deal =
-        manager.createDeal(description, photoBlobkey, start, end, source, posterId, restaurantId);
+        manager.createDeal(
+            description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
 
     response.setStatus(HttpServletResponse.SC_OK);
     // TODO redirect to deal page instead of printing deal

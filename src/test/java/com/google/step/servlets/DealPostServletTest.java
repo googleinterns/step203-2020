@@ -8,6 +8,7 @@ import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -85,7 +86,8 @@ public class DealPostServletTest {
             eq(DATE_B),
             eq(SOURCE_A),
             anyLong(),
-            eq(RESTAURANT_ID_A)))
+            eq(RESTAURANT_ID_A),
+            anyList()))
         .thenReturn(DEAL);
 
     servlet.doPost(request, response);
@@ -98,7 +100,8 @@ public class DealPostServletTest {
             eq(DATE_B),
             eq(SOURCE_A),
             anyLong(),
-            eq(RESTAURANT_ID_A));
+            eq(RESTAURANT_ID_A),
+            anyList());
     verify(response).setStatus(HttpServletResponse.SC_OK);
   }
 
