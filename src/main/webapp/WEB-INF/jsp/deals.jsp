@@ -33,6 +33,15 @@
         <a class="nav-item nav-link active" id="nav-details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">Details</a>
         <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Comments</a>
       </div>
+      <div class="d-flex justify-content-end">
+        <button type="button" id="upvote-btn" class="btn text-danger">
+          <span class="fas fa-angle-up"></span>
+        </button>
+        <span id="votes-num" class="my-auto">20</span>
+        <button type="button" id="downvote-btn" class="btn">
+          <span class="fas fa-angle-down text-success"></span>
+        </button>
+      </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="nav-details-tab">

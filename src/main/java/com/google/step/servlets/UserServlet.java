@@ -71,16 +71,17 @@ public class UserServlet extends HttpServlet {
     }
 
     long id;
+    User user;
     try {
       String idString = request.getPathInfo().substring(1);
       id = Long.parseLong(idString);
-    } catch (IndexOutOfBoundsException | NumberFormatException e) {
+      user = userManager.readUser(id);
+    } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
     String userEmail = userService.getCurrentUser().getEmail();
-    User user = userManager.readUser(id);
     if (!userEmail.equals(user.email)) {
       // Inconsistent request with login status
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
