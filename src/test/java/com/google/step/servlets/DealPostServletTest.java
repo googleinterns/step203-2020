@@ -58,9 +58,11 @@ public class DealPostServletTest {
   private DealManager dealManager;
   private UserService userService;
   private UserManager userManager;
+  private HttpServletResponse response;
+  private PrintWriter writer;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     request = mock(HttpServletRequest.class);
 
     PowerMockito.mockStatic(ImageUploader.class);
@@ -71,6 +73,12 @@ public class DealPostServletTest {
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
     User currentUser = new User(EMAIL_A, "");
+
+    // mock response
+    response = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
 
     // default request parameter for success case
     when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
@@ -89,12 +97,6 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_success() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
     when(dealManager.createDeal(
             eq(DESCRIPTION_A),
             anyString(),
@@ -120,14 +122,18 @@ public class DealPostServletTest {
   }
 
   @Test
+  public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
+    when(userService.isUserLoggedIn()).thenReturn(false);
+    when(userService.getCurrentUser()).thenReturn(null);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
   public void testDoPost_descriptionNull_badRequest() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("description")).thenReturn(null);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -136,13 +142,7 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_descriptionEmpty_badRequest() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("description")).thenReturn("");
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -151,14 +151,7 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_dateNull_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("start")).thenReturn(null);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -167,14 +160,7 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_dateInvalid_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("end")).thenReturn("trash");
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -183,14 +169,7 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_dateWrongFormat_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("start")).thenReturn("2020-1-1");
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -199,15 +178,8 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_dateWrongOrder_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("start")).thenReturn(DATE_B);
     when(request.getParameter("end")).thenReturn(DATE_A);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
@@ -216,14 +188,7 @@ public class DealPostServletTest {
 
   @Test
   public void testDoPost_restaurantInvalid_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(request.getParameter("restaurant")).thenReturn("aaa");
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
 
     servlet.doPost(request, response);
 
