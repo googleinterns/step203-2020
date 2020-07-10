@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,11 +71,15 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
+    String timestamp = LocalDateTime.now(ZoneId.of("Asia/Singapore")).toString();
+    entity.setProperty("timestamp", timestamp);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(
+            id, description, photoBlobkey, start, end, source, posterId, restaurantId, timestamp);
     searchManager.putDeal(deal, new ArrayList<>());
 
     return deal;
@@ -95,7 +101,10 @@ public class DealManagerDatastore implements DealManager {
     String source = (String) dealEntity.getProperty("source");
     long posterId = (long) dealEntity.getProperty("posterId");
     long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    String timestamp = (String) dealEntity.getProperty("timestamp");
+    Deal deal =
+        new Deal(
+            id, description, photoBlobkey, start, end, source, posterId, restaurantId, timestamp);
     return deal;
   }
 
@@ -200,11 +209,21 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
-    return new ArrayList<Deal>();
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return LocalDateTime.parse(deal2.timestamp)
+                .compareTo(LocalDateTime.parse(deal1.timestamp)); // Descending
+          }
+        });
+    return deals;
   }
 
   @Override
   public List<Deal> getTrendingDeals() {
+    // Sort based on New & Top
     return new ArrayList<Deal>();
   }
 }

@@ -34,6 +34,7 @@ import com.google.step.model.Deal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.After;
 import org.junit.Before;
@@ -111,7 +112,7 @@ public final class DealManagerDatastoreTest {
 
   @Test
   public void testUpdate_invalidId_returnsNull() {
-    Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1);
+    Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(deal);
     assertNull(updatedDeal);
   }
@@ -121,7 +122,8 @@ public final class DealManagerDatastoreTest {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
-    Deal dealToUpdate = new Deal(createdDeal.id, DESCRIPTION_B, null, null, null, null, -1, -1);
+    Deal dealToUpdate =
+        new Deal(createdDeal.id, DESCRIPTION_B, null, null, null, null, -1, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
 
     // only description should change, everything else should remain
@@ -140,7 +142,7 @@ public final class DealManagerDatastoreTest {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
-    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1);
+    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
     assertEquals(USER_ID_A, updatedDeal.posterId);
   }
@@ -159,7 +161,8 @@ public final class DealManagerDatastoreTest {
             DATE_D,
             SOURCE_B,
             -1,
-            RESTAURANT_ID_B);
+            RESTAURANT_ID_B,
+            null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
     assertEquals(DESCRIPTION_B, updatedDeal.description);
     assertEquals(BLOBKEY_B, updatedDeal.photoBlobkey);
@@ -308,6 +311,41 @@ public final class DealManagerDatastoreTest {
     assertThat(dealSorted, IsIterableContainingInOrder.contains(expectedList.toArray()));
   }
 
+  @Test
+  public void testSortDealsByNew() throws Exception {
+    // Create 3 Deals with 1 second delay
+    Deal dealA =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+    TimeUnit.SECONDS.sleep(1);
+    Deal dealB =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_B, BLOBKEY_B, DATE_B, DATE_C, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+    TimeUnit.SECONDS.sleep(1);
+    Deal dealC =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_C, BLOBKEY_C, DATE_C, DATE_D, SOURCE_C, USER_ID_C, RESTAURANT_ID_C);
+
+    // Random order: A, C, B
+    List<Deal> dealList = new ArrayList<>();
+    dealList.add(dealA);
+    dealList.add(dealC);
+    dealList.add(dealB);
+
+    // Expected order: C, B, A (Newest to Oldest)
+    List<Deal> expectedList = new ArrayList<>();
+    expectedList.add(dealC);
+    expectedList.add(dealB);
+    expectedList.add(dealA);
+
+    List<Deal> dealSorted = dealManagerDatastore.sortDealsBasedOnNew(dealList);
+    System.out.println(dealSorted.get(0).timestamp);
+    System.out.println(dealSorted.get(1).timestamp);
+    System.out.println(dealSorted.get(2).timestamp);
+    assertThat(dealSorted, IsIterableContainingInOrder.contains(expectedList.toArray()));
+  }
+
+  // Check whether two objects are equivalent in attributes
   private boolean sameAttributeValues(Deal dealA, Deal dealB) {
     return dealA.id == dealB.id
         && dealA.description.equals(dealB.description)
