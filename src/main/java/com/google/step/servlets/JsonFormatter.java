@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import com.google.gson.Gson;
+import com.google.step.model.Comment;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -12,6 +13,22 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
+  public static String getCommentsJson(List<Comment> comments) {
+    Gson gson = new Gson();
+    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
+    for (Comment comment : comments) {
+      commentMapList.add(getCommentMap(comment));
+    }
+    String json = gson.toJson(commentMapList);
+    return json;
+  }
+
+  public static String getCommentJson(Comment comment) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getCommentMap(comment));
+    return json;
+  }
+
   public static String getDealJson(Deal deal) {
     Gson gson = new Gson();
     String json = gson.toJson(getDealMap(deal));
@@ -22,6 +39,15 @@ public class JsonFormatter {
     Gson gson = new Gson();
     String json = gson.toJson(getDealListBriefMaps(deals));
     return json;
+  }
+
+  private static Map<String, Object> getCommentMap(Comment comment) {
+    Map<String, Object> commentMap = new HashMap<>();
+    commentMap.put("id", comment.id);
+    commentMap.put("dealId", comment.dealId);
+    commentMap.put("userId", comment.userId);
+    commentMap.put("content", comment.content);
+    return commentMap;
   }
 
   private static Map<String, Object> getDealMap(Deal deal) {
