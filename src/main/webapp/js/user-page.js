@@ -13,6 +13,12 @@ function configureUserProfile(user) {
   bioContainer.innerText = user.bio;
   const profileImage = document.getElementById('profile-photo');
   profileImage.src = user.picture;
+
+  configureDealsPublishedBy(user);
+  configureUserFollowers(user);
+  configureUsersFollowedBy(user);
+  configureRestaurantsFollowedBy(user);
+  configureTagsFollowedBy(user);
 }
 
 /**
@@ -213,10 +219,12 @@ function configureFollowButton(user, userLoggedInId) {
  * @param {object} user The user whose profile is being edited.
  */
 function showProfileEditingForm(user) {
+  const profileEditForms = document.getElementById('profile-edit-forms');
+  profileEditForms.hidden = false;
+  const profileInfoForm = document.getElementById('profile-form');
+  profileInfoForm.action += '/' + user.id;
   const profile = document.getElementById('profile');
   profile.hidden = true;
-  const profileForm = document.getElementById('profile-form');
-  profileForm.hidden = false;
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
   if (typeof user.picture != 'undefined') {
@@ -263,8 +271,8 @@ function profilePhotoPreview(input) {
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
-  const profileForm = document.getElementById('profile-form');
-  profileForm.hidden = true;
+  const profileEditForms = document.getElementById('profile-edit-forms');
+  profileEditForms.hidden = true;
 }
 
 /**

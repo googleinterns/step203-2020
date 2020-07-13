@@ -33,9 +33,10 @@ $('#restaurant-input').blur(function() {
 /*
  * Form validation
  */
+$('#from-date, #to-date').change(checkDatesOrdered);
 const form = document.getElementsByClassName('needs-validation')[0];
 form.addEventListener('submit', (event) => {
-  if (form.checkValidity() === false) {
+  if (form.checkValidity() === false || !checkFormValid()) {
     event.preventDefault();
     event.stopPropagation();
   }
@@ -45,13 +46,47 @@ form.addEventListener('submit', (event) => {
   });
 });
 
+/*
+ * Sets the form URL
+ */
+form.style.display = 'none';
+$.ajax({
+  url: '/api/upload-deals-url',
+  method: 'GET',
+}).done((url) => {
+  form.action = url;
+  form.style.display = 'block';
+});
+
+/**
+ * Custom validation for form
+ * @return {boolean}
+ */
+function checkFormValid() {
+  return checkDatesOrdered();
+}
+
+/**
+ * Checks if the dates of the form is ordered and displays error message.
+ * @return {boolean}
+ */
+function checkDatesOrdered() {
+  const start = document.getElementById('from-date');
+  const end = document.getElementById('to-date');
+  const message = document.getElementById('date-error-msg');
+  if (start.value && end.value && start.value > end.value) {
+    message.style.display = 'block';
+    return false;
+  }
+  message.style.display = 'none';
+  return true;
+}
 
 /**
  * Handles restaurant selection
  * @param {object} restaurant
  */
 function selectRestaurant(restaurant) {
-  console.log(restaurant);
   const restaurantDiv = $('#restaurant-selected')[0];
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
