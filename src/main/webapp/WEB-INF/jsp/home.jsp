@@ -6,10 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <title>Freelancer - Start Bootstrap Theme</title>
-  <script src="js/util.js"></script>
+  <title>Deal Finder</title>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="/js/util.js"></script>
+  <script src="/js/home-page.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+  <!-- Third party plugin JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
@@ -20,17 +25,35 @@
 
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
-  <div class="container">
-    Home Page
-  </div>
+  <!-- Masthead-->
+  <header class="header-bg-img masthead text-white text-center">
+    <div class="container d-flex align-items-center flex-column">
+      <!-- Masthead Heading-->
+      <h1 class="masthead-heading text-uppercase mb-2">Deal Finder</h1>
+      <!-- Search Bar-->
+      <form class="form-inline">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
+      </form>
+    </div>
+  </header>
+  <section class="page-section" id="popular-deals">
+    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Trending Deals</h2>
+    <%@include file="/WEB-INF/components/section-carousel.html"%>
+  </section>
+  <section class="page-section" id="restaurants-you-follow">
+    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Restaurants You Follow</h2>
+    <%@include file="/WEB-INF/components/section-carousel.html"%>
+  </section>
+  <section class="page-section" id="users-you-follow">
+    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Users You Follow</h2>
+    <%@include file="/WEB-INF/components//section-carousel.html"%>
+  </section>
+  <section class="page-section" id="tags-you-follow">
+    <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">#Tags You Follow</h2>
+    <%@include file="/WEB-INF/components/section-carousel.html"%>
+  </section>
   <%@include file="/WEB-INF/components/footer.html"%>
-  <!-- Bootstrap core JS-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-  <!-- Third party plugin JS-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-  <!-- Core theme JS-->
-  <script src="js/scripts.js"></script>
 </body>
-
+<script src="js/scripts.js"></script>
 </html>
