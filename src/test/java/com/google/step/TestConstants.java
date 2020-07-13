@@ -80,8 +80,6 @@ public class TestConstants {
   public static final long RESTAURANT_ID_B = 2;
   public static final long RESTAURANT_ID_C = 3;
   public static final long RESTAURANT_ID_D = 4;
-  public static final String RESTAURANT_NAME_A = "A";
-  public static final String RESTAURANT_NAME_B = "B";
 
   public static final String RESTAURANT_NAME_A = "A";
   public static final String RESTAURANT_NAME_B = "B";
