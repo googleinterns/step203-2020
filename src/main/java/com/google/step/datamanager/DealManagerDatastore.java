@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DealManagerDatastore implements DealManager {
 
@@ -55,15 +56,7 @@ public class DealManagerDatastore implements DealManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    String description = (String) dealEntity.getProperty("description");
-    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
-    String start = (String) dealEntity.getProperty("start");
-    String end = (String) dealEntity.getProperty("end");
-    String source = (String) dealEntity.getProperty("source");
-    long posterId = (long) dealEntity.getProperty("posterId");
-    long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
-    return deal;
+    return transformEntitytoDeal(dealEntity);
   }
 
   @Override
@@ -103,7 +96,7 @@ public class DealManagerDatastore implements DealManager {
     }
     datastore.put(dealEntity);
     searchManager.putDeal(deal, new ArrayList<>());
-    return readDeal(deal.id);
+    return transformEntitytoDeal(dealEntity);
   }
 
   /** Retrieves deals posted by users followed by user */
@@ -146,6 +139,7 @@ public class DealManagerDatastore implements DealManager {
    * @return a Deal object transformed from the entity.
    */
   private Deal transformEntitytoDeal(Entity dealEntity) {
+    long id = dealEntity.getKey().getId();
     String description = (String) dealEntity.getProperty("description");
     String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
     String start = (String) dealEntity.getProperty("start");
@@ -153,6 +147,6 @@ public class DealManagerDatastore implements DealManager {
     String source = (String) dealEntity.getProperty("source");
     long posterId = (long) dealEntity.getProperty("posterId");
     long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    return new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
   }
 }
