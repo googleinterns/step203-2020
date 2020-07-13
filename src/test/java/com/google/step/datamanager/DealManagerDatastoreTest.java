@@ -6,6 +6,7 @@ import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DATE_C;
 import static com.google.step.TestConstants.DATE_D;
+import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.DESCRIPTION_B;
@@ -52,13 +53,7 @@ public final class DealManagerDatastoreTest {
     Deal deal =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
-    assertEquals(DESCRIPTION_A, deal.description);
-    assertEquals(BLOBKEY_A, deal.photoBlobkey);
-    assertEquals(DATE_A, deal.start);
-    assertEquals(DATE_B, deal.end);
-    assertEquals(SOURCE_A, deal.source);
-    assertEquals(USER_ID_A, deal.posterId);
-    assertEquals(RESTAURANT_ID_A, deal.restaurantId);
+    assertEquals(DEAL_A, deal);
   }
 
   @Test
@@ -67,13 +62,7 @@ public final class DealManagerDatastoreTest {
         dealManagerDatastore.createDeal(
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
     Deal deal = dealManagerDatastore.readDeal(createdDeal.id);
-    assertEquals(DESCRIPTION_A, deal.description);
-    assertEquals(BLOBKEY_A, deal.photoBlobkey);
-    assertEquals(DATE_A, deal.start);
-    assertEquals(DATE_B, deal.end);
-    assertEquals(SOURCE_A, deal.source);
-    assertEquals(USER_ID_A, deal.posterId);
-    assertEquals(RESTAURANT_ID_A, deal.restaurantId);
+    assertEquals(DEAL_A, deal);
   }
 
   @Test
@@ -108,13 +97,17 @@ public final class DealManagerDatastoreTest {
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
 
     // only description should change, everything else should remain
-    assertEquals(DESCRIPTION_B, updatedDeal.description);
-    assertEquals(BLOBKEY_A, updatedDeal.photoBlobkey);
-    assertEquals(DATE_A, updatedDeal.start);
-    assertEquals(DATE_B, updatedDeal.end);
-    assertEquals(SOURCE_A, updatedDeal.source);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
-    assertEquals(RESTAURANT_ID_A, updatedDeal.restaurantId);
+    Deal expected =
+        new Deal(
+            DEAL_ID_A,
+            DESCRIPTION_B,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A);
+    assertEquals(expected, updatedDeal);
   }
 
   @Test
@@ -125,7 +118,7 @@ public final class DealManagerDatastoreTest {
             DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
     Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
+    assertEquals(DEAL_A, updatedDeal);
   }
 
   @Test
@@ -144,12 +137,17 @@ public final class DealManagerDatastoreTest {
             -1,
             RESTAURANT_ID_B);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
-    assertEquals(DESCRIPTION_B, updatedDeal.description);
-    assertEquals(BLOBKEY_B, updatedDeal.photoBlobkey);
-    assertEquals(DATE_C, updatedDeal.start);
-    assertEquals(DATE_D, updatedDeal.end);
-    assertEquals(SOURCE_B, updatedDeal.source);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
-    assertEquals(RESTAURANT_ID_B, updatedDeal.restaurantId);
+
+    Deal expected =
+        new Deal(
+            createdDeal.id,
+            DESCRIPTION_B,
+            BLOBKEY_B,
+            DATE_C,
+            DATE_D,
+            SOURCE_B,
+            USER_ID_A,
+            RESTAURANT_ID_B);
+    assertEquals(expected, updatedDeal);
   }
 }
