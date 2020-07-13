@@ -156,8 +156,8 @@ function showNotFound() {
 }
 
 /**
- * Calls backend to get user's current vote status, and add upvote/downvote
- * click events
+ * Calls backend to get user's current vote status, and shows the
+ * upvote/downvote buttons
  */
 function initVotes() {
   $.ajax('/api/vote/' + dealId)
