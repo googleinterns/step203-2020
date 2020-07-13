@@ -140,7 +140,7 @@ public class CommentGetPostServletTest {
 
     String expected =
         String.format(
-            "[{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}]",
+            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
             COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);

@@ -4,8 +4,6 @@ import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.model.Comment;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -55,8 +53,6 @@ public class CommentGetPostServlet extends HttpServlet {
     content = request.getParameter("content");
     Comment comment = manager.createComment(dealId, userId, content);
     response.setContentType("application/json;");
-    response
-        .getWriter()
-        .println(JsonFormatter.getCommentsJson(new ArrayList<Comment>(Arrays.asList(comment))));
+    response.getWriter().println(JsonFormatter.getCommentJson(comment));
   }
 }
