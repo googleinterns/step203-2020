@@ -26,8 +26,7 @@
       <form action="/search">
         <div class="input-group mb-3">
           <div class="input-group-prepend">
-            <span class="input-group-text" id="basic-addon1"><i class="fas fa-search" aria-hidden="true"></i></span>
-            <!-- <i class="fas fa-search" aria-hidden="true"></i> -->
+            <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
           </div>
           <input id="search-input" name="query" class="form-control" type="search" placeholder="Search" aria-label="Search">
         </div>
