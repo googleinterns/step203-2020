@@ -135,7 +135,7 @@ public class DealManagerDatastore implements DealManager {
   /**
    * Returns a Deal object transformed from a deal entity.
    *
-   * @param entity Deal entity.
+   * @param dealEntity Deal entity.
    * @return a Deal object transformed from the entity.
    */
   private Deal transformEntitytoDeal(Entity dealEntity) {
