@@ -17,23 +17,8 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="/css/styles.css" rel="stylesheet" />
-  <style>
-    #downvote-btn:hover {
-      color: #dc3545;
-    }
-
-    #downvote-btn.active {
-      color: #dc3545;
-    }
-
-    #upvote-btn:hover {
-      color: #28a745;
-    }
-
-    #upvote-btn.active {
-      color: #28a745;
-    }
-  </style>
+  <!-- Page CSS-->
+  <link href="/css/deals.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
