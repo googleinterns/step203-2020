@@ -9,4 +9,10 @@ public interface VoteManager {
    * dealId}) in {@code dir} direction.
    */
   public void vote(long userId, long dealId, int dir);
+
+  /**
+   * Gets the direction that the user (specified by {@code userId}) votes for the deal (specified by
+   * {@code dealId}).
+   */
+  public int getDirection(long userId, long dealId);
 }
