@@ -1,5 +1,8 @@
 package com.google.step;
 
+import com.google.step.model.Deal;
+import com.google.step.model.Restaurant;
+import com.google.step.model.Tag;
 import com.google.step.model.User;
 
 public class TestConstants {
@@ -19,6 +22,9 @@ public class TestConstants {
 
   public static final String BLOBKEY_A = "a_blob_key";
   public static final String BLOBKEY_B = "a_blob_key_b";
+
+  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
+  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -47,6 +53,11 @@ public class TestConstants {
   public static final long TAG_ID_C = 3;
   public static final long TAG_ID_D = 4;
 
+  public static final Tag TAG_A = new Tag(TAG_ID_A, TAG_NAME_A);
+  public static final Tag TAG_B = new Tag(TAG_ID_B, TAG_NAME_B);
+  public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
+  public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
+
   // Deal
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
@@ -70,9 +81,38 @@ public class TestConstants {
   public static final long RESTAURANT_ID_C = 3;
   public static final long RESTAURANT_ID_D = 4;
 
+  public static final String RESTAURANT_NAME_A = "A";
+  public static final String RESTAURANT_NAME_B = "B";
+
+  public static final Restaurant RESTAURANT_A =
+      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+
   // Comment
   public static final long COMMENT_ID_A = 1;
   public static final long COMMENT_ID_B = 2;
   public static final long COMMENT_ID_C = 3;
   public static final long COMMENT_ID_D = 4;
+
+  // Deal class
+  public static final Deal DEAL_A =
+      new Deal(
+          DEAL_ID_A,
+          DESCRIPTION_A,
+          BLOBKEY_A,
+          DATE_A,
+          DATE_B,
+          SOURCE_A,
+          USER_ID_A,
+          RESTAURANT_ID_A);
+
+  public static final Deal DEAL_B =
+      new Deal(
+          DEAL_ID_B,
+          DESCRIPTION_B,
+          BLOBKEY_B,
+          DATE_C,
+          DATE_D,
+          SOURCE_B,
+          USER_ID_B,
+          RESTAURANT_ID_B);
 }
