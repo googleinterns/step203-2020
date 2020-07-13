@@ -16,6 +16,7 @@ const commentsData = {
 };
 
 let votes = 0;
+let dealId;
 
 /**
  * Loads the deal onto the page
@@ -53,6 +54,8 @@ function loadDealDataToPage(deal) {
   const voteElement = document.getElementById('votes-num');
   votes = deal.votes;
   voteElement.innerText = deal.votes;
+
+  dealId = deal.id;
 }
 
 /**
@@ -86,7 +89,7 @@ function createCommentElement(commentEntity) {
 
 let myVote = 0;
 /**
- * Updates vote UI based on global variable myVote
+ * Updates vote UI based on global variable vote and myVote
  */
 function updateMyVote() {
   const upvoteBtn = document.getElementById('upvote-btn');
@@ -103,13 +106,29 @@ function updateMyVote() {
 }
 
 /**
+ * Calls backend and POSTs vote to deal
+ * @param {number} dir
+ */
+function postVote(dir) {
+  $.ajax({
+    url: '/api/vote/' + dealId,
+    method: 'POST',
+    data: {
+      dir: dir,
+    },
+  });
+}
+
+/**
  * Called when the user clicks the upvote button
  */
 function handleUpvote() {
   if (myVote == 1) {
     myVote = 0;
+    postVote(0);
   } else {
     myVote = 1;
+    postVote(1);
   }
   updateMyVote();
 }
@@ -120,8 +139,10 @@ function handleUpvote() {
 function handleDownvote() {
   if (myVote == -1) {
     myVote = 0;
+    postVote(0);
   } else {
     myVote = -1;
+    postVote(-1);
   }
   updateMyVote();
 }
@@ -137,14 +158,15 @@ function showNotFound() {
 /**
  * Calls backend to get user's current vote status, and add upvote/downvote
  * click events
- * @param {number} dealId
  */
-function initVotes(dealId) {
+function initVotes() {
   $.ajax('/api/vote/' + dealId)
       .done((dir) => {
-        dir = parseInt(dir);
-        console.log(dir);
-        console.log(typeof(dir));
+        myVote = parseInt(dir);
+        votes -= myVote; // exclude myVote from global vote count
+        const voteDiv = document.getElementById('vote-div');
+        voteDiv.style.display = 'block';
+        updateMyVote();
       });
 }
 
