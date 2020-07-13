@@ -31,6 +31,7 @@ public class UserServlet extends HttpServlet {
   private DealManager dealManager = new DealManagerDatastore();
   private FollowManager followManager = new FollowManagerDatastore();
   private TagManager tagManager = new TagManagerDatastore();
+  // TODO: private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
   public UserServlet(UserManager userManager, UserService userService) {
     super();
@@ -71,6 +72,7 @@ public class UserServlet extends HttpServlet {
     List<Long> tagIds = followManager.getFollowedTagIds(id);
     List<Tag> tags = tagManager.readTags(tagIds);
 
+    // TODO: List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
     List<Restaurant> restaurants =
         new ArrayList<>(); // followManager.getRestaurantsFollowedByUser(id);
 
