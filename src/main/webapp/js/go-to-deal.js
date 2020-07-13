@@ -179,7 +179,7 @@ function initDeal() {
   $.ajax('/api/deals/' + myId)
       .done((deal) => {
         loadDealDataToPage(deal);
-        initVotes(deal.id);
+        initVotes();
       })
       .fail(() => {
         showNotFound();
