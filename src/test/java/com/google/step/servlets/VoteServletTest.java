@@ -51,7 +51,9 @@ public class VoteServletTest {
     StringWriter stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
+  }
 
+  public void setUpUserAuthentication() {
     // behaviour when user is logged in
     when(userService.isUserLoggedIn()).thenReturn(true);
     User currentUser = new User(EMAIL_A, "");
@@ -75,6 +77,7 @@ public class VoteServletTest {
 
   @Test
   public void testDoPost_sucess() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(DIR_ONE);
@@ -88,6 +91,7 @@ public class VoteServletTest {
 
   @Test
   public void testDoPost_invalidPath_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(DIR_ONE);
@@ -99,6 +103,7 @@ public class VoteServletTest {
 
   @Test
   public void testDoPost_invalidDir_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(DIR_INVALID);
@@ -110,6 +115,7 @@ public class VoteServletTest {
 
   @Test
   public void testDoPost_missingDir_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(null);
@@ -135,6 +141,7 @@ public class VoteServletTest {
 
   @Test
   public void testDoGet_success() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getPathInfo()).thenReturn(DEAL_PATH);
