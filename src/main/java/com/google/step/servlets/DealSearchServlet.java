@@ -1,8 +1,10 @@
 package com.google.step.servlets;
 
-import com.google.gson.Gson;
+import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealSearchManager;
 import com.google.step.datamanager.DealSearchManagerIndex;
+import com.google.step.model.Deal;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/search/deals")
 public class DealSearchServlet extends HttpServlet {
 
-  private final DealSearchManager manager;
+  private final DealSearchManager dealSearchManager;
+  private final DealManager dealManager;
 
   public DealSearchServlet() {
-    manager = new DealSearchManagerIndex();
+    dealSearchManager = new DealSearchManagerIndex();
+    dealManager = new DealManagerDatastore();
   }
 
   /**
@@ -53,11 +57,15 @@ public class DealSearchServlet extends HttpServlet {
       tagsList.add(id);
     }
 
-    List<Long> dealIds = manager.search(query, tagsList);
+    List<Long> dealIds = dealSearchManager.search(query, tagsList);
+    List<Deal> deals = new ArrayList<>();
+    for (long dealId : dealIds) {
+      Deal deal = dealManager.readDeal(dealId);
+      deals.add(deal);
+    }
 
-    // TODO return a list of brief deals instead of just the ID
-    Gson gson = new Gson();
-    String json = gson.toJson(dealIds);
+    String json = JsonFormatter.getDealListJson(deals);
+    response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 }
