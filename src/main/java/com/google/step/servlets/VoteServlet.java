@@ -61,6 +61,7 @@ public class VoteServlet extends HttpServlet {
       return;
     }
     voteManager.vote(userId, dealId, Integer.parseInt(dir));
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
 
   @Override
@@ -86,6 +87,7 @@ public class VoteServlet extends HttpServlet {
     }
 
     response.setContentType("text/html");
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
     response.getWriter().println(voteManager.getDirection(userId, dealId));
   }
 }

@@ -1,11 +1,11 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.USER_A;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class VoteServletTest {
 
-  private static final String DEAL_PATH = "/123";
+  private static final String DEAL_PATH = "/" + DEAL_ID_A;
   private static final String DEAL_PATH_INVALID = "/trash";
   private static final String DIR_ONE = "1";
   private static final String DIR_INVALID = "00";
@@ -36,6 +36,7 @@ public class VoteServletTest {
   private UserManager userManager;
   private VoteManager voteManager;
   private HttpServletResponse response;
+  private PrintWriter writer;
 
   @Before
   public void setUp() throws IOException {
@@ -48,7 +49,7 @@ public class VoteServletTest {
     // mock HttpServletResponse
     response = mock(HttpServletResponse.class);
     StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
+    writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
     // behaviour when user is logged in
@@ -61,6 +62,9 @@ public class VoteServletTest {
   @Test
   public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getPathInfo()).thenReturn(DEAL_PATH);
+
     when(userService.isUserLoggedIn()).thenReturn(false);
     when(userService.getCurrentUser()).thenReturn(null);
 
@@ -78,8 +82,8 @@ public class VoteServletTest {
 
     servlet.doPost(request, response);
 
-    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(voteManager).vote(anyLong(), eq((long) 123), eq(1));
+    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
+    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
   }
 
   @Test
@@ -113,5 +117,31 @@ public class VoteServletTest {
 
     servlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_userNotLoggedIn_unauthorized() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getPathInfo()).thenReturn(DEAL_PATH);
+
+    when(userService.isUserLoggedIn()).thenReturn(false);
+    when(userService.getCurrentUser()).thenReturn(null);
+
+    servlet.doGet(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoGet_success() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getPathInfo()).thenReturn(DEAL_PATH);
+
+    servlet.doGet(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
+    verify(voteManager).getDirection(USER_ID_A, DEAL_ID_A);
   }
 }
