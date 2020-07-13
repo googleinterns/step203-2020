@@ -6,20 +6,54 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
+  private final DealTagManager dealTagManager;
+  private final FollowManager followManager;
   private final DealSearchManager searchManager;
+  private final VoteManager voteManager;
+
+  private final String FOLLOWER_FIELD_NAME = "follower";
+  private final String RESTAURANT_FIELD_NAME = "restaurant";
+  private final String USER_FIELD_NAME = "user";
+  private final String TAG_FIELD_NAME = "tag";
+
+  private final Long oldestDealTimestamp = 1594652120L;
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
+    dealTagManager = new DealTagManagerDatastore();
+    followManager = new FollowManagerDatastore();
     searchManager = new DealSearchManagerIndex();
+    voteManager = new VoteManagerDatastore();
+  }
+
+  public DealManagerDatastore(
+      FollowManager followManager,
+      DealTagManager dealTagManager,
+      VoteManager voteManager,
+      DealSearchManager searchManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.followManager = followManager;
+    this.dealTagManager = dealTagManager;
+    this.voteManager = voteManager;
+    this.searchManager = searchManager;
   }
 
   @Override
@@ -83,7 +117,6 @@ public class DealManagerDatastore implements DealManager {
     }
     if (deal.description != null) {
       dealEntity.setProperty("description", deal.description);
-      System.out.println(deal.description);
     }
     if (deal.photoBlobkey != null) {
       dealEntity.setProperty("photoBlobkey", deal.photoBlobkey);
@@ -105,39 +138,6 @@ public class DealManagerDatastore implements DealManager {
     return transformEntitytoDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by users followed by user */
-  @Override
-  public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
-    return new ArrayList<Deal>();
-  }
-
-  /** Retrieves deals posted by restaurants followed by user */
-  @Override
-  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
-    return new ArrayList<Deal>();
-  }
-
-  /** Retrieves deals posted by tags followed by user */
-  @Override
-  public List<Deal> getDealsPublishedByFollowedTags(long userId) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> getTrendingDeals() {
-    return new ArrayList<Deal>();
-  }
-
   /**
    * Returns a Deal object transformed from a deal entity.
    *
@@ -156,5 +156,136 @@ public class DealManagerDatastore implements DealManager {
     String timestamp = (String) dealEntity.getProperty("timestamp");
     return new Deal(
         id, description, photoBlobkey, start, end, source, posterId, restaurantId, timestamp);
+  }
+
+  /** Retrieves deals posted by _ followed by user */
+  private List<Deal> getDealsPublishedByFollowedRestaurantsOrUsers(
+      long userId, String fieldName, String filterAttribute) {
+    List<Deal> dealResults = new ArrayList<>();
+    List<Long> idsOfFollowedFieldName = getFollowedSomething(userId, fieldName);
+    for (Long id : idsOfFollowedFieldName) {
+      Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.EQUAL, id);
+      Query query = new Query("Deal").setFilter(propertyFilter);
+      PreparedQuery pq = datastore.prepare(query);
+      for (Entity entity : pq.asIterable()) {
+        dealResults.add(readDeal(entity.getKey().getId()));
+      }
+    }
+    return dealResults;
+  }
+
+  private List<Long> getFollowedSomething(long followerId, String fieldName) {
+    Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
+    Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
+    Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);
+    Query query = new Query("Follow").setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+
+    List<Long> list = new ArrayList<>();
+    for (Entity entity : pq.asIterable()) {
+      list.add((Long) entity.getProperty(fieldName));
+    }
+    return list;
+  }
+
+  /** Retrieves deals posted by users followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
+    return getDealsPublishedByFollowedRestaurantsOrUsers(userId, USER_FIELD_NAME, "posterId");
+  }
+
+  /** Retrieves deals posted by restaurants followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
+    return getDealsPublishedByFollowedRestaurantsOrUsers(
+        userId, RESTAURANT_FIELD_NAME, "restaurantId");
+  }
+
+  /** Retrieves deals posted by tags followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedTags(long userId) {
+    List<Deal> dealResults = new ArrayList<>();
+    List<Long> dealIdResults = new ArrayList<>();
+    List<Long> idsOfFollowedTags = followManager.getFollowedTagIds(userId);
+    for (Long id : idsOfFollowedTags) {
+      List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
+      dealIdResults.addAll(dealIdsWithTag);
+    }
+    // Get rid of duplicate dealID (Deals with multiple tags)
+    List<Long> dealsWithoutDuplicates = new ArrayList<>(new HashSet<>(dealIdResults));
+    for (Long dealId : dealsWithoutDuplicates) {
+      dealResults.add(readDeal(dealId));
+    }
+    return dealResults;
+  }
+
+  @Override
+  public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return voteManager.getVotes(deal2.id) - voteManager.getVotes(deal1.id); // Descending
+          }
+        });
+    return deals;
+  }
+
+  @Override
+  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return LocalDateTime.parse(deal2.timestamp)
+                .compareTo(LocalDateTime.parse(deal1.timestamp)); // Descending
+          }
+        });
+    return deals;
+  }
+
+  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return -Double.compare(deal1.getHotScore(), deal2.getHotScore()); // Descending
+          }
+        });
+    return deals;
+  }
+
+  private double epochSeconds(String timestamp) {
+    LocalDateTime time = LocalDateTime.parse(timestamp);
+    long epoch = time.atZone(ZoneId.of("Asia/Singapore")).toEpochSecond();
+    return epoch;
+  }
+
+  private double calculateHotScore(Entity dealEntity) {
+    int netVotes = voteManager.getVotes(dealEntity.getKey().getId());
+    double order = Math.log(Math.max(Math.abs(netVotes), 1));
+    int sign = 0;
+    if (netVotes > 0) sign = 1;
+    else if (netVotes < 0) sign = -1;
+    double seconds =
+        epochSeconds((String) dealEntity.getProperty("timestamp")) - oldestDealTimestamp;
+    return order + (sign * seconds / 45000);
+  }
+
+  @Override
+  public List<Deal> getTrendingDeals() {
+    Query query = new Query("Deal");
+    PreparedQuery pq = datastore.prepare(query);
+    List<Deal> dealResults = new ArrayList<>();
+    for (Entity entity : pq.asIterable()) {
+      double hotScore = calculateHotScore(entity);
+      Deal deal = transformEntitytoDeal(entity);
+      deal.setHotScore(hotScore);
+      dealResults.add(deal);
+    }
+    return sortDealsBasedOnHotScore(dealResults);
   }
 }
