@@ -108,7 +108,7 @@ public class JsonFormatter {
   /**
    * Returns a map representation of brief user info.
    *
-   * @param user the user object being formatted
+   * @param user the user object being formatted.
    * @return a map representation of brief user info.
    */
   private static Map<String, Object> getUserBriefMap(User user) {
@@ -124,7 +124,7 @@ public class JsonFormatter {
   /**
    * Returns a list of maps of brief user info.
    *
-   * @param users a list of user whose brief info will be returned
+   * @param users a list of users whose brief info will be returned
    * @return a list of maps of brief user info.
    */
   private static List<Map<String, Object>> getUserListBriefMaps(List<User> users) {
@@ -135,7 +135,12 @@ public class JsonFormatter {
     return userMaps;
   }
 
-  // TODO
+  /**
+   * Returns a list of maps of brief tag info.
+   *
+   * @param tags a list of tags.
+   * @return a list of maps of brief tag info.
+   */
   private static List<Map<String, Object>> getTagListBriefMaps(List<Tag> tags) {
     List<Map<String, Object>> tagMaps = new ArrayList<>();
     for (Tag tag : tags) {
@@ -144,6 +149,12 @@ public class JsonFormatter {
     return tagMaps;
   }
 
+  /**
+   * Returns a map representation of brief tag info.
+   *
+   * @param tag a tag object.
+   * @return a map representation of brief tag info.
+   */
   private static Map<String, Object> getTagBriefMap(Tag tag) {
     Map<String, Object> tagMap = new HashMap<>();
     tagMap.put("id", tag.id);
@@ -151,7 +162,6 @@ public class JsonFormatter {
     return tagMap;
   }
 
-  // TODO
   private static List<Map<String, Object>> getRestaurantListBriefMaps(
       List<Restaurant> restaurants) {
     return new ArrayList<>();
