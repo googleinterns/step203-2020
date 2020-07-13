@@ -17,13 +17,18 @@
       <jsp-file>/WEB-INF/jsp/deals.jsp</jsp-file>
   </servlet>
   <servlet>
+    <servlet-name>userPage</servlet-name>
+    <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
+  </servlet>
+
+  <servlet>
     <servlet-name>addDeal</servlet-name>
     <jsp-file>/WEB-INF/jsp/add-deal.jsp</jsp-file>
   </servlet>
 
   <servlet>
-    <servlet-name>userPage</servlet-name>
-    <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
+    <servlet-name>search</servlet-name>
+    <jsp-file>/WEB-INF/jsp/search.jsp</jsp-file>
   </servlet>
 
   <servlet-mapping>
@@ -37,16 +42,17 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>deals</servlet-name>
-    <url-pattern>/deals/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
     <servlet-name>userPage</servlet-name>
     <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>addDeal</servlet-name>
     <url-pattern>/add-deal</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>search</servlet-name>
+    <url-pattern>/search</url-pattern>
   </servlet-mapping>
 </web-app>
