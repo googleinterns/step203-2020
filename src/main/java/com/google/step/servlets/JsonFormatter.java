@@ -88,6 +88,7 @@ public class JsonFormatter {
     restaurantMap.put("name", restaurant.name);
     restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
     return restaurantMap;
+  }
 
   private static List<Map<String, Object>> getDealListBriefMaps(List<Deal> deals) {
     List<Map<String, Object>> dealMaps = new ArrayList<>();
