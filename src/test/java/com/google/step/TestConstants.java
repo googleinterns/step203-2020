@@ -1,5 +1,7 @@
 package com.google.step;
 
+import com.google.step.model.User;
+
 public class TestConstants {
   // User
   public static final long USER_ID_A = 1;
@@ -22,6 +24,8 @@ public class TestConstants {
   public static final String BIO_A_NEW = "Hi, I'm Alice";
   public static final String BIO_B = "Hello I'm Bob.";
   public static final String BIO_C = "";
+
+  public static final User USER_A = new User(USER_ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
 
   public static final String USER_A_BRIEF_JSON =
       String.format(
