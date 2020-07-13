@@ -80,6 +80,13 @@ public class FollowServlet extends HttpServlet {
     response.setStatus(HttpServletResponse.SC_OK);
   }
 
+  // TODO
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("text/html");
+    response.getWriter().println(false);
+  }
+
   /**
    * Parses the String to the right of the first forward slash '/' as a long and returns it. If not
    * possible, returns -1;

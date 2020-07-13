@@ -209,9 +209,16 @@ function configureProfileEditButton(user) {
  */
 function configureFollowButton(user, userLoggedInId) {
   const followButton = document.getElementById('follow-btn');
-  followButton.hidden = false;
-  followButton.innerText = 'unfollow';
-  // TODO: Check follow relationship, btn onclick
+  $.ajax('/api/follows/',
+      {data: {followerId: userLoggedInId, followeeId: user.id}})
+      .done((isFollowing) => {
+        followButton.hidden = false;
+        if (isFollowing === 'true') {
+          followButton.innerText = 'Unfollow';
+        } else {
+          followButton.innerText = 'Follow';
+        }
+      });
 }
 
 /**
@@ -282,7 +289,7 @@ function cancelProfileEditing() {
  */
 function configureButtons(user) {
   fetch('/api/authentication')
-      .then((response) =>(response.json()))
+      .then((response) => (response.json()))
       .then((loginStatus) => {
         if (loginStatus.isLoggedIn) {
           if (loginStatus.id == user.id) {
