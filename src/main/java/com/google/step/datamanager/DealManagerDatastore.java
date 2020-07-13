@@ -105,4 +105,54 @@ public class DealManagerDatastore implements DealManager {
     searchManager.putDeal(deal, new ArrayList<>());
     return readDeal(deal.id);
   }
+
+  /** Retrieves deals posted by users followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
+    return new ArrayList<Deal>();
+  }
+
+  /** Retrieves deals posted by restaurants followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
+    return new ArrayList<Deal>();
+  }
+
+  /** Retrieves deals posted by tags followed by user */
+  @Override
+  public List<Deal> getDealsPublishedByFollowedTags(long userId) {
+    return new ArrayList<Deal>();
+  }
+
+  @Override
+  public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
+    return new ArrayList<Deal>();
+  }
+
+  @Override
+  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
+    return new ArrayList<Deal>();
+  }
+
+  @Override
+  public List<Deal> getTrendingDeals() {
+    return new ArrayList<Deal>();
+  }
+
+  /**
+   * Returns a Deal object transformed from a deal entity.
+   *
+   * @param entity Deal entity.
+   * @return a Deal object transformed from the entity.
+   */
+  private Deal transformEntitytoDeal(Entity dealEntity) {
+    String description = (String) dealEntity.getProperty("description");
+    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
+    String start = (String) dealEntity.getProperty("start");
+    String end = (String) dealEntity.getProperty("end");
+    String source = (String) dealEntity.getProperty("source");
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+  }
 }
