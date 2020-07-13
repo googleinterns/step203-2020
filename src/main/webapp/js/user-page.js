@@ -215,10 +215,32 @@ function configureFollowButton(user, userLoggedInId) {
         followButton.hidden = false;
         if (isFollowing === 'true') {
           followButton.innerText = 'Unfollow';
+          followButton.onclick = () => unfollow(user);
         } else {
           followButton.innerText = 'Follow';
+          followButton.onclick = () => follow(user);
         }
       });
+}
+
+/**
+ * Follows a user and reloads the page.
+ * @param {object} user the user to be followed.
+ */
+function follow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'POST'})
+      .done(() => location.reload());
+}
+
+/**
+ * Unfollows a user and reloads the page.
+ * @param {object} user the user to be unfollowed.
+ */
+function unfollow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'DELETE'})
+      .done(() => location.reload());
 }
 
 /**

@@ -35,7 +35,7 @@ public class FollowServlet extends HttpServlet {
       return;
     }
 
-    long followerId = 3141; // TODO: check user authentication
+    long followerId = 6632254138744832L; // TODO: check user authentication
 
     if (pathInfo.startsWith("restaurants/")) {
       manager.followRestaurant(followerId, id);
