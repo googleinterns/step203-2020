@@ -137,7 +137,18 @@ public class JsonFormatter {
 
   // TODO
   private static List<Map<String, Object>> getTagListBriefMaps(List<Tag> tags) {
-    return new ArrayList<>();
+    List<Map<String, Object>> tagMaps = new ArrayList<>();
+    for (Tag tag : tags) {
+      tagMaps.add(getTagBriefMap(tag));
+    }
+    return tagMaps;
+  }
+
+  private static Map<String, Object> getTagBriefMap(Tag tag) {
+    Map<String, Object> tagMap = new HashMap<>();
+    tagMap.put("id", tag.id);
+    tagMap.put("name", tag.name);
+    return tagMap;
   }
 
   // TODO

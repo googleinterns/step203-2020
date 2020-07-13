@@ -42,7 +42,8 @@
             <div class="mt-2">
               Bio: <span id="bio"></span>
             </div>
-            <div id="tags" class="mt-2">
+            <div class="mt-2">
+              Interests: <span id="tags"></span>
             </div>
         </div>
       </div>

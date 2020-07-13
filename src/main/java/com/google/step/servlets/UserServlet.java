@@ -29,11 +29,16 @@ public class UserServlet extends HttpServlet {
   private TagManager tagManager = new TagManagerDatastore();
   private FollowManager followManager = new FollowManagerDatastore();
 
-  public UserServlet(UserManager userManager, UserService userService, TagManager tagManager) {
+  public UserServlet(
+      UserManager userManager,
+      UserService userService,
+      TagManager tagManager,
+      FollowManager followManager) {
     super();
     this.userManager = userManager;
     this.userService = userService;
     this.tagManager = tagManager;
+    this.followManager = followManager;
   }
 
   public UserServlet() {

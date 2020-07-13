@@ -6,10 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -45,12 +48,16 @@ public class UserServletTest {
   private UserServlet servlet;
   private UserManager userManager;
   private UserService userService;
+  private TagManager tagManager;
+  private FollowManager followManager;
 
   @Before
   public void setUp() {
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
-    servlet = new UserServlet(userManager, userService);
+    tagManager = mock(TagManager.class);
+    followManager = mock(FollowManager.class);
+    servlet = new UserServlet(userManager, userService, tagManager, followManager);
   }
 
   @Test
@@ -59,6 +66,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
     when(userManager.readUser(1)).thenReturn(USER_A);
+    when(followManager.getFollowedTagIds(1)).thenReturn(new ArrayList<Long>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
