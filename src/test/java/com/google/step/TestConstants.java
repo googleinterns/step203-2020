@@ -71,4 +71,12 @@ public class TestConstants {
   public static final long COMMENT_ID_B = 2;
   public static final long COMMENT_ID_C = 3;
   public static final long COMMENT_ID_D = 4;
+
+  public static final String CONTENT_A = "Hello world";
+  public static final String CONTENT_B = "Hello world2";
+
+  public static final String TIME_A = "Time A";
+  public static final String TIME_B = "Time B";
+
+  public static final String UPDATE_CONTENT_A = "Update";
 }

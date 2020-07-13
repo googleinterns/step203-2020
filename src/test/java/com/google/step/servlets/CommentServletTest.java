@@ -1,5 +1,11 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.COMMENT_ID_A;
+import static com.google.step.TestConstants.CONTENT_A;
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.TIME_A;
+import static com.google.step.TestConstants.UPDATE_CONTENT_A;
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -22,14 +28,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @RunWith(JUnit4.class)
 public class CommentServletTest {
 
-  private static final long DEALID = 2;
-
-  private static final long ID_A = 1;
-  private static final long USERID_A = 3;
-  private static final String CONTENT_A = "Hello world";
-  private static final String UPDATE_CONTENT_A = "Update";
   private static final Comment UPDATE_COMMENT_A =
-      new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, UPDATE_CONTENT_A, TIME_A);
 
   private CommentManager mockCommentManager;
 
@@ -46,9 +46,10 @@ public class CommentServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn("/1");
+    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
     when(request.getParameter("content")).thenReturn(UPDATE_CONTENT_A);
-    when(mockCommentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
+    when(mockCommentManager.updateComment(COMMENT_ID_A, UPDATE_CONTENT_A))
+        .thenReturn(UPDATE_COMMENT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -58,7 +59,8 @@ public class CommentServletTest {
 
     String expected =
         String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\"}", ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
+            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, UPDATE_CONTENT_A, TIME_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -105,7 +107,7 @@ public class CommentServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getPathInfo()).thenReturn("/1");
+    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
 
     commentServlet.doDelete(request, response);
 
