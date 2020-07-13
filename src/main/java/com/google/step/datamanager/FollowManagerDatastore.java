@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class FollowManagerDatastore implements FollowManager {
@@ -116,5 +117,22 @@ public class FollowManagerDatastore implements FollowManager {
       list.add((Long) entity.getProperty(fieldName));
     }
     return list;
+  }
+
+  @Override
+  public void updateFollowedTagIds(long followerId, List<Long> tagIds) {
+    List<Long> tagsFollowed = getFollowedTagIds(followerId);
+    HashSet<Long> newTags = new HashSet<>(tagIds);
+    for (long id : tagsFollowed) {
+      if (newTags.contains(id)) {
+        newTags.remove(id);
+      } else {
+        unfollowTag(followerId, id);
+      }
+    }
+
+    for (long id : newTags) {
+      followTag(followerId, id);
+    }
   }
 }

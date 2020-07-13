@@ -20,4 +20,6 @@ public interface FollowManager {
   public void unfollowTag(long followerId, long tagId);
 
   public List<Long> getFollowedTagIds(long followerId);
+
+  public void updateFollowedTagIds(long followerId, List<Long> tagIds);
 }
