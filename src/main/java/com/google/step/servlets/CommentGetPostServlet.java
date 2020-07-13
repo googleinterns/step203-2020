@@ -33,7 +33,7 @@ public class CommentGetPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    List<Comment> comments = manager.getComments(dealId);
+    List<Comment> comments = manager.getCommentsForDeal(dealId);
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
