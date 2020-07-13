@@ -135,6 +135,20 @@ function showNotFound() {
 }
 
 /**
+ * Calls backend to get user's current vote status, and add upvote/downvote
+ * click events
+ * @param {number} dealId
+ */
+function initVotes(dealId) {
+  $.ajax('/api/vote/' + dealId)
+      .done((dir) => {
+        dir = parseInt(dir);
+        console.log(dir);
+        console.log(typeof(dir));
+      });
+}
+
+/**
  * Calls backend for data on deal
  */
 function initDeal() {
@@ -143,6 +157,7 @@ function initDeal() {
   $.ajax('/api/deals/' + myId)
       .done((deal) => {
         loadDealDataToPage(deal);
+        initVotes(deal.id);
       })
       .fail(() => {
         showNotFound();
