@@ -1,35 +1,22 @@
 package com.google.step.servlets;
 
-import static com.google.step.TestConstants.BLOBKEY_A;
-import static com.google.step.TestConstants.BLOBKEY_B;
-import static com.google.step.TestConstants.BLOBKEY_C;
-import static com.google.step.TestConstants.DATE_A;
-import static com.google.step.TestConstants.DATE_B;
-import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
-import static com.google.step.TestConstants.DEAL_B_BRIEF_JSON;
-import static com.google.step.TestConstants.DEAL_C_BRIEF_JSON;
-import static com.google.step.TestConstants.DEAL_ID_A;
-import static com.google.step.TestConstants.DEAL_ID_B;
-import static com.google.step.TestConstants.DEAL_ID_C;
-import static com.google.step.TestConstants.DESCRIPTION_A;
-import static com.google.step.TestConstants.DESCRIPTION_B;
-import static com.google.step.TestConstants.DESCRIPTION_C;
-import static com.google.step.TestConstants.RESTAURANT_ID_A;
-import static com.google.step.TestConstants.RESTAURANT_ID_B;
-import static com.google.step.TestConstants.RESTAURANT_ID_C;
-import static com.google.step.TestConstants.SOURCE_A;
-import static com.google.step.TestConstants.SOURCE_B;
-import static com.google.step.TestConstants.SOURCE_C;
-import static com.google.step.TestConstants.TIME_A;
-import static com.google.step.TestConstants.TIME_B;
-import static com.google.step.TestConstants.TIME_C;
-import static com.google.step.TestConstants.USER_ID_A;
-import static com.google.step.TestConstants.USER_ID_B;
-import static com.google.step.TestConstants.USER_ID_C;
+import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.HOME_DEAL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_ID_A;
+import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.VOTE_A;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealTagManager;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.TagManager;
+import com.google.step.datamanager.UserManager;
+import com.google.step.datamanager.VoteManager;
 import com.google.step.model.Deal;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -50,11 +37,23 @@ public class HomePageServletTest {
 
   private HomePageServlet homePageServlet;
   private DealManager dealManager;
+  private UserManager userManager;
+  private VoteManager voteManager;
+  private RestaurantManager restaurantManager;
+  private DealTagManager dealTagManager;
+  private TagManager tagManager;
 
   @Before
   public void setUp() {
     dealManager = mock(DealManager.class);
-    homePageServlet = new HomePageServlet(dealManager);
+    userManager = mock(UserManager.class);
+    voteManager = mock(VoteManager.class);
+    restaurantManager = mock(RestaurantManager.class);
+    dealTagManager = mock(DealTagManager.class);
+    tagManager = mock(TagManager.class);
+    homePageServlet =
+        new HomePageServlet(
+            dealManager, userManager, restaurantManager, voteManager, dealTagManager, tagManager);
   }
 
   @Test
@@ -62,51 +61,18 @@ public class HomePageServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    Deal DEAL_A =
-        new Deal(
-            DEAL_ID_A,
-            DESCRIPTION_A,
-            BLOBKEY_A,
-            DATE_A,
-            DATE_B,
-            SOURCE_A,
-            USER_ID_A,
-            RESTAURANT_ID_A,
-            TIME_A);
-    Deal DEAL_B =
-        new Deal(
-            DEAL_ID_B,
-            DESCRIPTION_B,
-            BLOBKEY_B,
-            DATE_A,
-            DATE_B,
-            SOURCE_B,
-            USER_ID_B,
-            RESTAURANT_ID_B,
-            TIME_B);
-    Deal DEAL_C =
-        new Deal(
-            DEAL_ID_C,
-            DESCRIPTION_C,
-            BLOBKEY_C,
-            DATE_A,
-            DATE_B,
-            SOURCE_C,
-            USER_ID_C,
-            RESTAURANT_ID_C,
-            TIME_C);
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    List<Deal> TRENDING_DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
-    List<Deal> DEALS_BY_FOLLOWED_USERS = new ArrayList<Deal>(Arrays.asList(DEAL_B, DEAL_A, DEAL_C));
-    List<Deal> DEALS_BY_FOLLOWED_RESTAURANTS =
-        new ArrayList<Deal>(Arrays.asList(DEAL_C, DEAL_B, DEAL_A));
-    List<Deal> DEALS_BY_FOLLOWED_TAGS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_C, DEAL_B));
+    when(dealManager.getTrendingDeals()).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByFollowedUsers(1)).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByFollowedRestaurants(1)).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByFollowedTags(1)).thenReturn(DEALS);
 
-    when(dealManager.getTrendingDeals()).thenReturn(TRENDING_DEALS);
-    when(dealManager.getDealsPublishedByFollowedUsers(1)).thenReturn(DEALS_BY_FOLLOWED_USERS);
-    when(dealManager.getDealsPublishedByFollowedRestaurants(1))
-        .thenReturn(DEALS_BY_FOLLOWED_RESTAURANTS);
-    when(dealManager.getDealsPublishedByFollowedTags(1)).thenReturn(DEALS_BY_FOLLOWED_TAGS);
+    when(userManager.readUser(anyLong())).thenReturn(USER_A);
+    when(restaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
+    when(dealTagManager.getTagIdsOfDeal(anyLong())).thenReturn(Arrays.asList(TAG_ID_A));
+    when(tagManager.readTag(anyLong())).thenReturn(TAG_A);
+    when(voteManager.getVotes(anyLong())).thenReturn(VOTE_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -114,18 +80,11 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String popularDeals =
-        String.format("[%s,%s,%s]", DEAL_A_BRIEF_JSON, DEAL_B_BRIEF_JSON, DEAL_C_BRIEF_JSON);
-    String dealsByFollowedUsers =
-        String.format("[%s,%s,%s]", DEAL_B_BRIEF_JSON, DEAL_A_BRIEF_JSON, DEAL_C_BRIEF_JSON);
-    String dealsByFollowedRestaurants =
-        String.format("[%s,%s,%s]", DEAL_C_BRIEF_JSON, DEAL_B_BRIEF_JSON, DEAL_A_BRIEF_JSON);
-    String dealsByFollowedTags =
-        String.format("[%s,%s,%s]", DEAL_A_BRIEF_JSON, DEAL_C_BRIEF_JSON, DEAL_B_BRIEF_JSON);
+    String popularDeals = String.format("[%s,%s,%s]", HOME_DEAL_A, HOME_DEAL_A, HOME_DEAL_A);
     String expected =
         String.format(
             "{popularDeals:%s," + "usersIFollow:%s," + "restaurantsIFollow:%s," + "tagsIFollow:%s}",
-            popularDeals, dealsByFollowedUsers, dealsByFollowedRestaurants, dealsByFollowedTags);
+            popularDeals, popularDeals, popularDeals, popularDeals);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }

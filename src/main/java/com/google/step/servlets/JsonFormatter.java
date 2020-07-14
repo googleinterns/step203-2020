@@ -206,24 +206,49 @@ public class JsonFormatter {
    * @param homePageDeals a list of list of deals for home page
    * @return a json of home page data
    */
-  public static String getHomePageJson(List<List<Deal>> homePageDeals) {
+  public static String getHomePageJson(List<List<Map<String, Object>>> homePageDealsMaps) {
     Gson gson = new Gson();
-    String json = gson.toJson(getHomePageMap(homePageDeals));
+    String json = gson.toJson(getHomePageMap(homePageDealsMaps));
     return json;
   }
 
   /**
    * Returns a map of list of brief deal info for home page
    *
-   * @param homePageDeals a list of list of deals for home page
+   * @param homePageDeals a list of list of maps for home page
    * @return a map of list of brief deal info for home page
    */
-  private static Map<String, Object> getHomePageMap(List<List<Deal>> homePageDeals) {
+  private static Map<String, Object> getHomePageMap(
+      List<List<Map<String, Object>>> homePageDealsMaps) {
     Map<String, Object> homePageMap = new HashMap<>();
-    homePageMap.put("popularDeals", getDealListBriefMaps(homePageDeals.get(0)));
-    homePageMap.put("usersIFollow", getDealListBriefMaps(homePageDeals.get(1)));
-    homePageMap.put("restaurantsIFollow", getDealListBriefMaps(homePageDeals.get(2)));
-    homePageMap.put("tagsIFollow", getDealListBriefMaps(homePageDeals.get(3)));
+    homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+    homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
+    homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
+    homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
     return homePageMap;
+  }
+
+  /**
+   * Returns a map of brief deal info for home page
+   *
+   * @param deal the deal to create a map for
+   * @param user the user object of the poster
+   * @param tags tags associated with the deal
+   * @param restaurants restaurant the deal is at
+   * @return a map of brief deal info for home page
+   */
+  public static Map<String, Object> getBriefHomePageDealMap(
+      Deal deal, User poster, Restaurant restaurant, List<Tag> tags, int votes) {
+    Map<String, Object> dealMap = new HashMap<>();
+    dealMap.put("id", deal.id);
+    dealMap.put("description", deal.description);
+    dealMap.put("pic", deal.photoBlobkey); // TODO get url
+    dealMap.put("posterName", poster.username);
+    dealMap.put("posterId", poster.id);
+    dealMap.put("restaurantId", restaurant.id);
+    dealMap.put("restaurantName", restaurant.name);
+    dealMap.put("votes", votes);
+    dealMap.put("tags", tags);
+    return dealMap;
   }
 }

@@ -87,7 +87,7 @@ public class TestConstants {
   public static final String TIME_B = "2020-07-10T12:15:30";
   public static final String TIME_C = "2020-07-10T14:15:30";
 
-  public static final long VOTE_A = 0;
+  public static final int VOTE_A = 0;
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
@@ -120,6 +120,22 @@ public class TestConstants {
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
           RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_C, USER_ID_C);
+
+  // Deal Brief for Home Page
+  public static final String HOME_DEAL_A =
+      String.format(
+          "{restaurantName: \"%s\", description: \"%s\", votes: %d, id: %d, pic: \"%s\", posterName: \"%s\", restaurantId: %d, posterId: %d, tags: [{id: %d, name: \"%s\"}]}",
+          RESTAURANT_NAME_A,
+          DESCRIPTION_A,
+          VOTE_A,
+          DEAL_ID_A,
+          BLOBKEY_A,
+          USERNAME_A,
+          RESTAURANT_ID_A,
+          USER_ID_A,
+          TAG_ID_A,
+          TAG_NAME_A);
+
   // Deal class
   public static final Deal DEAL_A =
       new Deal(
@@ -130,7 +146,8 @@ public class TestConstants {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          TIME_A);
 
   public static final Deal DEAL_B =
       new Deal(
@@ -141,5 +158,18 @@ public class TestConstants {
           DATE_D,
           SOURCE_B,
           USER_ID_B,
-          RESTAURANT_ID_B);
+          RESTAURANT_ID_B,
+          TIME_B);
+
+  public static final Deal DEAL_C =
+      new Deal(
+          DEAL_ID_C,
+          DESCRIPTION_C,
+          BLOBKEY_C,
+          DATE_A,
+          DATE_B,
+          SOURCE_C,
+          USER_ID_C,
+          RESTAURANT_ID_C,
+          TIME_C);
 }

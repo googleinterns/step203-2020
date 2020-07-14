@@ -1,64 +1,145 @@
-/* const homePage = {
-  'Popular Deals': [
+const homePageData = {
+  popularDeals: [
     {
-      'id': 1234,
-      'name': 'Bubble Tea',
-      'votes': 5,
-      'poster': 'abc',
-      'image': 'assets/deals/bubble-tea.jpeg',
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
     },
     {
-      'id': 2345,
-      'name': 'Dessert',
-      'votes': 5,
-      'poster': 'bcd',
-      'image': 'assets/deals/dessert.jpeg',
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
     },
     {
-      'id': 3456,
-      'name': 'KFC',
-      'votes': 5,
-      'poster': 'bcd',
-      'image': 'assets/deals/kfc.jpeg',
-    },
-    {
-      'id': 5678,
-      'name': 'Pizza',
-      'votes': 5,
-      'poster': 'bcd',
-      'image': 'assets/deals/pizza.jpeg',
-    },
-  ],
-  'Restaurants I Follow': [
-    {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'image': 'assets/deals/bubble-tea.jpeg',
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
     },
   ],
-  'Users I Follow': [
+  usersIFollow: [
     {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'Starbucks',
-      'image': 'assets/deals/bubble-tea.jpeg',
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
     },
   ],
-  'Tags I Follow': [
+  restaurantsIFollow: [
     {
-      'id': 1234,
-      'name': 'Starbucks Mocha 1-for-1',
-      'votes': 5,
-      'poster': 'def',
-      'tags': ['coffee', '1-for-1'],
-      'image': 'assets/deals/bubble-tea.jpeg',
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+  ],
+  tagsIFollow: [
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurantName: 'A',
+      restaurantId: 1,
+      posterId: 1,
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      posterName: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
     },
   ],
 };
-*/
 /**
  * Creates deal elements on home page
  * @param {object} homePage
@@ -69,19 +150,23 @@ function createHomePage(homePage) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
     const homePageData = homePage[homePageSections[i]];
-    const dealCardId = 'deal-card-'+i;
+    const dealCardId = 'deal-card-' + i;
     const dealCardElements =
-      document.querySelectorAll('#'+dealCardId+'.deal-card');
+      document.querySelectorAll('#' + dealCardId + '.deal-card');
     for (let j = 0; j < homePageData.length; j++) {
       const childElements = dealCardElements[j].children;
       const dealImage = childElements[0];
-      dealImage.src = homePageData[j].image;
+      dealImage.src = homePageData[j].pic;
       const dealBody = childElements[1];
       const dealTitle = dealBody.children[0];
-      dealTitle.innerText = homePageData[j].name;
-      const dealPoster = dealBody.children[2];
-      dealPoster.innerText = homePageData[j].poster;
-      const dealLink = dealBody.children[3];
+      dealTitle.innerText = homePageData[j].description;
+      const dealRestaurant = dealBody.children[2];
+      dealRestaurant.innerText = homePageData[j].restaurantName;
+      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurantId;
+      const dealPoster = dealBody.children[3];
+      dealPoster.innerText = homePageData[j].posterName;
+      dealPoster.href = '/users/' + homePageData[j].posterId;
+      const dealLink = dealBody.children[4];
       dealLink.href = '/deals/' + homePageData[j].id;
     }
   }
@@ -102,13 +187,13 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
     const numCarouselSlides = numCarouselSlidesList[i];
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
-      indicatorListChild.dataset.target = '#carousel-' +i;
+      indicatorListChild.dataset.target = '#carousel-' + i;
       indicatorListChild.setAttribute('data-slide-to', j);
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
       const rowElement = document.createElement('div');
-      rowElement.className='row';
-      const numCol = 'col-md-' + 12/numDealPerSlide;
+      rowElement.className = 'row';
+      const numCol = 'col-md-' + 12 / numDealPerSlide;
       for (let k = 0; k < numDealPerSlide; k++) {
         rowElement.innerHTML += `
           <div class="${numCol} mt-5">
@@ -117,7 +202,8 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title deal-title"></h5>
                   <p class="card-text deal-text"></p>
-                  <p class="card-text deal-poster"></p>
+                  <a href='#' class="card-text deal-restaurant"></a>
+                  <a href='#' class="card-text deal-poster"></a>
                   <a href="#"
                   class="btn btn-primary align-self-end mt-auto float-right">
                   See More
@@ -134,8 +220,8 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
       indicatorListElement.appendChild(indicatorListChild);
       carouselItemList.appendChild(carouselItemListChild);
     }
-    carouselElements[i].children[2].href='#carousel-'+i;
-    carouselElements[i].children[3].href='#carousel-'+i;
+    carouselElements[i].children[2].href = '#carousel-' + i;
+    carouselElements[i].children[3].href = '#carousel-' + i;
   }
 }
 
@@ -145,6 +231,7 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
+        homePageDeals = homePageData;
         console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4);
         createHomePage(homePageDeals);
@@ -156,6 +243,4 @@ function initHomePage() {
 
 addLoadEvent(() => {
   initHomePage();
-  // createCarouselElements([2, 2, 3, 3], 4);
-  // createHomePage(homePage);
 });
