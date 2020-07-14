@@ -1,11 +1,15 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.USER_ID_C;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.User;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -110,5 +114,27 @@ public final class UserManagerDatastoreTest {
     userManagerDatastore.updateUser(updatedUser);
     userBRead = userManagerDatastore.readUser(userB.id);
     assertFalse(userBRead.photoBlobKey.isPresent());
+  }
+
+  @Test
+  public void testReadUsers() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id);
+    List<User> users = userManagerDatastore.readUsers(ids);
+    User[] actual = users.toArray(new User[0]);
+    User[] expected = {userA, userB};
+    assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void testReadUsers_idDoesNotExist() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id, USER_ID_C);
+    List<User> users = userManagerDatastore.readUsers(ids);
+    User[] actual = users.toArray(new User[0]);
+    User[] expected = {userA, userB};
+    assertArrayEquals(expected, actual);
   }
 }

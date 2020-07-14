@@ -120,7 +120,17 @@ public class FollowManagerDatastore implements FollowManager {
 
   @Override
   public List<Long> getFollowerIdsOfUser(long followeeId) {
-    // TODO Auto-generated method stub
-    return null;
+    return getFollowersOfSomething(followeeId, USER_FIELD_NAME);
+  }
+
+  private List<Long> getFollowersOfSomething(long followeeId, String fieldName) {
+    Filter filter = new FilterPredicate(fieldName, FilterOperator.EQUAL, followeeId);
+    Query query = new Query(ENTITY_NAME).setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+    List<Long> list = new ArrayList<>();
+    for (Entity entity : pq.asIterable()) {
+      list.add((Long) entity.getProperty(FOLLOWER_FIELD_NAME));
+    }
+    return list;
   }
 }

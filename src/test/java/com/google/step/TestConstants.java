@@ -26,6 +26,7 @@ public class TestConstants {
   public static final String BIO_C = "";
 
   public static final User USER_A = new User(USER_ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
+  public static final User USER_B = new User(USER_ID_B, EMAIL_B, USERNAME_B, BLOBKEY_B, BIO_B);
 
   public static final String USER_A_BRIEF_JSON =
       String.format(
