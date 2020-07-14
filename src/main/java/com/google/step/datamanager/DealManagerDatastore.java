@@ -6,6 +6,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,14 +58,7 @@ public class DealManagerDatastore implements DealManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    String description = (String) dealEntity.getProperty("description");
-    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
-    String start = (String) dealEntity.getProperty("start");
-    String end = (String) dealEntity.getProperty("end");
-    String source = (String) dealEntity.getProperty("source");
-    long posterId = (long) dealEntity.getProperty("posterId");
-    long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal = transformEntityToDeal(dealEntity);
     return deal;
   }
 
@@ -109,7 +104,41 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> readDeals(List<Long> ids) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Deal> deals = new ArrayList<>();
+    for (long id : ids) {
+      try {
+        deals.add(readDeal(id));
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+    }
+    return deals;
+  }
+
+  @Override
+  public List<Deal> getDealsPublishedByUser(long userId) {
+    Query query =
+        new Query("Deal")
+            .setFilter(new Query.FilterPredicate("posterId", Query.FilterOperator.EQUAL, userId));
+    PreparedQuery results = datastore.prepare(query);
+    Iterable<Entity> dealEntities = results.asIterable();
+    List<Deal> deals = new ArrayList<>();
+    for (Entity entity : dealEntities) {
+      deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
+  }
+
+  private Deal transformEntityToDeal(Entity dealEntity) {
+    String description = (String) dealEntity.getProperty("description");
+    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
+    String start = (String) dealEntity.getProperty("start");
+    String end = (String) dealEntity.getProperty("end");
+    String source = (String) dealEntity.getProperty("source");
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    long id = dealEntity.getKey().getId();
+    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    return deal;
   }
 }

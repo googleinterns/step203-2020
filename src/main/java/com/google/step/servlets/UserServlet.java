@@ -6,6 +6,8 @@ import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.TagManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -15,7 +17,6 @@ import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,12 +32,22 @@ public class UserServlet extends HttpServlet {
   private DealManager dealManager = new DealManagerDatastore();
   private FollowManager followManager = new FollowManagerDatastore();
   private TagManager tagManager = new TagManagerDatastore();
-  // TODO: private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+  private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
-  public UserServlet(UserManager userManager, UserService userService) {
+  public UserServlet(
+      UserManager userManager,
+      UserService userService,
+      DealManager dealManager,
+      FollowManager followManager,
+      TagManager tagManager,
+      RestaurantManager restaurantManager) {
     super();
     this.userManager = userManager;
     this.userService = userService;
+    this.dealManager = dealManager;
+    this.followManager = followManager;
+    this.tagManager = tagManager;
+    this.restaurantManager = restaurantManager;
   }
 
   public UserServlet() {
@@ -61,7 +72,7 @@ public class UserServlet extends HttpServlet {
       return;
     }
 
-    List<Deal> deals = new ArrayList<>(); // dealManager.getDealsPublishedByUser(id);
+    List<Deal> deals = dealManager.getDealsPublishedByUser(id);
 
     List<Long> followingIds = followManager.getFollowedUserIds(id);
     List<User> following = userManager.readUsers(followingIds);
@@ -72,9 +83,8 @@ public class UserServlet extends HttpServlet {
     List<Long> tagIds = followManager.getFollowedTagIds(id);
     List<Tag> tags = tagManager.readTags(tagIds);
 
-    // TODO: List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
-    List<Restaurant> restaurants =
-        new ArrayList<>(); // followManager.getRestaurantsFollowedByUser(id);
+    List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
+    List<Restaurant> restaurants = restaurantManager.readRestaurants(restaurantIds);
 
     String json = JsonFormatter.getUserJson(user, deals, following, followers, tags, restaurants);
     response.setContentType("application/json");

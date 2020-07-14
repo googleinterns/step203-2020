@@ -7,6 +7,8 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Restaurant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantManagerDatastore implements RestaurantManager {
 
@@ -80,5 +82,18 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
     long id = restaurantEntity.getKey().getId();
     return new Restaurant(id, name, photoBlobkey);
+  }
+
+  @Override
+  public List<Restaurant> readRestaurants(List<Long> ids) {
+    List<Restaurant> restaurants = new ArrayList<>();
+    for (long id : ids) {
+      try {
+        restaurants.add(readRestaurant(id));
+      } catch (IllegalArgumentException e) {
+        continue;
+      }
+    }
+    return restaurants;
   }
 }

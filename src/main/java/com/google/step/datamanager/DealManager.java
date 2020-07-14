@@ -20,4 +20,6 @@ public interface DealManager {
   public void deleteDeal(long id);
 
   public List<Deal> readDeals(List<Long> ids);
+
+  public List<Deal> getDealsPublishedByUser(long userId);
 }
