@@ -33,7 +33,7 @@ public class CommentGetPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    List<Comment> comments = manager.getComments(dealId);
+    List<Comment> comments = manager.getCommentsForDeal(dealId);
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
@@ -42,7 +42,7 @@ public class CommentGetPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long dealId;
-    long userId = 3; // TODO get authenticated user id
+    long userId = 1; // TODO get authenticated user id
     String content;
     try {
       dealId = Long.parseLong(request.getParameter("dealId"));
@@ -52,6 +52,7 @@ public class CommentGetPostServlet extends HttpServlet {
     }
     content = request.getParameter("content");
     Comment comment = manager.createComment(dealId, userId, content);
-    response.sendRedirect("/deals/" + comment.dealId);
+    response.setContentType("application/json;");
+    response.getWriter().println(JsonFormatter.getCommentJson(comment));
   }
 }
