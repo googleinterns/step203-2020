@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.CommentManager;
-import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +27,8 @@ public class CommentServletTest {
   private static final long USERID_A = 3;
   private static final String CONTENT_A = "Hello world";
   private static final String UPDATE_CONTENT_A = "Update";
-  private static final Comment UPDATE_COMMENT_A =
-      new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+  // private static final Comment UPDATE_COMMENT_A =
+  // new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
 
   private CommentManager mockCommentManager;
 
@@ -48,7 +47,7 @@ public class CommentServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(request.getParameter("content")).thenReturn(UPDATE_CONTENT_A);
-    when(mockCommentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
+    // when(mockCommentManager.updateComment(1, UPDATE_CONTENT_A)).thenReturn(UPDATE_COMMENT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

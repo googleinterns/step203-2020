@@ -166,6 +166,8 @@ public class JsonFormatter {
     if (user.photoBlobKey.isPresent()) {
       if (user.photoBlobKey.isPresent()) {
         userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      } else {
+        userMap.put("picture", "/images/default-profile-pic.svg");
       }
     }
     return userMap;
