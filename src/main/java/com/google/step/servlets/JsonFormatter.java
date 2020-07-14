@@ -149,4 +149,32 @@ public class JsonFormatter {
   private static String getImageUrl(String blobKey) {
     return "/api/images/" + blobKey;
   }
+
+  /**
+   * Returns a json of home page data.
+   *
+   * @param homePageDeals a list of list of deals for home page
+   * @return a json of home page data
+   */
+  public static String getHomePageJson(List<List<Deal>> homePageDeals) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getHomePageMap(homePageDeals));
+    return json;
+  }
+
+  /**
+   * Returns a map of list of brief deal info for home page
+   *
+   * @param homePageDeals a list of list of deals for home page
+   * @return a map of list of brief deal info for home page
+   */
+  private static Map<String, Object> getHomePageMap(List<List<Deal>> homePageDeals) {
+    Map<String, Object> homePageMap = new HashMap<>();
+    System.out.println(homePageDeals);
+    homePageMap.put("Popular Deals", getDealListBriefMaps(homePageDeals.get(0)));
+    homePageMap.put("Users I Follow", getDealListBriefMaps(homePageDeals.get(1)));
+    homePageMap.put("Restaurants I Follow", getDealListBriefMaps(homePageDeals.get(2)));
+    homePageMap.put("Tags I Follow", getDealListBriefMaps(homePageDeals.get(3)));
+    return homePageMap;
+  }
 }

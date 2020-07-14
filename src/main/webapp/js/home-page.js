@@ -139,6 +139,19 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
   }
 }
 
+/**
+ * Calls backend for data on deal
+ */
+function initDeal() {
+  $.ajax('/home/')
+      .done((deal) => {
+        loadDealDataToPage(deal);
+      })
+      .fail(() => {
+        showNotFound();
+      });
+}
+
 addLoadEvent(() => {
   createCarouselElements([2, 2, 3, 3], 4);
   createHomePage(homePage);
