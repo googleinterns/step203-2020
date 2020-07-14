@@ -88,7 +88,7 @@ public class ImageUploader {
     try {
       blobstoreService.delete(new BlobKey(blobKey));
     } catch (Exception e) {
-      return;
+      e.printStackTrace();
     }
   }
 }
