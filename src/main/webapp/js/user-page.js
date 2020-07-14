@@ -271,19 +271,16 @@ function showProfileEditingForm(user) {
  */
 function toggleDefaultPhotoCheckbox(checkbox) {
   const photoUploadInput = document.getElementById('photo-upload-input');
+  const profilePhotoFile = document.getElementById('profile-photo-file');
   const preview =
       document.getElementById('profile-photo-preview');
   if (checkbox.checked) {
     photoUploadInput.hidden = true;
     preview.src = '/images/default-profile-pic.svg';
+    profilePhotoFile.value = '';
   } else {
     photoUploadInput.hidden = false;
-    if (typeof initialProfilePhotoUrl != 'undefined') {
-      preview.src = initialProfilePhotoUrl;
-    } else {
-      const profilePhotoFile = document.getElementById('profile-photo-file');
-      profilePhotoPreview(profilePhotoFile);
-    }
+    preview.src = initialProfilePhotoUrl;
   }
 }
 
@@ -312,7 +309,6 @@ function profilePhotoPreview(input) {
 
     reader.readAsDataURL(input.files[0]);
   }
-  initialProfilePhotoUrl = undefined;
 }
 
 /**

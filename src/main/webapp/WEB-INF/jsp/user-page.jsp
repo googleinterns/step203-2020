@@ -73,8 +73,8 @@
             </div>
           </div>
 
-          <div class="checkbox">
-            <input type="checkbox" class="form-check-input" id="default-photo-checkbox" value="default" onclick="toggleDefaultPhotoCheckbox(this);">
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="default-photo-checkbox" name="default-photo" value="default" onclick="toggleDefaultPhotoCheckbox(this);">
             <label class="form-check-label">Use default profile picture</label>
           </div>
           <div class="form-group row" id="photo-upload-input">
