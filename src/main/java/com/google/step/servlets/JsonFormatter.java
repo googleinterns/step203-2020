@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import com.google.gson.Gson;
+import com.google.step.model.Comment;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -12,17 +13,54 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
+  public static String getCommentsJson(List<Comment> comments) {
+    Gson gson = new Gson();
+    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
+    for (Comment comment : comments) {
+      commentMapList.add(getCommentMap(comment));
+    }
+    String json = gson.toJson(commentMapList);
+    return json;
+  }
+
+  public static String getCommentJson(Comment comment) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getCommentMap(comment));
+    return json;
+  }
+
   public static String getDealJson(Deal deal) {
     Gson gson = new Gson();
     String json = gson.toJson(getDealMap(deal));
     return json;
   }
 
+  public static String getRestaurantJson(Restaurant restaurant) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getRestaurantMap(restaurant));
+    return json;
+  }
+
+  public static String getDealListJson(List<Deal> deals) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getDealListBriefMaps(deals));
+    return json;
+  }
+
+  private static Map<String, Object> getCommentMap(Comment comment) {
+    Map<String, Object> commentMap = new HashMap<>();
+    commentMap.put("id", comment.id);
+    commentMap.put("dealId", comment.dealId);
+    commentMap.put("userId", comment.userId);
+    commentMap.put("content", comment.content);
+    return commentMap;
+  }
+
   private static Map<String, Object> getDealMap(Deal deal) {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("pic", getImageUrl(deal.photoBlobkey));
+    dealMap.put("image", getImageUrl(deal.photoBlobkey));
     dealMap.put("start", deal.start.toString());
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
@@ -37,11 +75,19 @@ public class JsonFormatter {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("pic", deal.photoBlobkey); // TODO get url
+    dealMap.put("image", getImageUrl(deal.photoBlobkey));
     dealMap.put("poster", deal.posterId); // TODO use user name
     dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes
     return dealMap;
+  }
+
+  private static Map<String, Object> getRestaurantMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
+    return restaurantMap;
   }
 
   private static List<Map<String, Object>> getDealListBriefMaps(List<Deal> deals) {
