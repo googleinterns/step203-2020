@@ -102,7 +102,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
+    restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
     return restaurantMap;
   }
 
