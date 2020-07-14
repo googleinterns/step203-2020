@@ -5,9 +5,12 @@ import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,7 +18,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,38 +54,51 @@ public class DealPostServletTest {
           RESTAURANT_ID_A,
           null);
 
-  private HttpServletRequest request;
+  private HttpServletRequest mockRequest;
   private DealPostServlet servlet;
-  private DealManager dealManager;
+  private DealManager mockDealManager;
+  private UserService mockUserService;
+  private UserManager mockUserManager;
+  private HttpServletResponse mockResponse;
+  private PrintWriter writer;
 
   @Before
-  public void setUp() {
-    request = mock(HttpServletRequest.class);
+  public void setUp() throws IOException {
+    mockRequest = mock(HttpServletRequest.class);
 
     PowerMockito.mockStatic(ImageUploader.class);
-    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(eq(request), anyString()))
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(eq(mockRequest), anyString()))
         .willReturn(BLOBKEY_A);
 
-    dealManager = mock(DealManager.class);
-    servlet = new DealPostServlet(dealManager);
+    mockDealManager = mock(DealManager.class);
+    mockUserService = mock(UserService.class);
+    mockUserManager = mock(UserManager.class);
+    User currentUser = new User(EMAIL_A, "");
+
+    // mock response
+    mockResponse = mock(HttpServletResponse.class);
+    StringWriter stringWriter = new StringWriter();
+    writer = new PrintWriter(stringWriter);
+    when(mockResponse.getWriter()).thenReturn(writer);
 
     // default request parameter for success case
-    when(request.getParameter("description")).thenReturn(DESCRIPTION_A);
-    when(request.getParameter("start")).thenReturn(DATE_A);
-    when(request.getParameter("end")).thenReturn(DATE_B);
-    when(request.getParameter("source")).thenReturn(SOURCE_A);
-    when(request.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
+    when(mockRequest.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(mockRequest.getParameter("start")).thenReturn(DATE_A);
+    when(mockRequest.getParameter("end")).thenReturn(DATE_B);
+    when(mockRequest.getParameter("source")).thenReturn(SOURCE_A);
+    when(mockRequest.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
+
+    // behaviour when user is logged in
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
+    servlet = new DealPostServlet(mockDealManager, mockUserManager, mockUserService);
   }
 
   @Test
   public void testDoPost_success() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    when(dealManager.createDeal(
+    when(mockDealManager.createDeal(
             eq(DESCRIPTION_A),
             anyString(),
             eq(DATE_A),
@@ -89,9 +108,9 @@ public class DealPostServletTest {
             eq(RESTAURANT_ID_A)))
         .thenReturn(DEAL);
 
-    servlet.doPost(request, response);
+    servlet.doPost(mockRequest, mockResponse);
 
-    verify(dealManager)
+    verify(mockDealManager)
         .createDeal(
             eq(DESCRIPTION_A),
             anyString(),
@@ -100,117 +119,80 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A));
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(mockResponse).sendRedirect(any());
+  }
+
+  @Test
+  public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    when(mockUserService.getCurrentUser()).thenReturn(null);
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
   public void testDoPost_descriptionNull_badRequest() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("description")).thenReturn(null);
 
-    when(request.getParameter("description")).thenReturn(null);
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_descriptionEmpty_badRequest() throws IOException {
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("description")).thenReturn("");
 
-    when(request.getParameter("description")).thenReturn("");
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_dateNull_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("start")).thenReturn(null);
 
-    when(request.getParameter("start")).thenReturn(null);
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_dateInvalid_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("end")).thenReturn("trash");
 
-    when(request.getParameter("end")).thenReturn("trash");
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_dateWrongFormat_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("start")).thenReturn("2020-1-1");
 
-    when(request.getParameter("start")).thenReturn("2020-1-1");
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_dateWrongOrder_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("start")).thenReturn(DATE_B);
+    when(mockRequest.getParameter("end")).thenReturn(DATE_A);
 
-    when(request.getParameter("start")).thenReturn(DATE_B);
-    when(request.getParameter("end")).thenReturn(DATE_A);
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPost_restaurantInvalid_badRequest() throws IOException {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("restaurant")).thenReturn("aaa");
 
-    when(request.getParameter("restaurant")).thenReturn("aaa");
+    servlet.doPost(mockRequest, mockResponse);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
