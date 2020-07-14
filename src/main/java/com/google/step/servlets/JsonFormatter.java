@@ -29,9 +29,16 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getDealJson(Deal deal) {
+  public static String getDealJson(
+      Deal deal, Restaurant restaurant, User poster, List<Tag> tags, int votes) {
     Gson gson = new Gson();
-    String json = gson.toJson(getDealMap(deal));
+    String json = gson.toJson(getDealMap(deal, restaurant, poster, tags, votes));
+    return json;
+  }
+
+  public static String getRestaurantJson(Restaurant restaurant) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getRestaurantMap(restaurant));
     return json;
   }
 
@@ -50,7 +57,8 @@ public class JsonFormatter {
     return commentMap;
   }
 
-  private static Map<String, Object> getDealMap(Deal deal) {
+  private static Map<String, Object> getDealMap(
+      Deal deal, Restaurant restaurant, User poster, List<Tag> tags, int votes) {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
@@ -58,10 +66,10 @@ public class JsonFormatter {
     dealMap.put("start", deal.start.toString());
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
-    dealMap.put("poster", deal.posterId); // TODO user brief
-    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant brief
-    dealMap.put("tags", "TODO"); // TODO add tags
-    dealMap.put("votes", 0); // TODO add votes
+    dealMap.put("poster", getUserBriefMap(poster));
+    dealMap.put("restaurant", restaurant.name); // TODO use restaurant brief
+    dealMap.put("tags", getTagListBriefMaps(tags));
+    dealMap.put("votes", votes);
     return dealMap;
   }
 
@@ -74,6 +82,14 @@ public class JsonFormatter {
     dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
     dealMap.put("votes", 0); // TODO add votes
     return dealMap;
+  }
+
+  private static Map<String, Object> getRestaurantMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
+    return restaurantMap;
   }
 
   private static List<Map<String, Object>> getDealListBriefMaps(List<Deal> deals) {
@@ -126,7 +142,7 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("photoBlobKey", user.photoBlobKey.get());
+      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -148,7 +164,9 @@ public class JsonFormatter {
     userMap.put("id", user.id);
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("photoBlobKey", user.photoBlobKey.get());
+      if (user.photoBlobKey.isPresent()) {
+        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      }
     }
     return userMap;
   }
