@@ -54,6 +54,7 @@ public class JsonFormatter {
     commentMap.put("dealId", comment.dealId);
     commentMap.put("userId", comment.userId);
     commentMap.put("content", comment.content);
+    commentMap.put("timestamp", comment.timestamp);
     return commentMap;
   }
 
