@@ -45,19 +45,20 @@ public class UserServletTest {
   private static final User USER_A = new User(ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
   private static final User USER_B = new User(ID_B, EMAIL_B, USERNAME_B, BIO_B);
 
-  private UserServlet servlet;
-  private UserManager userManager;
-  private UserService userService;
-  private TagManager tagManager;
-  private FollowManager followManager;
+  private UserServlet mockUserServlet;
+  private UserManager mockUserManager;
+  private UserService mockUserService;
+  private TagManager mockTagManager;
+  private FollowManager mockFollowManager;
 
   @Before
   public void setUp() {
-    userManager = mock(UserManager.class);
-    userService = mock(UserService.class);
-    tagManager = mock(TagManager.class);
-    followManager = mock(FollowManager.class);
-    servlet = new UserServlet(userManager, userService, tagManager, followManager);
+    mockUserManager = mock(UserManager.class);
+    mockUserService = mock(UserService.class);
+    mockTagManager = mock(TagManager.class);
+    mockFollowManager = mock(FollowManager.class);
+    mockUserServlet =
+        new UserServlet(mockUserManager, mockUserService, mockTagManager, mockFollowManager);
   }
 
   @Test
@@ -65,14 +66,14 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
-    when(userManager.readUser(1)).thenReturn(USER_A);
-    when(followManager.getFollowedTagIds(1)).thenReturn(new ArrayList<Long>());
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
+    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(new ArrayList<Long>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    servlet.doGet(request, response);
+    mockUserServlet.doGet(request, response);
 
     writer.flush();
 
@@ -94,9 +95,9 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1000");
-    when(userManager.readUser(1000)).thenThrow(new IllegalArgumentException());
+    when(mockUserManager.readUser(1000)).thenThrow(new IllegalArgumentException());
 
-    servlet.doGet(request, response);
+    mockUserServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
@@ -106,7 +107,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/100x00");
 
-    servlet.doGet(request, response);
+    mockUserServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -117,7 +118,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("");
 
-    servlet.doGet(request, response);
+    mockUserServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -126,9 +127,9 @@ public class UserServletTest {
   public void testDoPost_userNotLoggedIn() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(false);
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
 
-    servlet.doPost(request, response);
+    mockUserServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
@@ -136,20 +137,20 @@ public class UserServletTest {
   public void testDoPost_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
     com.google.appengine.api.users.User currentUser =
         new com.google.appengine.api.users.User(EMAIL_A, "");
-    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(1)).thenReturn(USER_A);
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_A));
-    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet.doPost(request, response);
+    mockUserServlet.doPost(request, response);
     User updatedUser = new User(ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-    verify(userManager).updateUser(captor.capture());
+    verify(mockUserManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());
     verify(response).sendRedirect("/user/" + ID_A);
   }
@@ -158,17 +159,17 @@ public class UserServletTest {
   public void testDoPost_inconsistentUser() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
     com.google.appengine.api.users.User currentUser =
         new com.google.appengine.api.users.User(EMAIL_A, "");
-    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(2)).thenReturn(USER_B);
+    when(mockUserManager.readUser(2)).thenReturn(USER_B);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(ID_B));
-    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet.doPost(request, response);
+    mockUserServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
