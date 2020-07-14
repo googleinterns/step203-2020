@@ -80,11 +80,11 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String popularDeals = String.format("[%s,%s,%s]", HOME_DEAL_A, HOME_DEAL_A, HOME_DEAL_A);
+    String expectedDeals = String.format("[%s,%s,%s]", HOME_DEAL_A, HOME_DEAL_A, HOME_DEAL_A);
     String expected =
         String.format(
             "{popularDeals:%s," + "usersIFollow:%s," + "restaurantsIFollow:%s," + "tagsIFollow:%s}",
-            popularDeals, popularDeals, popularDeals, popularDeals);
+            expectedDeals, expectedDeals, expectedDeals, expectedDeals);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }

@@ -166,7 +166,9 @@ function createHomePage(homePage) {
       const dealPoster = dealBody.children[3];
       dealPoster.innerText = homePageData[j].posterName;
       dealPoster.href = '/users/' + homePageData[j].posterId;
-      const dealLink = dealBody.children[4];
+      const dealVotes = dealBody.children[4];
+      dealVotes.innerText = homePageData[j].votes;
+      const dealLink = dealBody.children[5];
       dealLink.href = '/deals/' + homePageData[j].id;
     }
   }
@@ -201,13 +203,14 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
               <img class="card-img-top home-deal-img" src="" alt="">
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title deal-title"></h5>
-                  <p class="card-text deal-text"></p>
-                  <a href='#' class="card-text deal-restaurant"></a>
-                  <a href='#' class="card-text deal-poster"></a>
-                  <a href="#"
+                <p class="card-text deal-text"></p>
+                <a href='#' class="card-text deal-restaurant"></a>
+                <a href='#' class="card-text deal-poster"></a>
+                <p class="card-text deal-votes"></p>
+                <a href="#"
                   class="btn btn-primary align-self-end mt-auto float-right">
                   See More
-                  </a>
+                </a>
               </div>
             </div>
           </div>`;
