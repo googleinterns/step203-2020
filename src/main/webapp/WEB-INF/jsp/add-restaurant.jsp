@@ -56,15 +56,18 @@
               </div>
               <div class="d-flex align-items-center">
                 <i class="fa fa-search mr-2"></i>
-                <input autocomplete="off" type="search" placeholder="Search for an address..." id="place-input"
+                <input autocomplete="off" type="search" placeholder="Search for an address..." id="place-search-input"
                   class="flex-grow-1" style="outline: 0;border-width: 0 0 2px;">
               </div>
               <div>
                 Search Results:
-                <table class="table table-striped">
-                  <tbody id="restaurants-results-tbody"></tbody>
-                </table>
+                <div>
+                  <table class="table table-striped">
+                    <tbody id="search-results-tbody"></tbody>
+                  </table>
+                </div>
               </div>
+              <input type="text" class="d-none" name="places" id="place-input">
             </div>
 
             <div class="form-group d-flex flex-row-reverse">
