@@ -77,6 +77,4 @@ public class TestConstants {
 
   public static final String TIME_A = "2020-07-10T10:15:30";
   public static final String TIME_B = "2020-07-10T12:15:30";
-
-  public static final String UPDATE_CONTENT_A = "Update";
 }
