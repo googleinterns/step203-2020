@@ -24,10 +24,10 @@ function configureHeaderLoginStatus() {
       .then((loginStatus) => {
         const loginLink = document.getElementById('login-link');
         const usernameDropdown = document.getElementById('username-dropdown');
+        const headerUsername = document.getElementById('header-username');
         if (loginStatus.isLoggedIn) {
           loginLink.hidden = true;
           usernameDropdown.hidden = false;
-          const headerUsername = document.getElementById('header-username');
           headerUsername.innerHTML =
               '<i class="fa fa-user-circle"></i> '+ loginStatus.username;
           const profileLink = document.getElementById('header-profile-link');
