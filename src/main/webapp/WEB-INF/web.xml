@@ -13,6 +13,10 @@
   </servlet>
 
   <servlet>
+      <servlet-name>deals</servlet-name>
+      <jsp-file>/WEB-INF/jsp/deals.jsp</jsp-file>
+  </servlet>
+  <servlet>
     <servlet-name>userPage</servlet-name>
     <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
   </servlet>

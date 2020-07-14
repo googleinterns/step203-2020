@@ -9,6 +9,18 @@ import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_B_BRIEF_JSON;
 import static com.google.step.TestConstants.USER_C;
 import static com.google.step.TestConstants.USER_C_BRIEF_JSON;
+import static com.google.step.TestConstants.DATE_A;
+import static com.google.step.TestConstants.DATE_B;
+import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DESCRIPTION_A;
+import static com.google.step.TestConstants.IMAGE_URL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_B;
+import static com.google.step.TestConstants.USERNAME_A;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 
 import com.google.step.model.Deal;
@@ -55,6 +67,38 @@ public class JsonFormatterTest {
             USER_C_BRIEF_JSON);
     try {
       JSONAssert.assertEquals(expected, userJson, JSONCompareMode.STRICT);
+    } catch (JSONException e) {
+      Assert.fail();
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testGetDealJson() {
+    List<Tag> tags = Arrays.asList(TAG_A, TAG_B);
+    String dealJson = JsonFormatter.getDealJson(DEAL_A, RESTAURANT_A, USER_A, tags, 123);
+    String expected =
+        String.format(
+            "{"
+                + "\"id\": %d,"
+                + "\"description\": \"%s\","
+                + "\"image\": \"%s\","
+                + "\"start\": \"%s\","
+                + "\"end\": \"%s\","
+                + "\"source\": \"%s\","
+                + "\"poster\": {"
+                + "\"id\": %d,"
+                + "\"username\": \"%s\""
+                + "},"
+                // + "\"restaurant\": \"Restaurant Name\","
+                // + "\"tags\": [],"
+                + "\"votes\": 123"
+                + "}",
+            DEAL_ID_A, DESCRIPTION_A, IMAGE_URL_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, USERNAME_A);
+
+    try {
+      // TODO change LENIENT to STRICT after the todo fields in the method are implemented
+      JSONAssert.assertEquals(expected, dealJson, JSONCompareMode.LENIENT);
     } catch (JSONException e) {
       Assert.fail();
       e.printStackTrace();
