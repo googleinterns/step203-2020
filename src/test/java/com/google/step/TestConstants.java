@@ -63,6 +63,12 @@ public class TestConstants {
   public static final String SOURCE_B = "www.somethingelse.com";
   public static final String SOURCE_C = "www.helloworld.com";
 
+  public static final String TIME_A = "2020-07-10T10:15:30";
+  public static final String TIME_B = "2020-07-10T12:15:30";
+  public static final String TIME_C = "2020-07-10T14:15:30";
+
+  public static final long VOTE_A = 0;
+
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
   public static final long RESTAURANT_ID_B = 2;
@@ -74,4 +80,18 @@ public class TestConstants {
   public static final long COMMENT_ID_B = 2;
   public static final long COMMENT_ID_C = 3;
   public static final long COMMENT_ID_D = 4;
+
+  // Deal Brief JSON
+  public static final String DEAL_A_BRIEF_JSON =
+      String.format(
+          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
+          RESTAURANT_ID_A, DESCRIPTION_A, VOTE_A, DEAL_ID_A, BLOBKEY_A, USER_ID_A);
+  public static final String DEAL_B_BRIEF_JSON =
+      String.format(
+          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
+          RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_B, USER_ID_B);
+  public static final String DEAL_C_BRIEF_JSON =
+      String.format(
+          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
+          RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_C, USER_ID_C);
 }

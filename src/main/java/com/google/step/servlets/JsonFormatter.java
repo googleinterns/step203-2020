@@ -170,11 +170,10 @@ public class JsonFormatter {
    */
   private static Map<String, Object> getHomePageMap(List<List<Deal>> homePageDeals) {
     Map<String, Object> homePageMap = new HashMap<>();
-    System.out.println(homePageDeals);
-    homePageMap.put("Popular Deals", getDealListBriefMaps(homePageDeals.get(0)));
-    homePageMap.put("Users I Follow", getDealListBriefMaps(homePageDeals.get(1)));
-    homePageMap.put("Restaurants I Follow", getDealListBriefMaps(homePageDeals.get(2)));
-    homePageMap.put("Tags I Follow", getDealListBriefMaps(homePageDeals.get(3)));
+    homePageMap.put("popularDeals", getDealListBriefMaps(homePageDeals.get(0)));
+    homePageMap.put("usersIFollow", getDealListBriefMaps(homePageDeals.get(1)));
+    homePageMap.put("restaurantsIFollow", getDealListBriefMaps(homePageDeals.get(2)));
+    homePageMap.put("tagsIFollow", getDealListBriefMaps(homePageDeals.get(3)));
     return homePageMap;
   }
 }

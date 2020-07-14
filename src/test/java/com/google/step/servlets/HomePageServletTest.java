@@ -5,6 +5,12 @@ import static com.google.step.TestConstants.BLOBKEY_B;
 import static com.google.step.TestConstants.BLOBKEY_C;
 import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
+import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
+import static com.google.step.TestConstants.DEAL_B_BRIEF_JSON;
+import static com.google.step.TestConstants.DEAL_C_BRIEF_JSON;
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DEAL_ID_B;
+import static com.google.step.TestConstants.DEAL_ID_C;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.DESCRIPTION_B;
 import static com.google.step.TestConstants.DESCRIPTION_C;
@@ -14,8 +20,12 @@ import static com.google.step.TestConstants.RESTAURANT_ID_C;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.SOURCE_B;
 import static com.google.step.TestConstants.SOURCE_C;
+import static com.google.step.TestConstants.TIME_A;
+import static com.google.step.TestConstants.TIME_B;
+import static com.google.step.TestConstants.TIME_C;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
+import static com.google.step.TestConstants.USER_ID_C;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,17 +85,16 @@ public class HomePageServletTest {
             RESTAURANT_ID_B,
             TIME_B);
     Deal DEAL_C =
-        dealManager.createDeal(
+        new Deal(
             DEAL_ID_C,
             DESCRIPTION_C,
             BLOBKEY_C,
             DATE_A,
             DATE_B,
             SOURCE_C,
-            USER_ID_B,
+            USER_ID_C,
             RESTAURANT_ID_C,
             TIME_C);
-    System.out.println("DSF" + DEAL_A);
 
     List<Deal> TRENDING_DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
     List<Deal> DEALS_BY_FOLLOWED_USERS = new ArrayList<Deal>(Arrays.asList(DEAL_B, DEAL_A, DEAL_C));
@@ -93,7 +102,6 @@ public class HomePageServletTest {
         new ArrayList<Deal>(Arrays.asList(DEAL_C, DEAL_B, DEAL_A));
     List<Deal> DEALS_BY_FOLLOWED_TAGS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_C, DEAL_B));
 
-    System.out.println(TRENDING_DEALS);
     when(dealManager.getTrendingDeals()).thenReturn(TRENDING_DEALS);
     when(dealManager.getDealsPublishedByFollowedUsers(1)).thenReturn(DEALS_BY_FOLLOWED_USERS);
     when(dealManager.getDealsPublishedByFollowedRestaurants(1))
@@ -106,11 +114,18 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String expected = "";
-    /*String.format(
-    "[{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-    COMMENT_ID_A, DEAL_ID_A, USER_ID_A, UPDATE_CONTENT_A, TIME_A);*/
-    System.out.println(stringWriter.toString());
+    String popularDeals =
+        String.format("[%s,%s,%s]", DEAL_A_BRIEF_JSON, DEAL_B_BRIEF_JSON, DEAL_C_BRIEF_JSON);
+    String dealsByFollowedUsers =
+        String.format("[%s,%s,%s]", DEAL_B_BRIEF_JSON, DEAL_A_BRIEF_JSON, DEAL_C_BRIEF_JSON);
+    String dealsByFollowedRestaurants =
+        String.format("[%s,%s,%s]", DEAL_C_BRIEF_JSON, DEAL_B_BRIEF_JSON, DEAL_A_BRIEF_JSON);
+    String dealsByFollowedTags =
+        String.format("[%s,%s,%s]", DEAL_A_BRIEF_JSON, DEAL_C_BRIEF_JSON, DEAL_B_BRIEF_JSON);
+    String expected =
+        String.format(
+            "{popularDeals:%s," + "usersIFollow:%s," + "restaurantsIFollow:%s," + "tagsIFollow:%s}",
+            popularDeals, dealsByFollowedUsers, dealsByFollowedRestaurants, dealsByFollowedTags);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }

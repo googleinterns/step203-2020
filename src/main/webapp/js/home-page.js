@@ -1,4 +1,4 @@
-const homePage = {
+/* const homePage = {
   'Popular Deals': [
     {
       'id': 1234,
@@ -58,14 +58,14 @@ const homePage = {
     },
   ],
 };
-
+*/
 /**
  * Creates deal elements on home page
  * @param {object} homePage
  */
 function createHomePage(homePage) {
-  const homePageSections = ['Popular Deals', 'Restaurants I Follow',
-    'Users I Follow', 'Tags I Follow'];
+  const homePageSections = ['popularDeals', 'restaurantsIFollow',
+    'usersIFollow', 'tagsIFollow'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
     const homePageData = homePage[homePageSections[i]];
@@ -140,12 +140,14 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
 }
 
 /**
- * Calls backend for data on deal
+ * Calls backend for data on home page deals
  */
-function initDeal() {
-  $.ajax('/home/')
-      .done((deal) => {
-        loadDealDataToPage(deal);
+function initHomePage() {
+  $.ajax('/home')
+      .done((homePageDeals) => {
+        console.log(homePageDeals);
+        createCarouselElements([2, 2, 3, 3], 4);
+        createHomePage(homePageDeals);
       })
       .fail(() => {
         showNotFound();
@@ -153,6 +155,7 @@ function initDeal() {
 }
 
 addLoadEvent(() => {
-  createCarouselElements([2, 2, 3, 3], 4);
-  createHomePage(homePage);
+  initHomePage();
+  // createCarouselElements([2, 2, 3, 3], 4);
+  // createHomePage(homePage);
 });
