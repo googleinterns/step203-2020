@@ -6,6 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.User;
 import java.io.PrintWriter;
@@ -45,12 +49,22 @@ public class UserServletTest {
   private UserServlet servlet;
   private UserManager userManager;
   private UserService userService;
+  private TagManager tagManager;
+  private FollowManager followManager;
+  private DealManager dealManager;
+  private RestaurantManager restaurantManager;
 
   @Before
   public void setUp() {
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
-    servlet = new UserServlet(userManager, userService);
+    tagManager = mock(TagManager.class);
+    followManager = mock(FollowManager.class);
+    dealManager = mock(DealManager.class);
+    restaurantManager = mock(RestaurantManager.class);
+    servlet =
+        new UserServlet(
+            userManager, userService, dealManager, followManager, tagManager, restaurantManager);
   }
 
   @Test
