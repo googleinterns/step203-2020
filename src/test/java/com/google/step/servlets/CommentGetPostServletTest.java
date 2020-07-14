@@ -30,12 +30,12 @@ public class CommentGetPostServletTest {
   private static final long ID_A = 1;
   private static final long USERID_A = 3;
   private static final String CONTENT_A = "Hello world";
-  private static final Comment COMMENT_A = new Comment(ID_A, DEALID, USERID_A, CONTENT_A);
+  private static final Comment COMMENT_A = new Comment(ID_A, DEALID, USERID_A, CONTENT_A, "1");
 
   private static final long ID_B = 2;
   private static final long USERID_B = 4;
   private static final String CONTENT_B = "Hello world2";
-  private static final Comment COMMENT_B = new Comment(ID_B, DEALID, USERID_B, CONTENT_B);
+  private static final Comment COMMENT_B = new Comment(ID_B, DEALID, USERID_B, CONTENT_B, "1");
 
   private CommentManager mockCommentManager;
 
@@ -56,7 +56,7 @@ public class CommentGetPostServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("dealId")).thenReturn("2");
-    when(mockCommentManager.getComments(2)).thenReturn(comments);
+    when(mockCommentManager.getCommentsForDeal(2)).thenReturn(comments);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -80,7 +80,7 @@ public class CommentGetPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getParameter("dealId")).thenReturn("1000");
-    when(mockCommentManager.getComments(1000)).thenReturn(new ArrayList<>());
+    when(mockCommentManager.getCommentsForDeal(1000)).thenReturn(new ArrayList<>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

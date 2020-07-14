@@ -29,7 +29,7 @@ public class CommentServletTest {
   private static final String CONTENT_A = "Hello world";
   private static final String UPDATE_CONTENT_A = "Update";
   private static final Comment UPDATE_COMMENT_A =
-      new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A);
+      new Comment(ID_A, DEALID, USERID_A, UPDATE_CONTENT_A, "1");
 
   private CommentManager mockCommentManager;
 
