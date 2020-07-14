@@ -1,5 +1,7 @@
 package com.google.step.datamanager;
 
+import static com.google.step.servlets.ImageUploader.deleteImage;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -96,7 +98,6 @@ public class UserManagerDatastore implements UserManager {
   @Override
   public void updateUser(User user) throws IllegalArgumentException {
     Entity entity = getUserEntity(user.id);
-
     if (user.username != null) {
       entity.setProperty("username", user.username);
     }
@@ -104,6 +105,7 @@ public class UserManagerDatastore implements UserManager {
       entity.setProperty("bio", user.bio);
     }
     if (user.photoBlobKey != null) {
+      discardImageOfUserEntity(entity);
       if (user.photoBlobKey.isPresent()) {
         entity.setProperty("photoBlobKey", user.photoBlobKey.get());
       } else {
@@ -115,7 +117,20 @@ public class UserManagerDatastore implements UserManager {
 
   @Override
   public void deleteUser(long id) {
-    Key key = KeyFactory.createKey("User", id);
-    datastore.delete(key);
+    Entity entity = getUserEntity(id);
+    discardImageOfUserEntity(entity);
+    datastore.delete(entity.getKey());
+  }
+
+  /**
+   * Discards the image of the user entity. If the user entity has a blob key, remove the file
+   * identified by the blob key.
+   *
+   * @param entity the user entity.
+   */
+  private void discardImageOfUserEntity(Entity entity) {
+    if (entity.hasProperty("photoBlobKey")) {
+      deleteImage((String) entity.getProperty("photoBlobKey"));
+    }
   }
 }

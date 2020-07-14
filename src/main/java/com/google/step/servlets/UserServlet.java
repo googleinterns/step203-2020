@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import static com.google.step.servlets.ImageUploader.getUploadedImageBlobkey;
+
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.FollowManager;
@@ -51,7 +53,7 @@ public class UserServlet extends HttpServlet {
     try {
       String idString = request.getPathInfo().substring(1); // Remove '/'
       id = Long.parseLong(idString);
-    } catch (IndexOutOfBoundsException | NumberFormatException e) {
+    } catch (IndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -89,10 +91,10 @@ public class UserServlet extends HttpServlet {
     long id;
     User user;
     try {
-      String idString = request.getPathInfo().substring(1);
+      String idString = request.getPathInfo().substring(1); // remove '/'
       id = Long.parseLong(idString);
       user = userManager.readUser(id);
-    } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+    } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -106,7 +108,15 @@ public class UserServlet extends HttpServlet {
 
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
-    User updatedUser = new User(user.id, null, username, null, bio);
+    String photoBlobKey = getUploadedImageBlobkey(request, "picture");
+
+    User updatedUser;
+    if (photoBlobKey != null) {
+      updatedUser = new User(user.id, null, username, photoBlobKey, bio);
+    } else {
+      updatedUser = new User(user.id, null, username, null, bio);
+    }
+
     userManager.updateUser(updatedUser);
     String tags = (String) request.getParameter("tags");
     if (tags != null) {

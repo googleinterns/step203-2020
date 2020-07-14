@@ -19,9 +19,8 @@ function addLoadEvent(func) {
  * Configures login status in header.
  */
 function configureHeaderLoginStatus() {
-  fetch('/api/authentication')
-      .then((response) => response.json())
-      .then((loginStatus) => {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
         const loginStatusLink = document.getElementById('login-status-link');
         const headerUsername = document.getElementById('header-username');
         if (loginStatus.isLoggedIn) {
@@ -38,3 +37,40 @@ function configureHeaderLoginStatus() {
 }
 
 addLoadEvent(configureHeaderLoginStatus);
+
+/**
+ * Returns a container for a deal.
+ * @param {object} deal deal whose info will be shown.
+ * @return {object} a DOM element showing deal's info.
+ */
+function createDealCard(deal) {
+  const dealCard = document.createElement('div');
+  dealCard.classList.add('deal-card', 'card');
+  const dealImage = document.createElement('img');
+  dealImage.className = 'card-img-top deal-card-img';
+  dealImage.src = deal.image;
+  dealImage.alt = 'Deal image';
+
+  const dealBody = document.createElement('div');
+  dealBody.className = 'card-body';
+
+  const dealName = document.createElement('h6');
+  dealName.className = 'card-title';
+  dealName.innerText = deal.description;
+
+  const dealVotes = document.createElement('p');
+  dealVotes.className = 'card-text';
+  dealVotes.innerText = deal.votes;
+
+  const dealLink = document.createElement('a');
+  dealLink.innerText = 'See detail';
+  dealLink.href = '/deals/' + deal.id;
+
+  dealBody.appendChild(dealName);
+  dealBody.appendChild(dealVotes);
+  dealBody.appendChild(dealLink);
+
+  dealCard.appendChild(dealImage);
+  dealCard.appendChild(dealBody);
+  return dealCard;
+}
