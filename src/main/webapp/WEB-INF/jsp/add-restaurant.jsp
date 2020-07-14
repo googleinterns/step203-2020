@@ -46,6 +46,27 @@
             </div>
             <img style="display: none;" id="img-preview" class="mw-100 my-4" src="#" alt="your image" />
 
+            <div class="form-group">
+              <label for="restaurant-input">Addresses</label>
+              <div>
+                Addresses Selected:
+                <table class="table table-striped">
+                  <tbody id="selected-restaurants-tbody"></tbody>
+                </table>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="fa fa-search mr-2"></i>
+                <input autocomplete="off" type="search" placeholder="Search for an address..." id="place-input"
+                  class="flex-grow-1" style="outline: 0;border-width: 0 0 2px;">
+              </div>
+              <div>
+                Search Results:
+                <table class="table table-striped">
+                  <tbody id="restaurants-results-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
             <div class="form-group d-flex flex-row-reverse">
               <button class="btn btn-primary" id="sendMessageButton" type="submit">Add Restaurant
               </button>
@@ -67,6 +88,9 @@
   <script src="js/scripts.js"></script>
   <!-- Page JS -->
   <script src="js/add-restaurant.js"></script>
+  <!-- Maps library -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxqwXj4lUG5Vpts3ZiXA2UksJbtDegeC4&libraries=places&callback=initMap"
+    async defer></script>
 </body>
 
 </html>
