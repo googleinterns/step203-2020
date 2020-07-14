@@ -74,7 +74,7 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
-    String timestamp = LocalDateTime.now(ZoneId.of("Asia/Singapore")).toString();
+    String timestamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
     entity.setProperty("timestamp", timestamp);
 
     Key key = datastore.put(entity);
