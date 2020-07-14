@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -11,9 +12,14 @@ import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
+import com.google.step.model.Deal;
+import com.google.step.model.Restaurant;
+import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -71,8 +77,31 @@ public class UserServletTest {
   public void testDoGet_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(request.getPathInfo()).thenReturn("/1");
-    when(userManager.readUser(1)).thenReturn(USER_A);
+    when(request.getPathInfo()).thenReturn("/" + USER_ID_A);
+    when(userManager.readUser(USER_ID_A)).thenReturn(USER_A);
+
+    List<Deal> deals = new ArrayList<>();
+    when(dealManager.getDealsPublishedByUser(USER_ID_A)).thenReturn(deals);
+
+    List<Long> followingIds = new ArrayList<>();
+    when(followManager.getFollowedUserIds(USER_ID_A)).thenReturn(followingIds);
+    List<User> following = new ArrayList<>();
+    when(userManager.readUsers(followingIds)).thenReturn(following);
+
+    List<Long> followerIds = new ArrayList<>();
+    when(followManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(followerIds);
+    List<User> followers = new ArrayList<>();
+    when(userManager.readUsers(followerIds)).thenReturn(followers);
+
+    List<Long> tagIds = new ArrayList<>();
+    when(followManager.getFollowedTagIds(USER_ID_A)).thenReturn(tagIds);
+    List<Tag> tags = new ArrayList<>();
+    when(tagManager.readTags(tagIds)).thenReturn(tags);
+
+    List<Long> restaurantIds = new ArrayList<>();
+    when(followManager.getFollowedRestaurantIds(USER_ID_A)).thenReturn(restaurantIds);
+    List<Restaurant> restaurants = new ArrayList<>();
+    when(restaurantManager.readRestaurants(restaurantIds)).thenReturn(restaurants);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
