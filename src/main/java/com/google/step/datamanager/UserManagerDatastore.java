@@ -21,7 +21,7 @@ public class UserManagerDatastore implements UserManager {
   }
 
   @Override
-  public User readOrCreateUserByEmail(String email) {
+  public User readUserByEmail(String email) throws IllegalArgumentException {
     // Checks if the user exists.
     Query query =
         new Query("User")
@@ -29,8 +29,7 @@ public class UserManagerDatastore implements UserManager {
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
     if (entity == null) {
-      // Creates a user entity if it does not exists.
-      return createUser(email);
+      throw new IllegalArgumentException("User does not exist");
     } else {
       return transformEntityToUser(entity);
     }
@@ -116,7 +115,7 @@ public class UserManagerDatastore implements UserManager {
 
   @Override
   public void deleteUser(long id) {
-    Key key = KeyFactory.createKey("Deal", id);
+    Key key = KeyFactory.createKey("User", id);
     datastore.delete(key);
   }
 }

@@ -28,7 +28,7 @@
       <h2 class="page-section-heading text-center text-secondary mb-4">Submit A Deal</h2>
       <div class="row">
         <div class="col-lg-8 mx-auto">
-          <form action="/api/deals" method="post" id="contactForm" name="dealform" novalidate class="needs-validation">
+          <form method="post" id="deal-form" name="dealform" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="form-group validate-me">
               <label for="img-input">Choose Image</label>
               <input name="pic" type="file" class="form-control-file" id="img-input" required>
@@ -72,6 +72,7 @@
                   </div>
                 </div>
               </div>
+              <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div>
             </div>
 
             <div class="form-group">
