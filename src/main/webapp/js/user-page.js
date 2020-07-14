@@ -215,16 +215,23 @@ function configureFollowButton(user, userLoggedInId) {
 }
 
 /**
+ * Sets profile form url.
+ * @param {String} url url for form submission.
+ */
+function setProfileFormUrl(url) {
+  const profileEditForm = document.getElementById('profile-form');
+  profileEditForm.action = url;
+}
+
+/**
  * Shows profile editing form and initializes input values with the user.
  * @param {object} user The user whose profile is being edited.
  */
 function showProfileEditingForm(user) {
-  const profileEditForms = document.getElementById('profile-edit-forms');
-  profileEditForms.hidden = false;
-  const profileInfoForm = document.getElementById('profile-form');
-  profileInfoForm.action += '/' + user.id;
   const profile = document.getElementById('profile');
   profile.hidden = true;
+  const profileEditForm = document.getElementById('profile-form');
+  profileEditForm.hidden = false;
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
   if (typeof user.picture != 'undefined') {
@@ -271,8 +278,8 @@ function profilePhotoPreview(input) {
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
-  const profileEditForms = document.getElementById('profile-edit-forms');
-  profileEditForms.hidden = true;
+  const profileEditForm = document.getElementById('profile-edit-form');
+  profileEditForm.hidden = true;
 }
 
 /**
@@ -281,9 +288,8 @@ function cancelProfileEditing() {
  * @param {object} user The user whose profile is shown.
  */
 function configureButtons(user) {
-  fetch('/api/authentication')
-      .then((response) =>(response.json()))
-      .then((loginStatus) => {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
         if (loginStatus.isLoggedIn) {
           if (loginStatus.id == user.id) {
             configureProfileEditButton(user);
@@ -293,16 +299,20 @@ function configureButtons(user) {
         }
       });
 }
+
 /**
- * Initializes the user profile based on the id.
+ * Initializes the user profile page based on the id.
  */
 function init() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
-  fetch('/api/users/' + id)
-      .then((response) => response.json())
-      .then((user) => {
+  $.ajax('/api/users/' + id)
+      .done((user) => {
         configureButtons(user);
         configureUserProfile(user);
+      });
+  $.ajax('/api/user-post-url/' + id)
+      .done((url) => {
+        setProfileFormUrl(url);
       });
 }
 
