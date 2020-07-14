@@ -144,6 +144,8 @@ public class JsonFormatter {
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
       userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
