@@ -358,7 +358,7 @@ public final class DealManagerDatastoreTest {
 
     // Deal B most votes -> Most trending
     // Deal A and C equal number of votes, but deal A is the older deal -> less trending since
-    // the votes was over a longer period of time
+    // the votes were over a longer period of time
 
     voteManager.vote(USER_ID_A, dealA.id, 1);
     voteManager.vote(USER_ID_B, dealA.id, 1);

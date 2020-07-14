@@ -34,7 +34,8 @@ public class DealManagerDatastore implements DealManager {
   private final String USER_FIELD_NAME = "user";
   private final String TAG_FIELD_NAME = "tag";
 
-  private final Long oldestDealTimestamp = 1594652120L;
+  private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
+  private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -174,6 +175,10 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
+  /**
+   * This is copied from the follow manager method which is private, would it be better to make the
+   * original method public?
+   */
   private List<Long> getFollowedSomething(long followerId, String fieldName) {
     Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
     Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
@@ -219,6 +224,7 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
+  /** Sorts deals based on votes (Highest to lowest) */
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
     Collections.sort(
@@ -232,6 +238,7 @@ public class DealManagerDatastore implements DealManager {
     return deals;
   }
 
+  /** Sorts deals based on new (Newest to oldest) */
   @Override
   public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
     Collections.sort(
@@ -246,6 +253,7 @@ public class DealManagerDatastore implements DealManager {
     return deals;
   }
 
+  /** Sorts deals based on hot score (Highest to lowest) */
   private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
     Collections.sort(
         deals,
@@ -258,12 +266,17 @@ public class DealManagerDatastore implements DealManager {
     return deals;
   }
 
+  /** Sorts deals based on hot score (Highest to lowest) */
   private double epochSeconds(String timestamp) {
     LocalDateTime time = LocalDateTime.parse(timestamp);
-    long epoch = time.atZone(ZoneId.of("Asia/Singapore")).toEpochSecond();
+    long epoch = time.atZone(ZoneId.of(LOCATION)).toEpochSecond();
     return epoch;
   }
 
+  /**
+   * Calculates a hot score for each deal entity, which takes into account both the time and the
+   * amount of votes it got
+   */
   private double calculateHotScore(Entity dealEntity) {
     int netVotes = voteManager.getVotes(dealEntity.getKey().getId());
     double order = Math.log(Math.max(Math.abs(netVotes), 1));
@@ -271,10 +284,12 @@ public class DealManagerDatastore implements DealManager {
     if (netVotes > 0) sign = 1;
     else if (netVotes < 0) sign = -1;
     double seconds =
-        epochSeconds((String) dealEntity.getProperty("timestamp")) - oldestDealTimestamp;
-    return order + (sign * seconds / 45000);
+        epochSeconds((String) dealEntity.getProperty("timestamp")) - OLDEST_DEAL_TIMESTAMP;
+    System.out.println(sign * order + seconds / 45000);
+    return sign * order + seconds / 45000;
   }
 
+  /** Gets a list of trending deals based on the hot score */
   @Override
   public List<Deal> getTrendingDeals() {
     Query query = new Query("Deal");
