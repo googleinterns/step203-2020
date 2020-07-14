@@ -143,7 +143,7 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
  * Calls backend for data on home page deals
  */
 function initHomePage() {
-  $.ajax('/home')
+  $.ajax('/api/home')
       .done((homePageDeals) => {
         console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4);

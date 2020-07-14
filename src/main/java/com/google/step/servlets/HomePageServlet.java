@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles retrieving deals for home page */
-@WebServlet("/home")
+@WebServlet("/api/home")
 public class HomePageServlet extends HttpServlet {
 
   private final DealManager dealManager;
