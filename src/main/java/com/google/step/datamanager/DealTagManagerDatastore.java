@@ -39,7 +39,7 @@ public class DealTagManagerDatastore implements DealTagManager {
 
   @Override
   public void updateTagsOfDeal(long dealId, List<Long> tagIds) {
-    HashSet<Long> newTagIds = new HashSet(tagIds);
+    HashSet<Long> newTagIds = new HashSet<>(tagIds);
     Iterable<Entity> results = getDealTagEntitiesOfDeal(dealId);
 
     // Keeps tags in the new list and remove others
