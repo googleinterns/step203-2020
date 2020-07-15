@@ -92,7 +92,7 @@
   <!-- Page JS -->
   <script src="js/add-restaurant.js"></script>
   <!-- Maps library -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxqwXj4lUG5Vpts3ZiXA2UksJbtDegeC4&libraries=places&callback=initMap"
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28&libraries=places&callback=initMap"
     async defer></script>
 </body>
 
