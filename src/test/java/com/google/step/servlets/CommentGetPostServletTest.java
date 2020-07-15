@@ -5,8 +5,10 @@ import static com.google.step.TestConstants.COMMENT_ID_B;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.TIME_A;
 import static com.google.step.TestConstants.TIME_B;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.mockito.Matchers.anyLong;
@@ -16,7 +18,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,13 +46,24 @@ public class CommentGetPostServletTest {
       new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
 
   private CommentManager mockCommentManager;
+  private UserService mockUserService;
+  private UserManager mockUserManager;
 
   private CommentGetPostServlet commentGetPostServlet;
 
   @Before
   public void setUp() {
     mockCommentManager = mock(CommentManager.class);
-    commentGetPostServlet = new CommentGetPostServlet(mockCommentManager);
+    mockUserService = mock(UserService.class);
+    mockUserManager = mock(UserManager.class);
+    commentGetPostServlet =
+        new CommentGetPostServlet(mockCommentManager, mockUserService, mockUserManager);
+
+    // mock behaviour when user is logged in
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    User currentUser = new User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
   }
 
   @Test
