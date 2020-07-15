@@ -8,7 +8,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -18,8 +17,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class DealManagerDatastore implements DealManager {
 
@@ -34,7 +35,8 @@ public class DealManagerDatastore implements DealManager {
   private final String USER_FIELD_NAME = "user";
   private final String TAG_FIELD_NAME = "tag";
 
-  private final Long oldestDealTimestamp = 1594652120L;
+  private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
+  private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -73,7 +75,7 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
-    String timestamp = LocalDateTime.now(ZoneId.of("Asia/Singapore")).toString();
+    String timestamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
     entity.setProperty("timestamp", timestamp);
 
     Key key = datastore.put(entity);
@@ -160,9 +162,8 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by _ followed by user */
   private List<Deal> getDealsPublishedByFollowedRestaurantsOrUsers(
-      long userId, String fieldName, String filterAttribute) {
+      List<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
-    List<Long> idsOfFollowedFieldName = getFollowedSomething(userId, fieldName);
     for (Long id : idsOfFollowedFieldName) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.EQUAL, id);
       Query query = new Query("Deal").setFilter(propertyFilter);
@@ -174,31 +175,18 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
-  private List<Long> getFollowedSomething(long followerId, String fieldName) {
-    Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
-    Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
-    Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);
-    Query query = new Query("Follow").setFilter(filter);
-    PreparedQuery pq = datastore.prepare(query);
-
-    List<Long> list = new ArrayList<>();
-    for (Entity entity : pq.asIterable()) {
-      list.add((Long) entity.getProperty(fieldName));
-    }
-    return list;
-  }
-
   /** Retrieves deals posted by users followed by user */
   @Override
   public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(userId, USER_FIELD_NAME, "posterId");
+    List<Long> userIds = followManager.getFollowedUserIds(userId);
+    return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants followed by user */
   @Override
   public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(
-        userId, RESTAURANT_FIELD_NAME, "restaurantId");
+    List<Long> restaurantIds = followManager.getFollowedRestaurantIds(userId);
+    return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   /** Retrieves deals posted by tags followed by user */
@@ -219,19 +207,43 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
+  /** Sorts deals based on votes (Highest to lowest) */
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return voteManager.getVotes(deal2.id) - voteManager.getVotes(deal1.id); // Descending
-          }
-        });
-    return deals;
+    List<Map<String, Object>> dealWithVotesMaps = new ArrayList<Map<String, Object>>();
+    // Creates a list of maps with votes as an attribute to be sorted
+    for (Deal deal : deals) {
+      Map<String, Object> dealWithVotesMap = new HashMap<>();
+      dealWithVotesMap.put("votes", voteManager.getVotes(deal.id));
+      dealWithVotesMap.put("deal", deal);
+      dealWithVotesMaps.add(dealWithVotesMap);
+    }
+    return sortDealMapsBasedOnValue(dealWithVotesMaps, "votes");
   }
 
+  /** Method to sort a list of maps based on a value and return a list of deals */
+  private List<Deal> sortDealMapsBasedOnValue(
+      List<Map<String, Object>> dealMaps, String attribute) {
+    Collections.sort(
+        dealMaps,
+        new Comparator<Map<String, Object>>() {
+          @Override
+          public int compare(Map<String, Object> deal1, Map<String, Object> deal2) {
+            if (attribute.equals("hotScore")) // comparing hot score (double values)
+            return -Double.compare(
+                  (double) deal1.get(attribute), (double) deal2.get(attribute)); // Descending
+            else // Comparing votes
+            return (int) deal2.get(attribute) - (int) deal1.get(attribute); // Descending
+          }
+        });
+    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
+    for (Map<String, Object> dealMap : dealMaps) {
+      dealResults.add((Deal) dealMap.get("deal"));
+    }
+    return dealResults;
+  }
+
+  /** Sorts deals based on new (Newest to oldest) */
   @Override
   public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
     Collections.sort(
@@ -246,24 +258,17 @@ public class DealManagerDatastore implements DealManager {
     return deals;
   }
 
-  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return -Double.compare(deal1.getHotScore(), deal2.getHotScore()); // Descending
-          }
-        });
-    return deals;
-  }
-
+  /** Sorts deals based on hot score (Highest to lowest) */
   private double epochSeconds(String timestamp) {
     LocalDateTime time = LocalDateTime.parse(timestamp);
-    long epoch = time.atZone(ZoneId.of("Asia/Singapore")).toEpochSecond();
+    long epoch = time.atZone(ZoneId.of(LOCATION)).toEpochSecond();
     return epoch;
   }
 
+  /**
+   * Calculates a hot score for each deal entity, which takes into account both the time and the
+   * amount of votes it got
+   */
   private double calculateHotScore(Entity dealEntity) {
     int netVotes = voteManager.getVotes(dealEntity.getKey().getId());
     double order = Math.log(Math.max(Math.abs(netVotes), 1));
@@ -271,21 +276,23 @@ public class DealManagerDatastore implements DealManager {
     if (netVotes > 0) sign = 1;
     else if (netVotes < 0) sign = -1;
     double seconds =
-        epochSeconds((String) dealEntity.getProperty("timestamp")) - oldestDealTimestamp;
-    return order + (sign * seconds / 45000);
+        epochSeconds((String) dealEntity.getProperty("timestamp")) - OLDEST_DEAL_TIMESTAMP;
+    return sign * order + seconds / 45000;
   }
 
+  /** Gets a list of trending deals based on the hot score */
   @Override
   public List<Deal> getTrendingDeals() {
     Query query = new Query("Deal");
     PreparedQuery pq = datastore.prepare(query);
     List<Deal> dealResults = new ArrayList<>();
+    List<Map<String, Object>> dealWithHotScoreMaps = new ArrayList<Map<String, Object>>();
     for (Entity entity : pq.asIterable()) {
-      double hotScore = calculateHotScore(entity);
-      Deal deal = transformEntitytoDeal(entity);
-      deal.setHotScore(hotScore);
-      dealResults.add(deal);
+      Map<String, Object> dealWithHotScoreMap = new HashMap<>();
+      dealWithHotScoreMap.put("hotScore", calculateHotScore(entity));
+      dealWithHotScoreMap.put("deal", transformEntitytoDeal(entity));
+      dealWithHotScoreMaps.add(dealWithHotScoreMap);
     }
-    return sortDealsBasedOnHotScore(dealResults);
+    return sortDealMapsBasedOnValue(dealWithHotScoreMaps, "hotScore");
   }
 }
