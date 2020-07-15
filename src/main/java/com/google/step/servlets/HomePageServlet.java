@@ -80,7 +80,7 @@ public class HomePageServlet extends HttpServlet {
     List<Deal> dealsByTagsFollowed =
         dealManager.getDealsPublishedByFollowedTags(followManager.getFollowedTagIds(userId));
     List<List<Deal>> homePageDeals =
-        new ArrayList<List<Deal>>(
+        new ArrayList<>(
             Arrays.asList(
                 trendingDeals,
                 dealsByUsersFollowed,
@@ -92,10 +92,9 @@ public class HomePageServlet extends HttpServlet {
 
   /** Creates a list of list of deal maps for the home page */
   private List<List<Map<String, Object>>> getHomePageDealMaps(List<List<Deal>> homePageDeals) {
-    List<List<Map<String, Object>>> homePageDealsMapList =
-        new ArrayList<List<Map<String, Object>>>();
+    List<List<Map<String, Object>>> homePageDealsMapList = new ArrayList<>();
     for (List<Deal> dealList : homePageDeals) {
-      List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<Map<String, Object>>();
+      List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<>();
       for (Deal deal : dealList) {
         User user = userManager.readUser(deal.posterId);
         Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
