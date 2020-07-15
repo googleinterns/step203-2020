@@ -1,5 +1,6 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -8,7 +9,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Restaurant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RestaurantManagerDatastore implements RestaurantManager {
 
@@ -86,14 +89,19 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   @Override
   public List<Restaurant> readRestaurants(List<Long> ids) {
-    List<Restaurant> restaurants = new ArrayList<>();
-    for (long id : ids) {
-      try {
-        restaurants.add(readRestaurant(id));
-      } catch (IllegalArgumentException e) {
-        continue;
-      }
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Restaurant", id)).collect(Collectors.toList());
+    Collection<Entity> restaurantEntities;
+    try {
+      restaurantEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
     }
+    List<Restaurant> restaurants =
+        restaurantEntities.stream()
+            .map(entity -> transformEntitytoRestaurant(entity))
+            .collect(Collectors.toList());
     return restaurants;
   }
 }

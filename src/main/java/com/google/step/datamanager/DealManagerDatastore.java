@@ -1,5 +1,6 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -10,7 +11,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
 
@@ -104,14 +107,19 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> readDeals(List<Long> ids) {
-    List<Deal> deals = new ArrayList<>();
-    for (long id : ids) {
-      try {
-        deals.add(readDeal(id));
-      } catch (IllegalArgumentException e) {
-        continue;
-      }
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    Collection<Entity> dealEntities;
+    try {
+      dealEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
     }
+    List<Deal> deals =
+        dealEntities.stream()
+            .map(entity -> transformEntityToDeal(entity))
+            .collect(Collectors.toList());
     return deals;
   }
 

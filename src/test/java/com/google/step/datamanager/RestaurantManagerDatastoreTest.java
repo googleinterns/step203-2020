@@ -2,14 +2,19 @@ package com.google.step.datamanager;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_B;
+import static com.google.step.TestConstants.RESTAURANT_ID_C;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_B;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Restaurant;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,5 +96,29 @@ public final class RestaurantManagerDatastoreTest {
     restaurantManagerDatastore.deleteRestaurant(restaurantA.id);
 
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
+  }
+
+  @Test
+  public void testReadRestaurants() {
+    Restaurant restaurantA =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurantB =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_B, BLOBKEY_B);
+    List<Long> ids = Arrays.asList(restaurantA.id, restaurantB.id);
+    List<Restaurant> users = restaurantManagerDatastore.readRestaurants(ids);
+
+    assertThat(users, containsInAnyOrder(restaurantA, restaurantB));
+  }
+
+  @Test
+  public void testReadRestaurants_idDoesNotExist() {
+    Restaurant restaurantA =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurantB =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_B, BLOBKEY_B);
+    List<Long> ids = Arrays.asList(restaurantA.id, restaurantB.id, RESTAURANT_ID_C);
+    List<Restaurant> users = restaurantManagerDatastore.readRestaurants(ids);
+
+    assertThat(users, containsInAnyOrder(restaurantA, restaurantB));
   }
 }
