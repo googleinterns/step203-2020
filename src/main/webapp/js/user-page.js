@@ -209,9 +209,38 @@ function configureProfileEditButton(user) {
  */
 function configureFollowButton(user, userLoggedInId) {
   const followButton = document.getElementById('follow-btn');
-  followButton.hidden = false;
-  followButton.innerText = 'unfollow';
-  // TODO: Check follow relationship, btn onclick
+  $.ajax('/api/follows/',
+      {data: {followerId: userLoggedInId, followeeId: user.id}})
+      .done((isFollowing) => {
+        followButton.hidden = false;
+        if (isFollowing === 'true') {
+          followButton.innerText = 'Unfollow';
+          followButton.onclick = () => unfollow(user);
+        } else {
+          followButton.innerText = 'Follow';
+          followButton.onclick = () => follow(user);
+        }
+      });
+}
+
+/**
+ * Follows a user and reloads the page.
+ * @param {object} user the user to be followed.
+ */
+function follow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'POST'})
+      .done(() => location.reload());
+}
+
+/**
+ * Unfollows a user and reloads the page.
+ * @param {object} user the user to be unfollowed.
+ */
+function unfollow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'DELETE'})
+      .done(() => location.reload());
 }
 
 /**
