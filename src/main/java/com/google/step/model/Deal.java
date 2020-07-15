@@ -1,5 +1,7 @@
 package com.google.step.model;
 
+import static com.google.step.model.Util.isEqual;
+
 public class Deal {
   public final long id;
   public final String description;
@@ -40,16 +42,11 @@ public class Deal {
     }
 
     return (other.id == this.id)
-        && ((other.description == null && this.description == null)
-            || (this.description != null && this.description.equals(other.description)))
-        && ((other.photoBlobkey == null && this.photoBlobkey == null)
-            || (this.photoBlobkey != null && this.photoBlobkey.equals(other.photoBlobkey)))
-        && ((other.start == null && this.start == null)
-            || (this.start != null && this.start.equals(other.start)))
-        && ((other.end == null && this.end == null)
-            || (this.end != null && this.end.equals(other.end)))
-        && ((other.source == null && this.source == null)
-            || (this.source != null && this.source.equals(other.source)))
+        && isEqual(this.description, other.description)
+        && isEqual(this.photoBlobkey, other.photoBlobkey)
+        && isEqual(this.start, other.start)
+        && isEqual(this.end, other.end)
+        && isEqual(this.source, other.source)
         && (this.posterId == other.posterId)
         && (this.restaurantId == other.restaurantId);
   }
