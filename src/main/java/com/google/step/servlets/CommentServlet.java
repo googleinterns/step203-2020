@@ -3,6 +3,7 @@ package com.google.step.servlets;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.model.Comment;
+import com.google.step.model.User;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -53,7 +54,10 @@ public class CommentServlet extends HttpServlet {
     if (updatedComment == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     } else {
-      response.getWriter().println(JsonFormatter.getCommentJson(updatedComment));
+      // TODO get user form user manager
+      response
+          .getWriter()
+          .println(JsonFormatter.getCommentJson(updatedComment, new User(1, "a@a.com")));
     }
   }
 }

@@ -10,6 +10,7 @@ import com.google.step.model.Comment;
 import com.google.step.model.User;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,8 +47,12 @@ public class CommentGetPostServlet extends HttpServlet {
       return;
     }
     List<Comment> comments = commentManager.getCommentsForDeal(dealId);
+    List<User> users =
+        comments.stream()
+            .map(comment -> userManager.readUser(comment.userId))
+            .collect(Collectors.toList());
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getCommentsJson(comments));
+    response.getWriter().println(JsonFormatter.getCommentsJson(comments, users));
   }
 
   /** Posts a comment for the deal with the given id parameter */
@@ -74,7 +79,6 @@ public class CommentGetPostServlet extends HttpServlet {
       content = "";
     }
     Comment comment = commentManager.createComment(dealId, posterId, content);
-    response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getCommentJson(comment));
+    response.sendRedirect("/deals/" + dealId);
   }
 }
