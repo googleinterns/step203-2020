@@ -104,7 +104,7 @@ public final class RestaurantManagerDatastoreTest {
     Restaurant restaurantB = restaurantManagerDatastore.createRestaurant("abxyz", BLOBKEY_A);
     Restaurant restaurantC = restaurantManagerDatastore.createRestaurant("aqqq", BLOBKEY_A);
 
-    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurant("ab");
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("ab");
 
     assertEquals(2, restaurants.size());
     assertThat(restaurants, hasItems(restaurantA, restaurantB));
@@ -115,7 +115,7 @@ public final class RestaurantManagerDatastoreTest {
   public void testSearchRestaurant_caseInsensitive() {
     Restaurant restaurantA = restaurantManagerDatastore.createRestaurant("AbCdE", BLOBKEY_A);
 
-    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurant("abcde");
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("abcde");
 
     assertEquals(1, restaurants.size());
     assertThat(restaurants, hasItem(restaurantA));
