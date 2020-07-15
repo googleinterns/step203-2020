@@ -9,7 +9,7 @@ public class Deal {
   public final String source;
   public final long posterId;
   public final long restaurantId;
-  public final String timestamp;
+  public final String creationTimeStamp;
 
   public Deal(
       long id,
@@ -20,7 +20,7 @@ public class Deal {
       String source,
       long posterId,
       long restaurantId,
-      String timestamp) {
+      String creationTimeStamp) {
     this.id = id;
     this.description = description;
     this.photoBlobkey = photoBlobkey;
@@ -29,6 +29,6 @@ public class Deal {
     this.source = source;
     this.posterId = posterId;
     this.restaurantId = restaurantId;
-    this.timestamp = timestamp;
+    this.creationTimeStamp = creationTimeStamp;
   }
 }
