@@ -15,7 +15,26 @@ const commentsData = {
   'token': 'bhfsdaog', // token for pagination
 };
 
+
 let votes = 0;
+let myVote = 0;
+
+/**
+ * Calls the backend to get the list of comments and loads it to the page
+ * @param {number} dealId
+ */
+function initComments(dealId) {
+  document.getElementById('dealId-input').value = dealId;
+  $.ajax({
+    url: '/api/comments',
+    data: {
+      dealId: dealId,
+    },
+  }).done((comments) => {
+    console.log(comments);
+    // TODO
+  });
+}
 
 /**
  * Loads the deal onto the page
@@ -74,7 +93,7 @@ function getComments(commentsData) {
  */
 function createCommentElement(commentEntity) {
   const commentElement = document.createElement('div');
-  commentElement.className = 'comment border border-info pb-3 pt-3 mb-3 mt-3';
+  commentElement.className = 'border border-info py-3 my-3';
 
   const textElement = document.createElement('span');
   textElement.innerText = commentEntity.user.username +
@@ -84,7 +103,6 @@ function createCommentElement(commentEntity) {
   return commentElement;
 }
 
-let myVote = 0;
 /**
  * Updates vote UI based on global variable myVote
  */
@@ -143,6 +161,7 @@ function initDeal() {
   $.ajax('/api/deals/' + myId)
       .done((deal) => {
         loadDealDataToPage(deal);
+        initComments(deal.id);
       })
       .fail(() => {
         showNotFound();
