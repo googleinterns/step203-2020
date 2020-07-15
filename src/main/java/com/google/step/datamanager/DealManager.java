@@ -19,4 +19,6 @@ public interface DealManager {
   public Deal updateDeal(Deal deal, List<String> tagNames);
 
   public void deleteDeal(long id);
+
+  public List<Deal> readDeals(List<Long> ids);
 }

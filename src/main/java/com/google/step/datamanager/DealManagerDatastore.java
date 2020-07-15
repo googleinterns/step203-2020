@@ -24,6 +24,11 @@ public class DealManagerDatastore implements DealManager {
     dealTagManager = new DealTagManagerDatastore();
   }
 
+  public DealManagerDatastore(DealSearchManager searchManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.searchManager = searchManager;
+  }
+
   @Override
   public Deal createDeal(
       String description,
@@ -126,5 +131,11 @@ public class DealManagerDatastore implements DealManager {
         .map(tagName -> tagManager.readOrCreateTagByName(tagName))
         .map(tag -> tag.id)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Deal> readDeals(List<Long> ids) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
