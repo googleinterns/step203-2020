@@ -117,4 +117,10 @@ public class FollowManagerDatastore implements FollowManager {
     }
     return list;
   }
+
+  @Override
+  public boolean isFollowing(long followerId, long followeeId) {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }
