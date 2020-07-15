@@ -4,6 +4,7 @@ import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,15 +28,14 @@ import org.junit.runners.JUnit4;
 public class VoteServletTest {
 
   private static final String DEAL_PATH = "/" + DEAL_ID_A;
-  private static final String DEAL_PATH_INVALID = "/trash";
   private static final String DIR_ONE = "1";
-  private static final String DIR_INVALID = "00";
 
   private VoteServlet servlet;
   private UserService userService;
   private UserManager userManager;
   private VoteManager voteManager;
   private HttpServletResponse response;
+  private StringWriter stringWriter;
   private PrintWriter writer;
 
   @Before
@@ -48,7 +48,7 @@ public class VoteServletTest {
 
     // mock HttpServletResponse
     response = mock(HttpServletResponse.class);
-    StringWriter stringWriter = new StringWriter();
+    stringWriter = new StringWriter();
     writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
   }
@@ -95,7 +95,7 @@ public class VoteServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(DIR_ONE);
-    when(request.getPathInfo()).thenReturn(DEAL_PATH_INVALID);
+    when(request.getPathInfo()).thenReturn("/trash");
 
     servlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -106,7 +106,7 @@ public class VoteServletTest {
     setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
-    when(request.getParameter("dir")).thenReturn(DIR_INVALID);
+    when(request.getParameter("dir")).thenReturn("00");
     when(request.getPathInfo()).thenReturn(DEAL_PATH);
 
     servlet.doPost(request, response);
@@ -145,10 +145,13 @@ public class VoteServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getPathInfo()).thenReturn(DEAL_PATH);
+    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
 
     servlet.doGet(request, response);
 
-    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     verify(voteManager).getDirection(USER_ID_A, DEAL_ID_A);
+    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
+    writer.flush();
+    assertEquals("1", stringWriter.toString().trim());
   }
 }
