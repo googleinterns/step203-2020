@@ -9,8 +9,6 @@
   <title>Restaurant</title>
   <script src="/js/util.js"></script>
   <script src="/js/restaurant-page.js"></script>
-  <link href="/css/deal.css" rel="stylesheet" />
-  <link href="/tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <!-- Google fonts-->
@@ -28,7 +26,7 @@
       <div class="row mb-5">
         <div class="col-sm-4 col-lg-3">
           <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
-          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+          <button id="follow-btn" type="button" class="btn btn-primary">Follow</button>
         </div>
         <div class="col-sm-8 col-lg-9">
           <h3 id="restaurant-name">
@@ -44,7 +42,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     <!-- Third party plugin JS-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="/tagsinput/tagsinput.js"></script>
     <!-- Core theme JS-->
     <script src="/js/scripts.js"></script>
 </body>
