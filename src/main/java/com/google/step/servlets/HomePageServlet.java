@@ -65,10 +65,13 @@ public class HomePageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long userId = 1; // TODO get authenticated user id
     List<Deal> trendingDeals = dealManager.getTrendingDeals();
-    List<Deal> dealsByUsersFollowed = dealManager.getDealsPublishedByFollowedUsers(userId);
+    List<Deal> dealsByUsersFollowed =
+        dealManager.getDealsPublishedByFollowedUsers(followManager.getFollowedUserIds(userId));
     List<Deal> dealsByRestaurantsFollowed =
-        dealManager.getDealsPublishedByFollowedRestaurants(userId);
-    List<Deal> dealsByTagsFollowed = dealManager.getDealsPublishedByFollowedTags(userId);
+        dealManager.getDealsPublishedByFollowedRestaurants(
+            followManager.getFollowedRestaurantIds(userId));
+    List<Deal> dealsByTagsFollowed =
+        dealManager.getDealsPublishedByFollowedTags(followManager.getFollowedTagIds(userId));
     List<List<Deal>> homePageDeals =
         new ArrayList<List<Deal>>(
             Arrays.asList(
