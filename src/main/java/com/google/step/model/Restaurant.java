@@ -13,10 +13,17 @@ public class Restaurant {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null || !(obj instanceof Restaurant)) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof Restaurant)) {
       return false;
     }
     Restaurant other = (Restaurant) obj;
-    return id == other.id && name.equals(other.name) && photoBlobkey.equals(other.photoBlobkey);
+    return (this.id == other.id)
+        && ((this.name == null && other.name == null)
+            || (this.name != null && this.name.equals(other.name)))
+        && ((this.photoBlobkey == null && other.photoBlobkey == null)
+            || (this.photoBlobkey != null && this.photoBlobkey.equals(other.photoBlobkey)));
   }
 }

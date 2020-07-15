@@ -5,7 +5,10 @@ import static com.google.step.TestConstants.BLOBKEY_B;
 import static com.google.step.TestConstants.RESTAURANT_ID_C;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_B;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -120,5 +123,27 @@ public final class RestaurantManagerDatastoreTest {
     List<Restaurant> users = restaurantManagerDatastore.readRestaurants(ids);
 
     assertThat(users, containsInAnyOrder(restaurantA, restaurantB));
+  }
+
+  public void testSearchRestaurant() {
+    Restaurant restaurantA = restaurantManagerDatastore.createRestaurant("abcde", BLOBKEY_A);
+    Restaurant restaurantB = restaurantManagerDatastore.createRestaurant("abxyz", BLOBKEY_A);
+    Restaurant restaurantC = restaurantManagerDatastore.createRestaurant("aqqq", BLOBKEY_A);
+
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("ab");
+
+    assertEquals(2, restaurants.size());
+    assertThat(restaurants, hasItems(restaurantA, restaurantB));
+    assertThat(restaurants, not(hasItem(restaurantC)));
+  }
+
+  @Test
+  public void testSearchRestaurant_caseInsensitive() {
+    Restaurant restaurantA = restaurantManagerDatastore.createRestaurant("AbCdE", BLOBKEY_A);
+
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("abcde");
+
+    assertEquals(1, restaurants.size());
+    assertThat(restaurants, hasItem(restaurantA));
   }
 }
