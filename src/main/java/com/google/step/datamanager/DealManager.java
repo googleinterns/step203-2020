@@ -1,6 +1,7 @@
 package com.google.step.datamanager;
 
 import com.google.step.model.Deal;
+import java.util.List;
 
 public interface DealManager {
   public Deal createDeal(
@@ -17,4 +18,6 @@ public interface DealManager {
   public Deal updateDeal(Deal deal);
 
   public void deleteDeal(long id);
+
+  public List<Deal> readDeals(List<Long> ids);
 }
