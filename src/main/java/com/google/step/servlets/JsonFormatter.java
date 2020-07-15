@@ -218,7 +218,7 @@ public class JsonFormatter {
   /**
    * Returns a json of home page data.
    *
-   * @param homePageDeals a list of list of deals for home page
+   * @param homePageDealsMaps a list of list of maps for home page
    * @return a json of home page data
    */
   public static String getHomePageJson(List<List<Map<String, Object>>> homePageDealsMaps) {
@@ -228,10 +228,10 @@ public class JsonFormatter {
   }
 
   /**
-   * Returns a map of list of brief deal info for home page
+   * Returns a map of sections for home page
    *
-   * @param homePageDeals a list of list of maps for home page
-   * @return a map of list of brief deal info for home page
+   * @param homePageDealsMaps a list of list of maps for home page
+   * @return a map of sections for home page
    */
   private static Map<String, Object> getHomePageMap(
       List<List<Map<String, Object>>> homePageDealsMaps) {
