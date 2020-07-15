@@ -23,6 +23,9 @@ public class TestConstants {
   public static final String BLOBKEY_A = "a_blob_key";
   public static final String BLOBKEY_B = "a_blob_key_b";
 
+  private static final String URL_PREFIX = "/api/images/";
+  public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
+  public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
   public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
   public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
@@ -33,13 +36,14 @@ public class TestConstants {
 
   public static final User USER_A = new User(USER_ID_A, EMAIL_A, USERNAME_A, BLOBKEY_A, BIO_A);
   public static final User USER_B = new User(USER_ID_B, EMAIL_B, USERNAME_B, BLOBKEY_B, BIO_B);
+  public static final User USER_C = new User(USER_ID_C, EMAIL_C, USERNAME_C, BIO_C);
 
   public static final String USER_A_BRIEF_JSON =
       String.format(
-          "{id: %d, username: \"%s\", photoBlobKey: \"%s\"}", USER_ID_A, USERNAME_A, BLOBKEY_A);
+          "{id: %d, username: \"%s\", picture: \"%s\"}", USER_ID_A, USERNAME_A, BLOBKEY_URL_A);
   public static final String USER_B_BRIEF_JSON =
       String.format(
-          "{id: %d, username: \"%s\", photoBlobKey: \"%s\"}", USER_ID_B, USERNAME_B, BLOBKEY_B);
+          "{id: %d, username: \"%s\", picture: \"%s\"}", USER_ID_B, USERNAME_B, BLOBKEY_URL_B);
   public static final String USER_C_BRIEF_JSON =
       String.format("{id: %d, username: \"%s\"}", USER_ID_C, USERNAME_C);
 
@@ -93,6 +97,12 @@ public class TestConstants {
   public static final long COMMENT_ID_B = 2;
   public static final long COMMENT_ID_C = 3;
   public static final long COMMENT_ID_D = 4;
+
+  public static final String CONTENT_A = "Hello world";
+  public static final String CONTENT_B = "Hello world2";
+
+  public static final String TIME_A = "2020-07-10T10:15:30";
+  public static final String TIME_B = "2020-07-10T12:15:30";
 
   // Deal class
   public static final Deal DEAL_A =
