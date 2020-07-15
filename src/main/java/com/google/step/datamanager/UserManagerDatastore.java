@@ -15,6 +15,7 @@ import com.google.step.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /** A data manager handling datastore operations on user. */
@@ -150,10 +151,16 @@ public class UserManagerDatastore implements UserManager {
       e.printStackTrace();
       return new ArrayList<>();
     }
-    List<User> users =
+    Map<Long, User> userMap =
         userEntities.stream()
             .map(entity -> transformEntityToUser(entity))
-            .collect(Collectors.toList());
+            .collect(Collectors.toMap(user -> user.id, user -> user));
+    List<User> users = new ArrayList<>();
+    for (Long id : ids) {
+      if (userMap.containsKey(id)) {
+        users.add(userMap.get(id));
+      }
+    }
     return users;
   }
 }

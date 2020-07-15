@@ -21,9 +21,8 @@ let myVote = 0;
 
 /**
  * Calls the backend to get the list of comments and loads it to the page
- * @param {number} dealId
  */
-function initComments(dealId) {
+function initComments() {
   document.getElementById('dealId-input').value = dealId;
   $.ajax({
     url: '/api/comments',
@@ -196,7 +195,7 @@ function initDeal() {
   $.ajax('/api/deals/' + myId)
       .done((deal) => {
         loadDealDataToPage(deal);
-        initComments(deal.id);
+        initComments();
         initVotes();
       })
       .fail(() => {
