@@ -70,6 +70,9 @@ public class CommentGetPostServlet extends HttpServlet {
       return;
     }
     content = request.getParameter("content");
+    if (content == null) {
+      content = "";
+    }
     Comment comment = commentManager.createComment(dealId, posterId, content);
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentJson(comment));

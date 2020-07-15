@@ -64,7 +64,7 @@
             <div class="row">
               <div class="col-sm-12 mt-3">
                 <form id="comment-form" action="/api/comments" method="POST">
-                  <textarea class="w-100 form-control mb-3" type="text" name="comment"
+                  <textarea class="w-100 form-control mb-3" type="text" name="content"
                     placeholder="Leave a comment..."></textarea>
                   <input type="hidden" name="dealId" id="dealId-input">
                   <input type="submit" class="btn btn-primary float-right" />
