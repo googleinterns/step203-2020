@@ -6,9 +6,11 @@ import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.EMAIL_B;
 import static com.google.step.TestConstants.TIME_A;
 import static com.google.step.TestConstants.TIME_B;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.mockito.Matchers.anyLong;
@@ -63,7 +65,12 @@ public class CommentGetPostServletTest {
     when(mockUserService.isUserLoggedIn()).thenReturn(true);
     User currentUser = new User(EMAIL_A, "");
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+
+    // mock user manager
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
+    when(mockUserManager.readUser(USER_ID_B)).thenReturn(USER_B);
   }
 
   @Test
@@ -83,17 +90,18 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
 
+    // TODO add user brief
     String commentA =
         String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
+            "{\"id\":%d,\"dealId\":%d,\"content\":\"%s\",\"timestamp\":\"%s\"}",
+            COMMENT_ID_A, DEAL_ID_A, CONTENT_A, TIME_A);
     String commentB =
         String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
+            "{\"id\":%d,\"dealId\":%d,\"content\":\"%s\",\"timestamp\":\"%s\"}",
+            COMMENT_ID_B, DEAL_ID_A, CONTENT_B, TIME_B);
     String expected = "[" + commentA + "," + commentB + "]";
 
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.LENIENT);
   }
 
   @Test
@@ -137,7 +145,6 @@ public class CommentGetPostServletTest {
 
   @Test
   public void testDoPost_success() throws Exception {
-    List<Comment> comments = new ArrayList<>();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -153,12 +160,6 @@ public class CommentGetPostServletTest {
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockCommentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));
-
-    String expected =
-        String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    verify(response).sendRedirect("/deals/" + DEAL_ID_A);
   }
 }
