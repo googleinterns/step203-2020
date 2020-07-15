@@ -11,7 +11,6 @@ import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,6 +26,7 @@ import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -106,7 +106,7 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A),
-            anyList()))
+            eq(new ArrayList<>())))
         .thenReturn(DEAL);
 
     servlet.doPost(mockRequest, mockResponse);
@@ -120,7 +120,7 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A),
-            anyList());
+            eq(new ArrayList<>()));
     verify(mockResponse).sendRedirect(any());
   }
 
