@@ -7,12 +7,17 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.EMAIL_B;
 import static com.google.step.TestConstants.USERNAME_A;
 import static com.google.step.TestConstants.USERNAME_B;
+import static com.google.step.TestConstants.USER_ID_C;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.User;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,5 +111,24 @@ public final class UserManagerDatastoreTest {
     userManagerDatastore.updateUser(updatedUser);
     userBRead = userManagerDatastore.readUser(userB.id);
     assertFalse(userBRead.photoBlobKey.isPresent());
+  }
+
+  @Test
+  public void testReadUsers() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id);
+    List<User> users = userManagerDatastore.readUsers(ids);
+
+    assertThat(users, containsInAnyOrder(userA, userB));
+  }
+
+  @Test
+  public void testReadUsers_idDoesNotExist() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id, USER_ID_C);
+    List<User> users = userManagerDatastore.readUsers(ids);
+    assertThat(users, containsInAnyOrder(userA, userB));
   }
 }

@@ -64,6 +64,18 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
+  // Restaurant
+  public static final long RESTAURANT_ID_A = 1;
+  public static final long RESTAURANT_ID_B = 2;
+  public static final long RESTAURANT_ID_C = 3;
+  public static final long RESTAURANT_ID_D = 4;
+
+  public static final String RESTAURANT_NAME_A = "A";
+  public static final String RESTAURANT_NAME_B = "B";
+
+  public static final Restaurant RESTAURANT_A =
+      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+
   // Deal
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
@@ -81,17 +93,27 @@ public class TestConstants {
   public static final String SOURCE_A = "www.example.com";
   public static final String SOURCE_B = "www.somethingelse.com";
 
-  // Restaurant
-  public static final long RESTAURANT_ID_A = 1;
-  public static final long RESTAURANT_ID_B = 2;
-  public static final long RESTAURANT_ID_C = 3;
-  public static final long RESTAURANT_ID_D = 4;
+  public static final Deal DEAL_A =
+      new Deal(
+          DEAL_ID_A,
+          DESCRIPTION_A,
+          BLOBKEY_A,
+          DATE_A,
+          DATE_B,
+          SOURCE_A,
+          USER_ID_A,
+          RESTAURANT_ID_A);
 
-  public static final String RESTAURANT_NAME_A = "A";
-  public static final String RESTAURANT_NAME_B = "B";
-
-  public static final Restaurant RESTAURANT_A =
-      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+  public static final Deal DEAL_B =
+      new Deal(
+          DEAL_ID_B,
+          DESCRIPTION_B,
+          BLOBKEY_B,
+          DATE_C,
+          DATE_D,
+          SOURCE_B,
+          USER_ID_B,
+          RESTAURANT_ID_B);
 
   // Comment
   public static final long COMMENT_ID_A = 1;
@@ -140,27 +162,4 @@ public class TestConstants {
               + "}"
               + "}",
           COMMENT_ID_B, DEAL_ID_A, CONTENT_B, TIME_B, USER_ID_B, BLOBKEY_URL_B, USERNAME_B);
-
-  // Deal class
-  public static final Deal DEAL_A =
-      new Deal(
-          DEAL_ID_A,
-          DESCRIPTION_A,
-          BLOBKEY_A,
-          DATE_A,
-          DATE_B,
-          SOURCE_A,
-          USER_ID_A,
-          RESTAURANT_ID_A);
-
-  public static final Deal DEAL_B =
-      new Deal(
-          DEAL_ID_B,
-          DESCRIPTION_B,
-          BLOBKEY_B,
-          DATE_C,
-          DATE_D,
-          SOURCE_B,
-          USER_ID_B,
-          RESTAURANT_ID_B);
 }

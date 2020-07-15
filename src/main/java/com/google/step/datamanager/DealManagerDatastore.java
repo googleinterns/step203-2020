@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DealManagerDatastore implements DealManager {
 
@@ -17,6 +18,11 @@ public class DealManagerDatastore implements DealManager {
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
     searchManager = new DealSearchManagerIndex();
+  }
+
+  public DealManagerDatastore(DealSearchManager searchManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.searchManager = searchManager;
   }
 
   @Override
@@ -104,5 +110,11 @@ public class DealManagerDatastore implements DealManager {
     datastore.put(dealEntity);
     searchManager.putDeal(deal, new ArrayList<>());
     return readDeal(deal.id);
+  }
+
+  @Override
+  public List<Deal> readDeals(List<Long> ids) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

@@ -17,10 +17,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
+import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -41,12 +46,16 @@ public class UserServletTest {
   private UserServlet servlet;
   private UserManager userManager;
   private UserService userService;
+  private FollowManager followManager;
+  private TagManager tagManager;
 
   @Before
   public void setUp() {
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
-    servlet = new UserServlet(userManager, userService);
+    followManager = mock(FollowManager.class);
+    tagManager = mock(TagManager.class);
+    servlet = new UserServlet(userManager, userService, followManager, tagManager);
   }
 
   @Test
@@ -55,6 +64,9 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
     when(userManager.readUser(1)).thenReturn(USER_A);
+    List<Long> tagIds = new ArrayList<>();
+    when(followManager.getFollowedTagIds(1)).thenReturn(tagIds);
+    when(tagManager.readTags(tagIds)).thenReturn(new ArrayList<Tag>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

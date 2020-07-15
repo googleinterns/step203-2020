@@ -8,7 +8,7 @@ import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.TIME_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
