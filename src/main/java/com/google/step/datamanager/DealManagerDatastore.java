@@ -17,8 +17,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class DealManagerDatastore implements DealManager {
 
@@ -208,15 +210,37 @@ public class DealManagerDatastore implements DealManager {
   /** Sorts deals based on votes (Highest to lowest) */
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
+    List<Map<String, Object>> dealWithVotesMaps = new ArrayList<Map<String, Object>>();
+    // Creates a list of maps with votes as an attribute to be sorted
+    for (Deal deal : deals) {
+      Map<String, Object> dealWithVotesMap = new HashMap<>();
+      dealWithVotesMap.put("votes", voteManager.getVotes(deal.id));
+      dealWithVotesMap.put("deal", deal);
+      dealWithVotesMaps.add(dealWithVotesMap);
+    }
+    return sortDealMapsBasedOnValue(dealWithVotesMaps, "votes");
+  }
+
+  /** Method to sort a list of maps based on a value and return a list of deals */
+  private List<Deal> sortDealMapsBasedOnValue(
+      List<Map<String, Object>> dealMaps, String attribute) {
     Collections.sort(
-        deals,
-        new Comparator<Deal>() {
+        dealMaps,
+        new Comparator<Map<String, Object>>() {
           @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return voteManager.getVotes(deal2.id) - voteManager.getVotes(deal1.id); // Descending
+          public int compare(Map<String, Object> deal1, Map<String, Object> deal2) {
+            if (attribute.equals("hotScore")) // comparing hot score (double values)
+            return -Double.compare(
+                  (double) deal1.get(attribute), (double) deal2.get(attribute)); // Descending
+            else // Comparing votes
+            return (int) deal2.get(attribute) - (int) deal1.get(attribute); // Descending
           }
         });
-    return deals;
+    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
+    for (Map<String, Object> dealMap : dealMaps) {
+      dealResults.add((Deal) dealMap.get("deal"));
+    }
+    return dealResults;
   }
 
   /** Sorts deals based on new (Newest to oldest) */
@@ -229,19 +253,6 @@ public class DealManagerDatastore implements DealManager {
           public int compare(Deal deal1, Deal deal2) {
             return LocalDateTime.parse(deal2.timestamp)
                 .compareTo(LocalDateTime.parse(deal1.timestamp)); // Descending
-          }
-        });
-    return deals;
-  }
-
-  /** Sorts deals based on hot score (Highest to lowest) */
-  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return -Double.compare(deal1.getHotScore(), deal2.getHotScore()); // Descending
           }
         });
     return deals;
@@ -266,7 +277,6 @@ public class DealManagerDatastore implements DealManager {
     else if (netVotes < 0) sign = -1;
     double seconds =
         epochSeconds((String) dealEntity.getProperty("timestamp")) - OLDEST_DEAL_TIMESTAMP;
-    System.out.println(sign * order + seconds / 45000);
     return sign * order + seconds / 45000;
   }
 
@@ -276,12 +286,13 @@ public class DealManagerDatastore implements DealManager {
     Query query = new Query("Deal");
     PreparedQuery pq = datastore.prepare(query);
     List<Deal> dealResults = new ArrayList<>();
+    List<Map<String, Object>> dealWithHotScoreMaps = new ArrayList<Map<String, Object>>();
     for (Entity entity : pq.asIterable()) {
-      double hotScore = calculateHotScore(entity);
-      Deal deal = transformEntitytoDeal(entity);
-      deal.setHotScore(hotScore);
-      dealResults.add(deal);
+      Map<String, Object> dealWithHotScoreMap = new HashMap<>();
+      dealWithHotScoreMap.put("hotScore", calculateHotScore(entity));
+      dealWithHotScoreMap.put("deal", transformEntitytoDeal(entity));
+      dealWithHotScoreMaps.add(dealWithHotScoreMap);
     }
-    return sortDealsBasedOnHotScore(dealResults);
+    return sortDealMapsBasedOnValue(dealWithHotScoreMaps, "hotScore");
   }
 }

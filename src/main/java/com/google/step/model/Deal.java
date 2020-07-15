@@ -10,7 +10,6 @@ public class Deal {
   public final long posterId;
   public final long restaurantId;
   public final String timestamp;
-  private double hotScore;
 
   public Deal(
       long id,
@@ -31,13 +30,5 @@ public class Deal {
     this.posterId = posterId;
     this.restaurantId = restaurantId;
     this.timestamp = timestamp;
-  }
-
-  public void setHotScore(double hotScore) {
-    this.hotScore = hotScore;
-  }
-
-  public double getHotScore() {
-    return hotScore;
   }
 }
