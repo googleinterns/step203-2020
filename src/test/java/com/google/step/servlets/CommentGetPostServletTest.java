@@ -1,14 +1,13 @@
 package com.google.step.servlets;
 
-import static com.google.step.TestConstants.COMMENT_ID_A;
-import static com.google.step.TestConstants.COMMENT_ID_B;
+import static com.google.step.TestConstants.COMMENT_A;
+import static com.google.step.TestConstants.COMMENT_A_JSON;
+import static com.google.step.TestConstants.COMMENT_B;
+import static com.google.step.TestConstants.COMMENT_B_JSON;
 import static com.google.step.TestConstants.CONTENT_A;
-import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.EMAIL_B;
-import static com.google.step.TestConstants.TIME_A;
-import static com.google.step.TestConstants.TIME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
@@ -40,12 +39,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(JUnit4.class)
 public class CommentGetPostServletTest {
-
-  private static final Comment COMMENT_A =
-      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-
-  private static final Comment COMMENT_B =
-      new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
 
   private CommentManager mockCommentManager;
   private UserService mockUserService;
@@ -90,18 +83,9 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
 
-    // TODO add user brief
-    String commentA =
-        String.format(
-            "{\"id\":%d,\"dealId\":%d,\"content\":\"%s\",\"timestamp\":\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, CONTENT_A, TIME_A);
-    String commentB =
-        String.format(
-            "{\"id\":%d,\"dealId\":%d,\"content\":\"%s\",\"timestamp\":\"%s\"}",
-            COMMENT_ID_B, DEAL_ID_A, CONTENT_B, TIME_B);
-    String expected = "[" + commentA + "," + commentB + "]";
+    String expected = "[" + COMMENT_A_JSON + "," + COMMENT_B_JSON + "]";
 
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.LENIENT);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test

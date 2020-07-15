@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.COMMENT_A;
+import static com.google.step.TestConstants.COMMENT_A_JSON;
 import static com.google.step.TestConstants.COMMENT_ID_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
@@ -61,13 +63,7 @@ public class CommentServletTest {
 
     commentServlet.doPut(request, response);
 
-    // TODO put user json
-    String expected =
-        String.format(
-            "{id:%d,dealId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, CONTENT_A, TIME_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.LENIENT);
+    JSONAssert.assertEquals(COMMENT_A_JSON, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
