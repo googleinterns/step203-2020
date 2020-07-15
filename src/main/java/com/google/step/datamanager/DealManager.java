@@ -21,11 +21,11 @@ public interface DealManager {
 
   public List<Deal> getTrendingDeals();
 
-  public List<Deal> getDealsPublishedByFollowedUsers(long userId);
+  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds);
 
-  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId);
+  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds);
 
-  public List<Deal> getDealsPublishedByFollowedTags(long userId);
+  public List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds);
 
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals);
 
