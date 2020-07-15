@@ -1,5 +1,6 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -16,6 +17,7 @@ import com.google.step.model.Tag;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -112,7 +114,7 @@ public class DealManagerDatastore implements DealManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    return transformEntitytoDeal(dealEntity);
+    return transformEntityToDeal(dealEntity);
   }
 
   @Override
@@ -155,7 +157,7 @@ public class DealManagerDatastore implements DealManager {
     }
     datastore.put(dealEntity);
     searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
-    return transformEntitytoDeal(dealEntity);
+    return transformEntityToDeal(dealEntity);
   }
 
   /** Retrieves deals posted by _ followed by user */
@@ -282,7 +284,7 @@ public class DealManagerDatastore implements DealManager {
     for (Entity entity : pq.asIterable()) {
       Map<String, Object> dealWithHotScoreMap = new HashMap<>();
       dealWithHotScoreMap.put("hotScore", calculateHotScore(entity));
-      dealWithHotScoreMap.put("deal", transformEntitytoDeal(entity));
+      dealWithHotScoreMap.put("deal", transformEntityToDeal(entity));
       dealWithHotScoreMaps.add(dealWithHotScoreMap);
     }
     return sortDealMapsBasedOnValue(dealWithHotScoreMaps, "hotScore");
@@ -294,7 +296,7 @@ public class DealManagerDatastore implements DealManager {
    * @param dealEntity Deal entity.
    * @return a Deal object transformed from the entity.
    */
-  private Deal transformEntitytoDeal(Entity dealEntity) {
+  private Deal transformEntityToDeal(Entity dealEntity) {
     long id = dealEntity.getKey().getId();
     String description = (String) dealEntity.getProperty("description");
     String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
@@ -331,10 +333,19 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> readDeals(List<Long> ids) {
-    List<Deal> deals = new ArrayList<>();
-    for (Long id : ids) {
-      deals.add(readDeal(id));
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    Collection<Entity> dealEntities;
+    try {
+      dealEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
     }
+    List<Deal> deals =
+        dealEntities.stream()
+            .map(entity -> transformEntityToDeal(entity))
+            .collect(Collectors.toList());
     return deals;
   }
 }
