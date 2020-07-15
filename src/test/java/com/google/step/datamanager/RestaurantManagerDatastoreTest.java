@@ -4,12 +4,17 @@ import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_B;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_B;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Restaurant;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,5 +96,28 @@ public final class RestaurantManagerDatastoreTest {
     restaurantManagerDatastore.deleteRestaurant(restaurantA.id);
 
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
+  }
+
+  @Test
+  public void testSearchRestaurant() {
+    Restaurant restaurantA = restaurantManagerDatastore.createRestaurant("abcde", BLOBKEY_A);
+    Restaurant restaurantB = restaurantManagerDatastore.createRestaurant("abxyz", BLOBKEY_A);
+    Restaurant restaurantC = restaurantManagerDatastore.createRestaurant("aqqq", BLOBKEY_A);
+
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("ab");
+
+    assertEquals(2, restaurants.size());
+    assertThat(restaurants, hasItems(restaurantA, restaurantB));
+    assertThat(restaurants, not(hasItem(restaurantC)));
+  }
+
+  @Test
+  public void testSearchRestaurant_caseInsensitive() {
+    Restaurant restaurantA = restaurantManagerDatastore.createRestaurant("AbCdE", BLOBKEY_A);
+
+    List<Restaurant> restaurants = restaurantManagerDatastore.searchRestaurants("abcde");
+
+    assertEquals(1, restaurants.size());
+    assertThat(restaurants, hasItem(restaurantA));
   }
 }
