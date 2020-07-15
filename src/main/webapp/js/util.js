@@ -19,22 +19,64 @@ function addLoadEvent(func) {
  * Configures login status in header.
  */
 function configureHeaderLoginStatus() {
-  fetch('/api/authentication')
-      .then((response) => response.json())
-      .then((loginStatus) => {
-        const loginStatusLink = document.getElementById('login-status-link');
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
+        const loginLink = document.getElementById('login-link');
         const headerUsername = document.getElementById('header-username');
+        const usernameDropdown = document.getElementById('username-dropdown');
         if (loginStatus.isLoggedIn) {
-          loginStatusLink.href = loginStatus.logoutUrl;
-          loginStatusLink.innerText = 'Logout';
-          headerUsername.innerText = loginStatus.username;
-          headerUsername.href = '/user/' + loginStatus.id;
+          loginLink.hidden = true;
+          usernameDropdown.hidden = false;
+          headerUsername.innerHTML =
+              '<i class="fa fa-user-circle"></i> '+ loginStatus.username;
+          const profileLink = document.getElementById('header-profile-link');
+          profileLink.href = '/user/' + loginStatus.id;
+          const logoutLink = document.getElementById('logout-link');
+          logoutLink.href = loginStatus.logoutUrl;
         } else {
-          loginStatusLink.href = loginStatus.loginUrl;
-          loginStatusLink.innerText = 'Login';
-          headerUsername.innerText = '';
+          loginLink.hidden = false;
+          usernameDropdown.hidden = true;
+          loginLink.href = loginStatus.loginUrl;
+          headerUsername.hidden = true;
         }
       });
 }
 
 addLoadEvent(configureHeaderLoginStatus);
+
+/**
+ * Returns a container for a deal.
+ * @param {object} deal deal whose info will be shown.
+ * @return {object} a DOM element showing deal's info.
+ */
+function createDealCard(deal) {
+  const dealCard = document.createElement('div');
+  dealCard.classList.add('deal-card', 'card');
+  const dealImage = document.createElement('img');
+  dealImage.className = 'card-img-top deal-card-img';
+  dealImage.src = deal.image;
+  dealImage.alt = 'Deal image';
+
+  const dealBody = document.createElement('div');
+  dealBody.className = 'card-body';
+
+  const dealName = document.createElement('h6');
+  dealName.className = 'card-title';
+  dealName.innerText = deal.description;
+
+  const dealVotes = document.createElement('p');
+  dealVotes.className = 'card-text';
+  dealVotes.innerText = deal.votes;
+
+  const dealLink = document.createElement('a');
+  dealLink.innerText = 'See detail';
+  dealLink.href = '/deals/' + deal.id;
+
+  dealBody.appendChild(dealName);
+  dealBody.appendChild(dealVotes);
+  dealBody.appendChild(dealLink);
+
+  dealCard.appendChild(dealImage);
+  dealCard.appendChild(dealBody);
+  return dealCard;
+}

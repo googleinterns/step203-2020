@@ -78,4 +78,17 @@ public class ImageUploader {
     }
     return true;
   }
+
+  /**
+   * Deletes the image file identified by the blobKey.
+   *
+   * @param blobKey blobKey of the image file.
+   */
+  public static void deleteImage(String blobKey) {
+    try {
+      blobstoreService.delete(new BlobKey(blobKey));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

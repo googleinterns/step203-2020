@@ -1,5 +1,6 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -9,6 +10,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Tag;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** A class handling tag operations. */
 public class TagManagerDatastore implements TagManager {
@@ -71,5 +76,23 @@ public class TagManagerDatastore implements TagManager {
     long id = (long) entity.getKey().getId();
 
     return new Tag(id, name);
+  }
+
+  @Override
+  public List<Tag> readTags(List<Long> ids) {
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Tag", id)).collect(Collectors.toList());
+    Collection<Entity> tagEntities;
+    try {
+      tagEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
+    }
+    List<Tag> tags =
+        tagEntities.stream()
+            .map(entity -> transformEntityToTag(entity))
+            .collect(Collectors.toList());
+    return tags;
   }
 }
