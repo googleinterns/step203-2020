@@ -48,9 +48,8 @@ public class CommentGetPostServlet extends HttpServlet {
     }
     List<Comment> comments = commentManager.getCommentsForDeal(dealId);
     List<User> users =
-        comments.stream()
-            .map(comment -> userManager.readUser(comment.userId))
-            .collect(Collectors.toList());
+        userManager.readUsers(
+            comments.stream().map(comment -> comment.userId).collect(Collectors.toList()));
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsJson(comments, users));
   }
