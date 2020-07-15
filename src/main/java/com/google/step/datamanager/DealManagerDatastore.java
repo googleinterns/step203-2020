@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
+import com.google.step.model.Tag;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ public class DealManagerDatastore implements DealManager {
   public DealManagerDatastore(DealSearchManager searchManager) {
     datastore = DatastoreServiceFactory.getDatastoreService();
     this.searchManager = searchManager;
+    tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
   }
 
   @Override
@@ -124,6 +127,12 @@ public class DealManagerDatastore implements DealManager {
     datastore.put(dealEntity);
     searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
     return readDeal(deal.id);
+  }
+
+  @Override
+  public List<Tag> getTags(long dealId) {
+    List<Long> tagIds = dealTagManager.getTagIdsOfDeal(dealId);
+    return tagManager.readTags(tagIds);
   }
 
   private List<Long> getTagIdsFromNames(List<String> tagNames) {
