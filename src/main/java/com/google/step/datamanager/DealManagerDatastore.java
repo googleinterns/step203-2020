@@ -20,6 +20,11 @@ public class DealManagerDatastore implements DealManager {
     searchManager = new DealSearchManagerIndex();
   }
 
+  public DealManagerDatastore(DealSearchManager searchManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.searchManager = searchManager;
+  }
+
   @Override
   public Deal createDeal(
       String description,
