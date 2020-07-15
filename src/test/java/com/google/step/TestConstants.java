@@ -135,6 +135,7 @@ public class TestConstants {
           USER_ID_A,
           TAG_ID_A,
           TAG_NAME_A);
+
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
 
