@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
+import com.google.step.model.Tag;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -21,14 +22,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
   private final DealTagManager dealTagManager;
-  private final FollowManager followManager;
   private final DealSearchManager searchManager;
   private final VoteManager voteManager;
+  private final TagManager tagManager;
 
   private final String FOLLOWER_FIELD_NAME = "follower";
   private final String RESTAURANT_FIELD_NAME = "restaurant";
@@ -40,22 +42,20 @@ public class DealManagerDatastore implements DealManager {
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
-    dealTagManager = new DealTagManagerDatastore();
-    followManager = new FollowManagerDatastore();
     searchManager = new DealSearchManagerIndex();
     voteManager = new VoteManagerDatastore();
+    tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
   }
 
   public DealManagerDatastore(
-      FollowManager followManager,
-      DealTagManager dealTagManager,
-      VoteManager voteManager,
-      DealSearchManager searchManager) {
+      DealTagManager dealTagManager, VoteManager voteManager, DealSearchManager searchManager) {
     datastore = DatastoreServiceFactory.getDatastoreService();
-    this.followManager = followManager;
     this.dealTagManager = dealTagManager;
     this.voteManager = voteManager;
     this.searchManager = searchManager;
+    tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
   }
 
   @Override
@@ -66,7 +66,8 @@ public class DealManagerDatastore implements DealManager {
       String end,
       String source,
       long posterId,
-      long restaurantId) {
+      long restaurantId,
+      List<String> tagNames) {
     Entity entity = new Entity("Deal");
     entity.setProperty("description", description);
     entity.setProperty("photoBlobkey", photoBlobkey);
@@ -75,16 +76,29 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
-    String timestamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
-    entity.setProperty("timestamp", timestamp);
+    String creationTimeStamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
+    entity.setProperty("timestamp", creationTimeStamp);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
+    // gets the tag IDs from the tag names
+    List<Long> tagIds = getTagIdsFromNames(tagNames);
+
+    dealTagManager.updateTagsOfDeal(id, tagIds);
+
     Deal deal =
         new Deal(
-            id, description, photoBlobkey, start, end, source, posterId, restaurantId, timestamp);
-    searchManager.putDeal(deal, new ArrayList<>());
+            id,
+            description,
+            photoBlobkey,
+            start,
+            end,
+            source,
+            posterId,
+            restaurantId,
+            creationTimeStamp);
+    searchManager.putDeal(deal, tagIds);
 
     return deal;
   }
@@ -109,7 +123,7 @@ public class DealManagerDatastore implements DealManager {
   }
 
   @Override
-  public Deal updateDeal(Deal deal) {
+  public Deal updateDeal(Deal deal, List<String> tagNames) {
     Key key = KeyFactory.createKey("Deal", deal.id);
     Entity dealEntity;
     try {
@@ -135,29 +149,13 @@ public class DealManagerDatastore implements DealManager {
     if (deal.restaurantId != -1) {
       dealEntity.setProperty("restaurantId", deal.restaurantId);
     }
+    if (tagNames != null) {
+      List<Long> tagIds = getTagIdsFromNames(tagNames);
+      dealTagManager.updateTagsOfDeal(deal.id, tagIds);
+    }
     datastore.put(dealEntity);
-    searchManager.putDeal(deal, new ArrayList<>());
+    searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
     return transformEntitytoDeal(dealEntity);
-  }
-
-  /**
-   * Returns a Deal object transformed from a deal entity.
-   *
-   * @param dealEntity Deal entity.
-   * @return a Deal object transformed from the entity.
-   */
-  private Deal transformEntitytoDeal(Entity dealEntity) {
-    long id = dealEntity.getKey().getId();
-    String description = (String) dealEntity.getProperty("description");
-    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
-    String start = (String) dealEntity.getProperty("start");
-    String end = (String) dealEntity.getProperty("end");
-    String source = (String) dealEntity.getProperty("source");
-    long posterId = (long) dealEntity.getProperty("posterId");
-    long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    String timestamp = (String) dealEntity.getProperty("timestamp");
-    return new Deal(
-        id, description, photoBlobkey, start, end, source, posterId, restaurantId, timestamp);
   }
 
   /** Retrieves deals posted by _ followed by user */
@@ -177,34 +175,28 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
-    List<Long> userIds = followManager.getFollowedUserIds(userId);
+  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds) {
     return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
-    List<Long> restaurantIds = followManager.getFollowedRestaurantIds(userId);
+  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds) {
     return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   /** Retrieves deals posted by tags followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedTags(long userId) {
+  public List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds) {
     List<Deal> dealResults = new ArrayList<>();
     List<Long> dealIdResults = new ArrayList<>();
-    List<Long> idsOfFollowedTags = followManager.getFollowedTagIds(userId);
-    for (Long id : idsOfFollowedTags) {
+    for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
       dealIdResults.addAll(dealIdsWithTag);
     }
     // Get rid of duplicate dealID (Deals with multiple tags)
     List<Long> dealsWithoutDuplicates = new ArrayList<>(new HashSet<>(dealIdResults));
-    for (Long dealId : dealsWithoutDuplicates) {
-      dealResults.add(readDeal(dealId));
-    }
-    return dealResults;
+    return readDeals(dealsWithoutDuplicates);
   }
 
   /** Sorts deals based on votes (Highest to lowest) */
@@ -251,8 +243,8 @@ public class DealManagerDatastore implements DealManager {
         new Comparator<Deal>() {
           @Override
           public int compare(Deal deal1, Deal deal2) {
-            return LocalDateTime.parse(deal2.timestamp)
-                .compareTo(LocalDateTime.parse(deal1.timestamp)); // Descending
+            return LocalDateTime.parse(deal2.creationTimeStamp)
+                .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
           }
         });
     return deals;
@@ -294,5 +286,55 @@ public class DealManagerDatastore implements DealManager {
       dealWithHotScoreMaps.add(dealWithHotScoreMap);
     }
     return sortDealMapsBasedOnValue(dealWithHotScoreMaps, "hotScore");
+  }
+
+  /**
+   * Returns a Deal object transformed from a deal entity.
+   *
+   * @param dealEntity Deal entity.
+   * @return a Deal object transformed from the entity.
+   */
+  private Deal transformEntitytoDeal(Entity dealEntity) {
+    long id = dealEntity.getKey().getId();
+    String description = (String) dealEntity.getProperty("description");
+    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
+    String start = (String) dealEntity.getProperty("start");
+    String end = (String) dealEntity.getProperty("end");
+    String source = (String) dealEntity.getProperty("source");
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    String creationTimeStamp = (String) dealEntity.getProperty("timestamp");
+    return new Deal(
+        id,
+        description,
+        photoBlobkey,
+        start,
+        end,
+        source,
+        posterId,
+        restaurantId,
+        creationTimeStamp);
+  }
+
+  @Override
+  public List<Tag> getTags(long dealId) {
+    List<Long> tagIds = dealTagManager.getTagIdsOfDeal(dealId);
+    return tagManager.readTags(tagIds);
+  }
+
+  private List<Long> getTagIdsFromNames(List<String> tagNames) {
+    return tagNames.stream()
+        .map(tagName -> tagManager.readOrCreateTagByName(tagName))
+        .map(tag -> tag.id)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Deal> readDeals(List<Long> ids) {
+    List<Deal> deals = new ArrayList<>();
+    for (Long id : ids) {
+      deals.add(readDeal(id));
+    }
+    return deals;
   }
 }

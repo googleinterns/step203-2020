@@ -7,6 +7,7 @@ import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DATE_C;
 import static com.google.step.TestConstants.DATE_D;
+import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.DESCRIPTION_B;
@@ -19,18 +20,19 @@ import static com.google.step.TestConstants.SOURCE_B;
 import static com.google.step.TestConstants.SOURCE_C;
 import static com.google.step.TestConstants.TAG_ID_A;
 import static com.google.step.TestConstants.TAG_ID_B;
+import static com.google.step.TestConstants.TAG_NAME_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Deal;
+import com.google.step.model.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,12 +50,14 @@ public final class DealManagerDatastoreTest {
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-  private final FollowManager followManager = new FollowManagerDatastore();
   private final VoteManager voteManager = new VoteManagerDatastore();
   private final DealTagManager dealTagManager = new DealTagManagerDatastore();
-  private final DealSearchManager dealSearchManager = mock(DealSearchManager.class);
+  private static final List<String> EMPTY_LIST = new ArrayList<>();
+  private static final List<String> TAG_LIST = Arrays.asList(TAG_NAME_A);
+
+  private final DealSearchManager mockSearchManager = mock(DealSearchManager.class);
   private final DealManager dealManagerDatastore =
-      new DealManagerDatastore(followManager, dealTagManager, voteManager, dealSearchManager);
+      new DealManagerDatastore(dealTagManager, voteManager, mockSearchManager);
 
   @Before
   public void setUp() {
@@ -69,29 +73,31 @@ public final class DealManagerDatastoreTest {
   public void testCreate_success() {
     Deal deal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
-    assertEquals(DESCRIPTION_A, deal.description);
-    assertEquals(BLOBKEY_A, deal.photoBlobkey);
-    assertEquals(DATE_A, deal.start);
-    assertEquals(DATE_B, deal.end);
-    assertEquals(SOURCE_A, deal.source);
-    assertEquals(USER_ID_A, deal.posterId);
-    assertEquals(RESTAURANT_ID_A, deal.restaurantId);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
+    assertEquals(DEAL_A, deal);
   }
 
   @Test
   public void testRead_success() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal deal = dealManagerDatastore.readDeal(createdDeal.id);
-    assertEquals(DESCRIPTION_A, deal.description);
-    assertEquals(BLOBKEY_A, deal.photoBlobkey);
-    assertEquals(DATE_A, deal.start);
-    assertEquals(DATE_B, deal.end);
-    assertEquals(SOURCE_A, deal.source);
-    assertEquals(USER_ID_A, deal.posterId);
-    assertEquals(RESTAURANT_ID_A, deal.restaurantId);
+    assertEquals(DEAL_A, deal);
   }
 
   @Test
@@ -104,7 +110,14 @@ public final class DealManagerDatastoreTest {
   public void testDelete() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     dealManagerDatastore.deleteDeal(createdDeal.id);
     Deal deal = dealManagerDatastore.readDeal(createdDeal.id);
     assertNull(deal);
@@ -113,7 +126,7 @@ public final class DealManagerDatastoreTest {
   @Test
   public void testUpdate_invalidId_returnsNull() {
     Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1, null);
-    Deal updatedDeal = dealManagerDatastore.updateDeal(deal);
+    Deal updatedDeal = dealManagerDatastore.updateDeal(deal, null);
     assertNull(updatedDeal);
   }
 
@@ -121,19 +134,31 @@ public final class DealManagerDatastoreTest {
   public void testUpdate_descriptionOnly() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            new ArrayList<>());
     Deal dealToUpdate =
         new Deal(createdDeal.id, DESCRIPTION_B, null, null, null, null, -1, -1, null);
-    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
+    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, null);
 
     // only description should change, everything else should remain
-    assertEquals(DESCRIPTION_B, updatedDeal.description);
-    assertEquals(BLOBKEY_A, updatedDeal.photoBlobkey);
-    assertEquals(DATE_A, updatedDeal.start);
-    assertEquals(DATE_B, updatedDeal.end);
-    assertEquals(SOURCE_A, updatedDeal.source);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
-    assertEquals(RESTAURANT_ID_A, updatedDeal.restaurantId);
+    Deal expected =
+        new Deal(
+            DEAL_ID_A,
+            DESCRIPTION_B,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            null);
+    assertEquals(expected, updatedDeal);
   }
 
   @Test
@@ -141,17 +166,31 @@ public final class DealManagerDatastoreTest {
     // method should not allow updating of poster
     Deal createdDeal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            new ArrayList<>());
     Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1, null);
-    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
+    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, null);
+    assertEquals(DEAL_A, updatedDeal);
   }
 
   @Test
   public void testUpdate_allFields() {
     Deal createdDeal =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealToUpdate =
         new Deal(
             createdDeal.id,
@@ -163,14 +202,20 @@ public final class DealManagerDatastoreTest {
             -1,
             RESTAURANT_ID_B,
             null);
-    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate);
-    assertEquals(DESCRIPTION_B, updatedDeal.description);
-    assertEquals(BLOBKEY_B, updatedDeal.photoBlobkey);
-    assertEquals(DATE_C, updatedDeal.start);
-    assertEquals(DATE_D, updatedDeal.end);
-    assertEquals(SOURCE_B, updatedDeal.source);
-    assertEquals(USER_ID_A, updatedDeal.posterId);
-    assertEquals(RESTAURANT_ID_B, updatedDeal.restaurantId);
+    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, TAG_LIST);
+
+    Deal expected =
+        new Deal(
+            createdDeal.id,
+            DESCRIPTION_B,
+            BLOBKEY_B,
+            DATE_C,
+            DATE_D,
+            SOURCE_B,
+            USER_ID_A,
+            RESTAURANT_ID_B,
+            null);
+    assertEquals(expected, updatedDeal);
   }
 
   @Test
@@ -178,29 +223,47 @@ public final class DealManagerDatastoreTest {
     // Add deals published by USER_ID_A and USER_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_B, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_B,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealC =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_C, RESTAURANT_ID_A);
-
-    // User_ID_A follows USER_ID_B and USER_ID_C, USER_ID_B follows USER_ID_A
-    followManager.followUser(USER_ID_A, USER_ID_B);
-    followManager.followUser(USER_ID_A, USER_ID_C);
-    followManager.followUser(USER_ID_B, USER_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_C,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
 
     // Get deals published by the users followed by USER_ID_A
-    List<Deal> dealsForA = dealManagerDatastore.getDealsPublishedByFollowedUsers(USER_ID_A);
+    List<Deal> dealsForA =
+        dealManagerDatastore.getDealsPublishedByFollowedUsers(Arrays.asList(USER_ID_B, USER_ID_C));
     assertEquals(2, dealsForA.size());
-    assertTrue(sameAttributeValues(dealsForA.get(0), dealB));
-    assertTrue(sameAttributeValues(dealsForA.get(1), dealC));
+    assertEquals(dealsForA.get(0), dealB);
+    assertEquals(dealsForA.get(1), dealC);
 
     // Get deals published by the users followed by USER_ID_B
-    List<Deal> dealsB = dealManagerDatastore.getDealsPublishedByFollowedUsers(USER_ID_B);
+    List<Deal> dealsB =
+        dealManagerDatastore.getDealsPublishedByFollowedUsers(Arrays.asList(USER_ID_A));
     assertEquals(1, dealsB.size());
-    assertTrue(sameAttributeValues(dealsB.get(0), dealA));
+    assertEquals(dealsB.get(0), dealA);
   }
 
   @Test
@@ -208,20 +271,32 @@ public final class DealManagerDatastoreTest {
     // Add deals published by RESTAURANT_ID_A and RESTAURANT_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_B);
-
-    // USER_ID_B follows RESTAURANT_ID_A and RESTAURANT_ID_B
-    followManager.followRestaurant(USER_ID_B, RESTAURANT_ID_A);
-    followManager.followRestaurant(USER_ID_B, RESTAURANT_ID_B);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_B,
+            EMPTY_LIST);
 
     // Get deals published by the restaurants followed by USER_ID_B
-    List<Deal> deals = dealManagerDatastore.getDealsPublishedByFollowedRestaurants(USER_ID_B);
+    List<Deal> deals =
+        dealManagerDatastore.getDealsPublishedByFollowedRestaurants(
+            Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B));
     assertEquals(2, deals.size());
-    assertTrue(sameAttributeValues(deals.get(0), dealA));
-    assertTrue(sameAttributeValues(deals.get(1), dealB));
+    assertEquals(deals.get(0), dealA);
+    assertEquals(deals.get(1), dealB);
   }
 
   @Test
@@ -229,41 +304,48 @@ public final class DealManagerDatastoreTest {
     // Add deals published by RESTAURANT_ID_A and RESTAURANT_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_B);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_B,
+            EMPTY_LIST);
 
     // Add tags to the deals
     dealTagManager.updateTagsOfDeal(dealA.id, Arrays.asList(TAG_ID_A, TAG_ID_B));
     dealTagManager.updateTagsOfDeal(dealB.id, Arrays.asList(TAG_ID_B));
 
-    // USER_ID_A follows TAG_ID_A and TAG_ID_B
-    followManager.followTag(USER_ID_A, TAG_ID_A);
-    followManager.followTag(USER_ID_A, TAG_ID_B);
-
-    // USER_ID_B follows TAG_ID_A
-    followManager.followTag(USER_ID_B, TAG_ID_A);
-
-    // USER_ID_C follows TAG_ID_B
-    followManager.followTag(USER_ID_C, TAG_ID_B);
-
     // Get deals published by the tags followed by USER_ID_A
-    List<Deal> dealsForA = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_A);
+    List<Deal> dealsForA =
+        dealManagerDatastore.getDealsPublishedByFollowedTags(Arrays.asList(TAG_ID_A, TAG_ID_B));
     assertEquals(2, dealsForA.size());
-    assertTrue(sameAttributeValues(dealsForA.get(0), dealA));
-    assertTrue(sameAttributeValues(dealsForA.get(1), dealB));
+    assertEquals(dealsForA.get(0), dealA);
+    assertEquals(dealsForA.get(1), dealB);
 
     // Get deals published by the tags followed by USER_ID_B
-    List<Deal> dealsForB = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_B);
+    List<Deal> dealsForB =
+        dealManagerDatastore.getDealsPublishedByFollowedTags(Arrays.asList(TAG_ID_A));
     assertEquals(1, dealsForB.size());
-    assertTrue(sameAttributeValues(dealsForB.get(0), dealA));
+    assertEquals(dealsForB.get(0), dealA);
 
     // Get deals published by the tags followed by USER_ID_C
-    List<Deal> dealsForC = dealManagerDatastore.getDealsPublishedByFollowedTags(USER_ID_C);
+    List<Deal> dealsForC =
+        dealManagerDatastore.getDealsPublishedByFollowedTags(Arrays.asList(TAG_ID_B));
     assertEquals(2, dealsForC.size());
-    assertTrue(sameAttributeValues(dealsForC.get(0), dealA));
-    assertTrue(sameAttributeValues(dealsForC.get(1), dealB));
+    assertEquals(dealsForC.get(0), dealA);
+    assertEquals(dealsForC.get(1), dealB);
   }
 
   @Test
@@ -271,13 +353,34 @@ public final class DealManagerDatastoreTest {
     // Create 3 Deals
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_B, BLOBKEY_B, DATE_B, DATE_C, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+            DESCRIPTION_B,
+            BLOBKEY_B,
+            DATE_B,
+            DATE_C,
+            SOURCE_B,
+            USER_ID_B,
+            RESTAURANT_ID_B,
+            EMPTY_LIST);
     Deal dealC =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_C, BLOBKEY_C, DATE_C, DATE_D, SOURCE_C, USER_ID_C, RESTAURANT_ID_C);
+            DESCRIPTION_C,
+            BLOBKEY_C,
+            DATE_C,
+            DATE_D,
+            SOURCE_C,
+            USER_ID_C,
+            RESTAURANT_ID_C,
+            EMPTY_LIST);
 
     // Add votes to the deals
 
@@ -316,15 +419,36 @@ public final class DealManagerDatastoreTest {
     // Create 3 Deals with 1 second delay
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_B, BLOBKEY_B, DATE_B, DATE_C, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+            DESCRIPTION_B,
+            BLOBKEY_B,
+            DATE_B,
+            DATE_C,
+            SOURCE_B,
+            USER_ID_B,
+            RESTAURANT_ID_B,
+            EMPTY_LIST);
     TimeUnit.SECONDS.sleep(1);
     Deal dealC =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_C, BLOBKEY_C, DATE_C, DATE_D, SOURCE_C, USER_ID_C, RESTAURANT_ID_C);
+            DESCRIPTION_C,
+            BLOBKEY_C,
+            DATE_C,
+            DATE_D,
+            SOURCE_C,
+            USER_ID_C,
+            RESTAURANT_ID_C,
+            EMPTY_LIST);
 
     // Random order: A, C, B
     List<Deal> dealList = new ArrayList<>();
@@ -346,15 +470,36 @@ public final class DealManagerDatastoreTest {
   public void testGetTrendingDeals() throws Exception {
     Deal dealA =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            EMPTY_LIST);
     TimeUnit.SECONDS.sleep(2);
     Deal dealB =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_B, BLOBKEY_B, DATE_B, DATE_C, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+            DESCRIPTION_B,
+            BLOBKEY_B,
+            DATE_B,
+            DATE_C,
+            SOURCE_B,
+            USER_ID_B,
+            RESTAURANT_ID_B,
+            EMPTY_LIST);
     TimeUnit.SECONDS.sleep(2);
     Deal dealC =
         dealManagerDatastore.createDeal(
-            DESCRIPTION_C, BLOBKEY_C, DATE_C, DATE_D, SOURCE_C, USER_ID_C, RESTAURANT_ID_C);
+            DESCRIPTION_C,
+            BLOBKEY_C,
+            DATE_C,
+            DATE_D,
+            SOURCE_C,
+            USER_ID_C,
+            RESTAURANT_ID_C,
+            EMPTY_LIST);
 
     // Deal B most votes -> Most trending
     // Deal A and C equal number of votes, but deal A is the older deal -> less trending since
@@ -379,19 +524,45 @@ public final class DealManagerDatastoreTest {
 
     List<Deal> dealSorted = dealManagerDatastore.getTrendingDeals();
     for (int i = 0; i < 3; i++) {
-      assertTrue(sameAttributeValues(dealSorted.get(i), expectedList.get(i)));
+      assertEquals(dealSorted.get(i), expectedList.get(i));
     }
   }
 
-  // Check whether two objects are equivalent in attributes
-  private boolean sameAttributeValues(Deal dealA, Deal dealB) {
-    return dealA.id == dealB.id
-        && dealA.description.equals(dealB.description)
-        && dealA.photoBlobkey.equals(dealB.photoBlobkey)
-        && dealA.start.equals(dealB.start)
-        && dealA.end.equals(dealB.end)
-        && dealA.source.equals(dealB.source)
-        && dealA.posterId == dealB.posterId
-        && dealA.restaurantId == dealB.restaurantId;
+  @Test
+  public void testCreateDealWithTags() {
+    Deal deal =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            TAG_LIST);
+    List<Tag> tags = dealManagerDatastore.getTags(deal.id);
+
+    assertEquals(1, tags.size());
+    assertEquals(TAG_NAME_A, tags.get(0).name);
+  }
+
+  @Test
+  public void testUpdateDealTags() {
+    Deal createdDeal =
+        dealManagerDatastore.createDeal(
+            DESCRIPTION_A,
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            TAG_LIST);
+    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, -1, -1, null);
+    dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
+    Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
+    List<Tag> tags = dealManagerDatastore.getTags(createdDeal.id);
+
+    assertEquals(0, tags.size());
   }
 }

@@ -1,5 +1,7 @@
 package com.google.step.model;
 
+import static com.google.step.model.Util.isEqual;
+
 public class Deal {
   public final long id;
   public final String description;
@@ -9,7 +11,7 @@ public class Deal {
   public final String source;
   public final long posterId;
   public final long restaurantId;
-  public final String timestamp;
+  public final String creationTimeStamp;
 
   public Deal(
       long id,
@@ -20,7 +22,7 @@ public class Deal {
       String source,
       long posterId,
       long restaurantId,
-      String timestamp) {
+      String creationTimeStamp) {
     this.id = id;
     this.description = description;
     this.photoBlobkey = photoBlobkey;
@@ -29,6 +31,26 @@ public class Deal {
     this.source = source;
     this.posterId = posterId;
     this.restaurantId = restaurantId;
-    this.timestamp = timestamp;
+    this.creationTimeStamp = creationTimeStamp;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof Deal)) {
+      return false;
+    }
+    Deal other = (Deal) obj;
+    if (other == this) {
+      return true;
+    }
+
+    return (other.id == this.id)
+        && isEqual(this.description, other.description)
+        && isEqual(this.photoBlobkey, other.photoBlobkey)
+        && isEqual(this.start, other.start)
+        && isEqual(this.end, other.end)
+        && isEqual(this.source, other.source)
+        && (this.posterId == other.posterId)
+        && (this.restaurantId == other.restaurantId);
   }
 }
