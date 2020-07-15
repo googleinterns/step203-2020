@@ -8,7 +8,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -161,9 +160,8 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by _ followed by user */
   private List<Deal> getDealsPublishedByFollowedRestaurantsOrUsers(
-      long userId, String fieldName, String filterAttribute) {
+      List<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
-    List<Long> idsOfFollowedFieldName = getFollowedSomething(userId, fieldName);
     for (Long id : idsOfFollowedFieldName) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.EQUAL, id);
       Query query = new Query("Deal").setFilter(propertyFilter);
@@ -175,35 +173,18 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
-  /**
-   * This is copied from the follow manager method which is private, would it be better to make the
-   * original method public?
-   */
-  private List<Long> getFollowedSomething(long followerId, String fieldName) {
-    Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
-    Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
-    Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);
-    Query query = new Query("Follow").setFilter(filter);
-    PreparedQuery pq = datastore.prepare(query);
-
-    List<Long> list = new ArrayList<>();
-    for (Entity entity : pq.asIterable()) {
-      list.add((Long) entity.getProperty(fieldName));
-    }
-    return list;
-  }
-
   /** Retrieves deals posted by users followed by user */
   @Override
   public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(userId, USER_FIELD_NAME, "posterId");
+    List<Long> userIds = followManager.getFollowedUserIds(userId);
+    return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants followed by user */
   @Override
   public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(
-        userId, RESTAURANT_FIELD_NAME, "restaurantId");
+    List<Long> restaurantIds = followManager.getFollowedRestaurantIds(userId);
+    return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   /** Retrieves deals posted by tags followed by user */
