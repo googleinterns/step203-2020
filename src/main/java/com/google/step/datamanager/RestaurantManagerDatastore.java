@@ -6,7 +6,14 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.step.model.Restaurant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantManagerDatastore implements RestaurantManager {
 
@@ -22,6 +29,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
     entity.setProperty("photoBlobkey", photoBlobkey);
+    entity.setProperty("name_lowercase", name.toLowerCase());
 
     Key key = datastore.put(entity);
     long id = key.getId();
@@ -39,7 +47,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    return transformEntitytoRestaurant(restaurantEntity);
+    return transformEntityToRestaurant(restaurantEntity);
   }
 
   /** Updates restaurant info given an id */
@@ -54,12 +62,13 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     }
     if (restaurant.name != null) {
       restaurantEntity.setProperty("name", restaurant.name);
+      restaurantEntity.setProperty("name_lowercase", restaurant.name.toLowerCase());
     }
     if (restaurant.photoBlobkey != null) {
       restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
     }
     datastore.put(restaurantEntity);
-    return transformEntitytoRestaurant(restaurantEntity);
+    return transformEntityToRestaurant(restaurantEntity);
   }
 
   /** Deletes restaurant given an id */
@@ -69,13 +78,31 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     datastore.delete(key);
   }
 
+  @Override
+  public List<Restaurant> searchRestaurants(String queryString) {
+    queryString = queryString.toLowerCase();
+    Filter filterPrefix =
+        CompositeFilterOperator.and(
+            FilterOperator.GREATER_THAN_OR_EQUAL.of("name_lowercase", queryString),
+            FilterOperator.LESS_THAN.of("name_lowercase", queryString + "~"));
+    Query query = new Query("Restaurant").setFilter(filterPrefix);
+    PreparedQuery preparedQuery = datastore.prepare(query);
+
+    List<Restaurant> restaurants = new ArrayList<>();
+    for (Entity entity : preparedQuery.asIterable()) {
+      restaurants.add(transformEntityToRestaurant(entity));
+    }
+
+    return restaurants;
+  }
+
   /**
    * Returns a Restaurant object transformed from a restaurant entity.
    *
    * @param entity Restaurant entity.
    * @return a Restaurant object transformed from the entity.
    */
-  private Restaurant transformEntitytoRestaurant(Entity restaurantEntity) {
+  private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
     String name = (String) restaurantEntity.getProperty("name");
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
     long id = restaurantEntity.getKey().getId();
