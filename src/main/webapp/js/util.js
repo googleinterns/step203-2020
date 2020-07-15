@@ -21,8 +21,9 @@ function addLoadEvent(func) {
 function configureHeaderLoginStatus() {
   $.ajax('/api/authentication')
       .done((loginStatus) => {
-        const loginStatusLink = document.getElementById('login-status-link');
+        const loginLink = document.getElementById('login-link');
         const headerUsername = document.getElementById('header-username');
+        const usernameDropdown = document.getElementById('username-dropdown');
         if (loginStatus.isLoggedIn) {
           loginLink.hidden = true;
           usernameDropdown.hidden = false;
