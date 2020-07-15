@@ -54,6 +54,7 @@ public class JsonFormatter {
     commentMap.put("dealId", comment.dealId);
     commentMap.put("userId", comment.userId);
     commentMap.put("content", comment.content);
+    commentMap.put("timestamp", comment.timestamp);
     return commentMap;
   }
 
@@ -142,7 +143,7 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("photoBlobKey", user.photoBlobKey.get());
+      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -164,7 +165,9 @@ public class JsonFormatter {
     userMap.put("id", user.id);
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("photoBlobKey", user.photoBlobKey.get());
+      if (user.photoBlobKey.isPresent()) {
+        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      }
     }
     return userMap;
   }
