@@ -142,7 +142,7 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -165,7 +165,7 @@ public class JsonFormatter {
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
       if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
       }
     }
     return userMap;
@@ -242,7 +242,7 @@ public class JsonFormatter {
     Map<String, Object> dealMap = new HashMap<>();
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
-    dealMap.put("pic", deal.photoBlobkey); // TODO get url
+    dealMap.put("pic", getImageUrl(deal.photoBlobkey));
     dealMap.put("posterName", poster.username);
     dealMap.put("posterId", poster.id);
     dealMap.put("restaurantId", restaurant.id);
