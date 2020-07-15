@@ -78,6 +78,7 @@ public class VoteServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
     long dealId;
     try {
       dealId = Long.parseLong(request.getPathInfo().substring(1));
