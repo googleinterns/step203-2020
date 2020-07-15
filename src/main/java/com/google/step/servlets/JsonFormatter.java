@@ -247,9 +247,10 @@ public class JsonFormatter {
    * Returns a map of brief deal info for home page
    *
    * @param deal the deal to create a map for
-   * @param user the user object of the poster
+   * @param poster the user object of the poster
+   * @param restaurant restaurant the deal is at
    * @param tags tags associated with the deal
-   * @param restaurants restaurant the deal is at
+   * @param votes number of votes the deal received
    * @return a map of brief deal info for home page
    */
   public static Map<String, Object> getBriefHomePageDealMap(
@@ -264,6 +265,7 @@ public class JsonFormatter {
     dealMap.put("restaurantName", restaurant.name);
     dealMap.put("votes", votes);
     dealMap.put("tags", tags);
+    dealMap.put("timestamp", deal.creationTimeStamp);
     return dealMap;
   }
 }

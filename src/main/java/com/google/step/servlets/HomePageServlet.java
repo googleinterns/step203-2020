@@ -4,6 +4,8 @@ import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.DealTagManagerDatastore;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.TagManager;
@@ -62,7 +64,9 @@ public class HomePageServlet extends HttpServlet {
     restaurantManager = new RestaurantManagerDatastore();
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
+    followManager = new FollowManagerDatastore();
   }
+
   /** Gets the deals for the home page */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

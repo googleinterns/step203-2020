@@ -5,11 +5,12 @@ const homePageData = {
       restaurantId: 1,
       posterId: 1,
       description: 'starbucks mocha 1-for-1',
-      votes: 0,
+      votes: 1,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -18,9 +19,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -29,9 +31,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
   ],
   usersIFollow: [
@@ -42,9 +45,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -53,9 +57,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -64,9 +69,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
   ],
   restaurantsIFollow: [
@@ -77,9 +83,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -88,9 +95,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -99,9 +107,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
   ],
   tagsIFollow: [
@@ -112,9 +121,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -123,9 +133,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
     {
       restaurantName: 'A',
@@ -134,9 +145,10 @@ const homePageData = {
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
-      pic: 'a_blob_key',
+      pic: '/api/images/a_blob_key',
       posterName: 'Alice',
       tags: [{'id': 1, 'name': '1for1'}],
+      timestamp: '2020-07-10T10:15:30',
     },
   ],
 };
@@ -157,18 +169,33 @@ function createHomePage(homePage) {
       const childElements = dealCardElements[j].children;
       const dealImage = childElements[0];
       dealImage.src = homePageData[j].pic;
+
       const dealBody = childElements[1];
-      const dealTitle = dealBody.children[0];
+
+      const dealTime = dealBody.children[0];
+      dealTime.innerText = homePageData[j].timestamp;
+
+      const dealVotes = dealBody.children[1].children[1];
+      dealVotes.innerText = homePageData[j].votes;
+
+      const dealTitle = dealBody.children[2];
       dealTitle.innerText = homePageData[j].description;
-      const dealRestaurant = dealBody.children[2];
+
+      const dealRestaurant = dealBody.children[3].children[0];
       dealRestaurant.innerText = homePageData[j].restaurantName;
       dealRestaurant.href = '/restaurants/' + homePageData[j].restaurantId;
-      const dealPoster = dealBody.children[3];
+
+      const dealPoster = dealBody.children[4].children[0];
       dealPoster.innerText = homePageData[j].posterName;
       dealPoster.href = '/users/' + homePageData[j].posterId;
-      const dealVotes = dealBody.children[4];
-      dealVotes.innerText = homePageData[j].votes;
-      const dealLink = dealBody.children[5];
+
+      const dealTags = dealBody.children[5];
+      const numTags = homePageData[j].tags.length;
+      for (let i = 0; i < numTags; i++) {
+        dealTags.innerText += '#' + homePageData[j].tags[i].name + ', ';
+      };
+
+      const dealLink = dealBody.children[6];
       dealLink.href = '/deals/' + homePageData[j].id;
     }
   }
@@ -202,11 +229,23 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
             <div id=deal-card-${i} class="card deal-card h-100">
               <img class="card-img-top home-deal-img" src="" alt="">
               <div class="card-body d-flex flex-column">
+                <div class="card-text deal-time"></div>
+                <div class="d-flex justify-content-end" 
+                  style="display: none;">
+                  <button type="button" class="btn upvote-btn">
+                    <span class="fas fa-angle-up"></span>
+                  </button>
+                  <span class="my-auto votes-num"></span>
+                  <button type="button" class="btn downvote-btn">
+                    <span class="fas fa-angle-down"></span>
+                  </button>
+                </div>
                 <h5 class="card-title deal-title"></h5>
-                <p class="card-text deal-text"></p>
-                <a href='#' class="card-text deal-restaurant"></a>
-                <a href='#' class="card-text deal-poster"></a>
-                <p class="card-text deal-votes"></p>
+                <div>Restaurant: <a href='#' class="card-text deal-restaurant">
+                </a></div>
+                <div>Posted by: <a href='#' class="card-text deal-poster"></a>
+                </div>
+                <div class= "card-text tags" ></div>
                 <a href="#"
                   class="btn btn-primary align-self-end mt-auto float-right">
                   See More
@@ -235,7 +274,6 @@ function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
         homePageDeals = homePageData;
-        console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4);
         createHomePage(homePageDeals);
       })

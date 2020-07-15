@@ -123,9 +123,9 @@ public class TestConstants {
           RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_URL_C, USER_ID_C);
 
   // Deal Brief for Home Page
-  public static final String HOME_DEAL_A =
+  public static final String HOME_DEAL_A_JSON =
       String.format(
-          "{restaurantName: \"%s\", description: \"%s\", votes: %d, id: %d, pic: \"%s\", posterName: \"%s\", restaurantId: %d, posterId: %d, tags: [{id: %d, name: \"%s\"}]}",
+          "{restaurantName: \"%s\", description: \"%s\", votes: %d, id: %d, pic: \"%s\", posterName: \"%s\", restaurantId: %d, posterId: %d, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
           RESTAURANT_NAME_A,
           DESCRIPTION_A,
           VOTE_A,
@@ -135,7 +135,8 @@ public class TestConstants {
           RESTAURANT_ID_A,
           USER_ID_A,
           TAG_ID_A,
-          TAG_NAME_A);
+          TAG_NAME_A,
+          TIME_A);
 
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
