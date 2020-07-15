@@ -120,7 +120,6 @@ public class FollowManagerDatastore implements FollowManager {
 
   @Override
   public List<Long> getFollowerIdsOfUser(long followeeId) {
-    // TODO Auto-generated method stub
-    return null;
+    return new ArrayList<>();
   }
 }

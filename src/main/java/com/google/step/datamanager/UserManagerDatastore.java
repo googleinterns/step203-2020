@@ -2,6 +2,7 @@ package com.google.step.datamanager;
 
 import static com.google.step.servlets.ImageUploader.deleteImage;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -12,7 +13,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.User;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** A data manager handling datastore operations on user. */
 public class UserManagerDatastore implements UserManager {
@@ -138,14 +141,19 @@ public class UserManagerDatastore implements UserManager {
 
   @Override
   public List<User> readUsers(List<Long> ids) {
-    List<User> users = new ArrayList<>();
-    for (long id : ids) {
-      try {
-        users.add(readUser(id));
-      } catch (IllegalArgumentException e) {
-        continue;
-      }
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("User", id)).collect(Collectors.toList());
+    Collection<Entity> userEntities;
+    try {
+      userEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
     }
+    List<User> users =
+        userEntities.stream()
+            .map(entity -> transformEntityToUser(entity))
+            .collect(Collectors.toList());
     return users;
   }
 }

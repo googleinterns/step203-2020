@@ -35,10 +35,16 @@ public class UserServlet extends HttpServlet {
   private TagManager tagManager = new TagManagerDatastore();
   // TODO: private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
-  public UserServlet(UserManager userManager, UserService userService) {
+  public UserServlet(
+      UserManager userManager,
+      UserService userService,
+      FollowManager followManager,
+      TagManager tagManager) {
     super();
     this.userManager = userManager;
     this.userService = userService;
+    this.followManager = followManager;
+    this.tagManager = tagManager;
   }
 
   public UserServlet() {
