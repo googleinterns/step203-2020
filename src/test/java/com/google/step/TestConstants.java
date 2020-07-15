@@ -27,6 +27,7 @@ public class TestConstants {
   private static final String URL_PREFIX = "/api/images/";
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
+  public static final String BLOBKEY_URL_C = URL_PREFIX + BLOBKEY_C;
   public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
   public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
@@ -111,15 +112,15 @@ public class TestConstants {
   public static final String DEAL_A_BRIEF_JSON =
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_A, DESCRIPTION_A, VOTE_A, DEAL_ID_A, BLOBKEY_A, USER_ID_A);
+          RESTAURANT_ID_A, DESCRIPTION_A, VOTE_A, DEAL_ID_A, BLOBKEY_URL_A, USER_ID_A);
   public static final String DEAL_B_BRIEF_JSON =
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_B, USER_ID_B);
+          RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_URL_B, USER_ID_B);
   public static final String DEAL_C_BRIEF_JSON =
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_C, USER_ID_C);
+          RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_URL_C, USER_ID_C);
 
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A =
@@ -129,7 +130,7 @@ public class TestConstants {
           DESCRIPTION_A,
           VOTE_A,
           DEAL_ID_A,
-          BLOBKEY_A,
+          BLOBKEY_URL_A,
           USERNAME_A,
           RESTAURANT_ID_A,
           USER_ID_A,
