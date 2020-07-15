@@ -42,6 +42,20 @@ public class JsonFormatter {
     return json;
   }
 
+  public static String getRestaurantListJson(List<Restaurant> restaurants) {
+    Gson gson = new Gson();
+    String json = gson.toJson(getRestaurantMapsList(restaurants));
+    return json;
+  }
+
+  private static List<Map<String, Object>> getRestaurantMapsList(List<Restaurant> restaurants) {
+    List<Map<String, Object>> restaurantsMaps = new ArrayList<>();
+    for (Restaurant restaurant : restaurants) {
+      restaurantsMaps.add(getRestaurantMap(restaurant));
+    }
+    return restaurantsMaps;
+  }
+
   public static String getDealListJson(List<Deal> deals) {
     Gson gson = new Gson();
     String json = gson.toJson(getDealListBriefMaps(deals));
@@ -54,6 +68,7 @@ public class JsonFormatter {
     commentMap.put("dealId", comment.dealId);
     commentMap.put("userId", comment.userId);
     commentMap.put("content", comment.content);
+    commentMap.put("timestamp", comment.timestamp);
     return commentMap;
   }
 
