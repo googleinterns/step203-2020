@@ -92,7 +92,8 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
     manager.updateDeal(deal);
     response.setStatus(HttpServletResponse.SC_OK);
   }

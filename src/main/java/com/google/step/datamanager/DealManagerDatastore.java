@@ -7,6 +7,8 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.step.model.Deal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
   private final DealSearchManager searchManager;
+  private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -37,11 +40,23 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
+    String creationTimeStamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
+    entity.setProperty("timestamp", creationTimeStamp);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(
+            id,
+            description,
+            photoBlobkey,
+            start,
+            end,
+            source,
+            posterId,
+            restaurantId,
+            creationTimeStamp);
     searchManager.putDeal(deal, new ArrayList<>());
 
     return deal;
@@ -147,6 +162,16 @@ public class DealManagerDatastore implements DealManager {
     String source = (String) dealEntity.getProperty("source");
     long posterId = (long) dealEntity.getProperty("posterId");
     long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    return new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    String creationTimeStamp = (String) dealEntity.getProperty("timestamp");
+    return new Deal(
+        id,
+        description,
+        photoBlobkey,
+        start,
+        end,
+        source,
+        posterId,
+        restaurantId,
+        creationTimeStamp);
   }
 }
