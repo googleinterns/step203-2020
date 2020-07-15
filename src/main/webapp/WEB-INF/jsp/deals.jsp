@@ -39,7 +39,7 @@
             <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#comments" role="tab"
               aria-controls="comments" aria-selected="false">Comments</a>
           </div>
-          <div class="d-flex justify-content-end">
+          <div id="vote-div" class="d-flex justify-content-end" style="display: none;">
             <button type="button" id="upvote-btn" class="btn" onclick="handleUpvote()">
               <span class="fas fa-angle-up"></span>
             </button>
