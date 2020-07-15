@@ -61,8 +61,8 @@ function unfollow(restaurantId) {
 function init() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
   restaurant = {
-    name: "McDonald",
-    photoUrl: "https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png",
+    name: 'McDonald',
+    photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
   }
   //$.ajax('/api/restaurants/' + id)
   //   .done((restaurant) => {
