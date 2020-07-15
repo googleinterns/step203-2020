@@ -36,6 +36,7 @@ public class HomePageServlet extends HttpServlet {
   private final RestaurantManager restaurantManager;
   private final DealTagManager dealTagManager;
   private final TagManager tagManager;
+  private final FollowManager followManager;
 
   public HomePageServlet(
       DealManager dealManager,
@@ -43,13 +44,15 @@ public class HomePageServlet extends HttpServlet {
       RestaurantManager restaurantManager,
       VoteManager voteManager,
       DealTagManager dealTagManager,
-      TagManager tagManager) {
+      TagManager tagManager,
+      FollowManager followManager) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
     this.dealTagManager = dealTagManager;
     this.tagManager = tagManager;
+    this.followManager = followManager;
   }
 
   public HomePageServlet() {
@@ -92,10 +95,7 @@ public class HomePageServlet extends HttpServlet {
       for (Deal deal : dealList) {
         User user = userManager.readUser(deal.posterId);
         Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
-        List<Long> tagIds = dealTagManager.getTagIdsOfDeal(deal.id);
-        List<Tag> tags = new ArrayList<>();
-        for (Long tagId : tagIds)
-          tags.add(tagManager.readTag(tagId)); // TODO: Use readTags method when merged
+        List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
         int votes = voteManager.getVotes(deal.id);
         Map<String, Object> homePageDealMap =
             JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);

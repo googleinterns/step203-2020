@@ -26,6 +26,7 @@ import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -105,7 +106,8 @@ public class DealPostServletTest {
             eq(DATE_B),
             eq(SOURCE_A),
             anyLong(),
-            eq(RESTAURANT_ID_A)))
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>())))
         .thenReturn(DEAL);
 
     servlet.doPost(mockRequest, mockResponse);
@@ -118,7 +120,8 @@ public class DealPostServletTest {
             eq(DATE_B),
             eq(SOURCE_A),
             anyLong(),
-            eq(RESTAURANT_ID_A));
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>()));
     verify(mockResponse).sendRedirect(any());
   }
 

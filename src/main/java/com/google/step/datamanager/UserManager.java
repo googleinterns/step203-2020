@@ -1,6 +1,7 @@
 package com.google.step.datamanager;
 
 import com.google.step.model.User;
+import java.util.List;
 
 /** A UserManager handling user datastore operations. */
 public interface UserManager {
@@ -30,6 +31,14 @@ public interface UserManager {
    * @throws IllegalArgumentException if user id does not exist.
    */
   public User readUser(long id) throws IllegalArgumentException;
+
+  /**
+   * Returns a list of users identified by the list of ids.
+   *
+   * @param ids a list of user ids.
+   * @return a list of users.
+   */
+  public List<User> readUsers(List<Long> ids);
 
   /**
    * Updates a user's info with a partially populated user object. Updates fields except email that
