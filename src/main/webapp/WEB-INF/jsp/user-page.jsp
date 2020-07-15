@@ -84,7 +84,7 @@
                 onchange="profilePhotoPreview(this);">
             </div>
           </div>
-        
+
           <div class="form-group row">
             <label for="tags-input" class="col-form-label col-sm-2">Tags</label>
             <div class="col-sm-10">
