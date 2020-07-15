@@ -190,7 +190,6 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by tags followed by user */
   @Override
   public List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds) {
-    List<Deal> dealResults = new ArrayList<>();
     List<Long> dealIdResults = new ArrayList<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
