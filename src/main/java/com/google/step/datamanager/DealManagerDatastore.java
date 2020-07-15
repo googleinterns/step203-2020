@@ -139,19 +139,19 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedUsers(long userId) {
+  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds) {
     return new ArrayList<Deal>();
   }
 
   /** Retrieves deals posted by restaurants followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedRestaurants(long userId) {
+  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds) {
     return new ArrayList<Deal>();
   }
 
   /** Retrieves deals posted by tags followed by user */
   @Override
-  public List<Deal> getDealsPublishedByFollowedTags(long userId) {
+  public List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds) {
     return new ArrayList<Deal>();
   }
 
