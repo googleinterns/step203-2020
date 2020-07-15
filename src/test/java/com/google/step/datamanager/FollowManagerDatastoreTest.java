@@ -10,8 +10,10 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -135,5 +137,17 @@ public final class FollowManagerDatastoreTest {
     // Assert
     assertEquals(1, followedTags.size());
     assertThat(followedTags, hasItems(TAG_ID_B));
+  }
+
+  @Test
+  public void testGetFollowerIdsOfUser() {
+    manager.followUser(USER_ID_A, USER_ID_B);
+    manager.followUser(USER_ID_C, USER_ID_B);
+    manager.followUser(USER_ID_C, USER_ID_A);
+
+    List<Long> ids = manager.getFollowerIdsOfUser(USER_ID_B);
+
+    assertThat(ids, containsInAnyOrder(USER_ID_A, USER_ID_C));
+    assertTrue(manager.getFollowerIdsOfUser(USER_ID_C).isEmpty());
   }
 }
