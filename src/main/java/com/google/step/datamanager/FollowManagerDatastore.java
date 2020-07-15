@@ -135,4 +135,9 @@ public class FollowManagerDatastore implements FollowManager {
       followTag(followerId, id);
     }
   }
+  
+  public boolean isFollowing(long followerId, long followeeId) {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }
