@@ -26,7 +26,7 @@
       <div class="row mb-5">
         <div class="col-sm-4 col-lg-3">
           <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
-          <button id="follow-btn" type="button" class="btn btn-primary">Follow</button>
+          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
         </div>
         <div class="col-sm-8 col-lg-9">
           <h3 id="restaurant-name">
