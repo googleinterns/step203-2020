@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
+import com.google.step.datamanager.UserManager;
+import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Comment;
 import com.google.step.model.User;
 import java.io.IOException;
@@ -14,14 +16,17 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
-  private CommentManager manager;
+  private CommentManager commentManager;
+  private UserManager userManager;
 
-  public CommentServlet(CommentManager commentManager) {
-    manager = commentManager;
+  public CommentServlet(CommentManager commentManager, UserManager userManager) {
+    this.commentManager = commentManager;
+    this.userManager = userManager;
   }
 
   public CommentServlet() {
-    manager = new CommentManagerDatastore();
+    commentManager = new CommentManagerDatastore();
+    userManager = new UserManagerDatastore();
   }
 
   /** Deletes the comment with the given id parameter */
@@ -35,7 +40,7 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    manager.deleteComment(id);
+    commentManager.deleteComment(id);
   }
 
   /** Updates a comment with the given id parameter */
@@ -50,14 +55,13 @@ public class CommentServlet extends HttpServlet {
       return;
     }
     content = request.getParameter("content");
-    Comment updatedComment = manager.updateComment(id, content);
+    Comment updatedComment = commentManager.updateComment(id, content);
+
     if (updatedComment == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     } else {
-      // TODO get user form user manager
-      response
-          .getWriter()
-          .println(JsonFormatter.getCommentJson(updatedComment, new User(1, "a@a.com")));
+      User poster = userManager.readUser(updatedComment.userId);
+      response.getWriter().println(JsonFormatter.getCommentJson(updatedComment, poster));
     }
   }
 }
