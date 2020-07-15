@@ -27,6 +27,7 @@ import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +65,8 @@ public class CommentGetPostServletTest {
     when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
     when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
     when(mockUserManager.readUser(USER_ID_B)).thenReturn(USER_B);
+    List<Long> userIds = Arrays.asList(USER_ID_A, USER_ID_B);
+    when(mockUserManager.readUsers(userIds)).thenReturn(Arrays.asList(USER_A, USER_B));
   }
 
   @Test
