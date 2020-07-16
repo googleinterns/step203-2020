@@ -2,8 +2,11 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
+import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,10 +30,10 @@ public class RestaurantPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
-    String photoBlobkey = "A_BLOB_KEY";
+    String photoBlobkey = "a_blob_key";
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
-
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
+    List<Deal> deals = new ArrayList<>();
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
   }
 }

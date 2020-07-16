@@ -6,6 +6,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Deal;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,5 +113,39 @@ public class DealManagerDatastore implements DealManager {
   public List<Deal> readDeals(List<Long> ids) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  /**
+   * Returns a Deal object transformed from a deal entity.
+   *
+   * @param dealEntity Deal entity.
+   * @return a Deal object transformed from the entity.
+   */
+  private Deal transformEntityToDeal(Entity dealEntity) {
+    long id = dealEntity.getKey().getId();
+    String description = (String) dealEntity.getProperty("description");
+    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
+    String start = (String) dealEntity.getProperty("start");
+    String end = (String) dealEntity.getProperty("end");
+    String source = (String) dealEntity.getProperty("source");
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    return new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+  }
+
+  @Override
+  public List<Deal> getDealsOfRestaurant(long restaurantId) {
+    Query query =
+        new Query("Deal")
+            .setFilter(
+                new Query.FilterPredicate(
+                    "restaurantId", Query.FilterOperator.EQUAL, restaurantId));
+    PreparedQuery pq = datastore.prepare(query);
+    Iterable<Entity> entities = pq.asIterable();
+    List<Deal> deals = new ArrayList<>();
+    for (Entity entity : entities) {
+      deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
   }
 }

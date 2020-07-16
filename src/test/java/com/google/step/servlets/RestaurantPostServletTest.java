@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +23,6 @@ public class RestaurantPostServletTest {
 
   private static final long ID_A = 1;
   private static final String NAME_A = "A";
-  private static final String BLOBKEY_A = "A_BLOB_KEY";
   private static final Restaurant RESTAURANT_A = new Restaurant(ID_A, NAME_A, BLOBKEY_A);
 
   private RestaurantManager restaurantManager;
@@ -50,7 +51,7 @@ public class RestaurantPostServletTest {
     restaurantPostServlet.doPost(request, response);
 
     String expected =
-        String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}", ID_A, NAME_A, BLOBKEY_A);
+        String.format("{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[]}", ID_A, NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
