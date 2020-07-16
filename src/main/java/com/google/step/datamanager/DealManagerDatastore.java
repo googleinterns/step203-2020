@@ -137,15 +137,15 @@ public class DealManagerDatastore implements DealManager {
     return transformEntitytoDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by users followed by user */
+  /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds) {
+  public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
     return new ArrayList<Deal>();
   }
 
-  /** Retrieves deals posted by restaurants followed by user */
+  /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds) {
+  public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
     return new ArrayList<Deal>();
   }
 
