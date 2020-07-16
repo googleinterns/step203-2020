@@ -35,7 +35,7 @@ public class CommentGetPostServlet extends HttpServlet {
     }
     List<Comment> comments = manager.getCommentsForDeal(dealId);
     response.setContentType("application/json;");
-    // response.getWriter().println(JsonFormatter.getCommentsJson(comments));
+    response.getWriter().println(JsonFormatter.getCommentsJson(comments));
   }
 
   /** Posts a comment for the deal with the given id parameter */
