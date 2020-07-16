@@ -13,7 +13,6 @@ function initComments() {
       dealId: dealId,
     },
   }).done((comments) => {
-    console.log(comments);
     loadCommentsToPage(comments);
   });
 }
