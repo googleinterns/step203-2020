@@ -34,8 +34,8 @@ import com.google.step.datamanager.UserManager;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -81,7 +81,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
     when(mockUserManager.readUser(1)).thenReturn(USER_A);
-    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(new ArrayList<Long>());
+    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(new HashSet<Long>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

@@ -68,7 +68,7 @@ public class UserServlet extends HttpServlet {
     List<Deal> deals = new ArrayList<>(); // dealManager.getDealsPublishedByUser(id);
     List<User> following = new ArrayList<>(); // followManager.getUsersFollowedByUser(id);
     List<User> followers = new ArrayList<>(); // followManager.getUsersFollowingUser(id);
-    List<Long> tagIds = followManager.getFollowedTagIds(id);
+    List<Long> tagIds = new ArrayList<>(followManager.getFollowedTagIds(id));
     List<Tag> tags = new ArrayList<>();
     for (Long tagId : tagIds) {
       tags.add(tagManager.readTag(tagId));

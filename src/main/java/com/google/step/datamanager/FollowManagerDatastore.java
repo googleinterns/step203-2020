@@ -9,9 +9,9 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FollowManagerDatastore implements FollowManager {
 
@@ -91,38 +91,38 @@ public class FollowManagerDatastore implements FollowManager {
   }
 
   @Override
-  public List<Long> getFollowedRestaurantIds(long followerId) {
+  public Set<Long> getFollowedRestaurantIds(long followerId) {
     return getFollowedSomething(followerId, RESTAURANT_FIELD_NAME);
   }
 
   @Override
-  public List<Long> getFollowedUserIds(long followerId) {
+  public Set<Long> getFollowedUserIds(long followerId) {
     return getFollowedSomething(followerId, USER_FIELD_NAME);
   }
 
   @Override
-  public List<Long> getFollowedTagIds(long followerId) {
+  public Set<Long> getFollowedTagIds(long followerId) {
     return getFollowedSomething(followerId, TAG_FIELD_NAME);
   }
 
-  private List<Long> getFollowedSomething(long followerId, String fieldName) {
+  private Set<Long> getFollowedSomething(long followerId, String fieldName) {
     Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
     Filter otherFilter = new FilterPredicate(fieldName, FilterOperator.NOT_EQUAL, null);
     Filter filter = CompositeFilterOperator.and(userFilter, otherFilter);
     Query query = new Query(ENTITY_NAME).setFilter(filter);
     PreparedQuery pq = datastore.prepare(query);
 
-    List<Long> list = new ArrayList<>();
+    Set<Long> ids = new HashSet<>();
     for (Entity entity : pq.asIterable()) {
-      list.add((Long) entity.getProperty(fieldName));
+      ids.add((Long) entity.getProperty(fieldName));
     }
-    return list;
+    return ids;
   }
 
   @Override
   public void updateFollowedTagIds(long followerId, List<Long> tagIds) {
-    HashSet<Long> tagsFollowed = new HashSet<>(getFollowedTagIds(followerId));
-    HashSet<Long> newTagIds = new HashSet<>(tagIds);
+    Set<Long> tagsFollowed = getFollowedTagIds(followerId);
+    Set<Long> newTagIds = new HashSet<>(tagIds);
     for (long id : tagsFollowed) {
       if (newTagIds.contains(id)) {
         newTagIds.remove(id);
