@@ -29,11 +29,6 @@ public class DealManagerDatastore implements DealManager {
   private final VoteManager voteManager;
   private final TagManager tagManager;
 
-  private final String FOLLOWER_FIELD_NAME = "follower";
-  private final String RESTAURANT_FIELD_NAME = "restaurant";
-  private final String USER_FIELD_NAME = "user";
-  private final String TAG_FIELD_NAME = "tag";
-
   private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
@@ -154,7 +149,7 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by _ followed by user */
+  /** Retrieves deals posted by restaurants or users */
   private List<Deal> getDealsPublishedByRestaurantsOrUsers(
       List<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
