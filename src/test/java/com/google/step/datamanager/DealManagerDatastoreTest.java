@@ -41,14 +41,13 @@ public final class DealManagerDatastoreTest {
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-  private final VoteManager voteManager = new VoteManagerDatastore();
-  private final DealTagManager dealTagManager = new DealTagManagerDatastore();
   private static final List<String> EMPTY_LIST = new ArrayList<>();
   private static final List<String> TAG_LIST = Arrays.asList(TAG_NAME_A);
 
+  private final DealTagManager dealTagManager = new DealTagManagerDatastore();
   private final DealSearchManager mockSearchManager = mock(DealSearchManager.class);
   private final DealManager dealManagerDatastore =
-      new DealManagerDatastore(dealTagManager, voteManager, mockSearchManager);
+      new DealManagerDatastore(dealTagManager, mockSearchManager);
 
   @Before
   public void setUp() {
