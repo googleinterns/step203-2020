@@ -271,10 +271,10 @@ function showProfileEditingForm(user) {
   const photoUploadInput = document.getElementById('photo-upload-input');
   const defaultPhotoCheckbox =
       document.getElementById('default-photo-checkbox');
- const isDefaultProfilePicture = isDefaultProfilePicture(user.picture);
- defaultPhotoCheckbox.checked = isDefaultProfilePicture;
- photoUploadInput.hidden = isDefaultProfilePicture;
-  if (isDefaultProfilePicture) {
+  const isShowingDefaultProfilePicture = isDefaultProfilePicture(user.picture);
+  defaultPhotoCheckbox.checked = isShowingDefaultProfilePicture;
+  photoUploadInput.hidden = isShowingDefaultProfilePicture;
+  if (isShowingDefaultProfilePicture) {
     initialProfilePhotoUrl = user.picture;
   }
   if (typeof user.username != 'undefined') {
