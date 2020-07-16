@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -92,8 +93,12 @@ public class DealPostServlet extends HttpServlet {
       return;
     }
 
-    // TODO get the tag names from request parameter
-    List<String> tagNames = new ArrayList<>();
+    String tagParamter = request.getParameter("tags");
+    if (tagParamter == null) {
+      tagParamter = "";
+    }
+    List<String> tagNames =
+        (tagParamter.isEmpty()) ? new ArrayList<>() : Arrays.asList(tagParamter.split(","));
 
     Deal deal =
         dealManager.createDeal(

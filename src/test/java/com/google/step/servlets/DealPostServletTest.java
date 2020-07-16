@@ -9,8 +9,11 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestUtils.anyEmptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,7 +31,7 @@ import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -91,6 +94,7 @@ public class DealPostServletTest {
     when(mockRequest.getParameter("end")).thenReturn(DATE_B);
     when(mockRequest.getParameter("source")).thenReturn(SOURCE_A);
     when(mockRequest.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
+    when(mockRequest.getParameter("tags")).thenReturn("");
 
     // behaviour when user is logged in
     when(mockUserService.isUserLoggedIn()).thenReturn(true);
@@ -115,7 +119,7 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A),
-            eq(new ArrayList<>())))
+            anyEmptyList()))
         .thenReturn(DEAL);
 
     servlet.doPost(mockRequest, mockResponse);
@@ -129,7 +133,7 @@ public class DealPostServletTest {
             eq(SOURCE_A),
             anyLong(),
             eq(RESTAURANT_ID_A),
-            eq(new ArrayList<>()));
+            anyEmptyList());
     verify(mockResponse).sendRedirect(any());
   }
 
@@ -214,5 +218,35 @@ public class DealPostServletTest {
     servlet.doPost(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_tags() throws IOException {
+    when(mockRequest.getParameter("tags")).thenReturn(TAG_NAME_A + "," + TAG_NAME_B);
+
+    when(mockDealManager.createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(Arrays.asList(TAG_NAME_A, TAG_NAME_B))))
+        .thenReturn(DEAL);
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockDealManager)
+        .createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(Arrays.asList(TAG_NAME_A, TAG_NAME_B)));
+    verify(mockResponse).sendRedirect(any());
   }
 }
