@@ -149,27 +149,6 @@ public class DealManagerDatastore implements DealManager {
     return new ArrayList<Deal>();
   }
 
-  /** Retrieves deals posted by tags followed by user */
-  @Override
-  public List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
-    return new ArrayList<Deal>();
-  }
-
-  @Override
-  public List<Deal> getTrendingDeals() {
-    return new ArrayList<Deal>();
-  }
-
   /**
    * Returns a Deal object transformed from a deal entity.
    *
