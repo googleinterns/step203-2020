@@ -63,23 +63,6 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
-  // Deal
-  public static final long DEAL_ID_A = 1;
-  public static final long DEAL_ID_B = 2;
-  public static final long DEAL_ID_C = 3;
-  public static final long DEAL_ID_D = 4;
-
-  public static final String DESCRIPTION_A = "starbucks mocha 1-for-1";
-  public static final String DESCRIPTION_B = "KFC chick buy 5 free 10";
-
-  public static final String DATE_A = "2020-01-01";
-  public static final String DATE_B = "2020-01-02";
-  public static final String DATE_C = "2020-01-03";
-  public static final String DATE_D = "2020-01-04";
-
-  public static final String SOURCE_A = "www.example.com";
-  public static final String SOURCE_B = "www.somethingelse.com";
-
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
   public static final long RESTAURANT_ID_B = 2;
@@ -104,7 +87,23 @@ public class TestConstants {
   public static final String TIME_A = "2020-07-10T10:15:30";
   public static final String TIME_B = "2020-07-10T12:15:30";
 
-  // Deal class
+  // Deal
+  public static final long DEAL_ID_A = 1;
+  public static final long DEAL_ID_B = 2;
+  public static final long DEAL_ID_C = 3;
+  public static final long DEAL_ID_D = 4;
+
+  public static final String DESCRIPTION_A = "starbucks mocha 1-for-1";
+  public static final String DESCRIPTION_B = "KFC chick buy 5 free 10";
+
+  public static final String DATE_A = "2020-01-01";
+  public static final String DATE_B = "2020-01-02";
+  public static final String DATE_C = "2020-01-03";
+  public static final String DATE_D = "2020-01-04";
+
+  public static final String SOURCE_A = "www.example.com";
+  public static final String SOURCE_B = "www.somethingelse.com";
+
   public static final Deal DEAL_A =
       new Deal(
           DEAL_ID_A,
