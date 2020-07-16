@@ -31,6 +31,6 @@ public class RestaurantPostServlet extends HttpServlet {
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
 
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant));
+    response.sendRedirect("/restaurant/" + restaurant.id);
   }
 }
