@@ -80,11 +80,17 @@ function createCommentElement(comment) {
   const commentElement = document.createElement('div');
   commentElement.className = 'border border-info py-3 px-3 my-3';
 
-  const textElement = document.createElement('span');
+  const textElement = document.createElement('div');
   textElement.innerText = comment.user.username +
   ': ' + comment.content;
-
   commentElement.appendChild(textElement);
+
+  const timeElement = document.createElement('small');
+  timeElement.className = 'text-muted';
+  const date = new Date(Date.parse(comment.timestamp));
+  timeElement.innerText = 'Posted on: ' + date.toString();
+  commentElement.appendChild(timeElement);
+
   return commentElement;
 }
 
