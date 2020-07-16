@@ -26,7 +26,6 @@ public class DealManagerDatastore implements DealManager {
   private final DatastoreService datastore;
   private final DealTagManager dealTagManager;
   private final DealSearchManager searchManager;
-  private final VoteManager voteManager;
   private final TagManager tagManager;
 
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
@@ -35,19 +34,15 @@ public class DealManagerDatastore implements DealManager {
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
     searchManager = new DealSearchManagerIndex();
-    voteManager = new VoteManagerDatastore();
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
   }
 
-  public DealManagerDatastore(
-      DealTagManager dealTagManager, VoteManager voteManager, DealSearchManager searchManager) {
+  public DealManagerDatastore(DealTagManager dealTagManager, DealSearchManager searchManager) {
     datastore = DatastoreServiceFactory.getDatastoreService();
     this.dealTagManager = dealTagManager;
-    this.voteManager = voteManager;
     this.searchManager = searchManager;
     tagManager = new TagManagerDatastore();
-    dealTagManager = new DealTagManagerDatastore();
   }
 
   @Override
