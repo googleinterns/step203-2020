@@ -54,31 +54,27 @@ function unfollow(restaurantId) {
       .done(() => location.reload());
 }
 
-
 /**
  * Initializes the restaurant page based on the id.
  */
-function init() {
+function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
+  // TODO call back end
   restaurant = {
     name: 'McDonald',
     photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
-  }
-  //$.ajax('/api/restaurants/' + id)
-  //   .done((restaurant) => {
-        configureRestaurantInfo(restaurant);
-  //    });
+  };
+  configureRestaurantInfo(restaurant);
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {
         if (!loginStatus.isLoggedIn) {
           return;
         }
-
         configureFollowButton(id, loginStatus.id);
       });
 }
 
 addLoadEvent(() => {
-  init();
+  initRestaurantPage();
 });
