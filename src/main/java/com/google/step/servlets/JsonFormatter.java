@@ -15,7 +15,7 @@ import java.util.Map;
 public class JsonFormatter {
   public static String getCommentsJson(List<Comment> comments, List<User> users) {
     Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> commentMapList = new ArrayList<>();
     for (int i = 0; i < comments.size(); i++) {
       Comment comment = comments.get(i);
       User user = users.get(i);
