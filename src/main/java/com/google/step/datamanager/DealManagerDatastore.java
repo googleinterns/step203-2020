@@ -182,6 +182,17 @@ public class DealManagerDatastore implements DealManager {
     return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
+  @Override
+  public List<Deal> getAllDeals() {
+    Query query = new Query("Deal");
+    PreparedQuery pq = datastore.prepare(query);
+    List<Deal> dealResults = new ArrayList<>();
+    for (Entity dealEntity : pq.asIterable()) {
+      dealResults.add(transformEntityToDeal(dealEntity));
+    }
+    return dealResults;
+  }
+
   /**
    * Returns a Deal object transformed from a deal entity.
    *
