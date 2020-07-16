@@ -102,7 +102,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   /**
    * Returns a Restaurant object transformed from a restaurant entity.
    *
-   * @param entity Restaurant entity.
+   * @param restaurantEntity Restaurant entity.
    * @return a Restaurant object transformed from the entity.
    */
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
