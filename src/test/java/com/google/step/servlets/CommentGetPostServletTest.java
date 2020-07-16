@@ -77,7 +77,7 @@ public class CommentGetPostServletTest {
             COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
     String expected = "[" + commentA + "," + commentB + "]";
 
-    // JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
@@ -95,7 +95,7 @@ public class CommentGetPostServletTest {
 
     String expected = "[]";
 
-    // JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
