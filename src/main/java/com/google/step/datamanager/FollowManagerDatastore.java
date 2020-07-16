@@ -135,16 +135,12 @@ public class FollowManagerDatastore implements FollowManager {
       followTag(followerId, id);
     }
   }
-<<<<<<< HEAD
 
   @Override
   public Set<Long> getFollowerIdsOfUser(long followeeId) {
     return new HashSet<>();
   }
 
-=======
-  
->>>>>>> 7b0aef63056b69c9f3e15474c858f9ad95cfbbb5
   public boolean isFollowing(long followerId, long followeeId) {
     // TODO Auto-generated method stub
     return false;
