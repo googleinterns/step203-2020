@@ -44,10 +44,8 @@ public final class DealManagerDatastoreTest {
   private static final List<String> EMPTY_LIST = new ArrayList<>();
   private static final List<String> TAG_LIST = Arrays.asList(TAG_NAME_A);
 
-  private final DealTagManager dealTagManager = new DealTagManagerDatastore();
   private final DealSearchManager mockSearchManager = mock(DealSearchManager.class);
-  private final DealManager dealManagerDatastore =
-      new DealManagerDatastore(dealTagManager, mockSearchManager);
+  private final DealManager dealManagerDatastore = new DealManagerDatastore(mockSearchManager);
 
   @Before
   public void setUp() {
