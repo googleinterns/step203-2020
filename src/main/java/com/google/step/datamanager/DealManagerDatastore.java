@@ -170,15 +170,15 @@ public class DealManagerDatastore implements DealManager {
     return dealResults;
   }
 
-  /** Retrieves deals posted by users followed by user */
+  /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds) {
+  public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
     return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
   }
 
-  /** Retrieves deals posted by restaurants followed by user */
+  /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds) {
+  public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
     return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
