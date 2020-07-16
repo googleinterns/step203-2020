@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
@@ -29,19 +31,40 @@ public class DealDetailServlet extends HttpServlet {
   private final UserManager userManager;
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
+  private final UserService userService;
 
   public DealDetailServlet() {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
+    userService = UserServiceFactory.getUserService();
+  }
+
+  public DealDetailServlet(
+      DealManager dealManager,
+      UserManager userManager,
+      VoteManager voteManager,
+      RestaurantManager restaurantManager,
+      UserService userService) {
+    this.dealManager = dealManager;
+    this.userManager = userManager;
+    this.voteManager = voteManager;
+    this.restaurantManager = restaurantManager;
+    this.userService = userService;
   }
 
   /** Deletes the deal with the given id parameter */
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    // TODO: check user authentication
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User currentUser = userManager.readUserByEmail(email);
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -49,6 +72,20 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
+    Deal deal = dealManager.readDeal(id);
+    if (deal == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    // user can only delete deals he created
+    if (deal.posterId != currentUser.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
   }
 
@@ -77,6 +114,7 @@ public class DealDetailServlet extends HttpServlet {
     int votes = voteManager.getVotes(deal.id);
 
     response.setContentType("application/json;");
+    response.setStatus(HttpServletResponse.SC_OK);
     response.getWriter().println(JsonFormatter.getDealJson(deal, restaurant, poster, tags, votes));
   }
 
