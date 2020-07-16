@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +73,22 @@ public class HomePageServlet extends HttpServlet {
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
+  }
+
+  /** Class to store deal along with relevant attribute (hot score/votes) to be sorted */
+  class DealPair<T extends Comparable<T>> implements Comparable<DealPair<T>> {
+    public final T key;
+    public final Deal deal;
+
+    public DealPair(T key, Deal deal) {
+      this.key = key;
+      this.deal = deal;
+    }
+
+    @Override
+    public int compareTo(DealPair<T> other) {
+      return key.compareTo(other.key);
+    }
   }
 
   /** Gets the deals for the home page */
@@ -167,39 +182,18 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on votes (Highest to lowest) */
   private List<Deal> getSortedDealsBasedOnValue(List<Deal> deals, String attribute) {
-    List<Map<String, Object>> dealWithAttributeMaps = new ArrayList<>();
-    // Creates a list of maps with votes/hot score as an attribute to be sorted
+    List<DealPair> dealPairs = new ArrayList<>();
     for (Deal deal : deals) {
-      Map<String, Object> dealWithAttributeMap = new HashMap<>();
       if (attribute.equals("hotScore")) {
-        dealWithAttributeMap.put("hotScore", calculateHotScore(deal));
+        dealPairs.add(new DealPair(calculateHotScore(deal), deal));
       } else if (attribute.equals("votes")) {
-        dealWithAttributeMap.put("votes", voteManager.getVotes(deal.id));
+        dealPairs.add(new DealPair(voteManager.getVotes(deal.id), deal));
       }
-      dealWithAttributeMap.put("deal", deal);
-      dealWithAttributeMaps.add(dealWithAttributeMap);
     }
-    return sortDealMapsBasedOnValue(dealWithAttributeMaps, attribute);
-  }
-
-  /** Method to sort a list of maps based on an attribute and return a list of deals */
-  private List<Deal> sortDealMapsBasedOnValue(
-      List<Map<String, Object>> dealMaps, String attribute) {
-    Collections.sort(
-        dealMaps,
-        new Comparator<Map<String, Object>>() {
-          @Override
-          public int compare(Map<String, Object> deal1, Map<String, Object> deal2) {
-            if (attribute.equals("hotScore")) // comparing hot score (double values)
-            return -Double.compare(
-                  (double) deal1.get(attribute), (double) deal2.get(attribute)); // Descending
-            else // Comparing votes
-            return (int) deal2.get(attribute) - (int) deal1.get(attribute); // Descending
-          }
-        });
+    Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (Map<String, Object> dealMap : dealMaps) {
-      dealResults.add((Deal) dealMap.get("deal"));
+    for (DealPair dealPair : dealPairs) {
+      dealResults.add(dealPair.deal);
     }
     return dealResults;
   }
