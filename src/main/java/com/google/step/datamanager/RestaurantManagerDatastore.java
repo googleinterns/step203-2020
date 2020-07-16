@@ -80,7 +80,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   }
 
   @Override
-  public List<Restaurant> searchRestaurant(String queryString) {
+  public List<Restaurant> searchRestaurants(String queryString) {
     queryString = queryString.toLowerCase();
     Filter filterPrefix =
         CompositeFilterOperator.and(

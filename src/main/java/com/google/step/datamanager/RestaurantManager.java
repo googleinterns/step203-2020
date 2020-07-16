@@ -14,5 +14,5 @@ public interface RestaurantManager {
   public void deleteRestaurant(long id);
 
   /** Finds restaurant whose name starts with {@code query}. */
-  public List<Restaurant> searchRestaurant(String query);
+  public List<Restaurant> searchRestaurants(String query);
 }
