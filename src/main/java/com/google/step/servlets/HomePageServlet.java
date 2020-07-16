@@ -19,8 +19,14 @@ import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.annotation.WebServlet;
@@ -74,14 +80,14 @@ public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long userId = 1; // TODO get authenticated user id
-    List<Deal> trendingDeals = getTrendingDeals();
+    List<Deal> allDeals = dealManager.getAllDeals();
+    List<Deal> trendingDeals = getSortedDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed =
-        dealManager.getDealsPublishedByFollowedUsers(followManager.getFollowedUserIds(userId));
+        dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
     List<Deal> dealsByRestaurantsFollowed =
-        dealManager.getDealsPublishedByFollowedRestaurants(
-            followManager.getFollowedRestaurantIds(userId));
+        dealManager.getDealsPublishedByRestaurants(followManager.getFollowedRestaurantIds(userId));
     List<Deal> dealsByTagsFollowed =
-        getDealsPublishedByFollowedTags(followManager.getFollowedTagIds(userId));
+        getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
     List<List<Deal>> homePageDeals =
         new ArrayList<>(
             Arrays.asList(
@@ -113,7 +119,7 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Retrieves deals posted by tags followed by user */
-  private List<Deal> getDealsPublishedByFollowedTags(List<Long> tagIds) {
+  private List<Deal> getDealsPublishedByTags(List<Long> tagIds) {
     List<Long> dealIdResults = new ArrayList<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
@@ -121,12 +127,11 @@ public class HomePageServlet extends HttpServlet {
     }
     // Get rid of duplicate dealID (Deals with multiple tags)
     List<Long> dealsWithoutDuplicates = new ArrayList<>(new HashSet<>(dealIdResults));
-    return readDeals(dealsWithoutDuplicates);
+    return dealManager.readDeals(dealsWithoutDuplicates);
   }
 
   /** Sorts deals based on new (Newest to oldest) */
-  @Override
-  public List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
+  private List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
     Collections.sort(
         deals,
         new Comparator<Deal>() {
@@ -160,33 +165,24 @@ public class HomePageServlet extends HttpServlet {
     return sign * order + seconds / 45000;
   }
 
-  private List<Deal> getTrendingDeals() {
-    List<Deal> allDeals = dealManager.getAllDeals();
-    List<Map<String, Object>> dealWithHotScoreMaps = new ArrayList<>();
-    for (Deal deal : allDeals) {
-      Map<String, Object> dealWithHotScoreMap = new HashMap<>();
-      dealWithHotScoreMap.put("hotScore", calculateHotScore(deal));
-      dealWithHotScoreMap.put("deal", deal);
-      dealWithHotScoreMaps.add(dealWithHotScoreMap);
-    }
-    return sortDealMapsBasedOnValue(dealWithHotScoreMaps, "hotScore");
-  }
-
   /** Sorts deals based on votes (Highest to lowest) */
-  @Override
-  public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<Map<String, Object>> dealWithVotesMaps = new ArrayList<>();
-    // Creates a list of maps with votes as an attribute to be sorted
+  private List<Deal> getSortedDealsBasedOnValue(List<Deal> deals, String attribute) {
+    List<Map<String, Object>> dealWithAttributeMaps = new ArrayList<>();
+    // Creates a list of maps with votes/hot score as an attribute to be sorted
     for (Deal deal : deals) {
-      Map<String, Object> dealWithVotesMap = new HashMap<>();
-      dealWithVotesMap.put("votes", voteManager.getVotes(deal.id));
-      dealWithVotesMap.put("deal", deal);
-      dealWithVotesMaps.add(dealWithVotesMap);
+      Map<String, Object> dealWithAttributeMap = new HashMap<>();
+      if (attribute.equals("hotScore")) {
+        dealWithAttributeMap.put("hotScore", calculateHotScore(deal));
+      } else if (attribute.equals("votes")) {
+        dealWithAttributeMap.put("votes", voteManager.getVotes(deal.id));
+      }
+      dealWithAttributeMap.put("deal", deal);
+      dealWithAttributeMaps.add(dealWithAttributeMap);
     }
-    return sortDealMapsBasedOnValue(dealWithVotesMaps, "votes");
+    return sortDealMapsBasedOnValue(dealWithAttributeMaps, attribute);
   }
 
-  /** Method to sort a list of maps based on a value and return a list of deals */
+  /** Method to sort a list of maps based on an attribute and return a list of deals */
   private List<Deal> sortDealMapsBasedOnValue(
       List<Map<String, Object>> dealMaps, String attribute) {
     Collections.sort(

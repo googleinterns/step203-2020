@@ -34,6 +34,8 @@ public class DealManagerDatastore implements DealManager {
   private final String USER_FIELD_NAME = "user";
   private final String TAG_FIELD_NAME = "tag";
 
+  private final String LOCATION = "Asia/Singapore";
+
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
     searchManager = new DealSearchManagerIndex();
@@ -153,7 +155,7 @@ public class DealManagerDatastore implements DealManager {
   }
 
   /** Retrieves deals posted by _ followed by user */
-  private List<Deal> getDealsPublishedByFollowedRestaurantsOrUsers(
+  private List<Deal> getDealsPublishedByRestaurantsOrUsers(
       List<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
     for (Long id : idsOfFollowedFieldName) {
@@ -170,13 +172,13 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by users */
   @Override
   public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
   public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   @Override

@@ -245,20 +245,19 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_A
     List<Deal> dealsForA =
-        dealManagerDatastore.getDealsPublishedByFollowedUsers(Arrays.asList(USER_ID_B, USER_ID_C));
+        dealManagerDatastore.getDealsPublishedByUsers(Arrays.asList(USER_ID_B, USER_ID_C));
     assertEquals(2, dealsForA.size());
     assertEquals(dealsForA.get(0), dealB);
     assertEquals(dealsForA.get(1), dealC);
 
     // Get deals published by the users followed by USER_ID_B
-    List<Deal> dealsB =
-        dealManagerDatastore.getDealsPublishedByFollowedUsers(Arrays.asList(USER_ID_A));
+    List<Deal> dealsB = dealManagerDatastore.getDealsPublishedByUsers(Arrays.asList(USER_ID_A));
     assertEquals(1, dealsB.size());
     assertEquals(dealsB.get(0), dealA);
   }
 
   @Test
-  public void testGetDealPublishedByFollowedRestaurants_success() {
+  public void testGetDealPublishedByRestaurants_success() {
     // Add deals published by RESTAURANT_ID_A and RESTAURANT_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
@@ -283,7 +282,7 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the restaurants followed by USER_ID_B
     List<Deal> deals =
-        dealManagerDatastore.getDealsPublishedByFollowedRestaurants(
+        dealManagerDatastore.getDealsPublishedByRestaurants(
             Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B));
     assertEquals(2, deals.size());
     assertEquals(deals.get(0), dealA);

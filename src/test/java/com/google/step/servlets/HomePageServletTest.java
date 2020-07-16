@@ -4,7 +4,6 @@ import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.TAG_A;
-import static com.google.step.TestConstants.TAG_ID_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.VOTE_A;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -73,17 +72,15 @@ public class HomePageServletTest {
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    when(dealManager.getTrendingDeals()).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByFollowedUsers(anyList())).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByFollowedRestaurants(anyList())).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByFollowedTags(anyList())).thenReturn(DEALS);
+    when(dealManager.getAllDeals()).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByUsers(anyList())).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByRestaurants(anyList())).thenReturn(DEALS);
+    when(dealManager.readDeals(anyList())).thenReturn(DEALS);
 
     when(userManager.readUser(anyLong())).thenReturn(USER_A);
     when(restaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
-    when(dealTagManager.getTagIdsOfDeal(anyLong())).thenReturn(Arrays.asList(TAG_ID_A));
-    when(tagManager.readTag(anyLong())).thenReturn(TAG_A);
-    when(voteManager.getVotes(anyLong())).thenReturn(VOTE_A);
     when(tagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
+    when(voteManager.getVotes(anyLong())).thenReturn(VOTE_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
