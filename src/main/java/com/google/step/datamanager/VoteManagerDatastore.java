@@ -52,4 +52,21 @@ public class VoteManagerDatastore implements VoteManager {
     entity.setProperty("dir", dir);
     datastore.put(entity);
   }
+
+  @Override
+  public int getDirection(long userId, long dealId) {
+    // check if this user has voted on this deal before
+    Filter userFilter = new FilterPredicate("user", FilterOperator.EQUAL, userId);
+    Filter dealFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+    Filter filter = CompositeFilterOperator.and(userFilter, dealFilter);
+    Query query = new Query("Vote").setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+    Entity entity = pq.asSingleEntity();
+
+    // If user have not voted before return 0. Else, return the value of the entity.
+    if (entity == null) {
+      return 0;
+    }
+    return ((Long) entity.getProperty("dir")).intValue();
+  }
 }

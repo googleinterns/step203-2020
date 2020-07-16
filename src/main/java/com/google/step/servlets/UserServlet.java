@@ -4,6 +4,8 @@ import static com.google.step.servlets.ImageUploader.getUploadedImageBlobkey;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.TagManager;
@@ -30,6 +32,8 @@ public class UserServlet extends HttpServlet {
   private UserService userService = UserServiceFactory.getUserService();
   private TagManager tagManager = new TagManagerDatastore();
   private FollowManager followManager = new FollowManagerDatastore();
+  private DealManager dealManager = new DealManagerDatastore();
+  // TODO: private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
   public UserServlet(
       UserManager userManager,
@@ -39,8 +43,8 @@ public class UserServlet extends HttpServlet {
     super();
     this.userManager = userManager;
     this.userService = userService;
-    this.tagManager = tagManager;
     this.followManager = followManager;
+    this.tagManager = tagManager;
   }
 
   public UserServlet() {
@@ -66,13 +70,17 @@ public class UserServlet extends HttpServlet {
     }
 
     List<Deal> deals = new ArrayList<>(); // dealManager.getDealsPublishedByUser(id);
-    List<User> following = new ArrayList<>(); // followManager.getUsersFollowedByUser(id);
-    List<User> followers = new ArrayList<>(); // followManager.getUsersFollowingUser(id);
+
+    List<Long> followingIds = new ArrayList<>(followManager.getFollowedUserIds(id));
+    List<User> following = userManager.readUsers(followingIds);
+
+    List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(id));
+    List<User> followers = userManager.readUsers(followerIds);
+
     List<Long> tagIds = new ArrayList<>(followManager.getFollowedTagIds(id));
-    List<Tag> tags = new ArrayList<>();
-    for (Long tagId : tagIds) {
-      tags.add(tagManager.readTag(tagId));
-    }
+    List<Tag> tags = tagManager.readTags(tagIds);
+
+    // TODO: List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
     List<Restaurant> restaurants =
         new ArrayList<>(); // followManager.getRestaurantsFollowedByUser(id);
 

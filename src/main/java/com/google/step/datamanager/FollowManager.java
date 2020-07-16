@@ -16,6 +16,10 @@ public interface FollowManager {
 
   public Set<Long> getFollowedUserIds(long followerId);
 
+  public Set<Long> getFollowerIdsOfUser(long followeeId);
+
+  public boolean isFollowing(long followerId, long followeeId);
+
   public void followTag(long followerId, long tagId);
 
   public void unfollowTag(long followerId, long tagId);

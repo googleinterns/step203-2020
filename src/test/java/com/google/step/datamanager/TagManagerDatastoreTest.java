@@ -1,12 +1,17 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.TAG_ID_C;
 import static com.google.step.TestConstants.TAG_NAME_A;
 import static com.google.step.TestConstants.TAG_NAME_B;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Tag;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,5 +65,23 @@ public final class TagManagerDatastoreTest {
   public void testReadTag_notExist() {
     tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
     tagManagerDatastore.readTag(1000);
+  }
+
+  public void testReadTags() {
+    Tag tagA = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
+    Tag tagB = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_B);
+    List<Long> ids = Arrays.asList(tagA.id, tagB.id);
+    List<Tag> tags = tagManagerDatastore.readTags(ids);
+
+    assertThat(tags, containsInAnyOrder(tagA, tagB));
+  }
+
+  public void testReadTags_idDoesNotExist() {
+    Tag tagA = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_A);
+    Tag tagB = tagManagerDatastore.readOrCreateTagByName(TAG_NAME_B);
+    List<Long> ids = Arrays.asList(tagA.id, tagB.id, TAG_ID_C);
+    List<Tag> tags = tagManagerDatastore.readTags(ids);
+
+    assertThat(tags, containsInAnyOrder(tagA, tagB));
   }
 }

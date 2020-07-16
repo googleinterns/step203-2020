@@ -31,11 +31,14 @@ import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
+import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -81,7 +84,9 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
     when(mockUserManager.readUser(1)).thenReturn(USER_A);
-    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(new HashSet<Long>());
+    Set<Long> tagIds = new HashSet<>();
+    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(tagIds);
+    when(mockTagManager.readTags(new ArrayList<>(tagIds))).thenReturn(new ArrayList<Tag>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
