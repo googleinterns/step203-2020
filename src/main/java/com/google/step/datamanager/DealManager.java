@@ -25,6 +25,8 @@ public interface DealManager {
 
   public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds);
 
+  public List<Deal> getAllDeals();
+
   public List<Tag> getTags(long dealId);
 
   public List<Deal> readDeals(List<Long> ids);

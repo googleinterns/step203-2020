@@ -149,6 +149,11 @@ public class DealManagerDatastore implements DealManager {
     return new ArrayList<Deal>();
   }
 
+  @Override
+  public List<Deal> getAllDeals() {
+    return new ArrayList<Deal>();
+  }
+
   /**
    * Returns a Deal object transformed from a deal entity.
    *
