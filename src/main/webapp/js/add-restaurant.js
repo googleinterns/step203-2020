@@ -39,6 +39,17 @@ form.addEventListener('submit', (event) => {
     element.classList.add('was-validated');
   });
 });
+/*
+ * Sets the form URL
+ */
+form.style.display = 'none';
+$.ajax({
+  url: '/api/upload-restaurant-url',
+  method: 'GET',
+}).done((url) => {
+  form.action = url;
+  form.style.display = 'block';
+});
 
 let service;
 /**
