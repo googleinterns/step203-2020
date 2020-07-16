@@ -4,6 +4,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
@@ -25,18 +27,24 @@ public class DealPostServlet extends HttpServlet {
   private final UserService userService;
   private final DealManager dealManager;
   private final UserManager userManager;
+  private final RestaurantManager restaurantManager;
 
   public DealPostServlet(
-      DealManager dealManager, UserManager userManager, UserService userService) {
+      DealManager dealManager,
+      UserManager userManager,
+      UserService userService,
+      RestaurantManager restaurantManager) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.userService = userService;
+    this.restaurantManager = restaurantManager;
   }
 
   public DealPostServlet() {
     userService = UserServiceFactory.getUserService();
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
+    restaurantManager = new RestaurantManagerDatastore();
   }
 
   /** Posts the deal with the given id parameter */
@@ -63,7 +71,10 @@ public class DealPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    // TODO validate that restaurant ID exists
+    if (restaurantManager.readRestaurant(restaurantId) == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
     // validate required parameters exist
     if (anyEmpty(description, photoBlobkey, start, end)) {

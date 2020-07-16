@@ -6,6 +6,7 @@ import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.USER_A;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
@@ -59,6 +61,7 @@ public class DealPostServletTest {
   private DealManager mockDealManager;
   private UserService mockUserService;
   private UserManager mockUserManager;
+  private RestaurantManager mockRestaurantManager;
   private HttpServletResponse mockResponse;
   private PrintWriter writer;
 
@@ -73,6 +76,7 @@ public class DealPostServletTest {
     mockDealManager = mock(DealManager.class);
     mockUserService = mock(UserService.class);
     mockUserManager = mock(UserManager.class);
+    mockRestaurantManager = mock(RestaurantManager.class);
     User currentUser = new User(EMAIL_A, "");
 
     // mock response
@@ -93,7 +97,12 @@ public class DealPostServletTest {
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet = new DealPostServlet(mockDealManager, mockUserManager, mockUserService);
+    // mock restaurant manager
+    when(mockRestaurantManager.readRestaurant(RESTAURANT_ID_A)).thenReturn(RESTAURANT_A);
+
+    servlet =
+        new DealPostServlet(
+            mockDealManager, mockUserManager, mockUserService, mockRestaurantManager);
   }
 
   @Test
@@ -192,6 +201,15 @@ public class DealPostServletTest {
   @Test
   public void testDoPost_restaurantInvalid_badRequest() throws IOException {
     when(mockRequest.getParameter("restaurant")).thenReturn("aaa");
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_restaurantNotFound_badRequest() throws IOException {
+    when(mockRequest.getParameter("restaurant")).thenReturn("100");
 
     servlet.doPost(mockRequest, mockResponse);
 
