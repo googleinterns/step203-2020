@@ -161,8 +161,8 @@ public class HomePageServlet extends HttpServlet {
   }
 
   private List<Deal> getTrendingDeals() {
-    List<Deal> allDeals = dealManager.readAllDeals();
-    List<Map<String, Object>> dealWithHotScoreMaps = new ArrayList<Map<String, Object>>();
+    List<Deal> allDeals = dealManager.getAllDeals();
+    List<Map<String, Object>> dealWithHotScoreMaps = new ArrayList<>();
     for (Deal deal : allDeals) {
       Map<String, Object> dealWithHotScoreMap = new HashMap<>();
       dealWithHotScoreMap.put("hotScore", calculateHotScore(deal));
@@ -175,7 +175,7 @@ public class HomePageServlet extends HttpServlet {
   /** Sorts deals based on votes (Highest to lowest) */
   @Override
   public List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<Map<String, Object>> dealWithVotesMaps = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> dealWithVotesMaps = new ArrayList<>();
     // Creates a list of maps with votes as an attribute to be sorted
     for (Deal deal : deals) {
       Map<String, Object> dealWithVotesMap = new HashMap<>();
