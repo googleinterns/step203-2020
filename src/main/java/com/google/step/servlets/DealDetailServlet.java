@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.datamanager.VoteManager;
@@ -13,7 +15,6 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,11 +28,13 @@ public class DealDetailServlet extends HttpServlet {
   private final DealManager dealManager;
   private final UserManager userManager;
   private final VoteManager voteManager;
+  private final RestaurantManager restaurantManager;
 
   public DealDetailServlet() {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
+    restaurantManager = new RestaurantManagerDatastore();
   }
 
   /** Deletes the deal with the given id parameter */
@@ -65,13 +68,11 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    // TODO get real restaurant
-    Restaurant restaurant = new Restaurant(deal.restaurantId, "Restaurant Name", "ablobkey");
+    Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
 
     User poster = userManager.readUser(deal.posterId);
 
-    // TODO get real tags
-    List<Tag> tags = new ArrayList<>();
+    List<Tag> tags = dealManager.getTags(deal.id);
 
     int votes = voteManager.getVotes(deal.id);
 

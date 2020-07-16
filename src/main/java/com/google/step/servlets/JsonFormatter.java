@@ -38,7 +38,7 @@ public class JsonFormatter {
 
   public static String getRestaurantJson(Restaurant restaurant) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMap(restaurant));
+    String json = gson.toJson(getBriefRestaurantMap(restaurant));
     return json;
   }
 
@@ -51,7 +51,7 @@ public class JsonFormatter {
   private static List<Map<String, Object>> getRestaurantMapsList(List<Restaurant> restaurants) {
     List<Map<String, Object>> restaurantsMaps = new ArrayList<>();
     for (Restaurant restaurant : restaurants) {
-      restaurantsMaps.add(getRestaurantMap(restaurant));
+      restaurantsMaps.add(getBriefRestaurantMap(restaurant));
     }
     return restaurantsMaps;
   }
@@ -82,7 +82,7 @@ public class JsonFormatter {
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
     dealMap.put("poster", getUserBriefMap(poster));
-    dealMap.put("restaurant", restaurant.name); // TODO use restaurant brief
+    dealMap.put("restaurant", getBriefRestaurantMap(restaurant));
     dealMap.put("tags", getTagListBriefMaps(tags));
     dealMap.put("votes", votes);
     return dealMap;
@@ -99,7 +99,7 @@ public class JsonFormatter {
     return dealMap;
   }
 
-  private static Map<String, Object> getRestaurantMap(Restaurant restaurant) {
+  private static Map<String, Object> getBriefRestaurantMap(Restaurant restaurant) {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
