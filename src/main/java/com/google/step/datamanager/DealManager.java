@@ -21,9 +21,9 @@ public interface DealManager {
 
   public void deleteDeal(long id);
 
-  public List<Deal> getDealsPublishedByFollowedUsers(List<Long> userIds);
+  public List<Deal> getDealsPublishedByUsers(List<Long> userIds);
 
-  public List<Deal> getDealsPublishedByFollowedRestaurants(List<Long> restaurantIds);
+  public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds);
 
   public List<Deal> getAllDeals();
 
