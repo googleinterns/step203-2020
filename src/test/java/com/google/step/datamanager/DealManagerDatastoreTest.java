@@ -210,7 +210,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealPublishedByFollowedUsers_success() {
+  public void testGetDealPublishedByUsers_success() {
     // Add deals published by USER_ID_A and USER_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
@@ -257,7 +257,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealPublishedByFollowedRestaurants_success() {
+  public void testGetDealPublishedByRestaurants_success() {
     // Add deals published by RESTAURANT_ID_A and RESTAURANT_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(

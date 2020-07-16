@@ -150,8 +150,8 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by _ followed by user */
-  private List<Deal> getDealsPublishedByFollowedRestaurantsOrUsers(
+  /** Retrieves deals posted by restaurants or users */
+  private List<Deal> getDealsPublishedByRestaurantsOrUsers(
       List<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
     for (Long id : idsOfFollowedFieldName) {
@@ -168,13 +168,13 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by users */
   @Override
   public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(userIds, "posterId");
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
   public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
-    return getDealsPublishedByFollowedRestaurantsOrUsers(restaurantIds, "restaurantId");
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   @Override
