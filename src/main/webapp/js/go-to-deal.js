@@ -54,6 +54,7 @@ function loadDealDataToPage(deal) {
 
   const dealRestaurantElement = document.getElementById('restaurant-info');
   dealRestaurantElement.innerText = deal.restaurant.name;
+  dealRestaurantElement.href = '/restaurant/' + deal.restaurant.id;
 
   const dealValidStart = document.getElementById('start-date');
   dealValidStart.innerText = deal.start;

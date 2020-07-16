@@ -53,7 +53,7 @@
           <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="nav-details-tab">
             <div class="col-md-8">
               <p>Description: <span id="deal-info"></span></p>
-              <p>Restaurant: <span id="restaurant-info"></span></p>
+              <p>Restaurant: <a id="restaurant-info"></a></p>
               <ul class="list-group" id="outlet-list"><span id="all-or-selected"></span></ul>
               <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
               <p>Posted by: <a id="user-poster" href=""></a></p>
