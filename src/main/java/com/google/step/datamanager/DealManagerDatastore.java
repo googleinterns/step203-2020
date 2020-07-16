@@ -38,11 +38,11 @@ public class DealManagerDatastore implements DealManager {
     dealTagManager = new DealTagManagerDatastore();
   }
 
-  public DealManagerDatastore(DealTagManager dealTagManager, DealSearchManager searchManager) {
+  public DealManagerDatastore(DealSearchManager searchManager) {
     datastore = DatastoreServiceFactory.getDatastoreService();
-    this.dealTagManager = dealTagManager;
     this.searchManager = searchManager;
     tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
   }
 
   @Override
