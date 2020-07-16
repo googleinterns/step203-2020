@@ -5,6 +5,16 @@ import static com.google.step.TestConstants.BIO_A_NEW;
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_B;
+import static com.google.step.TestConstants.TAG_C;
+import static com.google.step.TestConstants.TAG_ID_A;
+import static com.google.step.TestConstants.TAG_ID_B;
+import static com.google.step.TestConstants.TAG_ID_C;
+import static com.google.step.TestConstants.TAG_LIST_ABC;
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
+import static com.google.step.TestConstants.TAG_NAME_C;
 import static com.google.step.TestConstants.USERNAME_A;
 import static com.google.step.TestConstants.USERNAME_A_NEW;
 import static com.google.step.TestConstants.USER_A;
@@ -13,6 +23,7 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.validateMockitoUsage;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,8 +35,10 @@ import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +54,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @PrepareForTest(ImageUploader.class)
 public class UserServletTest {
 
-  private UserServlet mockUserServlet;
+  private UserServlet userServlet;
   private UserManager mockUserManager;
   private UserService mockUserService;
   private TagManager mockTagManager;
@@ -53,8 +66,13 @@ public class UserServletTest {
     mockUserService = mock(UserService.class);
     mockTagManager = mock(TagManager.class);
     mockFollowManager = mock(FollowManager.class);
-    mockUserServlet =
+    userServlet =
         new UserServlet(mockUserManager, mockUserService, mockTagManager, mockFollowManager);
+  }
+
+  @After
+  public void validate() {
+    validateMockitoUsage();
   }
 
   @Test
@@ -69,7 +87,7 @@ public class UserServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    mockUserServlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     writer.flush();
 
@@ -93,7 +111,7 @@ public class UserServletTest {
     when(request.getPathInfo()).thenReturn("/1000");
     when(mockUserManager.readUser(1000)).thenThrow(new IllegalArgumentException());
 
-    mockUserServlet.doGet(request, response);
+    userServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
@@ -103,7 +121,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/100x00");
 
-    mockUserServlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -114,7 +132,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("");
 
-    mockUserServlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -125,7 +143,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
 
-    mockUserServlet.doPost(request, response);
+    userServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
@@ -146,12 +164,42 @@ public class UserServletTest {
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
         .willReturn(BLOBKEY_A);
 
-    mockUserServlet.doPost(request, response);
+    userServlet.doPost(request, response);
     User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, BLOBKEY_A, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
     verify(mockUserManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());
     verify(response).sendRedirect("/user/" + USER_ID_A);
+  }
+
+  @Test
+  public void testDoPost_updateTagsFollowed() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    com.google.appengine.api.users.User currentUser =
+        new com.google.appengine.api.users.User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(request.getParameter("tags")).thenReturn(TAG_LIST_ABC);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_A)).thenReturn(TAG_A);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_B)).thenReturn(TAG_B);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_C)).thenReturn(TAG_C);
+
+    PowerMockito.mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
+        .willReturn(BLOBKEY_A);
+
+    userServlet.doPost(request, response);
+
+    verify(response).sendRedirect("/user/" + USER_ID_A);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_A);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_B);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_C);
+    verify(mockFollowManager)
+        .updateFollowedTagIds(USER_ID_A, Arrays.asList(TAG_ID_A, TAG_ID_B, TAG_ID_C));
   }
 
   @Test
@@ -171,7 +219,7 @@ public class UserServletTest {
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "profile-photo-file"))
         .willReturn(null);
 
-    mockUserServlet.doPost(request, response);
+    userServlet.doPost(request, response);
     User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
     verify(mockUserManager).updateUser(captor.capture());
@@ -193,7 +241,7 @@ public class UserServletTest {
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_B));
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    mockUserServlet.doPost(request, response);
+    userServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }

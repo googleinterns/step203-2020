@@ -127,23 +127,12 @@ public class UserServlet extends HttpServlet {
   }
 
   private void updateTagsFollowedBy(long userId, String tagsString) {
-    String[] tagNames = getTagNames(tagsString);
+    String[] tagNames = tagsString.split(",");
     List<Long> tagIds = new ArrayList<>();
     for (String tagName : tagNames) {
       tagIds.add(tagManager.readOrCreateTagByName(tagName).id);
     }
 
     followManager.updateFollowedTagIds(userId, tagIds);
-  }
-
-  /**
-   * Returns an array of tag names parsed from the tagsArrayString.
-   *
-   * @param tagsArrayString a string representation of a tag names array.
-   * @return an array of tag names.
-   */
-  private String[] getTagNames(String tagsArrayString) {
-    String[] tagNames = tagsArrayString.split(",");
-    return tagNames;
   }
 }

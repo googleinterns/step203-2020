@@ -121,17 +121,17 @@ public class FollowManagerDatastore implements FollowManager {
 
   @Override
   public void updateFollowedTagIds(long followerId, List<Long> tagIds) {
-    List<Long> tagsFollowed = getFollowedTagIds(followerId);
-    HashSet<Long> newTags = new HashSet<>(tagIds);
+    HashSet<Long> tagsFollowed = new HashSet<>(getFollowedTagIds(followerId));
+    HashSet<Long> newTagIds = new HashSet<>(tagIds);
     for (long id : tagsFollowed) {
-      if (newTags.contains(id)) {
-        newTags.remove(id);
+      if (newTagIds.contains(id)) {
+        newTagIds.remove(id);
       } else {
         unfollowTag(followerId, id);
       }
     }
 
-    for (long id : newTags) {
+    for (long id : newTagIds) {
       followTag(followerId, id);
     }
   }

@@ -63,6 +63,8 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
+  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
+
   // Deal
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
