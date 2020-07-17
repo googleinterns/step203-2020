@@ -171,7 +171,7 @@ function configureRestaurantsFollowedBy(user) {
  */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
-  tagContainer.className = 'badge badge-pill badge-primary';
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
   tagContainer.innerText = tag.name;
   return tagContainer;
 }
@@ -182,7 +182,7 @@ function createTagContainer(tag) {
  */
 function configureTagsFollowedBy(user) {
   const tagsContainer = document.getElementById('tags');
-  tagsContainer.classList.add('d-flex', 'flex-wrap');
+  tagsContainer.classList.add('d-flex', 'flex-wrap', 'mt-2');
   for (const tag of user.tagsFollowed) {
     const tagContainer = createTagContainer(tag);
     tagsContainer.appendChild(tagContainer);
