@@ -1,5 +1,10 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
+import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -23,14 +28,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @RunWith(JUnit4.class)
 public class RestaurantServletTest {
 
-  private static final long ID_A = 1;
-  private static final String NAME_A = "A";
-  private static final String BLOBKEY_A = "A_BLOB_KEY";
-  private static final Restaurant RESTAURANT_A = new Restaurant(ID_A, NAME_A, BLOBKEY_A);
-
   private static final String UPDATE_NAME_A = "UPDATE";
-  private static final Restaurant UPDATE_RESTAURANT_A =
-      new Restaurant(ID_A, UPDATE_NAME_A, BLOBKEY_A);
 
   private RestaurantManager restaurantManager;
 
@@ -58,7 +56,8 @@ public class RestaurantServletTest {
     restaurantServlet.doGet(request, response);
 
     String expected =
-        String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}", ID_A, NAME_A, BLOBKEY_A);
+        String.format(
+            "{id:%d,name:\"%s\",image:\"%s\"}", RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -105,7 +104,8 @@ public class RestaurantServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(request.getParameter("name")).thenReturn(UPDATE_NAME_A);
-    when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(UPDATE_RESTAURANT_A);
+    Restaurant updatedRestaurant = new Restaurant(RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A);
+    when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(updatedRestaurant);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -114,7 +114,8 @@ public class RestaurantServletTest {
     restaurantServlet.doPut(request, response);
 
     String expected =
-        String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}", ID_A, UPDATE_NAME_A, BLOBKEY_A);
+        String.format(
+            "{id:%d,name:\"%s\",image:\"%s\"}", RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }

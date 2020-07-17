@@ -31,10 +31,10 @@ public class UserServlet extends HttpServlet {
 
   private UserManager userManager = new UserManagerDatastore();
   private UserService userService = UserServiceFactory.getUserService();
-  private DealManager dealManager = new DealManagerDatastore();
-  private FollowManager followManager = new FollowManagerDatastore();
   private TagManager tagManager = new TagManagerDatastore();
   private RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+  private FollowManager followManager = new FollowManagerDatastore();
+  private DealManager dealManager = new DealManagerDatastore();
 
   public UserServlet(
       UserManager userManager,
@@ -76,13 +76,13 @@ public class UserServlet extends HttpServlet {
 
     List<Deal> deals = dealManager.getDealsPublishedByUser(id);
 
-    List<Long> followingIds = followManager.getFollowedUserIds(id);
+    List<Long> followingIds = new ArrayList<>(followManager.getFollowedUserIds(id));
     List<User> following = userManager.readUsers(followingIds);
 
-    List<Long> followerIds = followManager.getFollowerIdsOfUser(id);
+    List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(id));
     List<User> followers = userManager.readUsers(followerIds);
 
-    List<Long> tagIds = followManager.getFollowedTagIds(id);
+    List<Long> tagIds = new ArrayList<>(followManager.getFollowedTagIds(id));
     List<Tag> tags = tagManager.readTags(tagIds);
 
     List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
@@ -130,6 +130,21 @@ public class UserServlet extends HttpServlet {
     }
 
     userManager.updateUser(updatedUser);
+    String tags = (String) request.getParameter("tags");
+    if (tags != null) {
+      updateTagsFollowedBy(id, tags);
+    }
+
     response.sendRedirect("/user/" + user.id);
+  }
+
+  private void updateTagsFollowedBy(long userId, String tagsString) {
+    String[] tagNames = tagsString.split(",");
+    List<Long> tagIds = new ArrayList<>();
+    for (String tagName : tagNames) {
+      tagIds.add(tagManager.readOrCreateTagByName(tagName).id);
+    }
+
+    followManager.updateFollowedTagIds(userId, tagIds);
   }
 }

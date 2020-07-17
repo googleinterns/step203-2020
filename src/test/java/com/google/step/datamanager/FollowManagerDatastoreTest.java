@@ -17,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,17 +46,17 @@ public final class FollowManagerDatastoreTest {
 
   @Test
   public void testGetFollowedUserIdsDefault_noUserIdsReturned() {
-    assertEquals(new ArrayList<>(), manager.getFollowedUserIds(USER_ID_A));
+    assertTrue(manager.getFollowedUserIds(USER_ID_A).isEmpty());
   }
 
   @Test
   public void testGetFollowedRestaurantIdsDefault_noRestaurantIdsReturned() {
-    assertEquals(new ArrayList<>(), manager.getFollowedRestaurantIds(USER_ID_A));
+    assertTrue(manager.getFollowedRestaurantIds(USER_ID_A).isEmpty());
   }
 
   @Test
   public void testGetFollowedTagIdsDefault_noTagIdsReturned() {
-    assertEquals(new ArrayList<>(), manager.getFollowedTagIds(USER_ID_A));
+    assertTrue(manager.getFollowedTagIds(USER_ID_A).isEmpty());
   }
 
   @Test
@@ -63,7 +64,7 @@ public final class FollowManagerDatastoreTest {
     // Act
     manager.followUser(USER_ID_A, USER_ID_B);
     manager.followUser(USER_ID_A, USER_ID_C);
-    List<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
+    Set<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
 
     // Assert
     assertEquals(2, followedUsers.size());
@@ -78,7 +79,7 @@ public final class FollowManagerDatastoreTest {
 
     // Act
     manager.unfollowUser(USER_ID_A, USER_ID_C);
-    List<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
+    Set<Long> followedUsers = manager.getFollowedUserIds(USER_ID_A);
 
     // Assert
     assertEquals(1, followedUsers.size());
@@ -90,7 +91,7 @@ public final class FollowManagerDatastoreTest {
     // Act
     manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B);
     manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_C);
-    List<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
+    Set<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
 
     // Assert
     assertEquals(2, followedRestaurants.size());
@@ -105,7 +106,7 @@ public final class FollowManagerDatastoreTest {
 
     // Act
     manager.unfollowRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_C);
-    List<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
+    Set<Long> followedRestaurants = manager.getFollowedRestaurantIds(RESTAURANT_ID_A);
 
     // Assert
     assertEquals(1, followedRestaurants.size());
@@ -117,7 +118,7 @@ public final class FollowManagerDatastoreTest {
     // Act
     manager.followTag(TAG_ID_A, TAG_ID_B);
     manager.followTag(TAG_ID_A, TAG_ID_C);
-    List<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
+    Set<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
 
     // Assert
     assertEquals(2, followedTags.size());
@@ -132,7 +133,7 @@ public final class FollowManagerDatastoreTest {
 
     // Act
     manager.unfollowTag(TAG_ID_A, TAG_ID_C);
-    List<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
+    Set<Long> followedTags = manager.getFollowedTagIds(TAG_ID_A);
 
     // Assert
     assertEquals(1, followedTags.size());
@@ -149,5 +150,20 @@ public final class FollowManagerDatastoreTest {
 
     assertThat(ids, containsInAnyOrder(USER_ID_A, USER_ID_C));
     assertTrue(manager.getFollowerIdsOfUser(USER_ID_C).isEmpty());
+  }
+  
+  public void testUpdateFollowedTagIds() {
+    manager.followTag(USER_ID_A, TAG_ID_A);
+    manager.followTag(USER_ID_A, TAG_ID_B);
+
+    List<Long> tagIds = Arrays.asList(TAG_ID_A, TAG_ID_C);
+    manager.updateFollowedTagIds(USER_ID_A, tagIds);
+    assertThat(manager.getFollowedTagIds(USER_ID_A), hasItems(TAG_ID_A, TAG_ID_C));
+
+    tagIds = Arrays.asList(TAG_ID_A, TAG_ID_B);
+    manager.updateFollowedTagIds(USER_ID_B, tagIds);
+    assertThat(manager.getFollowedTagIds(USER_ID_B), hasItems(TAG_ID_A, TAG_ID_B));
+
+    assertTrue(manager.getFollowedTagIds(USER_ID_C).isEmpty());
   }
 }
