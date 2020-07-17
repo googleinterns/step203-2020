@@ -125,15 +125,17 @@ public class TestConstants {
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
-          "{restaurantName: \"%s\", description: \"%s\", votes: %d, id: %d, pic: \"%s\", posterName: \"%s\", restaurantId: %d, posterId: %d, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          RESTAURANT_ID_A,
           RESTAURANT_NAME_A,
+          IMAGE_URL_A,
           DESCRIPTION_A,
           VOTE_A,
           DEAL_ID_A,
           BLOBKEY_URL_A,
-          USERNAME_A,
-          RESTAURANT_ID_A,
           USER_ID_A,
+          USERNAME_A,
+          IMAGE_URL_A,
           TAG_ID_A,
           TAG_NAME_A,
           TIME_A);
