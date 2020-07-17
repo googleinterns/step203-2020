@@ -107,6 +107,10 @@ function createCarouselElements(numCarouselSlidesList,
     if (homePageDeals[homePageSections[i]].length == 0) {
       carouselElements[i].children[2].style.display = 'none';
       carouselElements[i].children[3].style.display = 'none';
+      const showNotFound = document.createElement('h5');
+      showNotFound.className = 'text-center mt-5';
+      showNotFound.innerText = 'Please log in to view.';
+      carouselElements[i].appendChild(showNotFound);
       console.log(homePageDeals[homePageSections[i]]);
       continue;
     }
