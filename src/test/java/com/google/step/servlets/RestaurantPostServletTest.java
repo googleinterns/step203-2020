@@ -1,6 +1,8 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.RestaurantManager;
@@ -13,8 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(JUnit4.class)
 public class RestaurantPostServletTest {
@@ -49,9 +49,6 @@ public class RestaurantPostServletTest {
 
     restaurantPostServlet.doPost(request, response);
 
-    String expected =
-        String.format("{id:%d,name:\"%s\",photoBlobkey:\"%s\"}", ID_A, NAME_A, BLOBKEY_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    verify(response).sendRedirect("/restaurant/" + RESTAURANT_ID_A);
   }
 }

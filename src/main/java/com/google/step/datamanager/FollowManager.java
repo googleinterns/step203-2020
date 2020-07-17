@@ -1,13 +1,14 @@
 package com.google.step.datamanager;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FollowManager {
   public void followRestaurant(long followerId, long restaurantId);
 
   public void unfollowRestaurant(long followerId, long restaurantId);
 
-  public List<Long> getFollowedRestaurantIds(long followerId);
+  public Set<Long> getFollowedRestaurantIds(long followerId);
 
   public boolean isFollowingRestaurant(long followerId, long followeeId);
 
@@ -15,9 +16,9 @@ public interface FollowManager {
 
   public void unfollowUser(long followerId, long userId);
 
-  public List<Long> getFollowedUserIds(long followerId);
+  public Set<Long> getFollowedUserIds(long followerId);
 
-  public List<Long> getFollowerIdsOfUser(long followeeId);
+  public Set<Long> getFollowerIdsOfUser(long followeeId);
 
   public boolean isFollowingUser(long followerId, long followeeId);
 
@@ -25,5 +26,7 @@ public interface FollowManager {
 
   public void unfollowTag(long followerId, long tagId);
 
-  public List<Long> getFollowedTagIds(long followerId);
+  public Set<Long> getFollowedTagIds(long followerId);
+
+  public void updateFollowedTagIds(long followerId, List<Long> tagIds);
 }
