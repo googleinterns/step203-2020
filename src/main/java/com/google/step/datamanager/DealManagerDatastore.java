@@ -9,17 +9,29 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Deal;
-import java.util.ArrayList;
+import com.google.step.model.Tag;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
   private final DealSearchManager searchManager;
+  private final TagManager tagManager;
+  private final DealTagManager dealTagManager;
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
     searchManager = new DealSearchManagerIndex();
+    tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
+  }
+
+  public DealManagerDatastore(DealSearchManager searchManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.searchManager = searchManager;
+    tagManager = new TagManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
   }
 
   @Override
@@ -30,7 +42,8 @@ public class DealManagerDatastore implements DealManager {
       String end,
       String source,
       long posterId,
-      long restaurantId) {
+      long restaurantId,
+      List<String> tagNames) {
     Entity entity = new Entity("Deal");
     entity.setProperty("description", description);
     entity.setProperty("photoBlobkey", photoBlobkey);
@@ -43,8 +56,13 @@ public class DealManagerDatastore implements DealManager {
     Key key = datastore.put(entity);
     long id = key.getId();
 
+    // gets the tag IDs from the tag names
+    List<Long> tagIds = getTagIdsFromNames(tagNames);
+
+    dealTagManager.updateTagsOfDeal(id, tagIds);
+
     Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
-    searchManager.putDeal(deal, new ArrayList<>());
+    searchManager.putDeal(deal, tagIds);
 
     return deal;
   }
@@ -77,7 +95,7 @@ public class DealManagerDatastore implements DealManager {
   }
 
   @Override
-  public Deal updateDeal(Deal deal) {
+  public Deal updateDeal(Deal deal, List<String> tagNames) {
     Key key = KeyFactory.createKey("Deal", deal.id);
     Entity dealEntity;
     try {
@@ -104,9 +122,26 @@ public class DealManagerDatastore implements DealManager {
     if (deal.restaurantId != -1) {
       dealEntity.setProperty("restaurantId", deal.restaurantId);
     }
+    if (tagNames != null) {
+      List<Long> tagIds = getTagIdsFromNames(tagNames);
+      dealTagManager.updateTagsOfDeal(deal.id, tagIds);
+    }
     datastore.put(dealEntity);
-    searchManager.putDeal(deal, new ArrayList<>());
+    searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
     return readDeal(deal.id);
+  }
+
+  @Override
+  public List<Tag> getTags(long dealId) {
+    List<Long> tagIds = dealTagManager.getTagIdsOfDeal(dealId);
+    return tagManager.readTags(tagIds);
+  }
+
+  private List<Long> getTagIdsFromNames(List<String> tagNames) {
+    return tagNames.stream()
+        .map(tagName -> tagManager.readOrCreateTagByName(tagName))
+        .map(tag -> tag.id)
+        .collect(Collectors.toList());
   }
 
   @Override

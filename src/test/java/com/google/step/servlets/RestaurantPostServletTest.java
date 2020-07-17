@@ -2,7 +2,9 @@ package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.RestaurantManager;
@@ -54,5 +56,6 @@ public class RestaurantPostServletTest {
         String.format("{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[]}", ID_A, NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    verify(response).sendRedirect("/restaurant/" + RESTAURANT_ID_A);
   }
 }

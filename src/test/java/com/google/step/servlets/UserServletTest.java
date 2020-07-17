@@ -5,6 +5,16 @@ import static com.google.step.TestConstants.BIO_A_NEW;
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_B;
+import static com.google.step.TestConstants.TAG_C;
+import static com.google.step.TestConstants.TAG_ID_A;
+import static com.google.step.TestConstants.TAG_ID_B;
+import static com.google.step.TestConstants.TAG_ID_C;
+import static com.google.step.TestConstants.TAG_LIST_ABC;
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
+import static com.google.step.TestConstants.TAG_NAME_C;
 import static com.google.step.TestConstants.USERNAME_A;
 import static com.google.step.TestConstants.USERNAME_A_NEW;
 import static com.google.step.TestConstants.USER_A;
@@ -13,6 +23,7 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.validateMockitoUsage;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,9 +36,12 @@ import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,19 +57,25 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @PrepareForTest(ImageUploader.class)
 public class UserServletTest {
 
-  private UserServlet servlet;
-  private UserManager userManager;
-  private UserService userService;
-  private FollowManager followManager;
-  private TagManager tagManager;
+  private UserServlet userServlet;
+  private UserManager mockUserManager;
+  private UserService mockUserService;
+  private TagManager mockTagManager;
+  private FollowManager mockFollowManager;
 
   @Before
   public void setUp() {
-    userManager = mock(UserManager.class);
-    userService = mock(UserService.class);
-    followManager = mock(FollowManager.class);
-    tagManager = mock(TagManager.class);
-    servlet = new UserServlet(userManager, userService, followManager, tagManager);
+    mockUserManager = mock(UserManager.class);
+    mockUserService = mock(UserService.class);
+    mockTagManager = mock(TagManager.class);
+    mockFollowManager = mock(FollowManager.class);
+    userServlet =
+        new UserServlet(mockUserManager, mockUserService, mockTagManager, mockFollowManager);
+  }
+
+  @After
+  public void validate() {
+    validateMockitoUsage();
   }
 
   @Test
@@ -63,16 +83,16 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1");
-    when(userManager.readUser(1)).thenReturn(USER_A);
-    List<Long> tagIds = new ArrayList<>();
-    when(followManager.getFollowedTagIds(1)).thenReturn(tagIds);
-    when(tagManager.readTags(tagIds)).thenReturn(new ArrayList<Tag>());
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
+    Set<Long> tagIds = new HashSet<>();
+    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(tagIds);
+    when(mockTagManager.readTags(new ArrayList<>(tagIds))).thenReturn(new ArrayList<Tag>());
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    servlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     writer.flush();
 
@@ -94,9 +114,9 @@ public class UserServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/1000");
-    when(userManager.readUser(1000)).thenThrow(new IllegalArgumentException());
+    when(mockUserManager.readUser(1000)).thenThrow(new IllegalArgumentException());
 
-    servlet.doGet(request, response);
+    userServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
@@ -106,7 +126,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("/100x00");
 
-    servlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -117,7 +137,7 @@ public class UserServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getPathInfo()).thenReturn("");
 
-    servlet.doGet(request, response);
+    userServlet.doGet(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -126,9 +146,9 @@ public class UserServletTest {
   public void testDoPost_userNotLoggedIn() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(false);
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
 
-    servlet.doPost(request, response);
+    userServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
@@ -136,48 +156,78 @@ public class UserServletTest {
   public void testDoPost_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
     com.google.appengine.api.users.User currentUser =
         new com.google.appengine.api.users.User(EMAIL_A, "");
-    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(1)).thenReturn(USER_A);
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
-    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
     PowerMockito.mockStatic(ImageUploader.class);
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
         .willReturn(BLOBKEY_A);
 
-    servlet.doPost(request, response);
+    userServlet.doPost(request, response);
     User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, BLOBKEY_A, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-    verify(userManager).updateUser(captor.capture());
+    verify(mockUserManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());
     verify(response).sendRedirect("/user/" + USER_ID_A);
+  }
+
+  @Test
+  public void testDoPost_updateTagsFollowed() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    com.google.appengine.api.users.User currentUser =
+        new com.google.appengine.api.users.User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
+    when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(request.getParameter("tags")).thenReturn(TAG_LIST_ABC);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_A)).thenReturn(TAG_A);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_B)).thenReturn(TAG_B);
+    when(mockTagManager.readOrCreateTagByName(TAG_NAME_C)).thenReturn(TAG_C);
+
+    PowerMockito.mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "picture"))
+        .willReturn(BLOBKEY_A);
+
+    userServlet.doPost(request, response);
+
+    verify(response).sendRedirect("/user/" + USER_ID_A);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_A);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_B);
+    verify(mockTagManager).readOrCreateTagByName(TAG_NAME_C);
+    verify(mockFollowManager)
+        .updateFollowedTagIds(USER_ID_A, Arrays.asList(TAG_ID_A, TAG_ID_B, TAG_ID_C));
   }
 
   @Test
   public void testDoPost_doNotUpdatePhoto() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
     com.google.appengine.api.users.User currentUser =
         new com.google.appengine.api.users.User(EMAIL_A, "");
-    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(USERNAME_A_NEW);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(1)).thenReturn(USER_A);
+    when(mockUserManager.readUser(1)).thenReturn(USER_A);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_A));
-    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
     PowerMockito.mockStatic(ImageUploader.class);
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(request, "profile-photo-file"))
         .willReturn(null);
 
-    servlet.doPost(request, response);
+    userServlet.doPost(request, response);
     User updatedUser = new User(USER_ID_A, null, USERNAME_A_NEW, null, BIO_A_NEW);
     ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
-    verify(userManager).updateUser(captor.capture());
+    verify(mockUserManager).updateUser(captor.capture());
     assertEquals(updatedUser, captor.getValue());
     verify(response).sendRedirect("/user/" + USER_ID_A);
   }
@@ -186,17 +236,17 @@ public class UserServletTest {
   public void testDoPost_inconsistentUser() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
     com.google.appengine.api.users.User currentUser =
         new com.google.appengine.api.users.User(EMAIL_A, "");
-    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(request.getParameter("username")).thenReturn(null);
     when(request.getParameter("bio")).thenReturn(BIO_A_NEW);
-    when(userManager.readUser(2)).thenReturn(USER_B);
+    when(mockUserManager.readUser(2)).thenReturn(USER_B);
     when(request.getPathInfo()).thenReturn("/" + String.valueOf(USER_ID_B));
-    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet.doPost(request, response);
+    userServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
