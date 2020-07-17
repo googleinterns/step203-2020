@@ -47,7 +47,6 @@ function createHomePage(homePage) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
     if (homePage[homePageSections[i]].length == 0) {
-      console.log('ERE');
       continue;
     }
     homePageData = homePage[homePageSections[i]];
@@ -101,29 +100,34 @@ function createCarouselElements(numCarouselSlidesList,
   const carouselElements = document.querySelectorAll('.carousel.slide');
   const homePageSections = ['popularDeals', 'restaurantsIFollow',
     'usersIFollow', 'tagsIFollow'];
+
   // number of sections on homepage
   for (let i = 0; i < carouselElements.length; i++) {
-    console.log(homePageDeals[homePageSections[i]]);
     if (homePageDeals[homePageSections[i]].length == 0) {
+      // set display to none if there is no data for that section
       carouselElements[i].children[2].style.display = 'none';
       carouselElements[i].children[3].style.display = 'none';
+
+      // inform users to log in to view
       const showNotFound = document.createElement('h5');
       showNotFound.className = 'text-center mt-5';
       showNotFound.innerText = 'Please log in to view.';
       carouselElements[i].appendChild(showNotFound);
-      console.log(homePageDeals[homePageSections[i]]);
       continue;
     }
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[0];
     const carouselItemList = carouselElements[i].children[1];
     const numCarouselSlides = numCarouselSlidesList[i];
+
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
       indicatorListChild.dataset.target = '#carousel-' + i;
       indicatorListChild.setAttribute('data-slide-to', j);
+
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
+      
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
       const numCol = 'col-md-' + 12 / numDealPerSlide;
@@ -177,9 +181,7 @@ function createCarouselElements(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        console.log('HERRE');
         homePageDeals = homePageDealsData;
-        console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
