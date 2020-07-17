@@ -189,7 +189,7 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on votes (Highest to lowest) */
   private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<DealPair> dealPairs = new ArrayList<>();
+    List<DealPair> dealPairs = new ArrayList<DealPair>();
     for (Deal deal : deals) {
       dealPairs.add(new DealPair(voteManager.getVotes(deal.id), deal));
     }
