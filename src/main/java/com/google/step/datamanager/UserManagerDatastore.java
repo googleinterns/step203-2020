@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /** A data manager handling datastore operations on user. */
@@ -151,10 +152,13 @@ public class UserManagerDatastore implements UserManager {
       e.printStackTrace();
       return new ArrayList<>();
     }
+
+    // create a map which maps user's ID -> User object
     Map<Long, User> userMap =
         userEntities.stream()
             .map(entity -> transformEntityToUser(entity))
-            .collect(Collectors.toMap(user -> user.id, user -> user));
+            .collect(Collectors.toMap(user -> user.id, Function.identity()));
+
     List<User> users = new ArrayList<>();
     for (Long id : ids) {
       if (userMap.containsKey(id)) {
