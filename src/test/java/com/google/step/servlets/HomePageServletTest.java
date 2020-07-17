@@ -8,6 +8,7 @@ import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.VOTE_A;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,8 +74,8 @@ public class HomePageServletTest {
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(dealManager.getAllDeals()).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByUsers(anyList())).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByRestaurants(anyList())).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(dealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
     when(dealManager.readDeals(anyList())).thenReturn(DEALS);
 
     when(userManager.readUser(anyLong())).thenReturn(USER_A);

@@ -27,6 +27,7 @@ public class TestConstants {
   private static final String URL_PREFIX = "/api/images/";
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
+  public static final String BLOBKEY_URL_C = URL_PREFIX + BLOBKEY_C;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -123,17 +124,17 @@ public class TestConstants {
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
-          "{restaurant: {id: %d, name: \"%s\", photoBlobkey:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
           RESTAURANT_ID_A,
           RESTAURANT_NAME_A,
-          BLOBKEY_A,
+          BLOBKEY_URL_A,
           DESCRIPTION_A,
           VOTE_A,
           DEAL_ID_A,
           BLOBKEY_URL_A,
           USER_ID_A,
           USERNAME_A,
-          IMAGE_URL_A,
+          BLOBKEY_URL_A,
           TAG_ID_A,
           TAG_NAME_A,
           TIME_A);
