@@ -240,4 +240,18 @@ public class DealManagerDatastore implements DealManager {
             .collect(Collectors.toList());
     return deals;
   }
+
+  @Override
+  public List<Deal> getDealsPublishedByUser(long userId) {
+    Query query =
+        new Query("Deal")
+            .setFilter(new Query.FilterPredicate("posterId", Query.FilterOperator.EQUAL, userId));
+    PreparedQuery results = datastore.prepare(query);
+    Iterable<Entity> dealEntities = results.asIterable();
+    List<Deal> deals = new ArrayList<>();
+    for (Entity entity : dealEntities) {
+      deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
+  }
 }
