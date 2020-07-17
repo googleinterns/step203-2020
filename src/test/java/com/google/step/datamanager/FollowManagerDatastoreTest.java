@@ -11,7 +11,9 @@ import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -135,5 +137,26 @@ public final class FollowManagerDatastoreTest {
     // Assert
     assertEquals(1, followedTags.size());
     assertThat(followedTags, hasItems(TAG_ID_B));
+  }
+
+  @Test
+  public void testIsFollowingUser() {
+    manager.followUser(USER_ID_A, USER_ID_B);
+    manager.followUser(USER_ID_A, USER_ID_C);
+    manager.followUser(USER_ID_C, USER_ID_A);
+
+    assertTrue(manager.isFollowingUser(USER_ID_A, USER_ID_B));
+    assertFalse(manager.isFollowingUser(USER_ID_C, USER_ID_B));
+    assertFalse(manager.isFollowingUser(USER_ID_B, USER_ID_A));
+  }
+
+  @Test
+  public void testIsFollowingRestaurant() {
+    manager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B);
+    manager.followRestaurant(RESTAURANT_ID_B, RESTAURANT_ID_C);
+    manager.followRestaurant(RESTAURANT_ID_C, RESTAURANT_ID_A);
+
+    assertTrue(manager.isFollowingRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B));
+    assertFalse(manager.isFollowingRestaurant(RESTAURANT_ID_C, RESTAURANT_ID_B));
   }
 }

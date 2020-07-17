@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import com.google.appengine.repackaged.com.google.api.client.http.HttpStatusCodes;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import java.io.IOException;
@@ -80,11 +81,46 @@ public class FollowServlet extends HttpServlet {
     response.setStatus(HttpServletResponse.SC_OK);
   }
 
-  // TODO
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String followerIdString = request.getParameter("followerId");
+    long followerId;
+    try {
+      followerId = Long.parseLong(followerIdString);
+    } catch (NumberFormatException | NullPointerException e) {
+      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      return;
+    }
+
+    String followeeIdString;
+    if (request.getParameter("restaurantId") != null) {
+      followeeIdString = request.getParameter("restaurantId");
+    } else if (request.getParameter("userId") != null) {
+      followeeIdString = request.getParameter("userId");
+    } else {
+      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      return;
+    }
+    long followeeId;
+    try {
+      followeeId = Long.parseLong(followeeIdString);
+    } catch (NumberFormatException | NullPointerException e) {
+      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      return;
+    }
+
+    boolean isFollowing;
+    if (request.getParameter("restaurantId") != null) {
+      isFollowing = manager.isFollowingRestaurant(followerId, followeeId);
+    } else if (request.getParameter("userId") != null) {
+      isFollowing = manager.isFollowingUser(followerId, followeeId);
+    } else {
+      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      return;
+    }
+
     response.setContentType("text/html");
-    response.getWriter().println(false);
+    response.getWriter().println(isFollowing);
   }
 
   /**
