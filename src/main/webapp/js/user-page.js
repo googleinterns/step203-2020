@@ -171,7 +171,7 @@ function configureRestaurantsFollowedBy(user) {
  */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
-  tagContainer.className = 'badge badge-pill badge-primary';
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
   tagContainer.innerText = tag.name;
   return tagContainer;
 }
@@ -182,7 +182,7 @@ function createTagContainer(tag) {
  */
 function configureTagsFollowedBy(user) {
   const tagsContainer = document.getElementById('tags');
-  tagsContainer.classList.add('d-flex', 'flex-wrap');
+  tagsContainer.classList.add('d-flex', 'flex-wrap', 'mt-2');
   for (const tag of user.tagsFollowed) {
     const tagContainer = createTagContainer(tag);
     tagsContainer.appendChild(tagContainer);
@@ -252,6 +252,7 @@ function setProfileFormUrl(url) {
   profileEditForm.action = url;
 }
 
+let initialProfilePhotoUrl = undefined;
 /**
  * Shows profile editing form and initializes input values with the user.
  * @param {object} user The user whose profile is being edited.
@@ -263,10 +264,18 @@ function showProfileEditingForm(user) {
   profileEditForm.hidden = false;
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
-  if (typeof user.picture != 'undefined') {
-    const profilePhotoPreview =
+
+  const profilePhotoPreview =
       document.getElementById('profile-photo-preview');
-    profilePhotoPreview.src = user.picture;
+  profilePhotoPreview.src = user.picture;
+  const photoUploadInput = document.getElementById('photo-upload-input');
+  const defaultPhotoCheckbox =
+      document.getElementById('default-photo-checkbox');
+  const isShowingDefaultProfilePicture = isDefaultProfilePicture(user.picture);
+  defaultPhotoCheckbox.checked = isShowingDefaultProfilePicture;
+  photoUploadInput.hidden = isShowingDefaultProfilePicture;
+  if (isShowingDefaultProfilePicture) {
+    initialProfilePhotoUrl = user.picture;
   }
   if (typeof user.username != 'undefined') {
     const usernameInput = document.getElementById('username-input');
@@ -281,6 +290,34 @@ function showProfileEditingForm(user) {
     user.tagsFollowed.forEach((tag) =>
       $('#tags-input').tagsinput('add', tag.name));
   }
+}
+
+/**
+ * Toggles photo upload input when checkbox value changes.
+ * @param {Object} checkbox default photo checkbox
+ */
+function toggleDefaultPhotoCheckbox(checkbox) {
+  const photoUploadInput = document.getElementById('photo-upload-input');
+  const profilePhotoFile = document.getElementById('profile-photo-file');
+  const preview =
+      document.getElementById('profile-photo-preview');
+  if (checkbox.checked) {
+    photoUploadInput.hidden = true;
+    preview.src = '/images/default-profile-pic.svg';
+    profilePhotoFile.value = '';
+  } else {
+    photoUploadInput.hidden = false;
+    preview.src = initialProfilePhotoUrl;
+  }
+}
+
+/**
+ * Returns true if the given url is the default profile image.
+ * @param {String} url picture url
+ * @return {boolean} true if the given url is the default profile image.
+ */
+function isDefaultProfilePicture(url) {
+  return url.startsWith('/images/');
 }
 
 /**

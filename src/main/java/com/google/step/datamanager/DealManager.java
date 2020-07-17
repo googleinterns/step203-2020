@@ -30,4 +30,6 @@ public interface DealManager {
   public List<Tag> getTags(long dealId);
 
   public List<Deal> readDeals(List<Long> ids);
+
+  public List<Deal> getDealsPublishedByUser(long userId);
 }
