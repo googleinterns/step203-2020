@@ -39,17 +39,20 @@ public class FollowServletTest {
     mockUserService = mock(UserService.class);
     mockUserManager = mock(UserManager.class);
 
+    servlet = new FollowServlet(mockFollowManager, mockUserService, mockUserManager);
+  }
+
+  public void setUpUserAuthentication() {
     // behaviour when user is logged in
     when(mockUserService.isUserLoggedIn()).thenReturn(true);
     User currentUser = new User(EMAIL_A, "");
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
-
-    servlet = new FollowServlet(mockFollowManager, mockUserService, mockUserManager);
   }
 
   @Test
   public void testDoPost_restaurant_success() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -67,6 +70,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_tag_success() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -84,6 +88,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_user_success() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -101,6 +106,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_invalidName_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -113,6 +119,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_invalidId_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -125,6 +132,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_missingId_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -137,6 +145,7 @@ public class FollowServletTest {
 
   @Test
   public void testDoPost_emptyPath_badRequest() throws IOException {
+    setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -145,5 +154,31 @@ public class FollowServletTest {
     servlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/restaurants/" + ID);
+
+    servlet.doPost(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoDelete_userNotLoggedIn_unauthorized() throws IOException {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/restaurants/" + ID);
+
+    servlet.doDelete(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 }
