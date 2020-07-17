@@ -28,8 +28,6 @@ public class TestConstants {
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
   public static final String BLOBKEY_URL_C = URL_PREFIX + BLOBKEY_C;
-  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
-  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -89,6 +87,7 @@ public class TestConstants {
   public static final String TIME_C = "2020-07-10T14:15:30";
 
   public static final int VOTE_A = 0;
+  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
@@ -125,17 +124,17 @@ public class TestConstants {
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
-          "{restaurant: {id: %d, name: \"%s\", photoBlobkey:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
           RESTAURANT_ID_A,
           RESTAURANT_NAME_A,
-          BLOBKEY_A,
+          BLOBKEY_URL_A,
           DESCRIPTION_A,
           VOTE_A,
           DEAL_ID_A,
           BLOBKEY_URL_A,
           USER_ID_A,
           USERNAME_A,
-          IMAGE_URL_A,
+          BLOBKEY_URL_A,
           TAG_ID_A,
           TAG_NAME_A,
           TIME_A);
