@@ -28,6 +28,7 @@ import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -242,13 +243,15 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_A
     List<Deal> dealsForA =
-        dealManagerDatastore.getDealsPublishedByUsers(Arrays.asList(USER_ID_B, USER_ID_C));
+        dealManagerDatastore.getDealsPublishedByUsers(
+            new HashSet<Long>(Arrays.asList(USER_ID_B, USER_ID_C)));
     assertEquals(2, dealsForA.size());
     assertEquals(dealsForA.get(0), dealB);
     assertEquals(dealsForA.get(1), dealC);
 
     // Get deals published by the users followed by USER_ID_B
-    List<Deal> dealsB = dealManagerDatastore.getDealsPublishedByUsers(Arrays.asList(USER_ID_A));
+    List<Deal> dealsB =
+        dealManagerDatastore.getDealsPublishedByUsers(new HashSet<Long>(Arrays.asList(USER_ID_A)));
     assertEquals(1, dealsB.size());
     assertEquals(dealsB.get(0), dealA);
   }
@@ -280,7 +283,7 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the restaurants followed by USER_ID_B
     List<Deal> deals =
         dealManagerDatastore.getDealsPublishedByRestaurants(
-            Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B));
+            new HashSet<>(Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B)));
     assertEquals(2, deals.size());
     assertEquals(deals.get(0), dealA);
     assertEquals(deals.get(1), dealB);
