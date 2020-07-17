@@ -122,9 +122,12 @@ public class UserServlet extends HttpServlet {
     String username = (String) request.getParameter("username");
     String bio = (String) request.getParameter("bio");
     String photoBlobKey = getUploadedImageBlobkey(request, "picture");
+    boolean isUsingDefaultPhoto = request.getParameter("default-photo") != null;
 
     User updatedUser;
-    if (photoBlobKey != null) {
+    if (isUsingDefaultPhoto) {
+      updatedUser = new User(user.id, null, username, bio);
+    } else if (photoBlobKey != null) {
       updatedUser = new User(user.id, null, username, photoBlobKey, bio);
     } else {
       updatedUser = new User(user.id, null, username, null, bio);
