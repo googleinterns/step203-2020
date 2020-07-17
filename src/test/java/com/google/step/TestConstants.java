@@ -26,8 +26,6 @@ public class TestConstants {
   private static final String URL_PREFIX = "/api/images/";
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
-  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
-  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
