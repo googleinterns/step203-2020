@@ -28,7 +28,6 @@ public class DealManagerDatastore implements DealManager {
   private final DealSearchManager searchManager;
   private final TagManager tagManager;
 
-  private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
