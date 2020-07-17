@@ -19,6 +19,7 @@ import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -85,7 +86,7 @@ public class UserServlet extends HttpServlet {
     List<Long> tagIds = new ArrayList<>(followManager.getFollowedTagIds(id));
     List<Tag> tags = tagManager.readTags(tagIds);
 
-    List<Long> restaurantIds = followManager.getFollowedRestaurantIds(id);
+    List<Long> restaurantIds = new ArrayList<>(followManager.getFollowedRestaurantIds(id));
     List<Restaurant> restaurants = restaurantManager.readRestaurants(restaurantIds);
 
     String json = JsonFormatter.getUserJson(user, deals, following, followers, tags, restaurants);

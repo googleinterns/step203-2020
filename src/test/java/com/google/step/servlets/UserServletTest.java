@@ -42,7 +42,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -61,27 +61,32 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @PrepareForTest(ImageUploader.class)
 public class UserServletTest {
 
-  private UserServlet servlet;
-  private UserManager userManager;
-  private UserService userService;
-  private TagManager tagManager;
-  private FollowManager followManager;
-  private DealManager dealManager;
-  private RestaurantManager restaurantManager;
+  private UserServlet userServlet;
+  private UserManager mockUserManager;
+  private UserService mockUserService;
+  private TagManager mockTagManager;
+  private FollowManager mockFollowManager;
+  private DealManager mockDealManager;
+  private RestaurantManager mockRestaurantManager;
 
   @Before
   public void setUp() {
-    userManager = mock(UserManager.class);
-    userService = mock(UserService.class);
-    tagManager = mock(TagManager.class);
-    followManager = mock(FollowManager.class);
-    dealManager = mock(DealManager.class);
-    restaurantManager = mock(RestaurantManager.class);
-    servlet =
+    mockUserManager = mock(UserManager.class);
+    mockUserService = mock(UserService.class);
+    mockTagManager = mock(TagManager.class);
+    mockFollowManager = mock(FollowManager.class);
+    mockDealManager = mock(DealManager.class);
+    mockRestaurantManager = mock(RestaurantManager.class);
+    userServlet =
         new UserServlet(
-            userManager, userService, dealManager, followManager, tagManager, restaurantManager);
+            mockUserManager,
+            mockUserService,
+            mockDealManager,
+            mockFollowManager,
+            mockTagManager,
+            mockRestaurantManager);
   }
-  
+
   @After
   public void validate() {
     validateMockitoUsage();
@@ -91,32 +96,33 @@ public class UserServletTest {
   public void testDoGet_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    
+
     when(request.getPathInfo()).thenReturn("/" + USER_ID_A);
-    when(userManager.readUser(USER_ID_A)).thenReturn(USER_A);
+    when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
 
     List<Deal> deals = new ArrayList<>();
-    when(dealManager.getDealsPublishedByUser(USER_ID_A)).thenReturn(deals);
+    when(mockDealManager.getDealsPublishedByUser(USER_ID_A)).thenReturn(deals);
 
     List<Long> followingIds = new ArrayList<>();
-    when(followManager.getFollowedUserIds(USER_ID_A)).thenReturn(followingIds);
+    when(mockFollowManager.getFollowedUserIds(USER_ID_A)).thenReturn(new HashSet<>(followingIds));
     List<User> following = new ArrayList<>();
-    when(userManager.readUsers(followingIds)).thenReturn(following);
+    when(mockUserManager.readUsers(followingIds)).thenReturn(following);
 
     List<Long> followerIds = new ArrayList<>();
-    when(followManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(followerIds);
+    when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
     List<User> followers = new ArrayList<>();
-    when(userManager.readUsers(followerIds)).thenReturn(followers);
+    when(mockUserManager.readUsers(followerIds)).thenReturn(followers);
 
     List<Long> tagIds = new ArrayList<>();
-    when(followManager.getFollowedTagIds(USER_ID_A)).thenReturn(tagIds);
+    when(mockFollowManager.getFollowedTagIds(USER_ID_A)).thenReturn(new HashSet<>(tagIds));
     List<Tag> tags = new ArrayList<>();
-    when(tagManager.readTags(tagIds)).thenReturn(tags);
+    when(mockTagManager.readTags(tagIds)).thenReturn(tags);
 
     List<Long> restaurantIds = new ArrayList<>();
-    when(followManager.getFollowedRestaurantIds(USER_ID_A)).thenReturn(restaurantIds);
+    when(mockFollowManager.getFollowedRestaurantIds(USER_ID_A))
+        .thenReturn(new HashSet<>(restaurantIds));
     List<Restaurant> restaurants = new ArrayList<>();
-    when(restaurantManager.readRestaurants(restaurantIds)).thenReturn(restaurants);
+    when(mockRestaurantManager.readRestaurants(restaurantIds)).thenReturn(restaurants);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

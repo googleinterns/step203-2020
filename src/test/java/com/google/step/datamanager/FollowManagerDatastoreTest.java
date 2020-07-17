@@ -146,12 +146,12 @@ public final class FollowManagerDatastoreTest {
     manager.followUser(USER_ID_C, USER_ID_B);
     manager.followUser(USER_ID_C, USER_ID_A);
 
-    List<Long> ids = manager.getFollowerIdsOfUser(USER_ID_B);
+    Set<Long> ids = manager.getFollowerIdsOfUser(USER_ID_B);
 
     assertThat(ids, containsInAnyOrder(USER_ID_A, USER_ID_C));
     assertTrue(manager.getFollowerIdsOfUser(USER_ID_C).isEmpty());
   }
-  
+
   public void testUpdateFollowedTagIds() {
     manager.followTag(USER_ID_A, TAG_ID_A);
     manager.followTag(USER_ID_A, TAG_ID_B);
