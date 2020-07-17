@@ -97,7 +97,7 @@ public class HomePageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long userId = 1;
     List<Deal> allDeals = dealManager.getAllDeals();
-    List<Deal> trendingDeals = getSortedDealsBasedOnValue(allDeals, "hotScore");
+    List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
     List<Deal> dealsByUsersFollowed =
         dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
     List<Deal> dealsByRestaurantsFollowed =
@@ -167,7 +167,6 @@ public class HomePageServlet extends HttpServlet {
     return deals;
   }
 
-  /** Sorts deals based on hot score (Highest to lowest) */
   private double epochSeconds(String timestamp) {
     LocalDateTime time = LocalDateTime.parse(timestamp);
     long epoch = time.atZone(ZoneId.of(LOCATION)).toEpochSecond();
@@ -189,14 +188,24 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Sorts deals based on votes (Highest to lowest) */
-  private List<Deal> getSortedDealsBasedOnValue(List<Deal> deals, String attribute) {
+  private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
     List<DealPair> dealPairs = new ArrayList<>();
     for (Deal deal : deals) {
-      if (attribute.equals("hotScore")) {
-        dealPairs.add(new DealPair(calculateHotScore(deal), deal));
-      } else if (attribute.equals("votes")) {
-        dealPairs.add(new DealPair(voteManager.getVotes(deal.id), deal));
-      }
+      dealPairs.add(new DealPair(voteManager.getVotes(deal.id), deal));
+    }
+    Collections.sort(dealPairs);
+    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
+    for (DealPair dealPair : dealPairs) {
+      dealResults.add(dealPair.deal);
+    }
+    return dealResults;
+  }
+
+  /** Sorts deals based on hot score (Highest to lowest) */
+  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
+    List<DealPair> dealPairs = new ArrayList<>();
+    for (Deal deal : deals) {
+      dealPairs.add(new DealPair(calculateHotScore(deal), deal));
     }
     Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
