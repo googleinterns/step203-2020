@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.USER_A;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -7,7 +9,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.UserManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,12 +29,23 @@ public class FollowServletTest {
   private static final long ID = 123;
 
   private FollowServlet servlet;
-  private FollowManager followManager;
+  private FollowManager mockFollowManager;
+  private UserService mockUserService;
+  private UserManager mockUserManager;
 
   @Before
   public void setUp() {
-    followManager = mock(FollowManager.class);
-    servlet = new FollowServlet(followManager);
+    mockFollowManager = mock(FollowManager.class);
+    mockUserService = mock(UserService.class);
+    mockUserManager = mock(UserManager.class);
+
+    // behaviour when user is logged in
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    User currentUser = new User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
+    servlet = new FollowServlet(mockFollowManager, mockUserService, mockUserManager);
   }
 
   @Test
@@ -46,7 +62,7 @@ public class FollowServletTest {
     servlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(followManager).followRestaurant(anyLong(), eq(ID));
+    verify(mockFollowManager).followRestaurant(anyLong(), eq(ID));
   }
 
   @Test
@@ -63,7 +79,7 @@ public class FollowServletTest {
     servlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(followManager).followTag(anyLong(), eq(ID));
+    verify(mockFollowManager).followTag(anyLong(), eq(ID));
   }
 
   @Test
@@ -80,7 +96,7 @@ public class FollowServletTest {
     servlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(followManager).followUser(anyLong(), eq(ID));
+    verify(mockFollowManager).followUser(anyLong(), eq(ID));
   }
 
   @Test
