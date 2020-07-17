@@ -143,15 +143,15 @@ public class FollowManagerDatastore implements FollowManager {
 
   @Override
   public boolean isFollowingUser(long followerId, long followeeId) {
-    return isFollowing(followerId, followeeId, USER_FIELD_NAME);
+    return isFollowingSomething(followerId, followeeId, USER_FIELD_NAME);
   }
 
   @Override
   public boolean isFollowingRestaurant(long followerId, long followeeId) {
-    return isFollowing(followerId, followeeId, RESTAURANT_FIELD_NAME);
+    return isFollowingSomething(followerId, followeeId, RESTAURANT_FIELD_NAME);
   }
 
-  private boolean isFollowing(long followerId, long followeeId, String followeeFieldName) {
+  private boolean isFollowingSomething(long followerId, long followeeId, String followeeFieldName) {
     Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
     Filter followeeFilter =
         new FilterPredicate(followeeFieldName, FilterOperator.EQUAL, followeeId);
