@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -97,7 +98,7 @@ public class HomePageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long userId = 1;
     List<Deal> allDeals = dealManager.getAllDeals();
-    List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
+    List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed =
         dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
     List<Deal> dealsByRestaurantsFollowed =
@@ -142,7 +143,7 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Retrieves deals posted by tags followed by user */
-  private List<Deal> getDealsPublishedByTags(List<Long> tagIds) {
+  private List<Deal> getDealsPublishedByTags(Set<Long> tagIds) {
     List<Long> dealIdResults = new ArrayList<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
@@ -177,35 +178,25 @@ public class HomePageServlet extends HttpServlet {
    * Calculates a hot score for each deal entity, which takes into account both the time and the
    * amount of votes it got
    */
-  private double calculateHotScore(Deal deal) {
-    int netVotes = voteManager.getVotes(deal.id);
-    double order = Math.log(Math.max(Math.abs(netVotes), 1));
+  private double calculateHotScore(Deal deal, int votes) {
+    double order = Math.log(Math.max(Math.abs(votes), 1));
     int sign = 0;
-    if (netVotes > 0) sign = 1;
-    else if (netVotes < 0) sign = -1;
+    if (votes > 0) sign = 1;
+    else if (votes < 0) sign = -1;
     double seconds = epochSeconds((String) deal.creationTimeStamp) - OLDEST_DEAL_TIMESTAMP;
     return sign * order + seconds / 45000;
   }
 
-  /** Sorts deals based on votes (Highest to lowest) */
-  private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<DealPair> dealPairs = new ArrayList<DealPair>();
-    for (Deal deal : deals) {
-      dealPairs.add(new DealPair(voteManager.getVotes(deal.id), deal));
-    }
-    Collections.sort(dealPairs);
-    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (DealPair dealPair : dealPairs) {
-      dealResults.add(dealPair.deal);
-    }
-    return dealResults;
-  }
-
-  /** Sorts deals based on hot score (Highest to lowest) */
-  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
+  /** Sorts deals based on value (hot score or votes) */
+  private List<Deal> sortDealsBasedOnValue(List<Deal> deals, String attribute) {
     List<DealPair> dealPairs = new ArrayList<>();
     for (Deal deal : deals) {
-      dealPairs.add(new DealPair(calculateHotScore(deal), deal));
+      int votes = voteManager.getVotes(deal.id);
+      if (attribute.equals("hotScore")) {
+        dealPairs.add(new DealPair(calculateHotScore(deal, votes), deal));
+      } else if (attribute.equals("votes")) {
+        dealPairs.add(new DealPair(votes, deal));
+      }
     }
     Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals

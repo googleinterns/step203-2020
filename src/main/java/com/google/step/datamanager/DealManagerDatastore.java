@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
@@ -146,7 +147,7 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by restaurants or users */
   private List<Deal> getDealsPublishedByRestaurantsOrUsers(
-      List<Long> idsOfFollowedFieldName, String filterAttribute) {
+      Set<Long> idsOfFollowedFieldName, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
     for (Long id : idsOfFollowedFieldName) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.EQUAL, id);
@@ -161,13 +162,13 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
+  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds) {
     return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
+  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds) {
     return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
