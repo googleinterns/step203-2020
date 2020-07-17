@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -88,8 +89,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     Query query = new Query("Restaurant").setFilter(filterPrefix);
     PreparedQuery preparedQuery = datastore.prepare(query);
 
+    FetchOptions limitQueries = FetchOptions.Builder.withLimit(20);
+
     List<Restaurant> restaurants = new ArrayList<>();
-    for (Entity entity : preparedQuery.asIterable()) {
+    for (Entity entity : preparedQuery.asIterable(limitQueries)) {
       restaurants.add(transformEntityToRestaurant(entity));
     }
 
@@ -99,7 +102,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   /**
    * Returns a Restaurant object transformed from a restaurant entity.
    *
-   * @param entity Restaurant entity.
+   * @param restaurantEntity Restaurant entity.
    * @return a Restaurant object transformed from the entity.
    */
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
