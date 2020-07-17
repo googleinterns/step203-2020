@@ -1,3 +1,42 @@
+const homePageDealsData = {
+  popularDeals: [
+    {
+      restaurant: 'A',
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      poster: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurant: 'A',
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      poster: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+    {
+      restaurant: 'A',
+      description: 'starbucks mocha 1-for-1',
+      votes: 0,
+      id: 1,
+      pic: 'a_blob_key',
+      poster: 'Alice',
+      tags: [{'id': 1, 'name': '1for1'}],
+    },
+  ],
+  usersIFollow: [
+  ],
+  restaurantsIFollow: [
+  ],
+  tagsIFollow: [
+  ],
+};
+
+
 /**
  * Creates deal elements on home page
  * @param {object} homePage
@@ -7,7 +46,11 @@ function createHomePage(homePage) {
     'usersIFollow', 'tagsIFollow'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
-    const homePageData = homePage[homePageSections[i]];
+    if (homePage[homePageSections[i]].length == 0) {
+      console.log('ERE');
+      continue;
+    }
+    homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
       document.querySelectorAll('#' + dealCardId + '.deal-card');
@@ -51,11 +94,22 @@ function createHomePage(homePage) {
  * Creates carousel on home page
  * @param {object} numCarouselSlidesList
  * @param {object} numDealPerSlide
+ * @param {object} homePageDeals
  */
-function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
+function createCarouselElements(numCarouselSlidesList,
+    numDealPerSlide, homePageDeals) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
+  const homePageSections = ['popularDeals', 'restaurantsIFollow',
+    'usersIFollow', 'tagsIFollow'];
   // number of sections on homepage
   for (let i = 0; i < carouselElements.length; i++) {
+    console.log(homePageDeals[homePageSections[i]]);
+    if (homePageDeals[homePageSections[i]].length == 0) {
+      carouselElements[i].children[2].style.display = 'none';
+      carouselElements[i].children[3].style.display = 'none';
+      console.log(homePageDeals[homePageSections[i]]);
+      continue;
+    }
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[0];
     const carouselItemList = carouselElements[i].children[1];
@@ -119,7 +173,10 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        createCarouselElements([2, 2, 3, 3], 4);
+        console.log('HERRE');
+        homePageDeals = homePageDealsData;
+        console.log(homePageDeals);
+        createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
 }
