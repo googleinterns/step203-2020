@@ -1,16 +1,20 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +94,7 @@ public class DealManagerDatastore implements DealManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    return transformEntitytoDeal(dealEntity);
+    return transformEntityToDeal(dealEntity);
   }
 
   @Override
@@ -134,7 +138,7 @@ public class DealManagerDatastore implements DealManager {
     }
     datastore.put(dealEntity);
     searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
-    return transformEntitytoDeal(dealEntity);
+    return transformEntityToDeal(dealEntity);
   }
 
   /** Retrieves deals posted by users */
@@ -160,7 +164,7 @@ public class DealManagerDatastore implements DealManager {
    * @param dealEntity Deal entity.
    * @return a Deal object transformed from the entity.
    */
-  private Deal transformEntitytoDeal(Entity dealEntity) {
+  private Deal transformEntityToDeal(Entity dealEntity) {
     long id = dealEntity.getKey().getId();
     String description = (String) dealEntity.getProperty("description");
     String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
@@ -197,7 +201,33 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> readDeals(List<Long> ids) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    Collection<Entity> dealEntities;
+    try {
+      dealEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
+    }
+    List<Deal> deals =
+        dealEntities.stream()
+            .map(entity -> transformEntityToDeal(entity))
+            .collect(Collectors.toList());
+    return deals;
+  }
+
+  @Override
+  public List<Deal> getDealsPublishedByUser(long userId) {
+    Query query =
+        new Query("Deal")
+            .setFilter(new Query.FilterPredicate("posterId", Query.FilterOperator.EQUAL, userId));
+    PreparedQuery results = datastore.prepare(query);
+    Iterable<Entity> dealEntities = results.asIterable();
+    List<Deal> deals = new ArrayList<>();
+    for (Entity entity : dealEntities) {
+      deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
   }
 }
