@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealTagManager;
@@ -42,6 +44,7 @@ public class HomePageServlet extends HttpServlet {
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
   private final DealTagManager dealTagManager;
+  private final UserService userService;
   private final TagManager tagManager;
   private final FollowManager followManager;
 
@@ -55,7 +58,8 @@ public class HomePageServlet extends HttpServlet {
       VoteManager voteManager,
       DealTagManager dealTagManager,
       TagManager tagManager,
-      FollowManager followManager) {
+      FollowManager followManager,
+      UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
@@ -63,6 +67,7 @@ public class HomePageServlet extends HttpServlet {
     this.dealTagManager = dealTagManager;
     this.tagManager = tagManager;
     this.followManager = followManager;
+    this.userService = userService;
   }
 
   public HomePageServlet() {
@@ -73,6 +78,7 @@ public class HomePageServlet extends HttpServlet {
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
+    userService = UserServiceFactory.getUserService();
   }
 
   /** Class to store deal along with relevant attribute (hot score/votes) to be sorted */
@@ -94,7 +100,13 @@ public class HomePageServlet extends HttpServlet {
   /** Gets the deals for the home page */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long userId = 1; // TODO get authenticated user id
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User user = userManager.readUserByEmail(email);
+    long userId = follower.id;
     List<Deal> allDeals = dealManager.getAllDeals();
     List<Deal> trendingDeals = getSortedDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed =
