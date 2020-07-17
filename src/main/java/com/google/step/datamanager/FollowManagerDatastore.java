@@ -141,24 +141,8 @@ public class FollowManagerDatastore implements FollowManager {
     return new HashSet<>();
   }
 
-  @Override
-  public boolean isFollowingUser(long followerId, long followeeId) {
-    return isFollowing(followerId, followeeId, USER_FIELD_NAME);
-  }
-
-  @Override
-  public boolean isFollowingRestaurant(long followerId, long followeeId) {
-    return isFollowing(followerId, followeeId, RESTAURANT_FIELD_NAME);
-  }
-
-  private boolean isFollowing(long followerId, long followeeId, String followeeFieldName) {
-    Filter userFilter = new FilterPredicate(FOLLOWER_FIELD_NAME, FilterOperator.EQUAL, followerId);
-    Filter followeeFilter =
-        new FilterPredicate(followeeFieldName, FilterOperator.EQUAL, followeeId);
-    Filter filter = CompositeFilterOperator.and(userFilter, followeeFilter);
-    Query query = new Query(ENTITY_NAME).setFilter(filter);
-    PreparedQuery pq = datastore.prepare(query);
-
-    return pq.asSingleEntity() != null;
+  public boolean isFollowing(long followerId, long followeeId) {
+    // TODO Auto-generated method stub
+    return false;
   }
 }
