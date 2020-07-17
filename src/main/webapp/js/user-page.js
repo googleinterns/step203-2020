@@ -344,7 +344,7 @@ function profilePhotoPreview(input) {
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
-  const profileEditForm = document.getElementById('profile-edit-form');
+  const profileEditForm = document.getElementById('profile-form');
   profileEditForm.hidden = true;
 }
 
