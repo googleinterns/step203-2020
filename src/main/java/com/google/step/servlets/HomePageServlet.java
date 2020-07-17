@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class HomePageServlet extends HttpServlet {
   /** Gets the deals for the home page */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long userId = 1; // TODO get authenticated user id
+    long userId = 1;
     List<Deal> allDeals = dealManager.getAllDeals();
     List<Deal> trendingDeals = getSortedDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed =
@@ -111,7 +112,14 @@ public class HomePageServlet extends HttpServlet {
                 dealsByRestaurantsFollowed,
                 dealsByTagsFollowed));
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getHomePageJson(getHomePageDealMaps(homePageDeals)));
+
+    List<List<Map<String, Object>>> homePageDealsMaps = getHomePageDealMaps(homePageDeals);
+    Map<String, Object> homePageMap = new HashMap<>();
+    homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+    homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
+    homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
+    homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
+    response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
   }
 
   /** Creates a list of list of deal maps for the home page */
@@ -151,7 +159,7 @@ public class HomePageServlet extends HttpServlet {
         deals,
         new Comparator<Deal>() {
           @Override
-          public int compare(Deal deal1, Deal deal2) {
+          public int compare(Deal deal1, Deal deal2) { // TODO fix parse
             return LocalDateTime.parse(deal2.creationTimeStamp)
                 .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
           }

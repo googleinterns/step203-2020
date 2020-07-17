@@ -202,7 +202,18 @@ public class JsonFormatter {
 
   // TODO
   private static List<Map<String, Object>> getTagListBriefMaps(List<Tag> tags) {
-    return new ArrayList<>();
+    List<Map<String, Object>> tagMaps = new ArrayList<>();
+    for (Tag tag : tags) {
+      tagMaps.add(getTagBriefMap(tag));
+    }
+    return tagMaps;
+  }
+
+  private static Map<String, Object> getTagBriefMap(Tag tag) {
+    Map<String, Object> tagMap = new HashMap<>();
+    tagMap.put("id", tag.id);
+    tagMap.put("name", tag.name);
+    return tagMap;
   }
 
   // TODO
@@ -215,32 +226,10 @@ public class JsonFormatter {
     return "/api/images/" + blobKey;
   }
 
-  /**
-   * Returns a json of home page data.
-   *
-   * @param homePageDealsMaps a list of list of maps for home page
-   * @return a json of home page data
-   */
-  public static String getHomePageJson(List<List<Map<String, Object>>> homePageDealsMaps) {
+  public static String getHomePageJson(Map<String, Object> homePageDealsMaps) {
     Gson gson = new Gson();
-    String json = gson.toJson(getHomePageMap(homePageDealsMaps));
+    String json = gson.toJson(homePageDealsMaps);
     return json;
-  }
-
-  /**
-   * Returns a map of sections for home page
-   *
-   * @param homePageDealsMaps a list of list of maps for home page
-   * @return a map of sections for home page
-   */
-  private static Map<String, Object> getHomePageMap(
-      List<List<Map<String, Object>>> homePageDealsMaps) {
-    Map<String, Object> homePageMap = new HashMap<>();
-    homePageMap.put("popularDeals", homePageDealsMaps.get(0));
-    homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-    homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
-    homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
-    return homePageMap;
   }
 
   /**
@@ -264,7 +253,7 @@ public class JsonFormatter {
     dealMap.put("restaurantId", restaurant.id);
     dealMap.put("restaurantName", restaurant.name);
     dealMap.put("votes", votes);
-    dealMap.put("tags", tags);
+    dealMap.put("tags", getTagListBriefMaps(tags));
     dealMap.put("timestamp", deal.creationTimeStamp);
     return dealMap;
   }
