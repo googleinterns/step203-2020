@@ -182,7 +182,6 @@ function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
         homePageDeals = homePageDealsData;
-        console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
