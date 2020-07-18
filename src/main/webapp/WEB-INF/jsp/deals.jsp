@@ -60,6 +60,49 @@
               <p class="text-secondary">Source: <a id="deal-source" href=""></a></p>
               <ul class="list-group" id="menu"></ul>
             </div>
+            <button onclick="$('#deal-form').toggle()">Toggle form</button>
+            <form style="display:none" method="post" id="deal-form" novalidate class="needs-validation">
+              <div class="form-group form-inline">
+                <label for="description-input" class="mr-2">Description:</label>
+                <input name="description" type="text" class="form-control" id="description-input" required>
+                <div class="invalid-feedback">
+                  Please add a description.
+                </div>
+              </div>
+
+              <div class="form-group form-inline">
+                <label for="restaurant-input" class="mr-2">Restaurant:</label>
+                <input disabled type="text" class="form-control">
+              </div>
+              <div class="mb-3">
+                <div class="d-flex align-items-center">
+                  <i class="fa fa-search mr-2"></i>
+                  <input autocomplete="off" type="search" placeholder="Search for a restaurant..." id="restaurant-input"
+                    class="flex-grow-1" style="outline: 0;border-width: 0 0 2px;">
+                </div>
+                <div class="search-menu-container">
+                  <div id="restaurant-search-results" class="search-menu"></div>
+                </div>
+              </div>
+
+              <div class="form-group validate-me form-inline">
+                <label class="mr-2">Valid Date:</label>
+                <input name="start" class="form-control" type="date" id="from-date" required>
+                <span class="mx-2">to</span>
+                <input name="end" class="form-control" type="date" id="from-date" required>
+                <!-- <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div> -->
+              </div>
+
+              <div class="form-group form-inline">
+                <label for="source-input" class="mr-2">Source:</label>
+                <input name="source" type="text" class="form-control" id="source-input">
+              </div>
+
+              <div class="form-group d-flex flex-row-reverse">
+                <button class="btn btn-primary" id="sendMessageButton" type="submit">Submit Deal
+                </button>
+              </div>
+            </form>
           </div>
           <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">
             <div class="row">
