@@ -246,8 +246,6 @@ public class JsonFormatter {
     return json;
   }
 
-<<<<<<< HEAD
-=======
   /**
    * Returns a json of home page section data.
    *
@@ -260,7 +258,6 @@ public class JsonFormatter {
     return json;
   }
 
->>>>>>> Split into sections
   /**
    * Returns a map of brief deal info for home page
    *

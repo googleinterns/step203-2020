@@ -102,6 +102,7 @@ public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 <<<<<<< HEAD
+<<<<<<< HEAD
     List<Deal> allDeals = dealManager.getAllDeals();
     List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed = new ArrayList<>();
@@ -155,6 +156,8 @@ public class HomePageServlet extends HttpServlet {
     }
     return homePageDealsMapList;
 =======
+=======
+>>>>>>> 499a6d0... fix tests
     String homePageSection = request.getParameter("section");
     // if no home page section is being specified to view all deals, just return all home page data
     if (userService.isUserLoggedIn()) { // all sections are available
@@ -177,8 +180,9 @@ public class HomePageServlet extends HttpServlet {
             .getWriter()
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
-    } else { // user is not logged in
-      if (homePageSection == null) { // only trending will be displayed
+    } else { // user is not logged in and asks for a different section, is this possible? manually
+      // type in url
+      if (homePageSection == null) {
         homePageSection = "trending";
         List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
         Map<String, Object> homePageMap = new HashMap<>();
@@ -239,7 +243,6 @@ public class HomePageServlet extends HttpServlet {
       homePageSectionDealMaps.add(homePageDealMap);
     }
     return homePageSectionDealMaps;
->>>>>>> Split into sections
   }
 
   /** Retrieves deals posted by tags followed by user */
