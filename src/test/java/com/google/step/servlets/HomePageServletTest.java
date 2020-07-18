@@ -72,27 +72,37 @@ public class HomePageServletTest {
             mockUserService);
   }
 
+  private void setUpUserAuthentication() {
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+  }
+
+  private void gettingSectionMaps() {
+    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
+    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
+    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
+    when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+  }
+
   @Test
-  public void testDoGet_success() throws Exception {
+  public void testDoGetAllDeals_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
     User currentUser = new User(EMAIL_A, "");
 
-    when(mockUserService.isUserLoggedIn()).thenReturn(true);
-    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
-    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(request.getParameter("section")).thenReturn(null);
+
+    setUpUserAuthentication();
 
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
     when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
     when(mockDealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
-    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
-    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
-    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
-    when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -110,20 +120,19 @@ public class HomePageServletTest {
   }
 
   @Test
-  public void testDoGet_UserNotLoggedIn() throws Exception {
+  public void testDoGet_UserLoggedInViewSection_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+    User currentUser = new User(EMAIL_A, "");
 
-    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    when(request.getParameter("section")).thenReturn("users");
 
-    when(mockDealManager.getAllDeals()).thenReturn(DEALS);
+    setUpUserAuthentication();
 
-    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
-    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
-    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
-    when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -131,12 +140,62 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String trendingDeals =
-        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
     String expected =
-        String.format(
-            "{popularDeals:%s," + "usersIFollow:[]," + "restaurantsIFollow:[]," + "tagsIFollow:[]}",
-            trendingDeals);
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+
+    System.out.println(stringWriter.toString());
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserNotLoggedInAllDeals() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+
+    when(request.getParameter("section")).thenReturn(null);
+
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    when(mockDealManager.getAllDeals()).thenReturn(DEALS);
+
+    gettingSectionMaps();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String expected =
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserNotLoggedInViewTrending() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    when(request.getParameter("section")).thenReturn("trending");
+    when(mockDealManager.getAllDeals()).thenReturn(DEALS);
+
+    gettingSectionMaps();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String expected =
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+
+    System.out.println(stringWriter.toString());
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 }

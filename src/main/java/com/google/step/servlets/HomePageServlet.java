@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -99,9 +98,10 @@ public class HomePageServlet extends HttpServlet {
     }
   }
 
-  /** Gets the deals for the home page */
+  /** Gets the deals for the home page/ view all deals */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+<<<<<<< HEAD
     List<Deal> allDeals = dealManager.getAllDeals();
     List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
     List<Deal> dealsByUsersFollowed = new ArrayList<>();
@@ -154,6 +154,78 @@ public class HomePageServlet extends HttpServlet {
       homePageDealsMapList.add(homePageSectionDealMaps);
     }
     return homePageDealsMapList;
+=======
+    String homePageSection = request.getParameter("section");
+    // if no home page section is being specified to view all deals, just return all home page data
+    if (userService.isUserLoggedIn()) { // all sections are available
+      String email = userService.getCurrentUser().getEmail();
+      User user = userManager.readUserByEmail(email);
+      long userId = user.id;
+      List<List<Map<String, Object>>> homePageDealsMaps = getSectionDealMaps(section);
+      if (homePageDealsMaps.size() == 4) {
+        Map<String, Object> homePageMap = new HashMap<>();
+        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+        homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
+        homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
+        homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
+        response.setContentType("application/json;");
+        response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
+      }
+      else if (homePageDealsMaps.size() == 1) {
+        response.setContentType("application/json;");
+        response.getWriter().println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
+      }
+    } else { //user is not logged in and asks for a different section, is this possible? manually type in url
+    if (homePageSection == null) {
+      homePageSection = "trending";
+    }
+    if (!homePageSection.equals("trending")) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+  }
+
+  /** Gets a list of list of maps based on the required section(s) */
+  private List<List<Map<String, Object>>> getSectionListMaps(String section) {
+    List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
+    if (section == null || section.equals("trending")) {
+      List<Deal> allDeals = dealManager.getAllDeals();
+      List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
+      totalDealMaps.add(getHomePageSectionMap(trendingDeals));
+    }
+    if (section == null || section.equals("users")) {
+      List<Deal> dealsByUsersFollowed =
+          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
+      totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
+    }
+    if (section == null || section.equals("restaurants")) {
+      List<Deal> dealsByRestaurantsFollowed =
+          dealManager.getDealsPublishedByRestaurants(
+              followManager.getFollowedRestaurantIds(userId));
+      totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
+    }
+    if (section == null || section.equals("tags")) {
+      List<Deal> dealsByTagsFollowed =
+          getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+      totalDealMaps.add(getHomePageSectionMap(dealsByTagsFollowed));
+    }
+    return totalDealMaps;
+  }
+
+  /** Creates a list of deal maps for a section */
+  private List<Map<String, Object>> getHomePageSectionMap(List<Deal> sectionDeals) {
+    List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<>();
+    for (Deal deal : sectionDeals) {
+      User user = userManager.readUser(deal.posterId);
+      Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
+      List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
+      int votes = voteManager.getVotes(deal.id);
+      Map<String, Object> homePageDealMap =
+          JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);
+      homePageSectionDealMaps.add(homePageDealMap);
+    }
+    return homePageSectionDealMaps;
+>>>>>>> Split into sections
   }
 
   /** Retrieves deals posted by tags followed by user */
