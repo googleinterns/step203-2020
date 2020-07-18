@@ -161,7 +161,8 @@ public class HomePageServlet extends HttpServlet {
       String email = userService.getCurrentUser().getEmail();
       User user = userManager.readUserByEmail(email);
       long userId = user.id;
-      List<List<Map<String, Object>>> homePageDealsMaps = getSectionDealMaps(section);
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(homePageSection, userId);
       if (homePageDealsMaps.size() == 4) {
         Map<String, Object> homePageMap = new HashMap<>();
         homePageMap.put("popularDeals", homePageDealsMaps.get(0));
@@ -170,23 +171,36 @@ public class HomePageServlet extends HttpServlet {
         homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
-      }
-      else if (homePageDealsMaps.size() == 1) {
+      } else if (homePageDealsMaps.size() == 1) {
         response.setContentType("application/json;");
-        response.getWriter().println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
+        response
+            .getWriter()
+            .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
-    } else { //user is not logged in and asks for a different section, is this possible? manually type in url
-    if (homePageSection == null) {
-      homePageSection = "trending";
-    }
-    if (!homePageSection.equals("trending")) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      return;
+    } else { // user is not logged in
+      if (homePageSection == null) { // only trending will be displayed
+        homePageSection = "trending";
+        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
+        Map<String, Object> homePageMap = new HashMap<>();
+        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+        response.setContentType("application/json;");
+        response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
+      }
+      if (homePageSection.equals("trending")) {
+        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
+        response.setContentType("application/json;");
+        response
+            .getWriter()
+            .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
+      } else {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
+      }
     }
   }
 
   /** Gets a list of list of maps based on the required section(s) */
-  private List<List<Map<String, Object>>> getSectionListMaps(String section) {
+  private List<List<Map<String, Object>>> getSectionListMaps(String section, long userId) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
     if (section == null || section.equals("trending")) {
       List<Deal> allDeals = dealManager.getAllDeals();

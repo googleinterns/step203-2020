@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
@@ -73,6 +74,7 @@ public class HomePageServletTest {
   }
 
   private void setUpUserAuthentication() {
+    User currentUser = new User(EMAIL_A, "");
     when(mockUserService.isUserLoggedIn()).thenReturn(true);
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
@@ -91,7 +93,6 @@ public class HomePageServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
-    User currentUser = new User(EMAIL_A, "");
 
     when(request.getParameter("section")).thenReturn(null);
 
@@ -125,13 +126,11 @@ public class HomePageServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
-    User currentUser = new User(EMAIL_A, "");
 
     when(request.getParameter("section")).thenReturn("users");
-
     setUpUserAuthentication();
-
     when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+
     gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
@@ -142,8 +141,6 @@ public class HomePageServletTest {
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
-
-    System.out.println(stringWriter.toString());
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
@@ -155,9 +152,7 @@ public class HomePageServletTest {
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(request.getParameter("section")).thenReturn(null);
-
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
-
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
     gettingSectionMaps();
@@ -168,8 +163,9 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String expected =
+    String trendingDeals =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+    String expected = String.format("{popularDeals:%s}", trendingDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
@@ -195,7 +191,24 @@ public class HomePageServletTest {
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
 
-    System.out.println(stringWriter.toString());
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserNotLoggedInViewOtherSection() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    when(request.getParameter("section")).thenReturn("users");
+
+    gettingSectionMaps();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 }
