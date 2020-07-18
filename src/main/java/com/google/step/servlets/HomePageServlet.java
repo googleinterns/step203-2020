@@ -189,8 +189,7 @@ public class HomePageServlet extends HttpServlet {
         homePageMap.put("popularDeals", homePageDealsMaps.get(0));
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
-      }
-      if (homePageSection.equals("trending")) {
+      } else if (homePageSection.equals("trending")) {
         List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
         response.setContentType("application/json;");
         response
