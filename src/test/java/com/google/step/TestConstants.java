@@ -27,8 +27,6 @@ public class TestConstants {
   private static final String URL_PREFIX = "/api/images/";
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
-  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
-  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -64,6 +62,8 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
+  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
+
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
   public static final long RESTAURANT_ID_B = 2;
@@ -93,6 +93,9 @@ public class TestConstants {
   public static final String SOURCE_A = "www.example.com";
   public static final String SOURCE_B = "www.somethingelse.com";
 
+  public static final String TIME_A = "2020-07-10T10:15:30";
+  public static final String TIME_B = "2020-07-10T12:15:30";
+
   public static final Deal DEAL_A =
       new Deal(
           DEAL_ID_A,
@@ -102,7 +105,8 @@ public class TestConstants {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          TIME_A);
 
   public static final Deal DEAL_B =
       new Deal(
@@ -113,7 +117,8 @@ public class TestConstants {
           DATE_D,
           SOURCE_B,
           USER_ID_B,
-          RESTAURANT_ID_B);
+          RESTAURANT_ID_B,
+          TIME_A);
 
   // Comment
   public static final long COMMENT_ID_A = 1;
@@ -123,9 +128,6 @@ public class TestConstants {
 
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
-
-  public static final String TIME_A = "2020-07-10T10:15:30";
-  public static final String TIME_B = "2020-07-10T12:15:30";
 
   public static final Comment COMMENT_A =
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);

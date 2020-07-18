@@ -1,9 +1,11 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -13,7 +15,9 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.step.model.Restaurant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RestaurantManagerDatastore implements RestaurantManager {
 
@@ -88,8 +92,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     Query query = new Query("Restaurant").setFilter(filterPrefix);
     PreparedQuery preparedQuery = datastore.prepare(query);
 
+    FetchOptions limitQueries = FetchOptions.Builder.withLimit(20);
+
     List<Restaurant> restaurants = new ArrayList<>();
-    for (Entity entity : preparedQuery.asIterable()) {
+    for (Entity entity : preparedQuery.asIterable(limitQueries)) {
       restaurants.add(transformEntityToRestaurant(entity));
     }
 
@@ -99,7 +105,7 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   /**
    * Returns a Restaurant object transformed from a restaurant entity.
    *
-   * @param entity Restaurant entity.
+   * @param restaurantEntity Restaurant entity.
    * @return a Restaurant object transformed from the entity.
    */
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
@@ -107,5 +113,23 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
     long id = restaurantEntity.getKey().getId();
     return new Restaurant(id, name, photoBlobkey);
+  }
+
+  @Override
+  public List<Restaurant> readRestaurants(List<Long> ids) {
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Restaurant", id)).collect(Collectors.toList());
+    Collection<Entity> restaurantEntities;
+    try {
+      restaurantEntities = datastore.get(keys).values();
+    } catch (IllegalArgumentException | DatastoreFailureException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
+    }
+    List<Restaurant> restaurants =
+        restaurantEntities.stream()
+            .map(entity -> transformEntityToRestaurant(entity))
+            .collect(Collectors.toList());
+    return restaurants;
   }
 }
