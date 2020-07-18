@@ -110,20 +110,14 @@ public class HomePageServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String email = userService.getCurrentUser().getEmail();
       long userId;
-      try {
-        User user = userManager.readUserByEmail(email);
-        userId = user.id;
-      } catch (IllegalArgumentException e) {
-        userId = 5;
-      }
-      if (userId != 5) {
-        dealsByUsersFollowed =
-            dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
-        dealsByRestaurantsFollowed =
-            dealManager.getDealsPublishedByRestaurants(
-                followManager.getFollowedRestaurantIds(userId));
-        dealsByTagsFollowed = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
-      }
+      User user = userManager.readUserByEmail(email);
+      userId = user.id;
+      dealsByUsersFollowed =
+          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
+      dealsByRestaurantsFollowed =
+          dealManager.getDealsPublishedByRestaurants(
+              followManager.getFollowedRestaurantIds(userId));
+      dealsByTagsFollowed = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
     }
     List<List<Deal>> homePageDeals =
         new ArrayList<>(
