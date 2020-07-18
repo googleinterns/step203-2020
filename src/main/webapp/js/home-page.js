@@ -28,12 +28,6 @@ const homePageDealsData = {
       tags: [{'id': 1, 'name': '1for1'}],
     },
   ],
-  usersIFollow: [
-  ],
-  restaurantsIFollow: [
-  ],
-  tagsIFollow: [
-  ],
 };
 
 
@@ -46,7 +40,8 @@ function createHomePage(homePage) {
     'usersIFollow', 'tagsIFollow'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
-    if (homePage[homePageSections[i]].length == 0) {
+    if (!homePage.hasOwnProperty(homePageSections[i]) ||
+      homePage[homePageSections[i]].length == 0) {
       continue;
     }
     homePageData = homePage[homePageSections[i]];
@@ -103,7 +98,8 @@ function createCarouselElements(numCarouselSlidesList,
 
   // number of sections on homepage
   for (let i = 0; i < carouselElements.length; i++) {
-    if (homePageDeals[homePageSections[i]].length == 0) {
+    if (!homePageDeals.hasOwnProperty(homePageSections[i]) ||
+      homePageDeals[homePageSections[i]].length == 0) {
       // set display to none if there is no data for that section
       carouselElements[i].children[2].style.display = 'none';
       carouselElements[i].children[3].style.display = 'none';
@@ -127,7 +123,7 @@ function createCarouselElements(numCarouselSlidesList,
 
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
-      
+
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
       const numCol = 'col-md-' + 12 / numDealPerSlide;
