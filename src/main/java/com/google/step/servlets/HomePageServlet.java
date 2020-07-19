@@ -101,63 +101,6 @@ public class HomePageServlet extends HttpServlet {
   /** Gets the deals for the home page/ view all deals */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    List<Deal> allDeals = dealManager.getAllDeals();
-    List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
-    List<Deal> dealsByUsersFollowed = new ArrayList<>();
-    List<Deal> dealsByRestaurantsFollowed = new ArrayList<>();
-    List<Deal> dealsByTagsFollowed = new ArrayList<>();
-    if (userService.isUserLoggedIn()) {
-      String email = userService.getCurrentUser().getEmail();
-      long userId;
-      User user = userManager.readUserByEmail(email);
-      userId = user.id;
-      dealsByUsersFollowed =
-          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
-      dealsByRestaurantsFollowed =
-          dealManager.getDealsPublishedByRestaurants(
-              followManager.getFollowedRestaurantIds(userId));
-      dealsByTagsFollowed = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
-    }
-    List<List<Deal>> homePageDeals =
-        new ArrayList<>(
-            Arrays.asList(
-                trendingDeals,
-                dealsByUsersFollowed,
-                dealsByRestaurantsFollowed,
-                dealsByTagsFollowed));
-    response.setContentType("application/json;");
-
-    List<List<Map<String, Object>>> homePageDealsMaps = getHomePageDealMaps(homePageDeals);
-    Map<String, Object> homePageMap = new HashMap<>();
-    homePageMap.put("popularDeals", homePageDealsMaps.get(0));
-    homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-    homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
-    homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
-    response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
-  }
-
-  /** Creates a list of list of deal maps for the home page */
-  private List<List<Map<String, Object>>> getHomePageDealMaps(List<List<Deal>> homePageDeals) {
-    List<List<Map<String, Object>>> homePageDealsMapList = new ArrayList<>();
-    for (List<Deal> dealList : homePageDeals) {
-      List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<>();
-      for (Deal deal : dealList) {
-        User user = userManager.readUser(deal.posterId);
-        Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
-        List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
-        int votes = voteManager.getVotes(deal.id);
-        Map<String, Object> homePageDealMap =
-            JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);
-        homePageSectionDealMaps.add(homePageDealMap);
-      }
-      homePageDealsMapList.add(homePageSectionDealMaps);
-    }
-    return homePageDealsMapList;
-=======
-=======
->>>>>>> 499a6d0... fix tests
     String homePageSection = request.getParameter("section");
     // if no home page section is being specified to view all deals, just return all home page data
     if (userService.isUserLoggedIn()) { // all sections are available
