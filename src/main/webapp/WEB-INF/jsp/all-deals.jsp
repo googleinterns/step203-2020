@@ -24,7 +24,7 @@
     <section class="page-section">
       <h2 class="page-section-heading text-center text-secondary mb-4">All Deals</h2>
       <div id="list" class="card-columns" style="display: none;"></div>
-      <div id="deal-loading">
+      <div id="loading">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
