@@ -166,7 +166,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("restaurantId")).thenReturn(RESTAURANT_ID_A + "");
+    when(request.getPathInfo()).thenReturn("/restaurants/" + RESTAURANT_ID_A);
     when(request.getParameter("followerId")).thenReturn(USER_ID_A + "");
     when(mockFollowManager.isFollowingRestaurant(USER_ID_A, RESTAURANT_ID_A)).thenReturn(true);
 
@@ -184,7 +184,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("restaurantId")).thenReturn(RESTAURANT_ID_A + "xxx");
+    when(request.getPathInfo()).thenReturn("/restaurants/aa" + RESTAURANT_ID_A);
     when(request.getParameter("followerId")).thenReturn(USER_ID_A + "");
     when(mockFollowManager.isFollowingRestaurant(USER_ID_A, RESTAURANT_ID_A)).thenReturn(true);
 
@@ -198,7 +198,7 @@ public class FollowServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("userId")).thenReturn(USER_ID_A + "");
+    when(request.getPathInfo()).thenReturn("/users/" + USER_ID_B);
     when(request.getParameter("followerId")).thenReturn(USER_ID_B + "");
     when(mockFollowManager.isFollowingUser(USER_ID_B, USER_ID_A)).thenReturn(false);
 

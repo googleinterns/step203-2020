@@ -116,17 +116,18 @@ public class FollowServlet extends HttpServlet {
       return;
     }
 
-    String followeeIdString;
-    if (request.getParameter("restaurantId") != null) {
-      followeeIdString = request.getParameter("restaurantId");
-    } else if (request.getParameter("userId") != null) {
-      followeeIdString = request.getParameter("userId");
-    } else {
-      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
-      return;
-    }
+    String pathInfo = request.getPathInfo();
     long followeeId;
+
     try {
+      int index = pathInfo.lastIndexOf("/");
+      if (index == -1) {
+        response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+        return;
+      }
+
+      String followeeIdString = pathInfo.substring(index + 1);
+
       followeeId = Long.parseLong(followeeIdString);
     } catch (NumberFormatException | NullPointerException e) {
       response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
@@ -134,12 +135,12 @@ public class FollowServlet extends HttpServlet {
     }
 
     boolean isFollowing;
-    if (request.getParameter("restaurantId") != null) {
+    if (pathInfo.startsWith("/restaurants/")) {
       isFollowing = followManager.isFollowingRestaurant(followerId, followeeId);
-    } else if (request.getParameter("userId") != null) {
+    } else if (pathInfo.startsWith("/users/")) {
       isFollowing = followManager.isFollowingUser(followerId, followeeId);
     } else {
-      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
