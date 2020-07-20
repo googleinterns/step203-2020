@@ -4,15 +4,19 @@ import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_B;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_B;
+import static com.google.step.TestConstants.RESTAURANT_NAME_C;
+import static com.google.step.TestConstants.RESTAURANT_PHOTO_URL_A;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.step.model.DefaultRestaurant;
 import com.google.step.model.Restaurant;
 import java.util.List;
 import org.junit.After;
@@ -51,13 +55,33 @@ public final class RestaurantManagerDatastoreTest {
   }
 
   @Test
+  public void testCreateDefaultRestaurant_success() throws Exception {
+    DefaultRestaurant restaurant =
+        restaurantManagerDatastore.createDefaultRestaurant(
+            RESTAURANT_NAME_A, RESTAURANT_PHOTO_URL_A);
+
+    assertEquals(RESTAURANT_NAME_A, restaurant.name);
+    assertEquals(RESTAURANT_PHOTO_URL_A, restaurant.photoUrl);
+  }
+
+  @Test
   public void testReadRestaurant_success() throws Exception {
     Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
     Restaurant restaurantA_Test = restaurantManagerDatastore.readRestaurant(restaurantA.id);
 
+    Restaurant restaurantB =
+        restaurantManagerDatastore.createDefaultRestaurant(
+            RESTAURANT_NAME_B, RESTAURANT_PHOTO_URL_A);
+    Restaurant restaurantB_Test = restaurantManagerDatastore.readRestaurant(restaurantB.id);
+
     assertEquals(RESTAURANT_NAME_A, restaurantA_Test.name);
     assertEquals(BLOBKEY_A, restaurantA_Test.photoBlobkey);
+
+    assertEquals(RESTAURANT_NAME_B, restaurantB_Test.name);
+    assertTrue(restaurantB_Test instanceof DefaultRestaurant);
+
+    assertEquals(RESTAURANT_PHOTO_URL_A, ((DefaultRestaurant) restaurantB_Test).photoUrl);
   }
 
   @Test
@@ -109,6 +133,23 @@ public final class RestaurantManagerDatastoreTest {
     assertEquals(2, restaurants.size());
     assertThat(restaurants, hasItems(restaurantA, restaurantB));
     assertThat(restaurants, not(hasItem(restaurantC)));
+  }
+
+  @Test
+  public void testDeleteAllRestaurant() {
+    Restaurant restaurantA =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A);
+    Restaurant restaurantB =
+        restaurantManagerDatastore.createRestaurant(RESTAURANT_NAME_B, BLOBKEY_B);
+    Restaurant restaurantC =
+        restaurantManagerDatastore.createDefaultRestaurant(
+            RESTAURANT_NAME_C, RESTAURANT_PHOTO_URL_A);
+
+    restaurantManagerDatastore.deleteAllRestaurants();
+
+    assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
+    assertNull(restaurantManagerDatastore.readRestaurant(restaurantB.id));
+    assertNull(restaurantManagerDatastore.readRestaurant(restaurantC.id));
   }
 
   @Test

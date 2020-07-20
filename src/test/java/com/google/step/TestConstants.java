@@ -71,6 +71,9 @@ public class TestConstants {
 
   public static final String RESTAURANT_NAME_A = "A";
   public static final String RESTAURANT_NAME_B = "B";
+  public static final String RESTAURANT_NAME_C = "C";
+
+  public static final String RESTAURANT_PHOTO_URL_A = "photo_url";
 
   public static final Restaurant RESTAURANT_A =
       new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
