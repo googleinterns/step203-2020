@@ -73,8 +73,13 @@
               <textarea class="form-control" name="bio" id="bio-input" maxlength="150"></textarea>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="profile-photo-input" class="col-form-label col-sm-2">Bio</label>
+
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="default-photo-checkbox" name="default-photo" value="default" onclick="toggleDefaultPhotoCheckbox(this);">
+            <label class="form-check-label">Use default profile picture</label>
+          </div>
+          <div class="form-group row" id="photo-upload-input">
+            <label for="profile-photo-input" class="col-form-label col-sm-2">Profile Photo</label>
             <div class="col-sm-10">
               <input type="file" class="form-control-file" name="picture" id="profile-photo-file"
                 onchange="profilePhotoPreview(this);">

@@ -16,6 +16,7 @@
       <servlet-name>deals</servlet-name>
       <jsp-file>/WEB-INF/jsp/deals.jsp</jsp-file>
   </servlet>
+
   <servlet>
     <servlet-name>userPage</servlet-name>
     <jsp-file>/WEB-INF/jsp/user-page.jsp</jsp-file>
@@ -29,6 +30,16 @@
   <servlet>
     <servlet-name>search</servlet-name>
     <jsp-file>/WEB-INF/jsp/search.jsp</jsp-file>
+  </servlet>
+
+  <servlet>
+    <servlet-name>restaurant</servlet-name>
+    <jsp-file>/WEB-INF/jsp/restaurant.jsp</jsp-file>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>addRestaurant</servlet-name>
+    <jsp-file>/WEB-INF/jsp/add-restaurant.jsp</jsp-file>
   </servlet>
 
   <servlet-mapping>
@@ -54,5 +65,15 @@
   <servlet-mapping>
     <servlet-name>search</servlet-name>
     <url-pattern>/search</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>restaurant</servlet-name>
+    <url-pattern>/restaurant/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>addRestaurant</servlet-name>
+    <url-pattern>/add-restaurant</url-pattern>
   </servlet-mapping>
 </web-app>

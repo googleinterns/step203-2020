@@ -116,7 +116,8 @@ public class TestConstants {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          TIME_A);
 
   public static final Deal DEAL_B =
       new Deal(
@@ -127,5 +128,6 @@ public class TestConstants {
           DATE_D,
           SOURCE_B,
           USER_ID_B,
-          RESTAURANT_ID_B);
+          RESTAURANT_ID_B,
+          TIME_A);
 }

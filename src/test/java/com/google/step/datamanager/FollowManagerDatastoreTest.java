@@ -10,6 +10,7 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -140,6 +141,17 @@ public final class FollowManagerDatastoreTest {
   }
 
   @Test
+  public void testGetFollowerIdsOfUser() {
+    manager.followUser(USER_ID_A, USER_ID_B);
+    manager.followUser(USER_ID_C, USER_ID_B);
+    manager.followUser(USER_ID_C, USER_ID_A);
+
+    Set<Long> ids = manager.getFollowerIdsOfUser(USER_ID_B);
+
+    assertThat(ids, containsInAnyOrder(USER_ID_A, USER_ID_C));
+    assertTrue(manager.getFollowerIdsOfUser(USER_ID_C).isEmpty());
+  }
+
   public void testUpdateFollowedTagIds() {
     manager.followTag(USER_ID_A, TAG_ID_A);
     manager.followTag(USER_ID_A, TAG_ID_B);
