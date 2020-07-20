@@ -92,7 +92,11 @@ public class DealPostListServlet extends HttpServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {}
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Deal> deals = dealManager.getAllDeals();
+    response.setContentType("application/json;");
+    response.getWriter().println(JsonFormatter.getDealListJson(deals));
+  }
 
   private boolean anyEmpty(String... strs) {
     for (String str : strs) {

@@ -155,7 +155,13 @@ public class DealManagerDatastore implements DealManager {
 
   @Override
   public List<Deal> getAllDeals() {
-    return new ArrayList<Deal>();
+    Query query = new Query("Deal");
+    PreparedQuery pq = datastore.prepare(query);
+    List<Deal> dealResults = new ArrayList<>();
+    for (Entity dealEntity : pq.asIterable()) {
+      dealResults.add(transformEntityToDeal(dealEntity));
+    }
+    return dealResults;
   }
 
   /**
