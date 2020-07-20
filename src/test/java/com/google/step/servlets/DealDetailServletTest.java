@@ -105,7 +105,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void testDoDelete_sucess() throws IOException {
+  public void testDoDelete_success() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doDelete(mockRequest, mockResponse);
