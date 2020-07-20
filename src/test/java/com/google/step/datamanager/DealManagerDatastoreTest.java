@@ -330,6 +330,7 @@ public final class DealManagerDatastoreTest {
             RESTAURANT_ID_A,
             TAG_LIST);
     List<Tag> tags = dealManagerDatastore.getTags(deal.id);
+
     assertEquals(1, tags.size());
     assertEquals(TAG_NAME_A, tags.get(0).name);
   }
@@ -350,6 +351,7 @@ public final class DealManagerDatastoreTest {
     dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
     List<Tag> tags = dealManagerDatastore.getTags(createdDeal.id);
+
     assertEquals(0, tags.size());
   }
 }
