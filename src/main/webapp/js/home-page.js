@@ -88,7 +88,7 @@ function createCarouselElements(numCarouselSlidesList,
 
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
-      
+
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
       const numCol = 'col-md-' + 12 / numDealPerSlide;
