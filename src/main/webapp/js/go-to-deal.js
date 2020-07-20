@@ -1,22 +1,21 @@
-const commentsData = {
-  'comments': [
-    {
-      'id': 1234,
-      'user': {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'profile-pic': '/some-url-12345.jpg',
-      },
-      'timestamp': 123456789, // in milliseconds
-      'text': 'I ate here last week. Portions too small.',
-    },
-  ],
-  'token': 'bhfsdaog', // token for pagination
-};
-
-let votes = 0;
 let dealId;
+let votes = 0;
+let myVote = 0;
+
+/**
+ * Calls the backend to get the list of comments and loads it to the page
+ */
+function initComments() {
+  document.getElementById('dealId-input').value = dealId;
+  $.ajax({
+    url: '/api/comments',
+    data: {
+      dealId: dealId,
+    },
+  }).done((comments) => {
+    loadCommentsToPage(comments);
+  });
+}
 
 /**
  * Loads the deal onto the page
@@ -37,6 +36,7 @@ function loadDealDataToPage(deal) {
 
   const dealRestaurantElement = document.getElementById('restaurant-info');
   dealRestaurantElement.innerText = deal.restaurant.name;
+  dealRestaurantElement.href = '/restaurant/' + deal.restaurant.id;
 
   const dealValidStart = document.getElementById('start-date');
   dealValidStart.innerText = deal.start;
@@ -60,34 +60,39 @@ function loadDealDataToPage(deal) {
 
 /**
  * Get comments for a deal
- * @param {object} commentsData
+ * @param {array} comments
  */
-function getComments(commentsData) {
+function loadCommentsToPage(comments) {
   const commentListElement = document.getElementById('comment-list');
   commentListElement.innerHTML = '';
-  commentsData.comments.forEach((comment) => {
+  comments.forEach((comment) => {
     commentListElement.appendChild(createCommentElement(comment));
   });
 }
 
 /**
  * Creates comment element
- * @param {object} commentEntity
+ * @param {object} comment
  * @return {object} commentElement
  */
-function createCommentElement(commentEntity) {
+function createCommentElement(comment) {
   const commentElement = document.createElement('div');
-  commentElement.className = 'comment border border-info pb-3 pt-3 mb-3 mt-3';
+  commentElement.className = 'border border-info py-3 px-3 my-3';
 
-  const textElement = document.createElement('span');
-  textElement.innerText = commentEntity.user.username +
-  ': ' + commentEntity.text;
-
+  const textElement = document.createElement('div');
+  textElement.innerText = comment.user.username +
+  ': ' + comment.content;
   commentElement.appendChild(textElement);
+
+  const timeElement = document.createElement('small');
+  timeElement.className = 'text-muted';
+  const date = new Date(Date.parse(comment.timestamp));
+  timeElement.innerText = 'Posted on: ' + date.toString();
+  commentElement.appendChild(timeElement);
+
   return commentElement;
 }
 
-let myVote = 0;
 /**
  * Updates vote UI based on global variable vote and myVote
  */
@@ -179,6 +184,7 @@ function initDeal() {
   $.ajax('/api/deals/' + myId)
       .done((deal) => {
         loadDealDataToPage(deal);
+        initComments();
         initVotes();
       })
       .fail(() => {
@@ -188,5 +194,4 @@ function initDeal() {
 
 addLoadEvent(() => {
   initDeal();
-  getComments(commentsData);
 });
