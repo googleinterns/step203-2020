@@ -148,11 +148,13 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by restaurants or users */
   private List<Deal> getDealsPublishedByRestaurantsOrUsers(Set<Long> ids, String filterAttribute) {
     List<Deal> dealResults = new ArrayList<>();
-    Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
-    Query query = new Query("Deal").setFilter(propertyFilter);
-    PreparedQuery pq = datastore.prepare(query);
-    for (Entity entity : pq.asIterable()) {
-      dealResults.add(readDeal(entity.getKey().getId()));
+    if (ids.size() > 0) {
+      Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
+      Query query = new Query("Deal").setFilter(propertyFilter);
+      PreparedQuery pq = datastore.prepare(query);
+      for (Entity entity : pq.asIterable()) {
+        dealResults.add(readDeal(entity.getKey().getId()));
+      }
     }
     return dealResults;
   }
