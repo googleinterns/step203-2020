@@ -26,8 +26,6 @@ public class TestConstants {
   private static final String URL_PREFIX = "/api/images/";
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
-  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
-  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
 
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
@@ -62,6 +60,8 @@ public class TestConstants {
   public static final Tag TAG_B = new Tag(TAG_ID_B, TAG_NAME_B);
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
+
+  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
@@ -113,7 +113,8 @@ public class TestConstants {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          TIME_A);
 
   public static final Deal DEAL_B =
       new Deal(
@@ -124,5 +125,6 @@ public class TestConstants {
           DATE_D,
           SOURCE_B,
           USER_ID_B,
-          RESTAURANT_ID_B);
+          RESTAURANT_ID_B,
+          TIME_A);
 }

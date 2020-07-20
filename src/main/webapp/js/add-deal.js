@@ -24,7 +24,7 @@ $('#restaurant-input').keyup(function() {
 });
 $('#restaurant-search-results').hide();
 $('#restaurant-input').focus(function() {
-  $('#restaurant-search-results').show();
+  searchRestaurantThrottle();
 });
 $('#restaurant-input').blur(function() {
   $('#restaurant-search-results').hide();
@@ -91,7 +91,7 @@ function selectRestaurant(restaurant) {
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
       <span class="flex-grow-1">${restaurant.name}</span>
-      <img class="search-menu-pic" src="${restaurant.pic}">
+      <img class="search-menu-pic" src="${restaurant.image}">
     </div>
   `;
   const restaurantHiddenInput = $('#restaurant-selected-id-input')[0];
@@ -103,35 +103,37 @@ function selectRestaurant(restaurant) {
  * results.
  */
 function searchRestaurant() {
-  const text = $('#restaurant-input').val();
-  const results = [ // TODO(limli): use backend results
-    {
-      'id': 1234,
-      'name': 'KFC',
-      'pic': 'https://3dpng.com/wp-content/uploads/2020/05/KFC-New-Logo.png',
+  const text = $('#restaurant-input').val().trim();
+  if (text == '') {
+    $('#restaurant-search-results').hide();
+    return;
+  }
+  $.ajax({
+    url: '/api/search/restaurants',
+    data: {
+      query: text,
     },
-    {
-      'id': 4311,
-      'name': 'McDonald\'s',
-      'pic': 'https://d1nqx6es26drid.cloudfront.net/app/assets/img/logo_mcd.png',
-    },
-    {
-      'id': 9876,
-      'name': text,
-      'pic': 'https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg',
-    },
-  ];
-  const menu = $('#restaurant-search-results')[0];
-  menu.innerHTML = '';
-  results.forEach((restaurant) => {
-    const row = document.createElement('div');
-    row.className = 'd-flex align-items-center search-menu-item p-2';
-    row.innerHTML = `
-      <span class="flex-grow-1">${restaurant.name}</span>
-      <img class="search-menu-pic" src="${restaurant.pic}">
-    `;
-    row.onmousedown = () => selectRestaurant(restaurant);
-    menu.appendChild(row);
+  }).done((restaurants) => {
+    const menu = document.getElementById('restaurant-search-results');
+    menu.innerHTML = '';
+    if (restaurants.length == 0) {
+      const row = document.createElement('div');
+      row.className = 'd-flex align-items-center search-menu-item p-2';
+      row.innerHTML = 'No results';
+      menu.appendChild(row);
+    } else {
+      restaurants.forEach((restaurant) => {
+        const row = document.createElement('div');
+        row.className = 'd-flex align-items-center search-menu-item p-2';
+        row.innerHTML = `
+          <span class="flex-grow-1">${restaurant.name}</span>
+          <img class="search-menu-pic" src="${restaurant.image}">
+        `;
+        row.onmousedown = () => selectRestaurant(restaurant);
+        menu.appendChild(row);
+      });
+    }
+    $('#restaurant-search-results').show();
   });
 }
 
