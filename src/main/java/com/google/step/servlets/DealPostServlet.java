@@ -94,11 +94,10 @@ public class DealPostServlet extends HttpServlet {
     }
 
     String tagParameter = request.getParameter("tags");
-    if (tagParameter == null) {
-      tagParameter = "";
+    List<String> tagNames = new ArrayList<>();
+    if (tagParameter != null && !tagParameter.isEmpty()) {
+      tagNames = Arrays.asList(tagParameter.split(","));
     }
-    List<String> tagNames =
-        (tagParameter.isEmpty()) ? new ArrayList<>() : Arrays.asList(tagParameter.split(","));
 
     Deal deal =
         dealManager.createDeal(
