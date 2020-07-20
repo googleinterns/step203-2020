@@ -1,5 +1,9 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DEAL_ID_B;
+import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -12,12 +16,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class VoteManagerDatastoreTest {
-
-  private static final long USER_ID_A = 123;
-  private static final long USER_ID_B = 456;
-
-  private static final long DEAL_ID_A = 111;
-  private static final long DEAL_ID_B = 222;
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
