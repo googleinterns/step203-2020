@@ -6,7 +6,7 @@ function configureRestaurantInfo(restaurant) {
   const restaurantName = document.getElementById('restaurant-name');
   restaurantName.innerText = restaurant.name;
   const restaurantPhoto = document.getElementById('restaurant-photo');
-  restaurantPhoto.src = restaurant.photoUrl;
+  restaurantPhoto.src = restaurant.image;
 }
 
 /**
@@ -59,12 +59,10 @@ function unfollow(restaurantId) {
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
-  // TODO call back end
-  restaurant = {
-    name: 'McDonald',
-    photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
-  };
-  configureRestaurantInfo(restaurant);
+  $.ajax('/api/restaurants/' + id)
+      .done((restaurant) => {
+        configureRestaurantInfo(restaurant);
+      });
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {
