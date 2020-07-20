@@ -23,7 +23,12 @@
   <div class="container">
     <section class="page-section">
       <h2 class="page-section-heading text-center text-secondary mb-4">All Deals</h2>
-      <div id="list" class="card-columns"></div>
+      <div id="list" class="card-columns" style="display: none;"></div>
+      <div id="deal-loading">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
     </section>
   </div>
   <%@include file="/WEB-INF/components/footer.html"%>
@@ -35,7 +40,7 @@
   <!-- Core theme JS-->
   <script src="js/scripts.js"></script>
   <!-- Page JS -->
-  <script src="js/deals-list.js"></script>
+  <script src="js/all-deals.js"></script>
 </body>
 
 </html>
