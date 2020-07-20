@@ -135,7 +135,7 @@ public class TestConstants {
   public static final Comment COMMENT_B =
       new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
 
-  public static final Comment UPDATE_COMMENT_A =
+  public static final Comment UPDATED_COMMENT_A =
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_B, TIME_A);
 
   public static final String COMMENT_A_JSON =

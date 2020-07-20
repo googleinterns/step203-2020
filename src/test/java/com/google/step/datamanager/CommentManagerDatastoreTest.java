@@ -4,10 +4,13 @@ import static com.google.step.TestConstants.COMMENT_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
-import static com.google.step.TestConstants.UPDATE_COMMENT_A;
+import static com.google.step.TestConstants.UPDATED_COMMENT_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -50,8 +53,8 @@ public final class CommentManagerDatastoreTest {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
     List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A);
-    assertEquals(commentA, comments.get(1));
-    assertEquals(commentB, comments.get(0));
+    assertEquals(2, comments.size());
+    assertThat(comments, hasItems(commentA, commentB));
   }
 
   @Test
@@ -76,7 +79,7 @@ public final class CommentManagerDatastoreTest {
     Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
     commentManagerDatastore.deleteComment(commentA.id);
     List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A);
-    assertEquals(commentB, comments.get(0));
+    assertThat(comments, hasItem(commentB));
     assertEquals(1, comments.size());
   }
 
@@ -85,6 +88,7 @@ public final class CommentManagerDatastoreTest {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     commentManagerDatastore.updateComment(commentA.id, CONTENT_B);
     List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A);
-    assertEquals(UPDATE_COMMENT_A, comments.get(0));
+    assertEquals(UPDATED_COMMENT_A, comments.get(0));
+    assertEquals(1, comments.size());
   }
 }
