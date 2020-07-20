@@ -2,7 +2,6 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.http.HttpStatusCodes;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -112,25 +111,23 @@ public class FollowServlet extends HttpServlet {
     try {
       followerId = Long.parseLong(followerIdString);
     } catch (NumberFormatException | NullPointerException e) {
-      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
     String pathInfo = request.getPathInfo();
     long followeeId;
-
     try {
       int index = pathInfo.lastIndexOf("/");
       if (index == -1) {
-        response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
 
       String followeeIdString = pathInfo.substring(index + 1);
-
       followeeId = Long.parseLong(followeeIdString);
     } catch (NumberFormatException | NullPointerException e) {
-      response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
