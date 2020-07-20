@@ -27,7 +27,7 @@ public class RestaurantPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
-    String photoBlobkey = "A_BLOB_KEY";
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
 
