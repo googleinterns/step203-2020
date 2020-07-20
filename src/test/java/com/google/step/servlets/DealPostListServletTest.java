@@ -39,7 +39,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ImageUploader.class)
-public class DealPostServletTest {
+public class DealPostListServletTest {
 
   private static final String RESTAURANT_ID_A_STRING = Long.toString(RESTAURANT_ID_A);
 
@@ -56,7 +56,7 @@ public class DealPostServletTest {
           null);
 
   private HttpServletRequest mockRequest;
-  private DealPostServlet servlet;
+  private DealPostListServlet servlet;
   private DealManager mockDealManager;
   private UserService mockUserService;
   private UserManager mockUserManager;
@@ -94,7 +94,7 @@ public class DealPostServletTest {
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet = new DealPostServlet(mockDealManager, mockUserManager, mockUserService);
+    servlet = new DealPostListServlet(mockDealManager, mockUserManager, mockUserService);
   }
 
   @Test

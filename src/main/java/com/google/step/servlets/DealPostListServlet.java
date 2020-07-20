@@ -20,20 +20,20 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting deals. */
 @WebServlet("/api/deals")
-public class DealPostServlet extends HttpServlet {
+public class DealPostListServlet extends HttpServlet {
 
   private final UserService userService;
   private final DealManager dealManager;
   private final UserManager userManager;
 
-  public DealPostServlet(
+  public DealPostListServlet(
       DealManager dealManager, UserManager userManager, UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.userService = userService;
   }
 
-  public DealPostServlet() {
+  public DealPostListServlet() {
     userService = UserServiceFactory.getUserService();
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
@@ -90,6 +90,9 @@ public class DealPostServlet extends HttpServlet {
 
     response.sendRedirect("/deals/" + deal.id);
   }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {}
 
   private boolean anyEmpty(String... strs) {
     for (String str : strs) {
