@@ -95,6 +95,7 @@ public class DealPostListServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Deal> deals = dealManager.getAllDeals();
     response.setContentType("application/json;");
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
     response.getWriter().println(JsonFormatter.getDealListJson(deals));
   }
 
