@@ -179,4 +179,13 @@ public class DealDetailServletTest {
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
+
+  @Test
+  public void testDoDelete_notFound() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_B);
+
+    servlet.doDelete(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
+  }
 }
