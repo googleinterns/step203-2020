@@ -1,12 +1,15 @@
 package com.google.step.servlets;
 
-import static com.google.step.TestConstants.COMMENT_ID_A;
-import static com.google.step.TestConstants.COMMENT_ID_B;
+import static com.google.step.TestConstants.COMMENT_A;
+import static com.google.step.TestConstants.COMMENT_A_JSON;
+import static com.google.step.TestConstants.COMMENT_B;
+import static com.google.step.TestConstants.COMMENT_B_JSON;
 import static com.google.step.TestConstants.CONTENT_A;
-import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
-import static com.google.step.TestConstants.TIME_A;
-import static com.google.step.TestConstants.TIME_B;
+import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.EMAIL_B;
+import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -16,11 +19,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,20 +41,32 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @RunWith(JUnit4.class)
 public class CommentGetPostServletTest {
 
-  private static final Comment COMMENT_A =
-      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-
-  private static final Comment COMMENT_B =
-      new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
-
   private CommentManager mockCommentManager;
+  private UserService mockUserService;
+  private UserManager mockUserManager;
 
   private CommentGetPostServlet commentGetPostServlet;
 
   @Before
   public void setUp() {
     mockCommentManager = mock(CommentManager.class);
-    commentGetPostServlet = new CommentGetPostServlet(mockCommentManager);
+    mockUserService = mock(UserService.class);
+    mockUserManager = mock(UserManager.class);
+    commentGetPostServlet =
+        new CommentGetPostServlet(mockCommentManager, mockUserService, mockUserManager);
+
+    // mock behaviour when user is logged in
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    User currentUser = new User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+
+    // mock user manager
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
+    when(mockUserManager.readUser(USER_ID_B)).thenReturn(USER_B);
+    List<Long> userIds = Arrays.asList(USER_ID_A, USER_ID_B);
+    when(mockUserManager.readUsers(userIds)).thenReturn(Arrays.asList(USER_A, USER_B));
   }
 
   @Test
@@ -67,15 +86,7 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
 
-    String commentA =
-        String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-    String commentB =
-        String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
-    String expected = "[" + commentA + "," + commentB + "]";
+    String expected = "[" + COMMENT_A_JSON + "," + COMMENT_B_JSON + "]";
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -121,7 +132,6 @@ public class CommentGetPostServletTest {
 
   @Test
   public void testDoPost_success() throws Exception {
-    List<Comment> comments = new ArrayList<>();
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -137,12 +147,6 @@ public class CommentGetPostServletTest {
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockCommentManager).createComment(anyLong(), anyLong(), eq(CONTENT_A));
-
-    String expected =
-        String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    verify(response).sendRedirect("/deals/" + DEAL_ID_A);
   }
 }
