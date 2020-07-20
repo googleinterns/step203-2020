@@ -30,7 +30,7 @@ public class RestaurantPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
-    String photoBlobkey = "a_blob_key";
+    String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
     List<Deal> deals = new ArrayList<>();

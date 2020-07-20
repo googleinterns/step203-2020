@@ -28,9 +28,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
+import com.google.step.model.Deal;
+import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.PrintWriter;
@@ -38,7 +42,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
@@ -62,6 +66,8 @@ public class UserServletTest {
   private UserService mockUserService;
   private TagManager mockTagManager;
   private FollowManager mockFollowManager;
+  private DealManager mockDealManager;
+  private RestaurantManager mockRestaurantManager;
 
   @Before
   public void setUp() {
@@ -69,8 +75,16 @@ public class UserServletTest {
     mockUserService = mock(UserService.class);
     mockTagManager = mock(TagManager.class);
     mockFollowManager = mock(FollowManager.class);
+    mockDealManager = mock(DealManager.class);
+    mockRestaurantManager = mock(RestaurantManager.class);
     userServlet =
-        new UserServlet(mockUserManager, mockUserService, mockTagManager, mockFollowManager);
+        new UserServlet(
+            mockUserManager,
+            mockUserService,
+            mockDealManager,
+            mockFollowManager,
+            mockTagManager,
+            mockRestaurantManager);
   }
 
   @After
@@ -82,11 +96,33 @@ public class UserServletTest {
   public void testDoGet_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
-    when(request.getPathInfo()).thenReturn("/1");
-    when(mockUserManager.readUser(1)).thenReturn(USER_A);
-    Set<Long> tagIds = new HashSet<>();
-    when(mockFollowManager.getFollowedTagIds(1)).thenReturn(tagIds);
-    when(mockTagManager.readTags(new ArrayList<>(tagIds))).thenReturn(new ArrayList<Tag>());
+
+    when(request.getPathInfo()).thenReturn("/" + USER_ID_A);
+    when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
+
+    List<Deal> deals = new ArrayList<>();
+    when(mockDealManager.getDealsPublishedByUser(USER_ID_A)).thenReturn(deals);
+
+    List<Long> followingIds = new ArrayList<>();
+    when(mockFollowManager.getFollowedUserIds(USER_ID_A)).thenReturn(new HashSet<>(followingIds));
+    List<User> following = new ArrayList<>();
+    when(mockUserManager.readUsers(followingIds)).thenReturn(following);
+
+    List<Long> followerIds = new ArrayList<>();
+    when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
+    List<User> followers = new ArrayList<>();
+    when(mockUserManager.readUsers(followerIds)).thenReturn(followers);
+
+    List<Long> tagIds = new ArrayList<>();
+    when(mockFollowManager.getFollowedTagIds(USER_ID_A)).thenReturn(new HashSet<>(tagIds));
+    List<Tag> tags = new ArrayList<>();
+    when(mockTagManager.readTags(tagIds)).thenReturn(tags);
+
+    List<Long> restaurantIds = new ArrayList<>();
+    when(mockFollowManager.getFollowedRestaurantIds(USER_ID_A))
+        .thenReturn(new HashSet<>(restaurantIds));
+    List<Restaurant> restaurants = new ArrayList<>();
+    when(mockRestaurantManager.readRestaurants(restaurantIds)).thenReturn(restaurants);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

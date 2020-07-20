@@ -52,7 +52,8 @@ public class DealPostServletTest {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          null);
 
   private HttpServletRequest mockRequest;
   private DealPostServlet servlet;

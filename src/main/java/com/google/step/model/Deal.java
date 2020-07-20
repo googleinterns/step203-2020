@@ -11,6 +11,7 @@ public class Deal {
   public final String source;
   public final long posterId;
   public final long restaurantId;
+  public final String creationTimeStamp;
 
   public Deal(
       long id,
@@ -20,7 +21,8 @@ public class Deal {
       String end,
       String source,
       long posterId,
-      long restaurantId) {
+      long restaurantId,
+      String creationTimeStamp) {
     this.id = id;
     this.description = description;
     this.photoBlobkey = photoBlobkey;
@@ -29,6 +31,7 @@ public class Deal {
     this.source = source;
     this.posterId = posterId;
     this.restaurantId = restaurantId;
+    this.creationTimeStamp = creationTimeStamp;
   }
 
   @Override
