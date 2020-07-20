@@ -111,10 +111,10 @@ public class HomePageServlet extends HttpServlet {
           getSectionListMaps(homePageSection, userId);
       if (homePageDealsMaps.size() == 4) {
         Map<String, Object> homePageMap = new HashMap<>();
-        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
-        homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-        homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
-        homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
+        homePageMap.put("trending", homePageDealsMaps.get(0));
+        homePageMap.put("users", homePageDealsMaps.get(1));
+        homePageMap.put("restaurants", homePageDealsMaps.get(2));
+        homePageMap.put("tags", homePageDealsMaps.get(3));
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
       } else if (homePageDealsMaps.size() == 1) {
@@ -123,13 +123,12 @@ public class HomePageServlet extends HttpServlet {
             .getWriter()
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
-    } else { // user is not logged in and asks for a different section, is this possible? manually
-      // type in url
+    } else { // user is not logged in, only display trending for home page
       if (homePageSection == null) {
         homePageSection = "trending";
         List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
         Map<String, Object> homePageMap = new HashMap<>();
-        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+        homePageMap.put("trending", homePageDealsMaps.get(0));
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
       } else if (homePageSection.equals("trending")) {

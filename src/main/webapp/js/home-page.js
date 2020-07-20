@@ -1,5 +1,5 @@
 const homePageDealsData = {
-  popularDeals: [
+  trending: [
     {
       restaurant: 'A',
       description: 'starbucks mocha 1-for-1',
@@ -36,8 +36,8 @@ const homePageDealsData = {
  * @param {object} homePage
  */
 function createHomePage(homePage) {
-  const homePageSections = ['popularDeals', 'restaurantsIFollow',
-    'usersIFollow', 'tagsIFollow'];
+  const homePageSections = ['trending', 'restaurants',
+    'users', 'tags'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
     if (!homePage.hasOwnProperty(homePageSections[i]) ||
@@ -93,16 +93,17 @@ function createHomePage(homePage) {
 function createCarouselElements(numCarouselSlidesList,
     numDealPerSlide, homePageDeals) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
-  const homePageSections = ['popularDeals', 'restaurantsIFollow',
-    'usersIFollow', 'tagsIFollow'];
+  const homePageSections = ['trending', 'restaurants',
+    'users', 'tags'];
 
   // number of sections on homepage
   for (let i = 0; i < carouselElements.length; i++) {
     if (!homePageDeals.hasOwnProperty(homePageSections[i]) ||
       homePageDeals[homePageSections[i]].length == 0) {
       // set display to none if there is no data for that section
-      carouselElements[i].children[2].style.display = 'none';
+      carouselElements[i].children[0].style.display = 'none';
       carouselElements[i].children[3].style.display = 'none';
+      carouselElements[i].children[4].style.display = 'none';
 
       // inform users to log in to view
       const showNotFound = document.createElement('h5');
@@ -111,9 +112,10 @@ function createCarouselElements(numCarouselSlidesList,
       carouselElements[i].appendChild(showNotFound);
       continue;
     }
+    carouselElements[i].children[0].href = '/all-deals/' + homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
-    const indicatorListElement = carouselElements[i].children[0];
-    const carouselItemList = carouselElements[i].children[1];
+    const indicatorListElement = carouselElements[i].children[1];
+    const carouselItemList = carouselElements[i].children[2];
     const numCarouselSlides = numCarouselSlidesList[i];
 
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
@@ -166,8 +168,8 @@ function createCarouselElements(numCarouselSlidesList,
       indicatorListElement.appendChild(indicatorListChild);
       carouselItemList.appendChild(carouselItemListChild);
     }
-    carouselElements[i].children[2].href = '#carousel-' + i;
     carouselElements[i].children[3].href = '#carousel-' + i;
+    carouselElements[i].children[4].href = '#carousel-' + i;
   }
 }
 
