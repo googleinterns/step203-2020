@@ -37,7 +37,6 @@
     </div>
 
     <div id="deals-container" class="container">
-
     </div>
 
     </div>
