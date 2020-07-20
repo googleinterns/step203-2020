@@ -9,6 +9,7 @@
   <title>Restaurant</title>
   <script src="/js/util.js"></script>
   <script src="/js/restaurant-page.js"></script>
+  <link href="/css/deal.css" rel="stylesheet" />
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <!-- Google fonts-->
@@ -33,6 +34,10 @@
           </h3>
         </div>
       </div>
+    </div>
+
+    <div id="deals-container" class="container">
+
     </div>
 
     </div>
