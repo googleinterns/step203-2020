@@ -113,7 +113,7 @@ public final class DealManagerDatastoreTest {
 
   @Test
   public void testUpdate_invalidId_returnsNull() {
-    Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1);
+    Deal deal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(deal, null);
     assertNull(updatedDeal);
   }
@@ -130,7 +130,8 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             new ArrayList<>());
-    Deal dealToUpdate = new Deal(createdDeal.id, DESCRIPTION_B, null, null, null, null, -1, -1);
+    Deal dealToUpdate =
+        new Deal(createdDeal.id, DESCRIPTION_B, null, null, null, null, -1, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, null);
 
     // only description should change, everything else should remain
@@ -143,7 +144,8 @@ public final class DealManagerDatastoreTest {
             DATE_B,
             SOURCE_A,
             USER_ID_A,
-            RESTAURANT_ID_A);
+            RESTAURANT_ID_A,
+            null);
     assertEquals(expected, updatedDeal);
   }
 
@@ -160,7 +162,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             new ArrayList<>());
-    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1);
+    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, USER_ID_B, -1, null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, null);
     assertEquals(DEAL_A, updatedDeal);
   }
@@ -186,7 +188,8 @@ public final class DealManagerDatastoreTest {
             DATE_D,
             SOURCE_B,
             -1,
-            RESTAURANT_ID_B);
+            RESTAURANT_ID_B,
+            null);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, TAG_LIST);
 
     Deal expected =
@@ -198,7 +201,8 @@ public final class DealManagerDatastoreTest {
             DATE_D,
             SOURCE_B,
             USER_ID_A,
-            RESTAURANT_ID_B);
+            RESTAURANT_ID_B,
+            null);
     assertEquals(expected, updatedDeal);
   }
 
@@ -232,7 +236,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             TAG_LIST);
-    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, -1, -1);
+    Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, -1, -1, null);
     dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
     List<Tag> tags = dealManagerDatastore.getTags(createdDeal.id);

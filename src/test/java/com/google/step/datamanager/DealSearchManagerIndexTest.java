@@ -45,7 +45,8 @@ public final class DealSearchManagerIndexTest {
           DATE_B,
           SOURCE_A,
           USER_ID_A,
-          RESTAURANT_ID_A);
+          RESTAURANT_ID_A,
+          null);
 
   private final Deal DEAL_B =
       new Deal(
@@ -56,7 +57,8 @@ public final class DealSearchManagerIndexTest {
           DATE_D,
           SOURCE_B,
           USER_ID_B,
-          RESTAURANT_ID_B);
+          RESTAURANT_ID_B,
+          null);
 
   private final List<Long> EMPTY_TAGS = new ArrayList<>();
 
@@ -97,7 +99,8 @@ public final class DealSearchManagerIndexTest {
             DATE_B,
             SOURCE_A,
             USER_ID_A,
-            RESTAURANT_ID_A);
+            RESTAURANT_ID_A,
+            null);
     Deal deal2 =
         new Deal(
             DEAL_ID_B,
@@ -107,7 +110,8 @@ public final class DealSearchManagerIndexTest {
             DATE_D,
             SOURCE_B,
             USER_ID_B,
-            RESTAURANT_ID_B);
+            RESTAURANT_ID_B,
+            null);
 
     dealSearchManager.putDeal(deal1, EMPTY_TAGS);
     dealSearchManager.putDeal(deal2, EMPTY_TAGS);
@@ -133,10 +137,26 @@ public final class DealSearchManagerIndexTest {
   public void testSearch_wordAndTag() {
     Deal deal1 =
         new Deal(
-            DEAL_ID_A, "keyword", BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A);
+            DEAL_ID_A,
+            "keyword",
+            BLOBKEY_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            RESTAURANT_ID_A,
+            null);
     Deal deal2 =
         new Deal(
-            DEAL_ID_B, "keyword", BLOBKEY_B, DATE_C, DATE_D, SOURCE_B, USER_ID_B, RESTAURANT_ID_B);
+            DEAL_ID_B,
+            "keyword",
+            BLOBKEY_B,
+            DATE_C,
+            DATE_D,
+            SOURCE_B,
+            USER_ID_B,
+            RESTAURANT_ID_B,
+            null);
     Deal deal3 =
         new Deal(
             DEAL_ID_C,
@@ -146,7 +166,8 @@ public final class DealSearchManagerIndexTest {
             DATE_D,
             SOURCE_B,
             USER_ID_B,
-            RESTAURANT_ID_B);
+            RESTAURANT_ID_B,
+            null);
 
     dealSearchManager.putDeal(deal1, Arrays.asList(1L));
     dealSearchManager.putDeal(deal2, Arrays.asList(2L));
@@ -169,7 +190,8 @@ public final class DealSearchManagerIndexTest {
             DATE_B,
             SOURCE_A,
             USER_ID_A,
-            RESTAURANT_ID_A);
+            RESTAURANT_ID_A,
+            null);
 
     dealSearchManager.putDeal(deal, EMPTY_TAGS);
 

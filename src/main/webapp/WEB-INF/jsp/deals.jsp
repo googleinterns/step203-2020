@@ -52,22 +52,22 @@
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="nav-details-tab">
             <div class="col-md-8">
-              <p class="text-secondary">Description: <span id="deal-info"></span></p>
-              <p class="text-secondary">Restaurant: <span id="restaurant-info"></span></p>
+              <p>Description: <span id="deal-info"></span></p>
+              <p>Restaurant: <a id="restaurant-info"></a></p>
               <ul class="list-group" id="outlet-list"><span id="all-or-selected"></span></ul>
-              <p class="text-secondary">Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
-              <p class="text-secondary">Posted by: <a id="user-poster" href=""></a></p>
-              <p class="text-secondary">Source: <a id="deal-source" href=""></a></p>
-              <ul class="list-group" id="menu"></ul>
+              <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
+              <p>Posted by: <a id="user-poster" href=""></a></p>
+              <p>Source: <a id="deal-source" href=""></a></p>
             </div>
           </div>
           <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">
             <div class="row">
               <div class="col-sm-12 mt-3">
-                <form id="comment-form" class="hidden" enctype="multipart/form-data" method="POST">
-                  <textarea style="width: 100%;" class="comment form-control mb-3" type="text" name="comment"
+                <form id="comment-form" action="/api/comments" method="POST">
+                  <textarea class="w-100 form-control mb-3" type="text" name="content"
                     placeholder="Leave a comment..."></textarea>
-                  <input type="submit" class="btn btn-secondary float-right" />
+                  <input type="hidden" name="dealId" id="dealId-input">
+                  <input type="submit" class="btn btn-primary float-right" />
                 </form>
               </div>
             </div>

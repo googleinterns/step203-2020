@@ -13,19 +13,21 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
-  public static String getCommentsJson(List<Comment> comments) {
+  public static String getCommentsJson(List<Comment> comments, List<User> users) {
     Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
-    for (Comment comment : comments) {
-      commentMapList.add(getCommentMap(comment));
+    List<Map<String, Object>> commentMapList = new ArrayList<>();
+    for (int i = 0; i < comments.size(); i++) {
+      Comment comment = comments.get(i);
+      User user = users.get(i);
+      commentMapList.add(getCommentMap(comment, user));
     }
     String json = gson.toJson(commentMapList);
     return json;
   }
 
-  public static String getCommentJson(Comment comment) {
+  public static String getCommentJson(Comment comment, User user) {
     Gson gson = new Gson();
-    String json = gson.toJson(getCommentMap(comment));
+    String json = gson.toJson(getCommentMap(comment, user));
     return json;
   }
 
@@ -62,11 +64,11 @@ public class JsonFormatter {
     return json;
   }
 
-  private static Map<String, Object> getCommentMap(Comment comment) {
+  private static Map<String, Object> getCommentMap(Comment comment, User poster) {
     Map<String, Object> commentMap = new HashMap<>();
     commentMap.put("id", comment.id);
     commentMap.put("dealId", comment.dealId);
-    commentMap.put("userId", comment.userId);
+    commentMap.put("user", getUserBriefMap(poster));
     commentMap.put("content", comment.content);
     commentMap.put("timestamp", comment.timestamp);
     return commentMap;
@@ -93,9 +95,6 @@ public class JsonFormatter {
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
     dealMap.put("image", getImageUrl(deal.photoBlobkey));
-    dealMap.put("poster", deal.posterId); // TODO use user name
-    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
-    dealMap.put("votes", 0); // TODO add votes
     return dealMap;
   }
 
@@ -103,7 +102,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoBlobkey", restaurant.photoBlobkey);
+    restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
     return restaurantMap;
   }
 
@@ -157,7 +156,9 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -171,7 +172,7 @@ public class JsonFormatter {
   /**
    * Returns a map representation of brief user info.
    *
-   * @param user the user object being formatted
+   * @param user the user object being formatted.
    * @return a map representation of brief user info.
    */
   private static Map<String, Object> getUserBriefMap(User user) {
@@ -180,7 +181,9 @@ public class JsonFormatter {
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
       if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+      } else {
+        userMap.put("picture", "/images/default-profile-pic.svg");
       }
     }
     return userMap;
@@ -189,7 +192,7 @@ public class JsonFormatter {
   /**
    * Returns a list of maps of brief user info.
    *
-   * @param users a list of user whose brief info will be returned
+   * @param users a list of users whose brief info will be returned
    * @return a list of maps of brief user info.
    */
   private static List<Map<String, Object>> getUserListBriefMaps(List<User> users) {
@@ -200,12 +203,33 @@ public class JsonFormatter {
     return userMaps;
   }
 
-  // TODO
+  /**
+   * Returns a list of maps of brief tag info.
+   *
+   * @param tags a list of tags.
+   * @return a list of maps of brief tag info.
+   */
   private static List<Map<String, Object>> getTagListBriefMaps(List<Tag> tags) {
-    return new ArrayList<>();
+    List<Map<String, Object>> tagMaps = new ArrayList<>();
+    for (Tag tag : tags) {
+      tagMaps.add(getTagBriefMap(tag));
+    }
+    return tagMaps;
   }
 
-  // TODO
+  /**
+   * Returns a map representation of brief tag info.
+   *
+   * @param tag a tag object.
+   * @return a map representation of brief tag info.
+   */
+  private static Map<String, Object> getTagBriefMap(Tag tag) {
+    Map<String, Object> tagMap = new HashMap<>();
+    tagMap.put("id", tag.id);
+    tagMap.put("name", tag.name);
+    return tagMap;
+  }
+
   private static List<Map<String, Object>> getRestaurantListBriefMaps(
       List<Restaurant> restaurants) {
     return new ArrayList<>();

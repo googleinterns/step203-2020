@@ -1,9 +1,12 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.COMMENT_A;
+import static com.google.step.TestConstants.COMMENT_A_JSON;
 import static com.google.step.TestConstants.COMMENT_ID_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.TIME_A;
+import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -12,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,13 +35,17 @@ public class CommentServletTest {
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
 
   private CommentManager mockCommentManager;
+  private UserManager mockUserManager;
 
   private CommentServlet commentServlet;
 
   @Before
   public void setUp() {
     mockCommentManager = mock(CommentManager.class);
-    commentServlet = new CommentServlet(mockCommentManager);
+    mockUserManager = mock(UserManager.class);
+    commentServlet = new CommentServlet(mockCommentManager, mockUserManager);
+
+    when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
   }
 
   @Test
@@ -55,12 +63,7 @@ public class CommentServletTest {
 
     commentServlet.doPut(request, response);
 
-    String expected =
-        String.format(
-            "{id:%d,dealId:%d,userId:%d,content:\"%s\",timestamp:\"%s\"}",
-            COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
-
-    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+    JSONAssert.assertEquals(COMMENT_A_JSON, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
