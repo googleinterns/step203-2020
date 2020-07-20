@@ -168,7 +168,9 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -191,7 +193,9 @@ public class JsonFormatter {
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
       if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+      } else {
+        userMap.put("picture", "/images/default-profile-pic.svg");
       }
     }
     return userMap;
