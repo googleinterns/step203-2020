@@ -137,28 +137,3 @@ function searchRestaurant() {
   });
 }
 
-/**
- * Throttles a function. The function can be called at most once in limit
- * milliseconds.
- * @param {function} func
- * @param {number} limit - The limit of the function in milliseconds
- * @return {function}
- */
-function throttle(func, limit) {
-  let lastFunc;
-  let lastRan;
-  return function(...args) {
-    if (!lastRan) {
-      func(...args);
-      lastRan = Date.now();
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(function() {
-        if ((Date.now() - lastRan) >= limit) {
-          func(...args);
-          lastRan = Date.now();
-        }
-      }, limit - (Date.now() - lastRan));
-    }
-  };
-}
