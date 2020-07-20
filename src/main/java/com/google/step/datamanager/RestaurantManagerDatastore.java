@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.step.model.DefaultRestaurant;
 import com.google.step.model.Restaurant;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,19 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     long id = key.getId();
 
     return new Restaurant(id, name, photoBlobkey);
+  }
+
+  @Override
+  public DefaultRestaurant createDefaultRestaurant(String name, String photoUrl) {
+    Entity entity = new Entity("Restaurant");
+    entity.setProperty("name", name);
+    entity.setProperty("photoReference", photoUrl);
+    entity.setProperty("name_lowercase", name.toLowerCase());
+
+    Key key = datastore.put(entity);
+    long id = key.getId();
+
+    return new DefaultRestaurant(id, name, photoUrl);
   }
 
   /** Gets info on a restaurant given an id */
@@ -108,7 +122,23 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
     String name = (String) restaurantEntity.getProperty("name");
     String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
+    String photoReference = (String) restaurantEntity.getProperty("photoReference");
     long id = restaurantEntity.getKey().getId();
-    return new Restaurant(id, name, photoBlobkey);
+
+    if (photoBlobkey != null) {
+      return new Restaurant(id, name, photoBlobkey);
+    } else {
+      return new DefaultRestaurant(id, name, photoReference);
+    }
+  }
+
+  @Override
+  public void deleteAllRestaurants() {
+    Query query = new Query("Restaurant");
+    PreparedQuery preparedQuery = datastore.prepare(query);
+
+    for (Entity entity : preparedQuery.asIterable()) {
+      datastore.delete(entity.getKey());
+    }
   }
 }

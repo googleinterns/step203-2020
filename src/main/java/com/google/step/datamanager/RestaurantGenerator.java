@@ -25,6 +25,8 @@ public class RestaurantGenerator {
 
   private static final String FILE_NAME = "restaurants.txt";
 
+  private static RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+
   /** Fetches restaurants info and writes to a file. */
   private static void generateRestaurantsJsonFile() {
     HttpURLConnection connection = null;
@@ -100,15 +102,29 @@ public class RestaurantGenerator {
       e.printStackTrace();
       return;
     }
+    restaurantManager.deleteAllRestaurants();
     createRestaurants(jsonObject.get("results").getAsJsonArray());
   }
 
   private static void createRestaurants(JsonArray restaurantsJsonArray) {
-    RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+
     for (JsonElement restaurantElement : restaurantsJsonArray) {
       JsonObject restaurantObject = restaurantElement.getAsJsonObject();
       String name = restaurantObject.get("name").getAsString();
-      restaurantManager.createRestaurant(name, "test"); // TODO
+      JsonElement photo = restaurantObject.get("photos").getAsJsonArray().get(0);
+      String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
+
+      restaurantManager.createDefaultRestaurant(name, getPhotoUrl(photoReference));
     }
+  }
+
+  private static String getPhotoUrl(String photoReference) {
+    String url =
+        "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400"
+            + "&photoreference="
+            + photoReference
+            + "&key="
+            + API_KEY;
+    return url;
   }
 }
