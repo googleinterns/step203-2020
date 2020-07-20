@@ -189,14 +189,14 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on value (hot score or votes) */
   private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
-    List<DealPair<Double>> dealPairs = new ArrayList<DealPair<Double>>();
+    List<DealPair<Double>> dealPairs = new ArrayList<>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
-      dealPairs.add(new DealPair(calculateHotScore(deal, votes), deal));
+      dealPairs.add(new DealPair<Double>(calculateHotScore(deal, votes), deal));
     }
     Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (DealPair dealPair : dealPairs) {
+    for (DealPair<Double> dealPair : dealPairs) {
       dealResults.add(dealPair.deal);
     }
     return dealResults;
@@ -204,14 +204,14 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on value (hot score or votes) */
   private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<DealPair<Integer>> dealPairs = new ArrayList<DealPair<Integer>>();
+    List<DealPair<Integer>> dealPairs = new ArrayList<>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
-      dealPairs.add(new DealPair(votes, deal));
+      dealPairs.add(new DealPair<Integer>(votes, deal));
     }
     Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (DealPair dealPair : dealPairs) {
+    for (DealPair<Integer> dealPair : dealPairs) {
       dealResults.add(dealPair.deal);
     }
     return dealResults;
