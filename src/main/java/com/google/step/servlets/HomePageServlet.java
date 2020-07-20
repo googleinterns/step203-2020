@@ -98,7 +98,7 @@ public class HomePageServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     long userId = 1;
     List<Deal> allDeals = dealManager.getAllDeals();
-    List<Deal> trendingDeals = sortDealsBasedOnValue(allDeals, "hotScore");
+    List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
     List<Deal> dealsByUsersFollowed =
         dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
     List<Deal> dealsByRestaurantsFollowed =
@@ -188,15 +188,26 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Sorts deals based on value (hot score or votes) */
-  private List<Deal> sortDealsBasedOnValue(List<Deal> deals, String attribute) {
-    List<DealPair> dealPairs = new ArrayList<>();
+  private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
+    List<DealPair> dealPairs = new ArrayList<DealPair>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
-      if (attribute.equals("hotScore")) {
-        dealPairs.add(new DealPair(calculateHotScore(deal, votes), deal));
-      } else if (attribute.equals("votes")) {
-        dealPairs.add(new DealPair(votes, deal));
-      }
+      dealPairs.add(new DealPair(calculateHotScore(deal, votes), deal));
+    }
+    Collections.sort(dealPairs);
+    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
+    for (DealPair dealPair : dealPairs) {
+      dealResults.add(dealPair.deal);
+    }
+    return dealResults;
+  }
+
+  /** Sorts deals based on value (hot score or votes) */
+  private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
+    List<DealPair> dealPairs = new ArrayList<DealPair>();
+    for (Deal deal : deals) {
+      int votes = voteManager.getVotes(deal.id);
+      dealPairs.add(new DealPair(votes, deal));
     }
     Collections.sort(dealPairs);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
