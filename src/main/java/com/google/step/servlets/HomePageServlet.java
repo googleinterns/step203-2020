@@ -160,7 +160,7 @@ public class HomePageServlet extends HttpServlet {
         deals,
         new Comparator<Deal>() {
           @Override
-          public int compare(Deal deal1, Deal deal2) { // TODO fix parse
+          public int compare(Deal deal1, Deal deal2) {
             return LocalDateTime.parse(deal2.creationTimeStamp)
                 .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
           }
@@ -189,7 +189,7 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on value (hot score or votes) */
   private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
-    List<DealPair> dealPairs = new ArrayList<DealPair>();
+    List<DealPair<Double>> dealPairs = new ArrayList<DealPair<Double>>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
       dealPairs.add(new DealPair(calculateHotScore(deal, votes), deal));
@@ -204,7 +204,7 @@ public class HomePageServlet extends HttpServlet {
 
   /** Sorts deals based on value (hot score or votes) */
   private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<DealPair> dealPairs = new ArrayList<DealPair>();
+    List<DealPair<Integer>> dealPairs = new ArrayList<DealPair<Integer>>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
       dealPairs.add(new DealPair(votes, deal));
