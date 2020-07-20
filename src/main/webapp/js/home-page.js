@@ -1,42 +1,3 @@
-const homePageDealsData = {
-  popularDeals: [
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-  ],
-  usersIFollow: [
-  ],
-  restaurantsIFollow: [
-  ],
-  tagsIFollow: [
-  ],
-};
-
-
 /**
  * Creates deal elements on home page
  * @param {object} homePage
@@ -181,7 +142,6 @@ function createCarouselElements(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        homePageDeals = homePageDealsData;
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
