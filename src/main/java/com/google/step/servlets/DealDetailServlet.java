@@ -118,7 +118,8 @@ public class DealDetailServlet extends HttpServlet {
 
     List<String> tagNames = null; // TODO get from request parameter
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
     dealManager.updateDeal(deal, tagNames);
     response.setStatus(HttpServletResponse.SC_OK);
   }
