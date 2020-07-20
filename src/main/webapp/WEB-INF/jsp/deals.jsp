@@ -58,6 +58,7 @@
               <p class="text-secondary">Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
               <p class="text-secondary">Posted by: <a id="user-poster" href=""></a></p>
               <p class="text-secondary">Source: <a id="deal-source" href=""></a></p>
+              <p class="text-secondary">Tags: <span id="tags"></span></p>
               <ul class="list-group" id="menu"></ul>
             </div>
           </div>

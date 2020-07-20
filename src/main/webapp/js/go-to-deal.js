@@ -55,7 +55,25 @@ function loadDealDataToPage(deal) {
   votes = deal.votes;
   voteElement.innerText = deal.votes;
 
+  const tagsContainer = document.getElementById('tags');
+  for (const tag of deal.tags) {
+    const tagContainer = createTagContainer(tag);
+    tagsContainer.appendChild(tagContainer);
+  }
+
   dealId = deal.id;
+}
+
+/**
+ * Returns a container with tag's name.
+ * @param {object} tag The tag object.
+ * @return {object} a container with tag's name.
+ */
+function createTagContainer(tag) {
+  const tagContainer = document.createElement('span');
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
+  tagContainer.innerText = tag.name;
+  return tagContainer;
 }
 
 /**
