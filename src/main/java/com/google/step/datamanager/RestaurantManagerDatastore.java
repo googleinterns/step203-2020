@@ -137,12 +137,12 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   @Override
   public void deleteAllRestaurants() {
-    Query query = new Query("Restaurant");
+    Query query = new Query("Restaurant").setKeysOnly();
     PreparedQuery preparedQuery = datastore.prepare(query);
 
-    for (Entity entity : preparedQuery.asIterable()) {
-      datastore.delete(entity.getKey());
-    }
+    List<Key> keys = new ArrayList<>();
+    preparedQuery.asIterable().forEach(entity -> keys.add(entity.getKey()));
+    datastore.delete(keys);
   }
 
   @Override
