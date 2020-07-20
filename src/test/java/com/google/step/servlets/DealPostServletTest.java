@@ -247,6 +247,6 @@ public class DealPostServletTest {
             anyLong(),
             eq(RESTAURANT_ID_A),
             eq(Arrays.asList(TAG_NAME_A, TAG_NAME_B)));
-    verify(mockResponse).sendRedirect(any());
+    verify(mockResponse).sendRedirect("/deals/" + DEAL_ID_A);
   }
 }
