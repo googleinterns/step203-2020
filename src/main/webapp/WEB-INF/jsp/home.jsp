@@ -11,6 +11,7 @@
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <script src="/js/util.js"></script>
   <script src="/js/home-page.js"></script>
+  <script src="/js/search.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <!-- Third party plugin JS-->
@@ -21,6 +22,7 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="css/styles.css" rel="stylesheet" />
+  <link href="css/home-page.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
@@ -30,11 +32,7 @@
     <div class="container d-flex align-items-center flex-column">
       <!-- Masthead Heading-->
       <h1 class="masthead-heading text-uppercase mb-2">Deal Finder</h1>
-      <!-- Search Bar-->
-      <form class="form-inline" action="/search">
-        <i class="fas fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name="query">
-      </form>
+      <a class="btn btn-primary mt-5 search-btn" href="/search" role="button">Search</a>
     </div>
   </header>
   <section class="page-section" id="popular-deals">

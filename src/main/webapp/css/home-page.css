@@ -1,0 +1,33 @@
+.header-bg-img {
+    background-image: url('/../assets/img/food-photo.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
+  
+  .home-deal-img {
+    height: 270px;
+  }
+  
+  .deal-img {
+    height: 300px;
+    width: auto;
+  }
+  
+  .carousel-control-prev {
+    margin-left: -125px;
+    filter: invert(100%);
+  }
+  .carousel-control-next {
+    margin-right: -125px;
+    filter: invert(100%);
+  }
+  
+  .carousel-indicators {
+    filter: invert(100%);
+    margin-bottom: -50px;
+  }
+
+  .search-btn {
+      font-size: 24px;
+  }
