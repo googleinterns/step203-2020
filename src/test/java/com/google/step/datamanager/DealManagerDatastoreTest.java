@@ -244,15 +244,15 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the users followed by USER_ID_A
     List<Deal> dealsForA =
         dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<Long>(Arrays.asList(USER_ID_B, USER_ID_C)));
+            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)));
     assertEquals(dealsForA.size(), 2);
     assertEquals(dealsForA.get(0), dealB);
     assertEquals(dealsForA.get(1), dealC);
 
     // Get deals published by the users followed by USER_ID_B
     List<Deal> dealsB =
-        dealManagerDatastore.getDealsPublishedByUsers(new HashSet<Long>(Arrays.asList(USER_ID_A)));
-    assertEquals(dealsB.size(), 2);
+        dealManagerDatastore.getDealsPublishedByUsers(new HashSet<>(Arrays.asList(USER_ID_A)));
+    assertEquals(dealsB.size(), 1);
     assertEquals(dealsB.get(0), dealA);
   }
 
@@ -331,7 +331,7 @@ public final class DealManagerDatastoreTest {
             TAG_LIST);
     List<Tag> tags = dealManagerDatastore.getTags(deal.id);
 
-    assertEquals(tags.size(), 2);
+    assertEquals(tags.size(), 1);
     assertEquals(TAG_NAME_A, tags.get(0).name);
   }
 
@@ -348,10 +348,9 @@ public final class DealManagerDatastoreTest {
             RESTAURANT_ID_A,
             TAG_LIST);
     Deal dealToUpdate = new Deal(createdDeal.id, null, null, null, null, null, -1, -1, null);
-    dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
     Deal updatedDeal = dealManagerDatastore.updateDeal(dealToUpdate, EMPTY_LIST);
-    List<Tag> tags = dealManagerDatastore.getTags(createdDeal.id);
+    List<Tag> tags = dealManagerDatastore.getTags(updatedDeal.id);
 
-    assertEquals(tags.size(), 2);
+    assertEquals(tags.size(), 0);
   }
 }
