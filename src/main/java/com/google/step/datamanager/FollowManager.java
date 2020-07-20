@@ -10,8 +10,6 @@ public interface FollowManager {
 
   public Set<Long> getFollowedRestaurantIds(long followerId);
 
-  public boolean isFollowingRestaurant(long followerId, long followeeId);
-
   public void followUser(long followerId, long userId);
 
   public void unfollowUser(long followerId, long userId);
@@ -20,7 +18,7 @@ public interface FollowManager {
 
   public Set<Long> getFollowerIdsOfUser(long followeeId);
 
-  public boolean isFollowingUser(long followerId, long followeeId);
+  public boolean isFollowing(long followerId, long followeeId);
 
   public void followTag(long followerId, long tagId);
 
