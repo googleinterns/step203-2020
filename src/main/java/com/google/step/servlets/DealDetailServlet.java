@@ -79,7 +79,7 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    // user can only delete deals he created
+    // user can only delete deals they created
     if (deal.posterId != currentUser.id) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
