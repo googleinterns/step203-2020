@@ -1,8 +1,13 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.com.google.api.client.http.HttpStatusCodes;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
+import com.google.step.datamanager.UserManager;
+import com.google.step.datamanager.UserManagerDatastore;
+import com.google.step.model.User;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,14 +17,21 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/follows/*")
 public class FollowServlet extends HttpServlet {
 
-  private final FollowManager manager;
+  private final FollowManager followManager;
+  private final UserService userService;
+  private final UserManager userManager;
 
-  public FollowServlet(FollowManager manager) {
-    this.manager = manager;
+  public FollowServlet(
+      FollowManager followManager, UserService userService, UserManager userManager) {
+    this.followManager = followManager;
+    this.userService = userService;
+    this.userManager = userManager;
   }
 
   public FollowServlet() {
-    manager = new FollowManagerDatastore();
+    followManager = new FollowManagerDatastore();
+    userService = UserServiceFactory.getUserService();
+    userManager = new UserManagerDatastore();
   }
 
   /** Follows a restaurant, tag, or another user */
@@ -36,14 +48,20 @@ public class FollowServlet extends HttpServlet {
       return;
     }
 
-    long followerId = 6632254138744832L; // TODO: check user authentication
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User follower = userManager.readUserByEmail(email);
+    long followerId = follower.id;
 
     if (pathInfo.startsWith("restaurants/")) {
-      manager.followRestaurant(followerId, id);
+      followManager.followRestaurant(followerId, id);
     } else if (pathInfo.startsWith("tags/")) {
-      manager.followTag(followerId, id);
+      followManager.followTag(followerId, id);
     } else if (pathInfo.startsWith("users/")) {
-      manager.followUser(followerId, id);
+      followManager.followUser(followerId, id);
     } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -66,14 +84,20 @@ public class FollowServlet extends HttpServlet {
       return;
     }
 
-    long followerId = 3141; // TODO: check user authentication
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User follower = userManager.readUserByEmail(email);
+    long followerId = follower.id;
 
     if (pathInfo.startsWith("restaurants/")) {
-      manager.unfollowRestaurant(followerId, id);
+      followManager.unfollowRestaurant(followerId, id);
     } else if (pathInfo.startsWith("tags/")) {
-      manager.unfollowTag(followerId, id);
+      followManager.unfollowTag(followerId, id);
     } else if (pathInfo.startsWith("users/")) {
-      manager.unfollowUser(followerId, id);
+      followManager.unfollowUser(followerId, id);
     } else {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -111,9 +135,9 @@ public class FollowServlet extends HttpServlet {
 
     boolean isFollowing;
     if (request.getParameter("restaurantId") != null) {
-      isFollowing = manager.isFollowingRestaurant(followerId, followeeId);
+      isFollowing = followManager.isFollowingRestaurant(followerId, followeeId);
     } else if (request.getParameter("userId") != null) {
-      isFollowing = manager.isFollowingUser(followerId, followeeId);
+      isFollowing = followManager.isFollowingUser(followerId, followeeId);
     } else {
       response.setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
       return;

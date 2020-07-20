@@ -8,7 +8,6 @@ import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.EMAIL_A;
-import static com.google.step.TestConstants.IMAGE_URL_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.TAG_A;
@@ -92,7 +91,14 @@ public class JsonFormatterTest {
                 // + "\"tags\": [],"
                 + "\"votes\": 123"
                 + "}",
-            DEAL_ID_A, DESCRIPTION_A, IMAGE_URL_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, USERNAME_A);
+            DEAL_ID_A,
+            DESCRIPTION_A,
+            BLOBKEY_URL_A,
+            DATE_A,
+            DATE_B,
+            SOURCE_A,
+            USER_ID_A,
+            USERNAME_A);
 
     try {
       // TODO change LENIENT to STRICT after the todo fields in the method are implemented

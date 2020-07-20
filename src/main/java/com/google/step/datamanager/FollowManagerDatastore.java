@@ -120,6 +120,21 @@ public class FollowManagerDatastore implements FollowManager {
   }
 
   @Override
+  public Set<Long> getFollowerIdsOfUser(long followeeId) {
+    return getFollowersOfSomething(followeeId, USER_FIELD_NAME);
+  }
+
+  private Set<Long> getFollowersOfSomething(long followeeId, String fieldName) {
+    Filter filter = new FilterPredicate(fieldName, FilterOperator.EQUAL, followeeId);
+    Query query = new Query(ENTITY_NAME).setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+    Set<Long> set = new HashSet<>();
+    for (Entity entity : pq.asIterable()) {
+      set.add((Long) entity.getProperty(FOLLOWER_FIELD_NAME));
+    }
+    return set;
+  }
+
   public void updateFollowedTagIds(long followerId, List<Long> tagIds) {
     Set<Long> tagsFollowed = getFollowedTagIds(followerId);
     Set<Long> newTagIds = new HashSet<>(tagIds);
@@ -134,11 +149,6 @@ public class FollowManagerDatastore implements FollowManager {
     for (long id : newTagIds) {
       followTag(followerId, id);
     }
-  }
-
-  @Override
-  public Set<Long> getFollowerIdsOfUser(long followeeId) {
-    return new HashSet<>();
   }
 
   @Override
