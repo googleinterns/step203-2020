@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting deals. */
 @WebServlet("/api/deals")
-public class DealPostListServlet extends HttpServlet {
+public class DealServlet extends HttpServlet {
 
   private final UserService userService;
   private final DealManager dealManager;
   private final UserManager userManager;
   private final RestaurantManager restaurantManager;
 
-  public DealPostListServlet(
+  public DealServlet(
       DealManager dealManager,
       UserManager userManager,
       UserService userService,
@@ -41,7 +41,7 @@ public class DealPostListServlet extends HttpServlet {
     this.restaurantManager = restaurantManager;
   }
 
-  public DealPostListServlet() {
+  public DealServlet() {
     userService = UserServiceFactory.getUserService();
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();

@@ -49,12 +49,12 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ImageUploader.class)
-public class DealPostListServletTest {
+public class DealServletTest {
 
   private static final String RESTAURANT_ID_A_STRING = Long.toString(RESTAURANT_ID_A);
 
   private HttpServletRequest mockRequest;
-  private DealPostListServlet servlet;
+  private DealServlet servlet;
   private DealManager mockDealManager;
   private UserService mockUserService;
   private UserManager mockUserManager;
@@ -100,8 +100,7 @@ public class DealPostListServletTest {
     when(mockRestaurantManager.readRestaurant(RESTAURANT_ID_A)).thenReturn(RESTAURANT_A);
 
     servlet =
-        new DealPostListServlet(
-            mockDealManager, mockUserManager, mockUserService, mockRestaurantManager);
+        new DealServlet(mockDealManager, mockUserManager, mockUserService, mockRestaurantManager);
   }
 
   @Test
