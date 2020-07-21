@@ -64,7 +64,6 @@ function loadDataToDetails(deal) {
 
   const dealSource = document.getElementById('deal-source');
   dealSource.innerText = deal.source;
-  dealSource.href = deal.source;
 }
 
 /**
