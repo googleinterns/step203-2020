@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.PrintWriter;
@@ -36,6 +37,7 @@ public class RestaurantServletTest {
 
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
+  private RestaurantPlaceManager restaurantPlaceManager;
 
   private RestaurantServlet restaurantServlet;
 
@@ -43,7 +45,9 @@ public class RestaurantServletTest {
   public void setUp() {
     restaurantManager = mock(RestaurantManager.class);
     dealManager = mock(DealManager.class);
-    restaurantServlet = new RestaurantServlet(restaurantManager, dealManager);
+    restaurantPlaceManager = mock(RestaurantPlaceManager.class);
+    restaurantServlet =
+        new RestaurantServlet(restaurantManager, dealManager, restaurantPlaceManager);
   }
 
   /** Successfully returns a restaurant */
@@ -65,7 +69,7 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\"," + "deals: []}",
+            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals: [],placeIds:[]}",
             RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
@@ -124,7 +128,7 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[]}",
+            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[], placeIds:[]}",
             RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);

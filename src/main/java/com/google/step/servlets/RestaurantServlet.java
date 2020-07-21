@@ -73,7 +73,7 @@ public class RestaurantServlet extends HttpServlet {
     List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
 
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
   }
 
   /** Updates a restaurant with the given id parameter */
@@ -94,7 +94,10 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     } else {
       List<Deal> deals = dealManager.getDealsOfRestaurant(id);
-      response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals));
+      List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
+      response
+          .getWriter()
+          .println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals, placeIds));
     }
   }
 }

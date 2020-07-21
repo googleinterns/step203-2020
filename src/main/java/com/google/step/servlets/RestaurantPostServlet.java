@@ -34,7 +34,8 @@ public class RestaurantPostServlet extends HttpServlet {
 
     Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
     List<Deal> deals = new ArrayList<>();
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
+    List<String> placeIds = new ArrayList<>();
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
 
     response.sendRedirect("/restaurant/" + restaurant.id);
   }
