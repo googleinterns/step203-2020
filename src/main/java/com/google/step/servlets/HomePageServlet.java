@@ -109,9 +109,8 @@ public class HomePageServlet extends HttpServlet {
     List<Deal> dealsByTagsFollowed = new ArrayList<>();
     if (userService.isUserLoggedIn()) {
       String email = userService.getCurrentUser().getEmail();
-      long userId;
       User user = userManager.readUserByEmail(email);
-      userId = user.id;
+      long userId = user.id;
       dealsByUsersFollowed =
           dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
       dealsByRestaurantsFollowed =

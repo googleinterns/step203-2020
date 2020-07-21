@@ -10,7 +10,7 @@ function createHomePage(homePage) {
     if (homePage[homePageSections[i]].length == 0) {
       continue;
     }
-    homePageData = homePage[homePageSections[i]];
+    const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
       document.querySelectorAll('#' + dealCardId + '.deal-card');
