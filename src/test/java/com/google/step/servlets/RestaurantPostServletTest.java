@@ -60,7 +60,7 @@ public class RestaurantPostServletTest {
     restaurantPostServlet.doPost(mockRequest, mockResponse);
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[]}",
+            "{id:%d,name:\"%s\",image:\"%s\",deals:[]}",
             RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);

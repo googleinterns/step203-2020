@@ -109,7 +109,7 @@ public class DealDetailServletTest {
                 + "    \"restaurant\": {"
                 + "        \"id\": %d,"
                 + "        \"name\": \"%s\","
-                + "        \"photoUrl\": \"%s\""
+                + "        \"image\": \"%s\""
                 + "    },"
                 + "    \"poster\": {"
                 + "        \"id\": %d,"
