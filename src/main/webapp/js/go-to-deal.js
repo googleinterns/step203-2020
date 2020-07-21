@@ -176,6 +176,22 @@ function initVotes() {
 }
 
 /**
+ * Shows the form to edit the deal, and hides the deal details
+ */
+function handleEdit() {
+  $('#deal-details').hide();
+  $('#edit-form').show();
+}
+
+/**
+ * Shows the deal details and hides the form
+ */
+function handleCancelEdit() {
+  $('#deal-details').show();
+  $('#edit-form').hide();
+}
+
+/**
  * Calls backend for data on deal
  */
 function initDeal() {

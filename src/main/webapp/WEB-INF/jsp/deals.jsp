@@ -51,16 +51,18 @@
         </nav>
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="nav-details-tab">
-            <div class="col-md-8">
-              <p>Description: <span id="deal-info"></span></p>
-              <p>Restaurant: <a id="restaurant-info"></a></p>
-              <ul class="list-group" id="outlet-list"><span id="all-or-selected"></span></ul>
-              <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
-              <p>Posted by: <a id="user-poster" href=""></a></p>
-              <p>Source: <a id="deal-source" href=""></a></p>
+            <div id="deal-details">
+              <div class="col-md-8">
+                <p>Description: <span id="deal-info"></span></p>
+                <p>Restaurant: <a id="restaurant-info"></a></p>
+                <ul class="list-group" id="outlet-list"><span id="all-or-selected"></span></ul>
+                <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
+                <p>Posted by: <a id="user-poster" href=""></a></p>
+                <p>Source: <a id="deal-source" href=""></a></p>
+              </div>
+              <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
-            <button onclick="$('#deal-form').toggle()">Toggle form</button>
-            <form style="display:none" method="post" id="deal-form" novalidate class="needs-validation">
+            <form style="display:none" method="put" id="edit-form" novalidate class="needs-validation">
               <div class="form-group form-inline">
                 <label for="description-input" class="mr-2">Description:</label>
                 <input name="description" type="text" class="form-control" id="description-input" required>
@@ -93,14 +95,17 @@
               </div>
 
               <div class="form-group form-inline">
+                <label for="poster-input" class="mr-2">Posted by:</label>
+                <input disabled type="text" class="form-control" id="poster-input">
+              </div>
+
+              <div class="form-group form-inline">
                 <label for="source-input" class="mr-2">Source:</label>
                 <input name="source" type="text" class="form-control" id="source-input">
               </div>
 
-              <div class="form-group d-flex flex-row-reverse">
-                <button class="btn btn-primary" id="sendMessageButton" type="submit">Submit Deal
-                </button>
-              </div>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-primary ml-2" onclick="handleCancelEdit()">Cancel</button>
             </form>
           </div>
           <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">
