@@ -73,13 +73,13 @@
 
               <div class="form-group form-inline">
                 <label for="restaurant-input" class="mr-2">Restaurant:</label>
-                <input disabled type="text" class="form-control">
+                <input disabled type="text" class="form-control" id="restaurant-input">
               </div>
               <div class="mb-3">
                 <div class="d-flex align-items-center">
                   <i class="fa fa-search mr-2"></i>
-                  <input autocomplete="off" type="search" placeholder="Search for a restaurant..." id="restaurant-input"
-                    class="flex-grow-1" style="outline: 0;border-width: 0 0 2px;">
+                  <input autocomplete="off" type="search" placeholder="Search for a restaurant..." class="flex-grow-1"
+                    style="outline: 0;border-width: 0 0 2px;">
                 </div>
                 <div class="search-menu-container">
                   <div id="restaurant-search-results" class="search-menu"></div>
@@ -88,9 +88,9 @@
 
               <div class="form-group validate-me form-inline">
                 <label class="mr-2">Valid Date:</label>
-                <input name="start" class="form-control" type="date" id="from-date" required>
+                <input name="start" class="form-control" type="date" id="start-input" required>
                 <span class="mx-2">to</span>
-                <input name="end" class="form-control" type="date" id="from-date" required>
+                <input name="end" class="form-control" type="date" id="end-input" required>
                 <!-- <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div> -->
               </div>
 

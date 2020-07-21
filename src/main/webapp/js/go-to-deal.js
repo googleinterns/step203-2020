@@ -31,6 +31,21 @@ function loadDealDataToPage(deal) {
   const dealImageElement = document.getElementById('deal-image');
   dealImageElement.src = deal.image;
 
+  const voteElement = document.getElementById('votes-num');
+  votes = deal.votes;
+  voteElement.innerText = deal.votes;
+
+  loadDataToDetails(deal);
+  loadDataToForm(deal);
+
+  dealId = deal.id;
+}
+
+/**
+ * Loads the deal onto the details tab
+ * @param {object} deal
+ */
+function loadDataToDetails(deal) {
   const dealInfoElement = document.getElementById('deal-info');
   dealInfoElement.innerText = deal.description;
 
@@ -50,12 +65,29 @@ function loadDealDataToPage(deal) {
   const dealSource = document.getElementById('deal-source');
   dealSource.innerText = deal.source;
   dealSource.href = deal.source;
+}
 
-  const voteElement = document.getElementById('votes-num');
-  votes = deal.votes;
-  voteElement.innerText = deal.votes;
+/**
+ * Loads the deal onto the edit form
+ * @param {object} deal
+ */
+function loadDataToForm(deal) {
+  const descriptionInput = document.getElementById('description-input');
+  descriptionInput.value = deal.description;
 
-  dealId = deal.id;
+  const restaurantInput = document.getElementById('restaurant-input');
+  restaurantInput.value = deal.restaurant.name;
+
+  const startInput = document.getElementById('start-input');
+  startInput.value = deal.start;
+  const endInput = document.getElementById('end-input');
+  endInput.value = deal.end;
+
+  const posterInput = document.getElementById('poster-input');
+  posterInput.value = deal.poster.username;
+
+  const dealSource = document.getElementById('source-input');
+  dealSource.value = deal.source;
 }
 
 /**
