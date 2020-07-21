@@ -9,6 +9,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.time.LocalDateTime;
@@ -16,15 +19,17 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
-  private final DealSearchManager searchManager;
-  private final String LOCATION = "Asia/Singapore";
-  private final TagManager tagManager;
   private final DealTagManager dealTagManager;
+  private final DealSearchManager searchManager;
+  private final TagManager tagManager;
+
+  private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -115,7 +120,6 @@ public class DealManagerDatastore implements DealManager {
     }
     if (deal.description != null) {
       dealEntity.setProperty("description", deal.description);
-      System.out.println(deal.description);
     }
     if (deal.photoBlobkey != null) {
       dealEntity.setProperty("photoBlobkey", deal.photoBlobkey);
@@ -141,21 +145,41 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
+  /** Retrieves deals posted by restaurants or users */
+  private List<Deal> getDealsPublishedByRestaurantsOrUsers(Set<Long> ids, String filterAttribute) {
+    List<Deal> dealResults = new ArrayList<>();
+    if (ids.size() > 0) {
+      Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
+      Query query = new Query("Deal").setFilter(propertyFilter);
+      PreparedQuery pq = datastore.prepare(query);
+      for (Entity entity : pq.asIterable()) {
+        dealResults.add(readDeal(entity.getKey().getId()));
+      }
+    }
+    return dealResults;
+  }
+
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(List<Long> userIds) {
-    return new ArrayList<Deal>();
+  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds) {
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(List<Long> restaurantIds) {
-    return new ArrayList<Deal>();
+  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds) {
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
   }
 
   @Override
   public List<Deal> getAllDeals() {
-    return new ArrayList<Deal>();
+    Query query = new Query("Deal");
+    PreparedQuery pq = datastore.prepare(query);
+    List<Deal> dealResults = new ArrayList<>();
+    for (Entity dealEntity : pq.asIterable()) {
+      dealResults.add(transformEntityToDeal(dealEntity));
+    }
+    return dealResults;
   }
 
   /**

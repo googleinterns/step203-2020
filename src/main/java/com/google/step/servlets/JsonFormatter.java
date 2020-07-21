@@ -44,16 +44,17 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getRestaurantListJson(List<Restaurant> restaurants) {
+  public static String getRestaurantListBriefJson(List<Restaurant> restaurants) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMapsList(restaurants));
+    String json = gson.toJson(getRestaurantBriefMapsList(restaurants));
     return json;
   }
 
-  private static List<Map<String, Object>> getRestaurantMapsList(List<Restaurant> restaurants) {
+  private static List<Map<String, Object>> getRestaurantBriefMapsList(
+      List<Restaurant> restaurants) {
     List<Map<String, Object>> restaurantsMaps = new ArrayList<>();
     for (Restaurant restaurant : restaurants) {
-      restaurantsMaps.add(getRestaurantMap(restaurant));
+      restaurantsMaps.add(getRestaurantBriefMap(restaurant));
     }
     return restaurantsMaps;
   }
@@ -84,7 +85,7 @@ public class JsonFormatter {
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
     dealMap.put("poster", getUserBriefMap(poster));
-    dealMap.put("restaurant", restaurant.name); // TODO use restaurant brief
+    dealMap.put("restaurant", getRestaurantBriefMap(restaurant));
     dealMap.put("tags", getTagListBriefMaps(tags));
     dealMap.put("votes", votes);
     return dealMap;
@@ -103,6 +104,14 @@ public class JsonFormatter {
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
     restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
+    return restaurantMap;
+  }
+
+  private static Map<String, Object> getRestaurantBriefMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
     return restaurantMap;
   }
 
@@ -165,7 +174,7 @@ public class JsonFormatter {
     userMap.put("following", getUserListBriefMaps(following));
     userMap.put("followers", getUserListBriefMaps(followers));
     userMap.put("tagsFollowed", getTagListBriefMaps(tags));
-    userMap.put("restaurantsFollowed", getRestaurantListBriefMaps(restaurants));
+    userMap.put("restaurantsFollowed", getRestaurantBriefMapsList(restaurants));
     return userMap;
   }
 
@@ -228,11 +237,6 @@ public class JsonFormatter {
     tagMap.put("id", tag.id);
     tagMap.put("name", tag.name);
     return tagMap;
-  }
-
-  private static List<Map<String, Object>> getRestaurantListBriefMaps(
-      List<Restaurant> restaurants) {
-    return new ArrayList<>();
   }
 
   private static String getImageUrl(String blobKey) {
