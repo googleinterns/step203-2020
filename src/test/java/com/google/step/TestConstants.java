@@ -1,5 +1,6 @@
 package com.google.step;
 
+import com.google.step.model.Comment;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -101,12 +102,6 @@ public class TestConstants {
   public static final Restaurant RESTAURANT_A =
       new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
-  // Comment
-  public static final long COMMENT_ID_A = 1;
-  public static final long COMMENT_ID_B = 2;
-  public static final long COMMENT_ID_C = 3;
-  public static final long COMMENT_ID_D = 4;
-
   // Deal Brief JSON
   public static final String DEAL_A_BRIEF_JSON =
       String.format(
@@ -120,6 +115,7 @@ public class TestConstants {
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
           RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_URL_C, USER_ID_C);
+  // Deal
 
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
@@ -139,10 +135,6 @@ public class TestConstants {
           TAG_NAME_A,
           TIME_A);
 
-  public static final String CONTENT_A = "Hello world";
-  public static final String CONTENT_B = "Hello world2";
-
-  // Deal class
   public static final Deal DEAL_A =
       new Deal(
           DEAL_ID_A,
@@ -178,4 +170,49 @@ public class TestConstants {
           USER_ID_C,
           RESTAURANT_ID_C,
           TIME_C);
+
+  // Comment
+  public static final long COMMENT_ID_A = 1;
+  public static final long COMMENT_ID_B = 2;
+  public static final long COMMENT_ID_C = 3;
+  public static final long COMMENT_ID_D = 4;
+
+  public static final String CONTENT_A = "Hello world";
+  public static final String CONTENT_B = "Hello world2";
+
+  public static final Comment COMMENT_A =
+      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
+
+  public static final Comment COMMENT_B =
+      new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
+
+  public static final String COMMENT_A_JSON =
+      String.format(
+          "{"
+              + "\"id\": %d,"
+              + "\"dealId\": %d,"
+              + "\"content\": \"%s\","
+              + "\"timestamp\": \"%s\","
+              + "\"user\": {"
+              + "\"id\": %d,"
+              + "\"picture\": \"%s\","
+              + "\"username\": \"%s\""
+              + "}"
+              + "}",
+          COMMENT_ID_A, DEAL_ID_A, CONTENT_A, TIME_A, USER_ID_A, BLOBKEY_URL_A, USERNAME_A);
+
+  public static final String COMMENT_B_JSON =
+      String.format(
+          "{"
+              + "\"id\": %d,"
+              + "\"dealId\": %d,"
+              + "\"content\": \"%s\","
+              + "\"timestamp\": \"%s\","
+              + "\"user\": {"
+              + "\"id\": %d,"
+              + "\"picture\": \"%s\","
+              + "\"username\": \"%s\""
+              + "}"
+              + "}",
+          COMMENT_ID_B, DEAL_ID_A, CONTENT_B, TIME_B, USER_ID_B, BLOBKEY_URL_B, USERNAME_B);
 }

@@ -31,9 +31,9 @@
       <!-- Masthead Heading-->
       <h1 class="masthead-heading text-uppercase mb-2">Deal Finder</h1>
       <!-- Search Bar-->
-      <form class="form-inline">
+      <form class="form-inline" action="/search">
         <i class="fas fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
+        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name="query">
       </form>
     </div>
   </header>
