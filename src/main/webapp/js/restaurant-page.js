@@ -105,6 +105,27 @@ function setRestaurantMarkers(placeIds, map) {
 }
 
 /**
+ * Configures deals of the restaurant.
+ * @param {Object} deals deals of the restaurant
+ */
+function configureDealsOfRestaurant(deals) {
+  const dealsContainer = document.getElementById('deals-container');
+  dealsContainer.classList.add('card-columns');
+  for (const deal of deals) {
+    dealsContainer.appendChild(createDealCard(deal));
+  }
+}
+
+/**
+ * Configures header of deals section.
+ * @param {Object} restaurant restaurant object
+ */
+function configureDealsHeader(restaurant) {
+  const dealsHeader = document.getElementById('deals-header');
+  dealsHeader.innerText = 'Deals from ' + restaurant.name;
+}
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
@@ -114,9 +135,19 @@ function initRestaurantPage() {
     name: 'McDonald',
     photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
     placeIds: ['ChIJS5IVbvwa2jERDxPwmWkRghI', 'ChIJuUFoBdcb2jERsu6OBBfVMQQ'],
+    deals: [
+      {
+        id: 1,
+        description: 'bubble tea',
+        image: '/assets/deals/bubble-tea.jpeg',
+      },
+    ],
   };
   configureRestaurantInfo(restaurant);
   initMap(restaurant);
+  configureRestaurantInfo(restaurant);
+  configureDealsOfRestaurant(restaurant.deals);
+  configureDealsHeader(restaurant);
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {

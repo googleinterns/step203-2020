@@ -10306,3 +10306,8 @@ body > .container {
   filter: invert(100%);
   margin-bottom: -50px;
 }
+
+.deal-card-img {
+  max-height: 200px;
+  object-fit: cover;
+}

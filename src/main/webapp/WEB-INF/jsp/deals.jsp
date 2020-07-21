@@ -58,6 +58,8 @@
               <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
               <p>Posted by: <a id="user-poster" href=""></a></p>
               <p>Source: <a id="deal-source" href=""></a></p>
+              <p>Tags: <span id="tags"></span></p>
+              <ul class="list-group" id="menu"></ul>
             </div>
           </div>
           <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">

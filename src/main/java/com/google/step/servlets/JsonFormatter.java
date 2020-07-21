@@ -117,7 +117,6 @@ public class JsonFormatter {
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
     restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
-    restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
     return restaurantMap;
   }
 
