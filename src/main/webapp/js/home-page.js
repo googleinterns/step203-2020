@@ -1,42 +1,3 @@
-const homePageDealsData = {
-  popularDeals: [
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-    {
-      restaurant: 'A',
-      description: 'starbucks mocha 1-for-1',
-      votes: 0,
-      id: 1,
-      pic: 'a_blob_key',
-      poster: 'Alice',
-      tags: [{'id': 1, 'name': '1for1'}],
-    },
-  ],
-  usersIFollow: [
-  ],
-  restaurantsIFollow: [
-  ],
-  tagsIFollow: [
-  ],
-};
-
-
 /**
  * Creates deal elements on home page
  * @param {object} homePage
@@ -49,7 +10,7 @@ function createHomePage(homePage) {
     if (homePage[homePageSections[i]].length == 0) {
       continue;
     }
-    homePageData = homePage[homePageSections[i]];
+    const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
       document.querySelectorAll('#' + dealCardId + '.deal-card');
@@ -70,12 +31,12 @@ function createHomePage(homePage) {
       dealTitle.innerText = homePageData[j].description;
 
       const dealRestaurant = dealBody.children[3].children[0];
-      dealRestaurant.innerText = homePageData[j].restaurantName;
-      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurantId;
+      dealRestaurant.innerText = homePageData[j].restaurant.name;
+      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurant.id;
 
       const dealPoster = dealBody.children[4].children[0];
-      dealPoster.innerText = homePageData[j].posterName;
-      dealPoster.href = '/users/' + homePageData[j].posterId;
+      dealPoster.innerText = homePageData[j].poster.username;
+      dealPoster.href = '/users/' + homePageData[j].poster.id;
 
       const dealTags = dealBody.children[5];
       const numTags = homePageData[j].tags.length;
@@ -127,7 +88,7 @@ function createCarouselElements(numCarouselSlidesList,
 
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
-      
+
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
       const numCol = 'col-md-' + 12 / numDealPerSlide;
@@ -181,7 +142,6 @@ function createCarouselElements(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        homePageDeals = homePageDealsData;
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
