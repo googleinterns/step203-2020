@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting deals. */
 @WebServlet("/api/deals")
-public class DealPostServlet extends HttpServlet {
+public class DealServlet extends HttpServlet {
 
   private final UserService userService;
   private final DealManager dealManager;
   private final UserManager userManager;
   private final RestaurantManager restaurantManager;
 
-  public DealPostServlet(
+  public DealServlet(
       DealManager dealManager,
       UserManager userManager,
       UserService userService,
@@ -41,7 +41,7 @@ public class DealPostServlet extends HttpServlet {
     this.restaurantManager = restaurantManager;
   }
 
-  public DealPostServlet() {
+  public DealServlet() {
     userService = UserServiceFactory.getUserService();
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
@@ -104,6 +104,14 @@ public class DealPostServlet extends HttpServlet {
             description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
 
     response.sendRedirect("/deals/" + deal.id);
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Deal> deals = dealManager.getAllDeals();
+    response.setContentType("application/json;");
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+    response.getWriter().println(JsonFormatter.getDealListJson(deals));
   }
 
   private boolean anyEmpty(String... strs) {
