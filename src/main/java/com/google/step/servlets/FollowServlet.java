@@ -106,8 +106,43 @@ public class FollowServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String followerIdString = request.getParameter("followerId");
+    long followerId;
+    try {
+      followerId = Long.parseLong(followerIdString);
+    } catch (NumberFormatException | NullPointerException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    String pathInfo = request.getPathInfo();
+    long followeeId;
+    try {
+      int index = pathInfo.lastIndexOf("/");
+      if (index == -1) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+
+      String followeeIdString = pathInfo.substring(index + 1);
+      followeeId = Long.parseLong(followeeIdString);
+    } catch (NumberFormatException | NullPointerException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    boolean isFollowing;
+    if (pathInfo.startsWith("/restaurants/")) {
+      isFollowing = followManager.isFollowingRestaurant(followerId, followeeId);
+    } else if (pathInfo.startsWith("/users/")) {
+      isFollowing = followManager.isFollowingUser(followerId, followeeId);
+    } else {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
     response.setContentType("text/html");
-    response.getWriter().println(false);
+    response.getWriter().println(isFollowing);
   }
 
   /**

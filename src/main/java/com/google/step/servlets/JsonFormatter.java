@@ -96,9 +96,6 @@ public class JsonFormatter {
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
     dealMap.put("image", getImageUrl(deal.photoBlobkey));
-    dealMap.put("poster", deal.posterId); // TODO use user name
-    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
-    dealMap.put("votes", 0); // TODO add votes
     return dealMap;
   }
 
@@ -117,6 +114,14 @@ public class JsonFormatter {
     restaurantMap.put("name", restaurant.name);
     restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
     restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
+    return restaurantMap;
+  }
+
+  private static Map<String, Object> getRestaurantBriefMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
     return restaurantMap;
   }
 
