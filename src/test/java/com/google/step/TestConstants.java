@@ -7,6 +7,15 @@ import com.google.step.model.Tag;
 import com.google.step.model.User;
 
 public class TestConstants {
+
+  private static final String URL_PREFIX = "/api/images/";
+  public static final String BLOBKEY_A = "a_blob_key";
+  public static final String BLOBKEY_B = "a_blob_key_b";
+  public static final String BLOBKEY_C = "a_blob_key_c";
+
+  public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
+  public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
+
   // User
   public static final long USER_ID_A = 1;
   public static final long USER_ID_B = 2;
@@ -21,13 +30,9 @@ public class TestConstants {
   public static final String USERNAME_B = "Bob";
   public static final String USERNAME_C = "Charlie";
 
-  public static final String BLOBKEY_A = "a_blob_key";
-  public static final String BLOBKEY_B = "a_blob_key_b";
-
-  private static final String URL_PREFIX = "/api/images/";
-  public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
-  public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
-
+  public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
+  public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
+  
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
   public static final String BIO_B = "Hello I'm Bob.";
@@ -82,6 +87,11 @@ public class TestConstants {
   public static final Restaurant RESTAURANT_A =
       new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
+  public static final String RESTAURANT_A_BRIEF_JSON =
+      String.format(
+          "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
+          RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+
   // Deal
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
@@ -90,6 +100,7 @@ public class TestConstants {
 
   public static final String DESCRIPTION_A = "starbucks mocha 1-for-1";
   public static final String DESCRIPTION_B = "KFC chick buy 5 free 10";
+  public static final String DESCRIPTION_C = "bubble tea 50% off";
 
   public static final String DATE_A = "2020-01-01";
   public static final String DATE_B = "2020-01-02";
@@ -98,6 +109,7 @@ public class TestConstants {
 
   public static final String SOURCE_A = "www.example.com";
   public static final String SOURCE_B = "www.somethingelse.com";
+  public static final String SOURCE_C = "www.helloworld.com";
 
   public static final String TIME_A = "2020-07-10T10:15:30";
   public static final String TIME_B = "2020-07-10T12:15:30";
@@ -140,6 +152,9 @@ public class TestConstants {
 
   public static final Comment COMMENT_B =
       new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
+
+  public static final Comment UPDATED_COMMENT_A =
+      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_B, TIME_A);
 
   public static final String COMMENT_A_JSON =
       String.format(

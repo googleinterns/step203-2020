@@ -6,8 +6,11 @@ import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.SOURCE_A;
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,12 +24,14 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -60,6 +65,7 @@ public class DealPostServletTest {
   private DealManager mockDealManager;
   private UserService mockUserService;
   private UserManager mockUserManager;
+  private RestaurantManager mockRestaurantManager;
   private HttpServletResponse mockResponse;
   private PrintWriter writer;
 
@@ -74,6 +80,7 @@ public class DealPostServletTest {
     mockDealManager = mock(DealManager.class);
     mockUserService = mock(UserService.class);
     mockUserManager = mock(UserManager.class);
+    mockRestaurantManager = mock(RestaurantManager.class);
     User currentUser = new User(EMAIL_A, "");
 
     // mock response
@@ -88,13 +95,19 @@ public class DealPostServletTest {
     when(mockRequest.getParameter("end")).thenReturn(DATE_B);
     when(mockRequest.getParameter("source")).thenReturn(SOURCE_A);
     when(mockRequest.getParameter("restaurant")).thenReturn(RESTAURANT_ID_A_STRING);
+    when(mockRequest.getParameter("tags")).thenReturn("");
 
     // behaviour when user is logged in
     when(mockUserService.isUserLoggedIn()).thenReturn(true);
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    servlet = new DealPostServlet(mockDealManager, mockUserManager, mockUserService);
+    // mock restaurant manager
+    when(mockRestaurantManager.readRestaurant(RESTAURANT_ID_A)).thenReturn(RESTAURANT_A);
+
+    servlet =
+        new DealPostServlet(
+            mockDealManager, mockUserManager, mockUserService, mockRestaurantManager);
   }
 
   @Test
@@ -197,5 +210,44 @@ public class DealPostServletTest {
     servlet.doPost(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_restaurantNotFound_badRequest() throws IOException {
+    when(mockRequest.getParameter("restaurant")).thenReturn("100");
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPost_tags() throws IOException {
+    when(mockRequest.getParameter("tags")).thenReturn(TAG_NAME_A + "," + TAG_NAME_B);
+
+    when(mockDealManager.createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(Arrays.asList(TAG_NAME_A, TAG_NAME_B))))
+        .thenReturn(DEAL);
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockDealManager)
+        .createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(Arrays.asList(TAG_NAME_A, TAG_NAME_B)));
+    verify(mockResponse).sendRedirect("/deals/" + DEAL_ID_A);
   }
 }

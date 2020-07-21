@@ -1,5 +1,13 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DEAL_ID_B;
+import static com.google.step.TestConstants.DEAL_ID_C;
+import static com.google.step.TestConstants.DEAL_ID_D;
+import static com.google.step.TestConstants.TAG_ID_A;
+import static com.google.step.TestConstants.TAG_ID_B;
+import static com.google.step.TestConstants.TAG_ID_C;
+import static com.google.step.TestConstants.TAG_ID_D;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -15,15 +23,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class DealTagManagerDatastoreTest {
-  private static final long TAG_ID_A = 1;
-  private static final long TAG_ID_B = 2;
-  private static final long TAG_ID_C = 3;
-  private static final long TAG_ID_D = 4;
-
-  private static final long DEAL_ID_A = 1;
-  private static final long DEAL_ID_B = 2;
-  private static final long DEAL_ID_C = 3;
-  private static final long DEAL_ID_D = 4;
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
