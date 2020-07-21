@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
@@ -20,6 +21,8 @@ import org.mockito.BDDMockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ImageUploader.class)
@@ -55,6 +58,12 @@ public class RestaurantPostServletTest {
     when(mockResponse.getWriter()).thenReturn(writer);
 
     restaurantPostServlet.doPost(mockRequest, mockResponse);
+    String expected =
+        String.format(
+            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[]}",
+            RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
     verify(mockResponse).sendRedirect("/restaurant/" + RESTAURANT_ID_A);
   }
 }

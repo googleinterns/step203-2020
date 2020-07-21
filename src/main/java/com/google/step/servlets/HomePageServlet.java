@@ -84,18 +84,19 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Class to store deal along with relevant attribute (hot score/votes) to be sorted */
-  class DealPair<T extends Comparable<T>> implements Comparable<DealPair<T>> {
-    public final T key;
+  class ScoredDeal implements Comparable<ScoredDeal> {
     public final Deal deal;
+    public final double score;
 
-    public DealPair(T key, Deal deal) {
-      this.key = key;
+    public ScoredDeal(Deal deal, double score) {
+      /* this can accept int or double scores */
       this.deal = deal;
+      this.score = score;
     }
 
     @Override
-    public int compareTo(DealPair<T> other) {
-      return key.compareTo(other.key);
+    public int compareTo(ScoredDeal other) {
+      return Double.compare(score, other.score);
     }
   }
 
@@ -239,38 +240,41 @@ public class HomePageServlet extends HttpServlet {
   private double calculateHotScore(Deal deal, int votes) {
     double order = Math.log(Math.max(Math.abs(votes), 1));
     int sign = 0;
-    if (votes > 0) sign = 1;
-    else if (votes < 0) sign = -1;
+    if (votes > 0) {
+      sign = 1;
+    } else if (votes < 0) {
+      sign = -1;
+    }
     double seconds = epochSeconds((String) deal.creationTimeStamp) - OLDEST_DEAL_TIMESTAMP;
     return sign * order + seconds / 45000;
   }
 
-  /** Sorts deals based on value (hot score or votes) */
+  /** Sorts deals based on hot score */
   private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
-    List<DealPair<Double>> dealPairs = new ArrayList<>();
+    List<ScoredDeal> scoredDeals = new ArrayList<>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
-      dealPairs.add(new DealPair<Double>(calculateHotScore(deal, votes), deal));
+      scoredDeals.add(new ScoredDeal(deal, calculateHotScore(deal, votes)));
     }
-    Collections.sort(dealPairs);
+    Collections.sort(scoredDeals);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (DealPair<Double> dealPair : dealPairs) {
-      dealResults.add(dealPair.deal);
+    for (ScoredDeal scoredDeal : scoredDeals) {
+      dealResults.add(scoredDeal.deal);
     }
     return dealResults;
   }
 
-  /** Sorts deals based on value (hot score or votes) */
+  /** Sorts deals based on votes */
   private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<DealPair<Integer>> dealPairs = new ArrayList<>();
+    List<ScoredDeal> scoredDeals = new ArrayList<>();
     for (Deal deal : deals) {
       int votes = voteManager.getVotes(deal.id);
-      dealPairs.add(new DealPair<Integer>(votes, deal));
+      scoredDeals.add(new ScoredDeal(deal, votes));
     }
-    Collections.sort(dealPairs);
+    Collections.sort(scoredDeals);
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (DealPair<Integer> dealPair : dealPairs) {
-      dealResults.add(dealPair.deal);
+    for (ScoredDeal scoredDeal : scoredDeals) {
+      dealResults.add(scoredDeal.deal);
     }
     return dealResults;
   }
