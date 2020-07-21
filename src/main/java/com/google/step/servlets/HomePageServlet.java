@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -102,43 +103,55 @@ public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String homePageSection = request.getParameter("section");
-    // if no home page section is being specified to view all deals, just return all home page data
+    // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
       User user = userManager.readUserByEmail(email);
       long userId = user.id;
+      // Retrieves maps of all the sections
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(homePageSection, userId);
       if (homePageDealsMaps.size() == 4) {
         Map<String, Object> homePageMap = new HashMap<>();
-        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
-        homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-        homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
-        homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
+        // for each section, limit to 8 deals for home page
+        homePageMap.put(
+            "popularDeals",
+            homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+        homePageMap.put(
+            "usersIFollow",
+            homePageDealsMaps.get(1).stream().limit(8).collect(Collectors.toList()));
+        homePageMap.put(
+            "restaurantsIFollow",
+            homePageDealsMaps.get(2).stream().limit(8).collect(Collectors.toList()));
+        homePageMap.put(
+            "tagsIFollow", homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
+        // user requested to view all deals of particular section
       } else if (homePageDealsMaps.size() == 1) {
         response.setContentType("application/json;");
         response
             .getWriter()
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
-    } else { // user is not logged in and asks for a different section, is this possible? manually
-      // type in url
-      if (homePageSection == null) {
-        homePageSection = "trending";
-        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
-        Map<String, Object> homePageMap = new HashMap<>();
-        homePageMap.put("popularDeals", homePageDealsMaps.get(0));
+    } else {
+      if (homePageSection
+          == null) { // user accesses home page when not logged in, only trending will be shown
+        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps("trending", -1);
         response.setContentType("application/json;");
-        response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
-      } else if (homePageSection.equals("trending")) {
+        response
+            .getWriter()
+            .println(
+                JsonFormatter.getHomePageSectionJson(
+                    homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList())));
+      } else if (homePageSection.equals(
+          "trending")) { // user clicks on view all deals on home page for trending section
         List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
         response.setContentType("application/json;");
         response
             .getWriter()
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
-      } else {
+      } else { // user is unable to view all deals for other sections when not logged in
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return;
       }
