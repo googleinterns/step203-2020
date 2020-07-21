@@ -16,21 +16,6 @@ $('#img-input').change((event) => {
 });
 
 /*
- * Handles restaurant results when the search bar is typed
- */
-searchRestaurantThrottle = throttle(searchRestaurant, 1000);
-$('#restaurant-input').keyup(function() {
-  searchRestaurantThrottle();
-});
-$('#restaurant-search-results').hide();
-$('#restaurant-input').focus(function() {
-  searchRestaurantThrottle();
-});
-$('#restaurant-input').blur(function() {
-  $('#restaurant-search-results').hide();
-});
-
-/*
  * Form validation
  */
 $('#from-date, #to-date').change(checkDatesOrdered);
@@ -98,42 +83,9 @@ function selectRestaurant(restaurant) {
   restaurantHiddenInput.value = restaurant.id;
 }
 
-/**
- * Calls backend for retaurant based on text in restaurant search, and displays
- * results.
- */
-function searchRestaurant() {
-  const text = $('#restaurant-input').val().trim();
-  if (text == '') {
-    $('#restaurant-search-results').hide();
-    return;
-  }
-  $.ajax({
-    url: '/api/search/restaurants',
-    data: {
-      query: text,
-    },
-  }).done((restaurants) => {
-    const menu = document.getElementById('restaurant-search-results');
-    menu.innerHTML = '';
-    if (restaurants.length == 0) {
-      const row = document.createElement('div');
-      row.className = 'd-flex align-items-center search-menu-item p-2';
-      row.innerHTML = 'No results';
-      menu.appendChild(row);
-    } else {
-      restaurants.forEach((restaurant) => {
-        const row = document.createElement('div');
-        row.className = 'd-flex align-items-center search-menu-item p-2';
-        row.innerHTML = `
-          <span class="flex-grow-1">${restaurant.name}</span>
-          <img class="search-menu-pic" src="${restaurant.image}">
-        `;
-        row.onmousedown = () => selectRestaurant(restaurant);
-        menu.appendChild(row);
-      });
-    }
-    $('#restaurant-search-results').show();
-  });
-}
-
+addLoadEvent(() => {
+  initSearchRestaurant(
+      document.getElementById('search-container'),
+      selectRestaurant,
+  );
+});
