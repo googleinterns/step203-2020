@@ -231,12 +231,20 @@ function handleCancelEdit() {
  */
 function handleSubmit() {
   const form = document.getElementById('edit-form');
+  const validateGroup = form.querySelectorAll('.validate-me');
+  validateGroup.forEach((element) => {
+    element.classList.add('was-validated');
+  });
+  if (form.checkValidity() === false || !checkDatesOrdered()) {
+    return;
+  }
+
   $.ajax({
     type: 'PUT',
     url: '/api/deals/' + dealId,
     data: $(form).serialize(),
   }).done((a) => {
-    console.log(a);
+    location.reload();
   });
 }
 
@@ -257,10 +265,35 @@ function initDeal() {
       });
 }
 
+/**
+ * Handles restaurant selection
+ * @param {object} restaurant
+ */
+function selectRestaurant(restaurant) {
+  document.getElementById('restaurant-id-input').value = restaurant.id;
+  document.getElementById('restaurant-input').value = restaurant.name;
+}
+
+/**
+ * Checks if the dates of the form is ordered and displays error message.
+ * @return {boolean}
+ */
+function checkDatesOrdered() {
+  const start = document.getElementById('start-input');
+  const end = document.getElementById('end-input');
+  const message = document.getElementById('date-error-msg');
+  if (start.value && end.value && start.value > end.value) {
+    message.style.display = 'block';
+    return false;
+  }
+  message.style.display = 'none';
+  return true;
+}
+
 addLoadEvent(() => {
   initDeal();
   initSearchRestaurant(
       document.getElementById('search-container'),
-      (x) => console.log(x),
+      selectRestaurant,
   );
 });

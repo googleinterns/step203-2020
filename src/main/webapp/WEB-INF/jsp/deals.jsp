@@ -61,8 +61,8 @@
               </div>
               <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
-            <form style="display:none" id="edit-form" novalidate class="needs-validation">
-              <div class="form-group form-inline">
+            <form style="display:none" id="edit-form">
+              <div class="form-group validate-me form-inline">
                 <label for="description-input" class="mr-2">Description:</label>
                 <input name="description" type="text" class="form-control" id="description-input" required>
                 <div class="invalid-feedback">
@@ -74,24 +74,17 @@
                 <label for="restaurant-input" class="mr-2">Restaurant:</label>
                 <input disabled type="text" class="form-control" id="restaurant-input">
               </div>
-              <div class="mb-3" id="search-container">
-                <!-- <div class="d-flex align-items-center">
-                  <i class="fa fa-search mr-2"></i>
-                  <input autocomplete="off" type="search" placeholder="Search for a restaurant..." class="flex-grow-1"
-                    style="outline: 0;border-width: 0 0 2px;">
-                </div>
-                <div class="search-menu-container">
-                  <div id="restaurant-search-results" class="search-menu"></div>
-                </div> -->
-              </div>
+              <div class="mb-3" id="search-container"></div>
               <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
 
               <div class="form-group validate-me form-inline">
                 <label class="mr-2">Valid Date:</label>
-                <input name="start" class="form-control" type="date" id="start-input" required>
+                <input name="start" class="form-control" type="date" id="start-input" required
+                  onchange="checkDatesOrdered()">
                 <span class="mx-2">to</span>
-                <input name="end" class="form-control" type="date" id="end-input" required>
-                <!-- <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div> -->
+                <input name="end" class="form-control" type="date" id="end-input" required
+                  onchange="checkDatesOrdered()">
+                <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div>
               </div>
 
               <div class="form-group form-inline">
