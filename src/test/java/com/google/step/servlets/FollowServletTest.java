@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
-import com.google.appengine.repackaged.com.google.api.client.http.HttpStatusCodes;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.UserManager;
 import java.io.IOException;
@@ -190,7 +189,7 @@ public class FollowServletTest {
 
     followServlet.doGet(request, response);
 
-    verify(response).setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
@@ -220,7 +219,7 @@ public class FollowServletTest {
 
     followServlet.doGet(request, response);
 
-    verify(response).setStatus(HttpStatusCodes.STATUS_CODE_BAD_REQUEST);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
