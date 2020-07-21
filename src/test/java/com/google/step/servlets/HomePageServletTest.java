@@ -163,9 +163,8 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
 
-    String trendingDeals =
+    String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
-    String expected = String.format("{trending:%s}", trendingDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 

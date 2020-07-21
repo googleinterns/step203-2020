@@ -44,7 +44,7 @@ function createHomePage(homePage) {
       homePage[homePageSections[i]].length == 0) {
       continue;
     }
-    homePageData = homePage[homePageSections[i]];
+    const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
       document.querySelectorAll('#' + dealCardId + '.deal-card');
@@ -65,12 +65,12 @@ function createHomePage(homePage) {
       dealTitle.innerText = homePageData[j].description;
 
       const dealRestaurant = dealBody.children[3].children[0];
-      dealRestaurant.innerText = homePageData[j].restaurantName;
-      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurantId;
+      dealRestaurant.innerText = homePageData[j].restaurant.name;
+      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurant.id;
 
       const dealPoster = dealBody.children[4].children[0];
-      dealPoster.innerText = homePageData[j].posterName;
-      dealPoster.href = '/users/' + homePageData[j].posterId;
+      dealPoster.innerText = homePageData[j].poster.username;
+      dealPoster.href = '/users/' + homePageData[j].poster.id;
 
       const dealTags = dealBody.children[5];
       const numTags = homePageData[j].tags.length;
@@ -179,7 +179,6 @@ function createCarouselElements(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        homePageDeals = homePageDealsData;
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
