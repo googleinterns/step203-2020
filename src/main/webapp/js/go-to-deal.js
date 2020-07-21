@@ -234,7 +234,7 @@ function handleSubmit() {
   validateGroup.forEach((element) => {
     element.classList.add('was-validated');
   });
-  if (form.checkValidity() === false || !checkDatesOrdered()) {
+  if (!form.checkValidity() || !checkDatesOrdered()) {
     return;
   }
 
