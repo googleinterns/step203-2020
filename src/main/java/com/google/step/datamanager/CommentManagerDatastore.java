@@ -23,7 +23,7 @@ import java.util.List;
 
 public class CommentManagerDatastore implements CommentManager {
 
-  private static final int PAGE_SIZE = 2;
+  private static final int PAGE_SIZE = 5;
   private final DatastoreService datastore;
 
   public CommentManagerDatastore() {
