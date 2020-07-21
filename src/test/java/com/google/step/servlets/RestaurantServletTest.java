@@ -12,10 +12,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.RestaurantManager;
+import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -31,13 +35,15 @@ public class RestaurantServletTest {
   private static final String UPDATE_NAME_A = "UPDATE";
 
   private RestaurantManager restaurantManager;
+  private DealManager dealManager;
 
   private RestaurantServlet restaurantServlet;
 
   @Before
   public void setUp() {
     restaurantManager = mock(RestaurantManager.class);
-    restaurantServlet = new RestaurantServlet(restaurantManager);
+    dealManager = mock(DealManager.class);
+    restaurantServlet = new RestaurantServlet(restaurantManager, dealManager);
   }
 
   /** Successfully returns a restaurant */
@@ -48,6 +54,8 @@ public class RestaurantServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
+    List<Deal> deals = new ArrayList<>(); // TODO Arrays.asList(DEAL_A);
+    when(dealManager.getDealsOfRestaurant(1)).thenReturn(deals);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -57,7 +65,8 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",image:\"%s\"}", RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+            "{id:%d,name:\"%s\",photoUrl:\"%s\"," + "deals: []}",
+            RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -115,7 +124,8 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",image:\"%s\"}", RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
+            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[]}",
+            RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
