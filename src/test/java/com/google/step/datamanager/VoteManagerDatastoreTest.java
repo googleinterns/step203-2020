@@ -1,5 +1,9 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DEAL_ID_B;
+import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -12,12 +16,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class VoteManagerDatastoreTest {
-
-  private static final long USER_ID_A = 123;
-  private static final long USER_ID_B = 456;
-
-  private static final long DEAL_ID_A = 111;
-  private static final long DEAL_ID_B = 222;
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -36,55 +34,55 @@ public final class VoteManagerDatastoreTest {
 
   @Test
   public void getVotes_returnsZeroAtFirst() {
-    assertEquals(manager.getVotes(DEAL_ID_A), 0);
+    assertEquals(0, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_incrementsVotesCorrectly() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
     manager.vote(USER_ID_B, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 2);
+    assertEquals(2, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_doesNotIncrementForDuplicateVoteFromUser() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_decrementsVotesCorrectly() {
     manager.vote(USER_ID_A, DEAL_ID_A, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), -1);
+    assertEquals(-1, manager.getVotes(DEAL_ID_A));
     manager.vote(USER_ID_B, DEAL_ID_A, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), -2);
+    assertEquals(-2, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_doesNotAffectOtherDeals() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
     manager.vote(USER_ID_A, DEAL_ID_B, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
-    assertEquals(manager.getVotes(DEAL_ID_B), -1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
+    assertEquals(-1, manager.getVotes(DEAL_ID_B));
   }
 
   @Test
   public void vote_userChangeDirection() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
     manager.vote(USER_ID_A, DEAL_ID_A, -1);
-    assertEquals(manager.getVotes(DEAL_ID_A), -1);
+    assertEquals(-1, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_userUndoesVote() {
     manager.vote(USER_ID_A, DEAL_ID_A, 1);
-    assertEquals(manager.getVotes(DEAL_ID_A), 1);
+    assertEquals(1, manager.getVotes(DEAL_ID_A));
     manager.vote(USER_ID_A, DEAL_ID_A, 0);
-    assertEquals(manager.getVotes(DEAL_ID_A), 0);
+    assertEquals(0, manager.getVotes(DEAL_ID_A));
   }
 
   @Test
@@ -92,6 +90,6 @@ public final class VoteManagerDatastoreTest {
     for (int i = 1; i <= 100; i++) {
       manager.vote(i, DEAL_ID_A, 1);
     }
-    assertEquals(manager.getVotes(DEAL_ID_A), 100);
+    assertEquals(100, manager.getVotes(DEAL_ID_A));
   }
 }

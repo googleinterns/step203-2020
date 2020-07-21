@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DEAL_ID_B;
@@ -26,10 +27,13 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(JUnit4.class)
 public class DealDetailServletTest {
@@ -87,12 +91,62 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void testDoGet_success() throws IOException {
+  public void testDoGet_success() throws IOException, JSONException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doGet(mockRequest, mockResponse);
 
+    String expectedJson =
+        String.format(
+            "{"
+                + "    \"id\": %d,"
+                + "    \"description\": \"%s\","
+                + "    \"start\": \"%s\","
+                + "    \"end\": \"%s\","
+                + "    \"source\": \"%s\","
+                + "    \"image\": \"%s\","
+                + "    \"votes\": %d,"
+                + "    \"restaurant\": {"
+                + "        \"id\": %d,"
+                + "        \"name\": \"%s\","
+                + "        \"photoUrl\": \"%s\""
+                + "    },"
+                + "    \"poster\": {"
+                + "        \"id\": %d,"
+                + "        \"username\": \"%s\","
+                + "        \"picture\": \"%s\""
+                + "    },"
+                + "    \"tags\": ["
+                + "        {"
+                + "            \"name\": \"%s\","
+                + "            \"id\": %d"
+                + "        },"
+                + "        {"
+                + "            \"name\": \"%s\","
+                + "            \"id\": %d"
+                + "        }"
+                + "    ]"
+                + "}",
+            DEAL_A.id,
+            DEAL_A.description,
+            DEAL_A.start,
+            DEAL_A.end,
+            DEAL_A.source,
+            BLOBKEY_URL_A,
+            NUM_VOTES,
+            RESTAURANT_A.id,
+            RESTAURANT_A.name,
+            BLOBKEY_URL_A,
+            USER_A.id,
+            USER_A.username,
+            BLOBKEY_URL_A,
+            TAG_A.name,
+            TAG_A.id,
+            TAG_B.name,
+            TAG_B.id);
+
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
+    JSONAssert.assertEquals(expectedJson, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
@@ -105,7 +159,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void testDoDelete_sucess() throws IOException {
+  public void testDoDelete_success() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doDelete(mockRequest, mockResponse);
@@ -124,5 +178,14 @@ public class DealDetailServletTest {
     servlet.doDelete(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoDelete_notFound() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_B);
+
+    servlet.doDelete(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
 }

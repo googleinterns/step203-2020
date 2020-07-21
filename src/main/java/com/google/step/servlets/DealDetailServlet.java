@@ -79,7 +79,7 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    // user can only delete deals he created
+    // user can only delete deals they created
     if (deal.posterId != currentUser.id) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
@@ -157,7 +157,8 @@ public class DealDetailServlet extends HttpServlet {
 
     List<String> tagNames = null; // TODO get from request parameter
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
     dealManager.updateDeal(deal, tagNames);
     response.setStatus(HttpServletResponse.SC_OK);
   }

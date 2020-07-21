@@ -13,19 +13,21 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
-  public static String getCommentsJson(List<Comment> comments) {
+  public static String getCommentsJson(List<Comment> comments, List<User> users) {
     Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
-    for (Comment comment : comments) {
-      commentMapList.add(getCommentMap(comment));
+    List<Map<String, Object>> commentMapList = new ArrayList<>();
+    for (int i = 0; i < comments.size(); i++) {
+      Comment comment = comments.get(i);
+      User user = users.get(i);
+      commentMapList.add(getCommentMap(comment, user));
     }
     String json = gson.toJson(commentMapList);
     return json;
   }
 
-  public static String getCommentJson(Comment comment) {
+  public static String getCommentJson(Comment comment, User user) {
     Gson gson = new Gson();
-    String json = gson.toJson(getCommentMap(comment));
+    String json = gson.toJson(getCommentMap(comment, user));
     return json;
   }
 
@@ -63,11 +65,11 @@ public class JsonFormatter {
     return json;
   }
 
-  private static Map<String, Object> getCommentMap(Comment comment) {
+  private static Map<String, Object> getCommentMap(Comment comment, User poster) {
     Map<String, Object> commentMap = new HashMap<>();
     commentMap.put("id", comment.id);
     commentMap.put("dealId", comment.dealId);
-    commentMap.put("userId", comment.userId);
+    commentMap.put("user", getUserBriefMap(poster));
     commentMap.put("content", comment.content);
     commentMap.put("timestamp", comment.timestamp);
     return commentMap;
@@ -94,9 +96,6 @@ public class JsonFormatter {
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
     dealMap.put("image", getImageUrl(deal.photoBlobkey));
-    dealMap.put("poster", deal.posterId); // TODO use user name
-    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
-    dealMap.put("votes", 0); // TODO add votes
     return dealMap;
   }
 
@@ -166,7 +165,9 @@ public class JsonFormatter {
     userMap.put("email", user.email);
     userMap.put("bio", user.bio);
     if (user.photoBlobKey.isPresent()) {
-      userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
 
     userMap.put("dealsUploaded", getDealListBriefMaps(deals));
@@ -189,7 +190,9 @@ public class JsonFormatter {
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
       if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", "/api/images/" + user.photoBlobKey.get());
+        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+      } else {
+        userMap.put("picture", "/images/default-profile-pic.svg");
       }
     }
     return userMap;

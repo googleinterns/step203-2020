@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.step.model.Comment;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,7 +46,10 @@ public class CommentManagerDatastore implements CommentManager {
   @Override
   public List<Comment> getCommentsForDeal(long dealId) {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
-    Query query = new Query("Comment").setFilter(propertyFilter);
+    Query query =
+        new Query("Comment")
+            .setFilter(propertyFilter)
+            .addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery pq = datastore.prepare(query);
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : pq.asIterable()) {
