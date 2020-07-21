@@ -64,6 +64,8 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
+  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
+
   // Deal
   public static final long DEAL_ID_A = 1;
   public static final long DEAL_ID_B = 2;
@@ -88,7 +90,6 @@ public class TestConstants {
   public static final String TIME_C = "2020-07-10T14:15:30";
 
   public static final int VOTE_A = 0;
-  public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
@@ -111,10 +112,6 @@ public class TestConstants {
       String.format(
           "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
           RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_URL_B, USER_ID_B);
-  public static final String DEAL_C_BRIEF_JSON =
-      String.format(
-          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_C, DESCRIPTION_C, VOTE_A, DEAL_ID_C, BLOBKEY_URL_C, USER_ID_C);
   // Deal
 
   // Deal Brief for Home Page
