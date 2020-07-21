@@ -67,6 +67,15 @@ function configureDealsOfRestaurant(deals) {
 }
 
 /**
+ * Configures header of deals section.
+ * @param {Object} restaurant restaurant object
+ */
+function configureDealsHeader(restaurant) {
+  const dealsHeader = document.getElementById('deals-header');
+  dealsHeader.innerText = 'Deals from ' + restaurant.name;
+}
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
@@ -85,6 +94,7 @@ function initRestaurantPage() {
   };
   configureRestaurantInfo(restaurant);
   configureDealsOfRestaurant(restaurant.deals);
+  configureDealsHeader(restaurant);
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {
