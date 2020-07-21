@@ -39,6 +39,10 @@ function createHomePage(homePage) {
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
   for (let i = 0; i < Object.keys(homePage).length; i++) {
+<<<<<<< HEAD
+=======
+    console.log("hii");
+>>>>>>> b0da71b... set to check length of data instead
     const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
@@ -94,7 +98,12 @@ function createCarouselElements(numCarouselSlidesList,
   // number of sections on homepage
   let i;
   for (i = 0; i < Object.keys(homePageDeals).length; i++) {
+<<<<<<< HEAD
     carouselElements[i].children[0].href = '/all-section-deals/' + homePageSections[i];
+=======
+    console.log("here");
+    carouselElements[i].children[0].href = '/all-deals/' + homePageSections[i];
+>>>>>>> b0da71b... set to check length of data instead
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[1];
     const carouselItemList = carouselElements[i].children[2];

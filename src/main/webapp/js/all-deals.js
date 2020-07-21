@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+function setDealInfo() {
+  
+}
+>>>>>>> b0da71b... set to check length of data instead
 /**
  * Loads the deals onto the page
  * @param {array} deals
