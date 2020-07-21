@@ -1,20 +1,3 @@
-const commentsData = {
-  'comments': [
-    {
-      'id': 1234,
-      'user': {
-        'id': 1234,
-        'name': 'Alice Chen',
-        'username': 'alicechen',
-        'profile-pic': '/some-url-12345.jpg',
-      },
-      'timestamp': 123456789, // in milliseconds
-      'text': 'I ate here last week. Portions too small.',
-    },
-  ],
-  'token': 'bhfsdaog', // token for pagination
-};
-
 let dealId;
 let votes = 0;
 let myVote = 0;
@@ -30,8 +13,7 @@ function initComments() {
       dealId: dealId,
     },
   }).done((comments) => {
-    console.log(comments);
-    // TODO
+    loadCommentsToPage(comments);
   });
 }
 
@@ -78,30 +60,36 @@ function loadDealDataToPage(deal) {
 
 /**
  * Get comments for a deal
- * @param {object} commentsData
+ * @param {array} comments
  */
-function getComments(commentsData) {
+function loadCommentsToPage(comments) {
   const commentListElement = document.getElementById('comment-list');
   commentListElement.innerHTML = '';
-  commentsData.comments.forEach((comment) => {
+  comments.forEach((comment) => {
     commentListElement.appendChild(createCommentElement(comment));
   });
 }
 
 /**
  * Creates comment element
- * @param {object} commentEntity
+ * @param {object} comment
  * @return {object} commentElement
  */
-function createCommentElement(commentEntity) {
+function createCommentElement(comment) {
   const commentElement = document.createElement('div');
-  commentElement.className = 'border border-info py-3 my-3';
+  commentElement.className = 'border border-info py-3 px-3 my-3';
 
-  const textElement = document.createElement('span');
-  textElement.innerText = commentEntity.user.username +
-  ': ' + commentEntity.text;
-
+  const textElement = document.createElement('div');
+  textElement.innerText = comment.user.username +
+  ': ' + comment.content;
   commentElement.appendChild(textElement);
+
+  const timeElement = document.createElement('small');
+  timeElement.className = 'text-muted';
+  const date = new Date(Date.parse(comment.timestamp));
+  timeElement.innerText = 'Posted on: ' + date.toString();
+  commentElement.appendChild(timeElement);
+
   return commentElement;
 }
 
@@ -206,5 +194,4 @@ function initDeal() {
 
 addLoadEvent(() => {
   initDeal();
-  getComments(commentsData);
 });
