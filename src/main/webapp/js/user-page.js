@@ -344,7 +344,7 @@ function profilePhotoPreview(input) {
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
-  const profileEditForm = document.getElementById('profile-edit-form');
+  const profileEditForm = document.getElementById('profile-form');
   profileEditForm.hidden = true;
 }
 
@@ -369,7 +369,7 @@ function configureButtons(user) {
 /**
  * Initializes the user profile page based on the id.
  */
-function init() {
+function initRestaurantPage() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
   $.ajax('/api/users/' + id)
       .done((user) => {
@@ -383,5 +383,5 @@ function init() {
 }
 
 addLoadEvent(() => {
-  init();
+  initRestaurantPage();
 });

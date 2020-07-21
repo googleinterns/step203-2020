@@ -9,19 +9,27 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DealManagerDatastore implements DealManager {
 
   private final DatastoreService datastore;
+  private final DealTagManager dealTagManager;
   private final DealSearchManager searchManager;
   private final TagManager tagManager;
-  private final DealTagManager dealTagManager;
+
+  private final String LOCATION = "Asia/Singapore";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -55,6 +63,8 @@ public class DealManagerDatastore implements DealManager {
     entity.setProperty("source", source);
     entity.setProperty("posterId", posterId);
     entity.setProperty("restaurantId", restaurantId);
+    String creationTimeStamp = LocalDateTime.now(ZoneId.of(LOCATION)).toString();
+    entity.setProperty("timestamp", creationTimeStamp);
 
     Key key = datastore.put(entity);
     long id = key.getId();
@@ -64,7 +74,17 @@ public class DealManagerDatastore implements DealManager {
 
     dealTagManager.updateTagsOfDeal(id, tagIds);
 
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
+    Deal deal =
+        new Deal(
+            id,
+            description,
+            photoBlobkey,
+            start,
+            end,
+            source,
+            posterId,
+            restaurantId,
+            creationTimeStamp);
     searchManager.putDeal(deal, tagIds);
 
     return deal;
@@ -79,8 +99,7 @@ public class DealManagerDatastore implements DealManager {
     } catch (EntityNotFoundException e) {
       return null;
     }
-    Deal deal = transformEntityToDeal(dealEntity);
-    return deal;
+    return transformEntityToDeal(dealEntity);
   }
 
   @Override
@@ -101,7 +120,6 @@ public class DealManagerDatastore implements DealManager {
     }
     if (deal.description != null) {
       dealEntity.setProperty("description", deal.description);
-      System.out.println(deal.description);
     }
     if (deal.photoBlobkey != null) {
       dealEntity.setProperty("photoBlobkey", deal.photoBlobkey);
@@ -124,7 +142,72 @@ public class DealManagerDatastore implements DealManager {
     }
     datastore.put(dealEntity);
     searchManager.putDeal(deal, dealTagManager.getTagIdsOfDeal(deal.id));
-    return readDeal(deal.id);
+    return transformEntityToDeal(dealEntity);
+  }
+
+  /** Retrieves deals posted by restaurants or users */
+  private List<Deal> getDealsPublishedByRestaurantsOrUsers(Set<Long> ids, String filterAttribute) {
+    List<Deal> dealResults = new ArrayList<>();
+    if (ids.size() > 0) {
+      Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
+      Query query = new Query("Deal").setFilter(propertyFilter);
+      PreparedQuery pq = datastore.prepare(query);
+      for (Entity entity : pq.asIterable()) {
+        dealResults.add(readDeal(entity.getKey().getId()));
+      }
+    }
+    return dealResults;
+  }
+
+  /** Retrieves deals posted by users */
+  @Override
+  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds) {
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
+  }
+
+  /** Retrieves deals posted by restaurants */
+  @Override
+  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds) {
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
+  }
+
+  @Override
+  public List<Deal> getAllDeals() {
+    Query query = new Query("Deal");
+    PreparedQuery pq = datastore.prepare(query);
+    List<Deal> dealResults = new ArrayList<>();
+    for (Entity dealEntity : pq.asIterable()) {
+      dealResults.add(transformEntityToDeal(dealEntity));
+    }
+    return dealResults;
+  }
+
+  /**
+   * Returns a Deal object transformed from a deal entity.
+   *
+   * @param dealEntity Deal entity.
+   * @return a Deal object transformed from the entity.
+   */
+  private Deal transformEntityToDeal(Entity dealEntity) {
+    long id = dealEntity.getKey().getId();
+    String description = (String) dealEntity.getProperty("description");
+    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
+    String start = (String) dealEntity.getProperty("start");
+    String end = (String) dealEntity.getProperty("end");
+    String source = (String) dealEntity.getProperty("source");
+    long posterId = (long) dealEntity.getProperty("posterId");
+    long restaurantId = (long) dealEntity.getProperty("restaurantId");
+    String creationTimeStamp = (String) dealEntity.getProperty("timestamp");
+    return new Deal(
+        id,
+        description,
+        photoBlobkey,
+        start,
+        end,
+        source,
+        posterId,
+        restaurantId,
+        creationTimeStamp);
   }
 
   @Override
@@ -170,18 +253,5 @@ public class DealManagerDatastore implements DealManager {
       deals.add(transformEntityToDeal(entity));
     }
     return deals;
-  }
-
-  private Deal transformEntityToDeal(Entity dealEntity) {
-    String description = (String) dealEntity.getProperty("description");
-    String photoBlobkey = (String) dealEntity.getProperty("photoBlobkey");
-    String start = (String) dealEntity.getProperty("start");
-    String end = (String) dealEntity.getProperty("end");
-    String source = (String) dealEntity.getProperty("source");
-    long posterId = (long) dealEntity.getProperty("posterId");
-    long restaurantId = (long) dealEntity.getProperty("restaurantId");
-    long id = dealEntity.getKey().getId();
-    Deal deal = new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId);
-    return deal;
   }
 }
