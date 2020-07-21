@@ -88,6 +88,9 @@ function loadDataToForm(deal) {
 
   const dealSource = document.getElementById('source-input');
   dealSource.value = deal.source;
+
+  const restaurantIdInput = document.getElementById('restaurant-id-input');
+  restaurantIdInput.value = deal.restaurant.id;
 }
 
 /**
@@ -221,6 +224,20 @@ function handleEdit() {
 function handleCancelEdit() {
   $('#deal-details').show();
   $('#edit-form').hide();
+}
+
+/**
+ * Submits the form with a PUT request and refreshes the page
+ */
+function handleSubmit() {
+  const form = document.getElementById('edit-form');
+  $.ajax({
+    type: 'PUT',
+    url: '/api/deals/' + dealId,
+    data: $(form).serialize(),
+  }).done((a) => {
+    console.log(a);
+  });
 }
 
 /**

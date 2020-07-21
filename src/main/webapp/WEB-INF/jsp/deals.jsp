@@ -62,7 +62,7 @@
               </div>
               <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
-            <form style="display:none" method="put" id="edit-form" novalidate class="needs-validation">
+            <form style="display:none" id="edit-form" novalidate class="needs-validation">
               <div class="form-group form-inline">
                 <label for="description-input" class="mr-2">Description:</label>
                 <input name="description" type="text" class="form-control" id="description-input" required>
@@ -85,6 +85,7 @@
                   <div id="restaurant-search-results" class="search-menu"></div>
                 </div>
               </div>
+              <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
 
               <div class="form-group validate-me form-inline">
                 <label class="mr-2">Valid Date:</label>
@@ -104,7 +105,7 @@
                 <input name="source" type="text" class="form-control" id="source-input">
               </div>
 
-              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-primary" onclick="handleSubmit()">Save</button>
               <button type="button" class="btn btn-primary ml-2" onclick="handleCancelEdit()">Cancel</button>
             </form>
           </div>
