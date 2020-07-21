@@ -254,4 +254,20 @@ public class DealManagerDatastore implements DealManager {
     }
     return deals;
   }
+
+  @Override
+  public List<Deal> getDealsOfRestaurant(long restaurantId) {
+    Query query =
+        new Query("Deal")
+            .setFilter(
+                new Query.FilterPredicate(
+                    "restaurantId", Query.FilterOperator.EQUAL, restaurantId));
+    PreparedQuery pq = datastore.prepare(query);
+    Iterable<Entity> entities = pq.asIterable();
+    List<Deal> deals = new ArrayList<>();
+    for (Entity entity : entities) {
+      deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
+  }
 }
