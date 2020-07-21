@@ -24,8 +24,28 @@ public class RestaurantGenerator {
   private static final String TYPE = "restaurant";
 
   private static final String FILE_NAME = "restaurants.txt";
+  private static final RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
-  private static RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+  /** Populates restaurant database. */
+  public static void populateRestaurantsDatabase() {
+    File file = new File(RestaurantGenerator.class.getResource("/restaurants.txt").getFile());
+    String content;
+    try {
+      content = new String(Files.readAllBytes(file.toPath()));
+    } catch (IOException e) {
+      e.printStackTrace();
+      return;
+    }
+
+    JsonObject jsonObject;
+    try {
+      jsonObject = JsonParser.parseString(content).getAsJsonObject();
+    } catch (JsonSyntaxException e) {
+      e.printStackTrace();
+      return;
+    }
+    createRestaurants(jsonObject.get("results").getAsJsonArray());
+  }
 
   /** Fetches restaurants info and writes to a file. */
   private static void generateRestaurantsJsonFile() {
@@ -44,7 +64,6 @@ public class RestaurantGenerator {
     StringBuilder jsonResults = new StringBuilder();
 
     try {
-
       URL url = new URL(searchUrl);
       connection = (HttpURLConnection) url.openConnection();
       InputStreamReader in = new InputStreamReader(connection.getInputStream());
@@ -82,28 +101,6 @@ public class RestaurantGenerator {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  /** Populates restaurant database. */
-  public static void populateRestaurantsDatabase() {
-    File file = new File(RestaurantGenerator.class.getResource("/restaurants.txt").getFile());
-    String content;
-    try {
-      content = new String(Files.readAllBytes(file.toPath()));
-    } catch (IOException e) {
-      e.printStackTrace();
-      return;
-    }
-
-    JsonObject jsonObject;
-    try {
-      jsonObject = JsonParser.parseString(content).getAsJsonObject();
-    } catch (JsonSyntaxException e) {
-      e.printStackTrace();
-      return;
-    }
-    restaurantManager.deleteAllRestaurants();
-    createRestaurants(jsonObject.get("results").getAsJsonArray());
   }
 
   private static void createRestaurants(JsonArray restaurantsJsonArray) {
