@@ -62,6 +62,12 @@ function loadDataToDetails(deal) {
   dealPoster.href = '/user/' + deal.poster.id;
   dealPoster.innerText = deal.poster.username;
 
+  const tagsContainer = document.getElementById('tags');
+  for (const tag of deal.tags) {
+    const tagContainer = createTagContainer(tag);
+    tagsContainer.appendChild(tagContainer);
+  }
+
   const dealSource = document.getElementById('deal-source');
   dealSource.innerText = deal.source;
 }
@@ -90,6 +96,18 @@ function loadDataToForm(deal) {
 
   const restaurantIdInput = document.getElementById('restaurant-id-input');
   restaurantIdInput.value = deal.restaurant.id;
+}
+
+/**
+ * Returns a container with tag's name.
+ * @param {object} tag The tag object.
+ * @return {object} a container with tag's name.
+ */
+function createTagContainer(tag) {
+  const tagContainer = document.createElement('span');
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
+  tagContainer.innerText = tag.name;
+  return tagContainer;
 }
 
 /**

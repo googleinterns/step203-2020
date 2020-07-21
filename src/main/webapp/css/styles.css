@@ -10332,3 +10332,8 @@ body > .container {
   background-color: rgba(0, 0, 0, 0.075);
   cursor: pointer;
 }
+
+.deal-card-img {
+  max-height: 200px;
+  object-fit: cover;
+}

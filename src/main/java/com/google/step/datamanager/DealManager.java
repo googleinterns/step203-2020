@@ -32,5 +32,7 @@ public interface DealManager {
 
   public List<Deal> readDeals(List<Long> ids);
 
+  public List<Deal> getDealsOfRestaurant(long restaurantId);
+
   public List<Deal> getDealsPublishedByUser(long userId);
 }

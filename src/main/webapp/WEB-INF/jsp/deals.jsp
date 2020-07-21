@@ -58,6 +58,8 @@
                 <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
                 <p>Posted by: <a id="user-poster" href=""></a></p>
                 <p>Source: <span id="deal-source"></span></p>
+                <p>Tags: <span id="tags"></span></p>
+                <ul class="list-group" id="menu"></ul>
               </div>
               <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
