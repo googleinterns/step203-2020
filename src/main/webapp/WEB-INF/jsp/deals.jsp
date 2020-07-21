@@ -10,7 +10,6 @@
   <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="/js/go-to-deal.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
@@ -75,15 +74,15 @@
                 <label for="restaurant-input" class="mr-2">Restaurant:</label>
                 <input disabled type="text" class="form-control" id="restaurant-input">
               </div>
-              <div class="mb-3">
-                <div class="d-flex align-items-center">
+              <div class="mb-3" id="search-container">
+                <!-- <div class="d-flex align-items-center">
                   <i class="fa fa-search mr-2"></i>
                   <input autocomplete="off" type="search" placeholder="Search for a restaurant..." class="flex-grow-1"
                     style="outline: 0;border-width: 0 0 2px;">
                 </div>
                 <div class="search-menu-container">
                   <div id="restaurant-search-results" class="search-menu"></div>
-                </div>
+                </div> -->
               </div>
               <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
 
@@ -150,6 +149,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <!-- Core theme JS-->
   <script src="/js/scripts.js"></script>
+  <!-- Restaurant search JS-->
+  <script src="/js/restaurant-search-util.js"></script>
+  <!-- Page JS-->
+  <script src="/js/go-to-deal.js"></script>
 </body>
 
 </html>

@@ -259,4 +259,8 @@ function initDeal() {
 
 addLoadEvent(() => {
   initDeal();
+  initSearchRestaurant(
+      document.getElementById('search-container'),
+      (x) => console.log(x),
+  );
 });
