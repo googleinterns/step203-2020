@@ -45,6 +45,7 @@ function searchRestaurant(query, searchResults, callback) {
  */
 function initSearchRestaurant(searchDiv, callback) {
   const searchInputDiv = document.createElement('div');
+  searchInputDiv.className = 'd-flex';
   searchInputDiv.innerHTML = `
     <i class="fa fa-search mr-2"></i>
     <input autocomplete="off" type="search"
