@@ -32,7 +32,7 @@ public class TestConstants {
 
   public static final String IMAGE_URL_A = "/api/images/" + BLOBKEY_A;
   public static final String IMAGE_URL_B = "/api/images/" + BLOBKEY_B;
-  
+
   public static final String BIO_A = "Hello world.";
   public static final String BIO_A_NEW = "Hi, I'm Alice";
   public static final String BIO_B = "Hello I'm Bob.";
@@ -140,6 +140,8 @@ public class TestConstants {
 
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
+
+  public static final String TOKEN_A = "ghcnyoawecf";
 
   public static final Comment COMMENT_A =
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
