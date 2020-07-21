@@ -38,9 +38,10 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getRestaurantJson(Restaurant restaurant, List<Deal> deals) {
+  public static String getRestaurantJson(
+      Restaurant restaurant, List<Deal> deals, List<String> placeIds) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMap(restaurant, deals));
+    String json = gson.toJson(getRestaurantMap(restaurant, deals, placeIds));
     return json;
   }
 
@@ -99,12 +100,15 @@ public class JsonFormatter {
     return dealMap;
   }
 
-  private static Map<String, Object> getRestaurantMap(Restaurant restaurant, List<Deal> deals) {
+  private static Map<String, Object> getRestaurantMap(
+      Restaurant restaurant, List<Deal> deals, List<String> placeIds) {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
     restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
     restaurantMap.put("deals", getDealListBriefMaps(deals));
+    restaurantMap.put("placeIds", placeIds);
+
     return restaurantMap;
   }
 

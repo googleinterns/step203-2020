@@ -55,6 +55,56 @@ function unfollow(restaurantId) {
 }
 
 /**
+ * Initializes the restaurant map.
+ * @param {object} restaurant restaurant object.
+ */
+function initMap(restaurant) {
+  const center = {lat: 1.352, lng: 103.8198};
+  const map = new google.maps.Map(document.getElementById('restaurant-map'),
+      {zoom: 13, center: center});
+  setRestaurantMarkers(restaurant.placeIds, map);
+}
+
+/**
+ * Sets markers on the map.
+ * @param {String[]} placeIds place ids of restaurant branches
+ * @param {Object} map google map
+ */
+function setRestaurantMarkers(placeIds, map) {
+  const service = new google.maps.places.PlacesService(map);
+  const bounds = new google.maps.LatLngBounds();
+  for (const placeId of placeIds) {
+    const request = {
+      placeId: placeId,
+      fields: ['formatted_address', 'geometry', 'name'],
+    };
+
+    service.getDetails(request, function(place, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        const marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location,
+        });
+        bounds.extend(marker.position);
+        map.panToBounds(bounds);
+        map.fitBounds(bounds);
+
+        const infoWindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(marker, 'click', function() {
+          infoWindow.setContent(
+              '<div><h6>' +
+                place.name +
+                '</h6><p>' +
+                place.formatted_address +
+                '</p>');
+          infoWindow.open(map, marker);
+        });
+      }
+    });
+  }
+}
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
@@ -63,8 +113,10 @@ function initRestaurantPage() {
   restaurant = {
     name: 'McDonald',
     photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
+    placeIds: ['ChIJS5IVbvwa2jERDxPwmWkRghI', 'ChIJuUFoBdcb2jERsu6OBBfVMQQ'],
   };
   configureRestaurantInfo(restaurant);
+  initMap(restaurant);
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {

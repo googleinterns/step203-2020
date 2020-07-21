@@ -65,7 +65,7 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\"," + "deals: []}",
+            "{id:%d,name:\"%s\",photoUrl:\"%s\"," + "deals: []," + "placeIds:[]" + "}",
             RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
@@ -124,7 +124,7 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[]}",
+            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[]," + "placeIds:[]" + "}",
             RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);

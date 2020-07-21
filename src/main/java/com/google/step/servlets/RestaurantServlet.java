@@ -6,6 +6,7 @@ import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -59,9 +60,10 @@ public class RestaurantServlet extends HttpServlet {
     }
 
     List<Deal> deals = dealManager.getDealsOfRestaurant(id);
+    List<String> placeIds = new ArrayList<>(); // TODO
 
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
   }
 
   /** Updates a restaurant with the given id parameter */
@@ -82,7 +84,10 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     } else {
       List<Deal> deals = dealManager.getDealsOfRestaurant(id);
-      response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals));
+      List<String> placeIds = new ArrayList<>(); // TODO
+      response
+          .getWriter()
+          .println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals, placeIds));
     }
   }
 }
