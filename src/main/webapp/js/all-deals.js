@@ -1,4 +1,6 @@
-
+function setDealInfo() {
+  
+}
 /**
  * Creates deal elements on on view all deals page
  */

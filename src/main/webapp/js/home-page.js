@@ -38,12 +38,8 @@ const homePageDealsData = {
 function createHomePage(homePage) {
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
-  const carouselElements = document.querySelectorAll('.carousel.slide');
-  for (let i = 0; i < carouselElements.length; i++) {
-    if (!homePage.hasOwnProperty(homePageSections[i]) ||
-      homePage[homePageSections[i]].length == 0) {
-      continue;
-    }
+  for (let i = 0; i < Object.keys(homePage).length; i++) {
+    console.log("hii");
     const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
@@ -97,21 +93,9 @@ function createCarouselElements(numCarouselSlidesList,
     'users', 'tags'];
 
   // number of sections on homepage
-  for (let i = 0; i < carouselElements.length; i++) {
-    if (!homePageDeals.hasOwnProperty(homePageSections[i]) ||
-      homePageDeals[homePageSections[i]].length == 0) {
-      // set display to none if there is no data for that section
-      carouselElements[i].children[0].style.display = 'none';
-      carouselElements[i].children[3].style.display = 'none';
-      carouselElements[i].children[4].style.display = 'none';
-
-      // inform users to log in to view
-      const showNotFound = document.createElement('h5');
-      showNotFound.className = 'text-center mt-5';
-      showNotFound.innerText = 'Please log in to view.';
-      carouselElements[i].appendChild(showNotFound);
-      continue;
-    }
+  let i;
+  for (i = 0; i < Object.keys(homePageDeals).length; i++) {
+    console.log("here");
     carouselElements[i].children[0].href = '/all-deals/' + homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[1];
@@ -171,6 +155,20 @@ function createCarouselElements(numCarouselSlidesList,
     carouselElements[i].children[3].href = '#carousel-' + i;
     carouselElements[i].children[4].href = '#carousel-' + i;
   }
+  // for subsequent carousel elements, set to no display due to no data
+  for (let k = i; k < carouselElements.length; k++) {
+    // set display to none if there is no data for that section
+    carouselElements[k].children[0].style.display = 'none';
+    carouselElements[k].children[3].style.display = 'none';
+    carouselElements[k].children[4].style.display = 'none';
+
+    // inform users to log in to view
+    const showNotFound = document.createElement('h5');
+    showNotFound.className = 'text-center mt-5';
+    showNotFound.innerText = 'Please log in to view.';
+    carouselElements[k].appendChild(showNotFound);
+    continue;
+  }
 }
 
 /**
@@ -179,6 +177,8 @@ function createCarouselElements(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
+        homePageDeals = homePageDealsData;
+        console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });

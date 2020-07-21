@@ -33,10 +33,11 @@
   </servlet>
 
   <servlet>
-<<<<<<< HEAD
     <servlet-name>allDeals</servlet-name>
     <jsp-file>/WEB-INF/jsp/all-deals.jsp</jsp-file>
-=======
+  </servlet>
+  
+  <servlet>
     <servlet-name>restaurant</servlet-name>
     <jsp-file>/WEB-INF/jsp/restaurant.jsp</jsp-file>
   </servlet>
@@ -44,7 +45,6 @@
   <servlet>
     <servlet-name>addRestaurant</servlet-name>
     <jsp-file>/WEB-INF/jsp/add-restaurant.jsp</jsp-file>
->>>>>>> origin/view-section-deals-backend
   </servlet>
 
   <servlet-mapping>
