@@ -47,11 +47,6 @@ public class CommentManagerDatastore implements CommentManager {
   }
 
   @Override
-  public CommentsWithToken getCommentsForDeal(long dealId) {
-    return getCommentsForDeal(dealId, null);
-  }
-
-  @Override
   public CommentsWithToken getCommentsForDeal(long dealId, String token)
       throws IllegalArgumentException {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);

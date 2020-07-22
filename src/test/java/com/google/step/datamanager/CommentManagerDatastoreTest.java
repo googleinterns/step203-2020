@@ -52,7 +52,7 @@ public final class CommentManagerDatastoreTest {
   public void testGetCommentsForDeal() {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
-    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A).comments;
+    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
     assertEquals(2, comments.size());
     assertThat(comments, hasItems(commentA, commentB));
   }
@@ -61,7 +61,7 @@ public final class CommentManagerDatastoreTest {
   public void testDeleteSingleComment() {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     commentManagerDatastore.deleteComment(commentA.id);
-    assertTrue(commentManagerDatastore.getCommentsForDeal(DEAL_ID_A).comments.isEmpty());
+    assertTrue(commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments.isEmpty());
   }
 
   @Test
@@ -70,7 +70,7 @@ public final class CommentManagerDatastoreTest {
     Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
     commentManagerDatastore.deleteComment(commentA.id);
     commentManagerDatastore.deleteComment(commentB.id);
-    assertTrue(commentManagerDatastore.getCommentsForDeal(DEAL_ID_A).comments.isEmpty());
+    assertTrue(commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments.isEmpty());
   }
 
   @Test
@@ -78,7 +78,7 @@ public final class CommentManagerDatastoreTest {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
     commentManagerDatastore.deleteComment(commentA.id);
-    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A).comments;
+    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
     assertThat(comments, hasItem(commentB));
     assertEquals(1, comments.size());
   }
@@ -87,7 +87,7 @@ public final class CommentManagerDatastoreTest {
   public void testUpdateComment() {
     Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     commentManagerDatastore.updateComment(commentA.id, CONTENT_B);
-    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A).comments;
+    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
     assertEquals(UPDATED_COMMENT_A, comments.get(0));
     assertEquals(1, comments.size());
   }

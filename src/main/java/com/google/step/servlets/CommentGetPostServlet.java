@@ -63,6 +63,8 @@ public class CommentGetPostServlet extends HttpServlet {
     List<User> users =
         userManager.readUsers(
             comments.stream().map(comment -> comment.userId).collect(Collectors.toList()));
+
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
     response.setContentType("application/json;");
     response.getWriter().println(JsonFormatter.getCommentsWithTokenJson(comments, users, newToken));
   }
