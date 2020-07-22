@@ -107,8 +107,13 @@ public class HomePageServlet extends HttpServlet {
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
-      User user = userManager.readUserByEmail(email);
-      long userId = user.id;
+      long userId;
+      try {
+        User user = userManager.readUserByEmail(email);
+        userId = user.id;
+      } catch (IllegalArgumentException e) {
+        userId = 5;
+      }
       // Retrieves maps of all the sections
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(homePageSection, sort, userId);
@@ -133,8 +138,7 @@ public class HomePageServlet extends HttpServlet {
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
     } else {
-      if (homePageSection
-          == null) { // user accesses home page when not logged in, only trending will be shown
+      if (homePageSection == null) { // only trending will be shown when not logged in
         List<List<Map<String, Object>>> homePageDealsMaps =
             getSectionListMaps("trending", null, -1);
         response.setContentType("application/json;");

@@ -46,11 +46,18 @@ function createAllDealCards(deals, reqSection) {
       }
     }
   }
-  const dropdownMenu = document.querySelector('.dropdown-sort');
-  console.log('HERE');
-  dropdownMenu.children[0].href = '/all-section-deals/' + reqSection + '/trending';
-  dropdownMenu.children[1].href = '/all-section-deals/' + reqSection + '/votes';
-  dropdownMenu.children[2].href = '/all-section-deals/' + reqSection + '/new';
+  const dropdownMenu = document.getElementById('sort');
+  if (reqSection !== 'trending') {
+    dropdownMenu.children[0].href = '/all-section-deals/' +
+      reqSection + '/trending';
+    dropdownMenu.children[1].href = '/all-section-deals/' +
+      reqSection + '/votes';
+    dropdownMenu.children[2].href = '/all-section-deals/' +
+      reqSection + '/new';
+  } else {
+    const dropdownSection = document.querySelector('.dropdown-sort');
+    dropdownSection.style.display = 'none';
+  }
 }
 
 /**
