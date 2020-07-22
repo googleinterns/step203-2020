@@ -221,10 +221,6 @@ public class HomePageServletTest {
 
     gettingSectionMaps_A();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
     homePageServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
@@ -308,5 +304,28 @@ public class HomePageServletTest {
         String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_SectionIsNotValid() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("section")).thenReturn("trash");
+
+    homePageServlet.doGet(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_SortIsNotValid() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("section")).thenReturn("trending");
+    when(request.getParameter("sort")).thenReturn("trash");
+
+    homePageServlet.doGet(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }

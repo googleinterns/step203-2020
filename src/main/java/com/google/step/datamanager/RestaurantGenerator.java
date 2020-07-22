@@ -24,6 +24,7 @@ public class RestaurantGenerator {
   private static final String TYPE = "restaurant";
 
   private static final String FILE_NAME = "restaurants.txt";
+  private static final RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
   /** Populates restaurant database. */
   public static void populateRestaurantsDatabase() {
@@ -103,11 +104,14 @@ public class RestaurantGenerator {
   }
 
   private static void createRestaurants(JsonArray restaurantsJsonArray) {
-    RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+
     for (JsonElement restaurantElement : restaurantsJsonArray) {
       JsonObject restaurantObject = restaurantElement.getAsJsonObject();
       String name = restaurantObject.get("name").getAsString();
-      restaurantManager.createRestaurant(name, "test"); // TODO
+      JsonElement photo = restaurantObject.get("photos").getAsJsonArray().get(0);
+      String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
+
+      restaurantManager.createRestaurantWithPhotoReference(name, photoReference);
     }
   }
 }

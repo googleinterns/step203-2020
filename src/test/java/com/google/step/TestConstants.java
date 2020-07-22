@@ -78,12 +78,17 @@ public class TestConstants {
 
   public static final String RESTAURANT_NAME_A = "A";
   public static final String RESTAURANT_NAME_B = "B";
+  public static final String RESTAURANT_NAME_C = "C";
+
+  public static final String RESTAURANT_PHOTO_REFERENCE_A = "a_photo_reference";
+  public static final String RESTAURANT_PHOTO_REFERENCE_URL_A =
+      Restaurant.getImageUrlFromPhotoReference(RESTAURANT_PHOTO_REFERENCE_A);
 
   public static final Restaurant RESTAURANT_A =
-      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
   public static final Restaurant RESTAURANT_B =
-      new Restaurant(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
+      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
 
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
