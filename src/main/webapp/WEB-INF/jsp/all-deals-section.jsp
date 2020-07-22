@@ -6,30 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <title>All Deals | Deal Finder</title>
-  <script src="js/util.js"></script>
+  <title>Deals | Deal Finder</title>
+  <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="/js/all-deals.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
-  <link href="css/styles.css" rel="stylesheet" />
+  <link href="/css/styles.css" rel="stylesheet" />
+  <!-- Page CSS-->
+  <link href="/css/deals.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
   <div class="container">
-    <section class="page-section">
-      <h2 class="page-section-heading text-center text-secondary mb-4">All Deals</h2>
-      <div id="list" class="card-columns" style="display: none;"></div>
-      <div id="loading">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
-    </section>
+    <div class="page-section">
+      <div class="row row-deals"></div>
+      <div class="row row-deals"></div>
+      <div class="row row-deals"></div>
+      <div class="row row-deals"></div>
+      <div class="row row-deals"></div>
+    </div>
   </div>
   <%@include file="/WEB-INF/components/footer.html"%>
   <!-- Bootstrap core JS-->
@@ -38,9 +39,7 @@
   <!-- Third party plugin JS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <!-- Core theme JS-->
-  <script src="js/scripts.js"></script>
-  <!-- Page JS -->
-  <script src="js/all-deals.js"></script>
+  <script src="/js/scripts.js"></script>
 </body>
 
 </html>

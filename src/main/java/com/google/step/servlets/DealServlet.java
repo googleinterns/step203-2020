@@ -4,6 +4,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,23 +23,29 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting deals. */
 @WebServlet("/api/deals")
-public class DealPostServlet extends HttpServlet {
+public class DealServlet extends HttpServlet {
 
   private final UserService userService;
   private final DealManager dealManager;
   private final UserManager userManager;
+  private final RestaurantManager restaurantManager;
 
-  public DealPostServlet(
-      DealManager dealManager, UserManager userManager, UserService userService) {
+  public DealServlet(
+      DealManager dealManager,
+      UserManager userManager,
+      UserService userService,
+      RestaurantManager restaurantManager) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.userService = userService;
+    this.restaurantManager = restaurantManager;
   }
 
-  public DealPostServlet() {
+  public DealServlet() {
     userService = UserServiceFactory.getUserService();
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
+    restaurantManager = new RestaurantManagerDatastore();
   }
 
   /** Posts the deal with the given id parameter */
@@ -63,7 +72,10 @@ public class DealPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    // TODO validate that restaurant ID exists
+    if (restaurantManager.readRestaurant(restaurantId) == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
     // validate required parameters exist
     if (anyEmpty(description, photoBlobkey, start, end)) {
@@ -81,14 +93,25 @@ public class DealPostServlet extends HttpServlet {
       return;
     }
 
-    // TODO get the tag names from request parameter
+    String tagParameter = request.getParameter("tags");
     List<String> tagNames = new ArrayList<>();
+    if (tagParameter != null && !tagParameter.isEmpty()) {
+      tagNames = Arrays.asList(tagParameter.split(","));
+    }
 
     Deal deal =
         dealManager.createDeal(
             description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
 
     response.sendRedirect("/deals/" + deal.id);
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Deal> deals = dealManager.getAllDeals();
+    response.setContentType("application/json;");
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+    response.getWriter().println(JsonFormatter.getDealListJson(deals));
   }
 
   private boolean anyEmpty(String... strs) {
