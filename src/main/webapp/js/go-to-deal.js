@@ -167,6 +167,7 @@ function addCommentEditToBox(commentBox, comment) {
   const textareaDiv = document.createElement('div');
   const textarea = document.createElement('textarea');
   textarea.className = 'w-100 form-control mb-2';
+  textarea.value = comment.content;
   textareaDiv.appendChild(textarea);
   commentBox.appendChild(textareaDiv);
 
@@ -176,6 +177,12 @@ function addCommentEditToBox(commentBox, comment) {
   const saveBtn = document.createElement('button');
   saveBtn.className = 'btn btn-primary';
   saveBtn.innerText = 'Save';
+  saveBtn.onclick = () => {
+    const newContent = textarea.value;
+    comment.content = newContent;
+    updateComment(comment);
+    addCommentContentToBox(commentBox, comment);
+  };
   buttonDiv.appendChild(saveBtn);
 
   const cancelBtn = document.createElement('button');
@@ -196,6 +203,20 @@ function deleteComment(commentBox, comment) {
   $.ajax({
     url: '/api/comments/' + comment.id,
     method: 'DELETE',
+  });
+}
+
+/**
+ * Makes a request to the backend to update the comment
+ * @param {object} comment comment object
+ */
+function updateComment(comment) {
+  $.ajax({
+    url: '/api/comments/' + comment.id,
+    method: 'PUT',
+    data: {
+      content: comment.content,
+    },
   });
 }
 
