@@ -87,23 +87,23 @@ function loadCommentsToPage(comments) {
   const commentListElement = document.getElementById('comment-list');
   commentListElement.innerHTML = '';
   comments.forEach((comment) => {
-    commentListElement.appendChild(createCommentElement(comment));
+    commentListElement.appendChild(createCommentBox(comment));
   });
 }
 
 /**
  * Creates comment element
  * @param {object} comment
- * @return {HTMLDivElement} commentElement
+ * @return {HTMLDivElement} commentBox
  */
-function createCommentElement(comment) {
-  const commentElement = document.createElement('div');
-  commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
+function createCommentBox(comment) {
+  const commentBox = document.createElement('div');
+  commentBox.className = 'border border-info py-3 px-3 my-3 d-flex';
 
   const contentElement = document.createElement('div');
   contentElement.className = `flex-grow-1 d-flex flex-column
     justify-content-between`;
-  commentElement.appendChild(contentElement);
+  commentBox.appendChild(contentElement);
 
   const textElement = document.createElement('div');
   textElement.innerText = comment.user.username + ': ' + comment.content;
@@ -118,7 +118,7 @@ function createCommentElement(comment) {
   if (isLoggedIn && comment.user.id == userId) {
     const deleteEditContainer = document.createElement('div');
     deleteEditContainer.className = 'd-flex flex-column';
-    commentElement.appendChild(deleteEditContainer);
+    commentBox.appendChild(deleteEditContainer);
 
     // TODO allow edit comment
     // const editBtn = document.createElement('button');
@@ -132,23 +132,23 @@ function createCommentElement(comment) {
     deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
     deleteBtn.onclick = () => {
       if (confirm('Are you sure you want to delete this comment?')) {
-        deleteComment(commentElement, comment);
+        deleteComment(commentBox, comment);
       }
     };
     deleteEditContainer.appendChild(deleteBtn);
   }
 
-  return commentElement;
+  return commentBox;
 }
 
 /**
  * Makes a request to the backend to delete the comment, and removes the div
  * element
- * @param {HTMLDivElement} commentElement div to be deleted
+ * @param {HTMLDivElement} commentBox div to be deleted
  * @param {object} comment comment object
  */
-function deleteComment(commentElement, comment) {
-  commentElement.remove();
+function deleteComment(commentBox, comment) {
+  commentBox.remove();
   $.ajax({
     url: '/api/comments/' + comment.id,
     method: 'DELETE',
