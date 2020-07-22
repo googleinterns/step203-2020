@@ -16,12 +16,12 @@ public class RestaurantPlaceManagerDatastore implements RestaurantPlaceManager {
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
   @Override
-  public void updatePlacesOfRestaurants(long restaurantId, List<String> placeIds) {
+  public void updatePlacesOfRestaurant(long restaurantId, List<String> placeIds) {
     Set<String> newPlaceIds = new HashSet<>(placeIds);
-    Iterable<Entity> results = getEntitiesOfRestaurant(restaurantId);
+    Iterable<Entity> currentPlaceEntities = getRestaurantPlaceEntities(restaurantId);
 
     // Keeps place ids in the new list and remove others
-    for (Entity entity : results) {
+    for (Entity entity : currentPlaceEntities) {
       String placeId = (String) entity.getProperty("placeId");
       if (newPlaceIds.contains(placeId)) {
         newPlaceIds.remove(placeId);
@@ -38,8 +38,8 @@ public class RestaurantPlaceManagerDatastore implements RestaurantPlaceManager {
   }
 
   @Override
-  public Set<String> getPlaceIdsOfRestaurant(long id) {
-    Iterable<Entity> results = getEntitiesOfRestaurant(id);
+  public Set<String> getPlaceIdsOfRestaurant(long restaurantId) {
+    Iterable<Entity> results = getRestaurantPlaceEntities(restaurantId);
     Set<String> placeIds = new HashSet<>();
     for (Entity entity : results) {
       placeIds.add((String) entity.getProperty("placeId"));
@@ -55,11 +55,10 @@ public class RestaurantPlaceManagerDatastore implements RestaurantPlaceManager {
     return entity;
   }
 
-  private Iterable<Entity> getEntitiesOfRestaurant(long id) {
+  private Iterable<Entity> getRestaurantPlaceEntities(long restaurantId) {
     Query query = new Query("RestaurantPlace");
-    Filter filter = new FilterPredicate("restaurantId", FilterOperator.EQUAL, id);
+    Filter filter = new FilterPredicate("restaurantId", FilterOperator.EQUAL, restaurantId);
     query.setFilter(filter);
-    Iterable<Entity> results = datastore.prepare(query).asIterable();
-    return results;
+    return datastore.prepare(query).asIterable();
   }
 }

@@ -39,7 +39,7 @@ public class RestaurantPlaceManagerDatastoreTest {
   @Test
   public void testUpdatePlacesOfRestaurant() {
     List<String> placeIds = Arrays.asList(PLACE_ID_A, PLACE_ID_B);
-    restaurantPlaceManager.updatePlacesOfRestaurants(RESTAURANT_ID_A, placeIds);
+    restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_A, placeIds);
 
     Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A);
     assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_B));
@@ -48,9 +48,9 @@ public class RestaurantPlaceManagerDatastoreTest {
   @Test
   public void testUpdatePlacesOfRestaurant_morePlaceIds() {
     List<String> placeIds = Arrays.asList(PLACE_ID_A, PLACE_ID_B);
-    restaurantPlaceManager.updatePlacesOfRestaurants(RESTAURANT_ID_A, placeIds);
+    restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_A, placeIds);
     placeIds = Arrays.asList(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D);
-    restaurantPlaceManager.updatePlacesOfRestaurants(RESTAURANT_ID_A, placeIds);
+    restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_A, placeIds);
 
     Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A);
     assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D));
