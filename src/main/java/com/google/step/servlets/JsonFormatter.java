@@ -103,7 +103,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
     restaurantMap.put("deals", getDealListBriefMaps(deals));
     return restaurantMap;
   }
@@ -112,7 +112,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
     return restaurantMap;
   }
 
