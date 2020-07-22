@@ -176,9 +176,6 @@ function updateMyVote() {
  * @param {number} dir
  */
 function postVote(dir) {
-  if (!isLoggedIn) {
-    return;
-  }
   $.ajax({
     url: '/api/vote/' + dealId,
     method: 'POST',
@@ -229,9 +226,6 @@ function showNotFound() {
  * upvote/downvote buttons
  */
 function initVotes() {
-  if (!isLoggedIn) {
-    return;
-  }
   $.ajax('/api/vote/' + dealId)
       .done((dir) => {
         myVote = parseInt(dir);
