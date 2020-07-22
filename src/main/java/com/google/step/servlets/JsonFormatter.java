@@ -31,18 +31,6 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getCommentsJson(List<Comment> comments, List<User> users) {
-    Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<>();
-    for (int i = 0; i < comments.size(); i++) {
-      Comment comment = comments.get(i);
-      User user = users.get(i);
-      commentMapList.add(getCommentMap(comment, user));
-    }
-    String json = gson.toJson(commentMapList);
-    return json;
-  }
-
   public static String getCommentJson(Comment comment, User user) {
     Gson gson = new Gson();
     String json = gson.toJson(getCommentMap(comment, user));
