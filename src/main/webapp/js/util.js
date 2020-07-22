@@ -75,35 +75,7 @@ function createDealCard(deal) {
   dealCard.appendChild(dealBody);
   return dealCard;
 }
-/*
-<div class="${numCol} mt-5">
-            <div class="card deal-card h-100">
-              <img class="card-img-top home-deal-img" src="" alt="">
-              <div class="card-body d-flex flex-column">
-                <div class="card-text deal-time"></div>
-                <div class="d-flex justify-content-end"
-                  style="display: none;">
-                  <button type="button" class="btn upvote-btn">
-                    <span class="fas fa-angle-up"></span>
-                  </button>
-                  <span class="my-auto votes-num"></span>
-                  <button type="button" class="btn downvote-btn">
-                    <span class="fas fa-angle-down"></span>
-                  </button>
-                </div>
-                <h5 class="card-title deal-title"></h5>
-                <div>Restaurant: <a href='#' class="card-text deal-restaurant">
-                </a></div>
-                <div>Posted by: <a href='#' class="card-text deal-poster"></a>
-                </div>
-                <div class= "card-text tags" ></div>
-                <a href="#"
-                  class="btn btn-primary align-self-end mt-auto float-right">
-                  See More
-                </a>
-              </div>
-            </div>
-          </div>`;*/
+
 /**
  * Returns a container for a deal.
  * @param {object} deal deal whose info will be shown.
@@ -155,7 +127,8 @@ function createHomeDealCard(deal) {
   const dealSeeMore = document.createElement('a');
   dealSeeMore.href = '/deals/' + deal.id;
   dealSeeMore.innerText = 'See More';
-  dealSeeMore.classList.add('btn', 'btn-primary', 'align-self-end', 'mt-auto', 'float-right');
+  dealSeeMore.classList.add('btn', 'btn-primary', 'align-self-end',
+      'mt-auto', 'float-right');
 
   dealBody.appendChild(dealTime);
   dealBody.appendChild(dealName);
@@ -170,8 +143,6 @@ function createHomeDealCard(deal) {
   dealCardCol.appendChild(dealCard);
 
   return dealCardCol;
-
-  return dealCard;
 }
 
 /**
