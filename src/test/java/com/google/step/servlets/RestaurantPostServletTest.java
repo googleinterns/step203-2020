@@ -48,7 +48,8 @@ public class RestaurantPostServletTest {
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A)).thenReturn(RESTAURANT_A);
+    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A))
+        .thenReturn(RESTAURANT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);

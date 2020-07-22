@@ -3,7 +3,6 @@ package com.google.step.servlets;
 import com.google.gson.Gson;
 import com.google.step.model.Comment;
 import com.google.step.model.Deal;
-import com.google.step.model.DefaultRestaurant;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
@@ -104,12 +103,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-
-    if (restaurant instanceof DefaultRestaurant) {
-      restaurantMap.put("image", ((DefaultRestaurant) restaurant).photoUrl);
-    } else {
-      restaurantMap.put("image", getImageUrl(restaurant.photoBlobkey));
-    }
+    restaurantMap.put("image", restaurant.photoUrl);
     return restaurantMap;
   }
 

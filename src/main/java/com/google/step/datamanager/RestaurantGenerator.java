@@ -111,17 +111,7 @@ public class RestaurantGenerator {
       JsonElement photo = restaurantObject.get("photos").getAsJsonArray().get(0);
       String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
 
-      restaurantManager.createDefaultRestaurant(name, getPhotoUrl(photoReference));
+      restaurantManager.createRestaurantWithPhotoReference(name, photoReference);
     }
-  }
-
-  private static String getPhotoUrl(String photoReference) {
-    String url =
-        "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400"
-            + "&photoreference="
-            + photoReference
-            + "&key="
-            + API_KEY;
-    return url;
   }
 }

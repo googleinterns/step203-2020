@@ -73,10 +73,12 @@ public class TestConstants {
   public static final String RESTAURANT_NAME_B = "B";
   public static final String RESTAURANT_NAME_C = "C";
 
-  public static final String RESTAURANT_PHOTO_URL_A = "photo_url";
+  public static final String RESTAURANT_PHOTO_REFERENCE_A = "a_photo_reference";
+  public static final String RESTAURANT_PHOTO_REFERENCE_URL_A =
+      Restaurant.getImageUrlFromPhotoReference(RESTAURANT_PHOTO_REFERENCE_A);
 
   public static final Restaurant RESTAURANT_A =
-      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
   // Comment
   public static final long COMMENT_ID_A = 1;

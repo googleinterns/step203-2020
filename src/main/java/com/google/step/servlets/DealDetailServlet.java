@@ -66,7 +66,8 @@ public class DealDetailServlet extends HttpServlet {
     }
 
     // TODO get real restaurant
-    Restaurant restaurant = new Restaurant(deal.restaurantId, "Restaurant Name", "ablobkey");
+    Restaurant restaurant =
+        Restaurant.createRestaurantWithBlobkey(deal.restaurantId, "Restaurant Name", "ablobkey");
 
     User poster = userManager.readUser(deal.posterId);
 
