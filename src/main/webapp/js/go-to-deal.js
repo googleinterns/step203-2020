@@ -121,18 +121,35 @@ function createCommentElement(comment) {
     deleteEditContainer.className = 'd-flex flex-column';
     commentElement.appendChild(deleteEditContainer);
 
-    const editBtn = document.createElement('button');
-    editBtn.className = 'btn btn-warning btn-sm mb-1';
-    editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true"></i>';
-    deleteEditContainer.appendChild(editBtn);
+    // TODO allow edit comment
+    // const editBtn = document.createElement('button');
+    // editBtn.className = 'btn btn-warning btn-sm mb-1';
+    // editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true">
+    //    </i>';
+    // deleteEditContainer.appendChild(editBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn btn-danger btn-sm';
     deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+    deleteBtn.onclick = () => deleteComment(commentElement, comment);
     deleteEditContainer.appendChild(deleteBtn);
   }
 
   return commentElement;
+}
+
+/**
+ * Makes a request to the backend to delete the comment, and removes the div
+ * element
+ * @param {HTMLDivElement} commentElement div to be deleted
+ * @param {object} comment comment object
+ */
+function deleteComment(commentElement, comment) {
+  commentElement.remove();
+  $.ajax({
+    url: '/api/comments/' + comment.id,
+    method: 'DELETE',
+  });
 }
 
 /**
