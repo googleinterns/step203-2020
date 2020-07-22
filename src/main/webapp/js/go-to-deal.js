@@ -131,7 +131,11 @@ function createCommentElement(comment) {
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn btn-danger btn-sm';
     deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
-    deleteBtn.onclick = () => deleteComment(commentElement, comment);
+    deleteBtn.onclick = () => {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        deleteComment(commentElement, comment);
+      }
+    };
     deleteEditContainer.appendChild(deleteBtn);
   }
 
