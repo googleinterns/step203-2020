@@ -6,7 +6,7 @@ function configureRestaurantInfo(restaurant) {
   const restaurantName = document.getElementById('restaurant-name');
   restaurantName.innerText = restaurant.name;
   const restaurantPhoto = document.getElementById('restaurant-photo');
-  restaurantPhoto.src = restaurant.image;
+  restaurantPhoto.src = restaurant.photoUrl;
 }
 
 /**
@@ -17,13 +17,12 @@ function configureRestaurantInfo(restaurant) {
  */
 function configureFollowButton(restaurantId, loggedInUserId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/', {
+  $.ajax('/api/follows/restaurants/' + restaurantId, {
     data: {
-      restaurantId: restaurantId,
       followerId: loggedInUserId,
     },
   }).done((isFollowing) => {
-    if (isFollowing == 'true') {
+    if (isFollowing.startsWith('true')) {
       followButton.innerText = 'Unfollow';
       followButton.onclick = () => unfollow(restaurantId);
     } else {
