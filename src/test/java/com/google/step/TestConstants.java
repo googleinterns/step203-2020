@@ -176,6 +176,16 @@ public class TestConstants {
           RESTAURANT_ID_C,
           TIME_C);
 
+  public static final String DEAL_A_BRIEF_JSON =
+      String.format(
+          "{\"id\": %d,\"description\": \"%s\",\"image\": \"%s\"}",
+          DEAL_ID_A, DESCRIPTION_A, BLOBKEY_URL_A, RESTAURANT_ID_A, 0, USER_ID_A);
+
+  public static final String DEAL_B_BRIEF_JSON =
+      String.format(
+          "{\"id\": %d,\"description\": \"%s\",\"image\": \"%s\"}",
+          DEAL_ID_B, DESCRIPTION_B, BLOBKEY_URL_B, RESTAURANT_ID_B, 0, USER_ID_B);
+
   // Comment
   public static final long COMMENT_ID_A = 1;
   public static final long COMMENT_ID_B = 2;

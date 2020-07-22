@@ -42,6 +42,11 @@
     <jsp-file>/WEB-INF/jsp/add-restaurant.jsp</jsp-file>
   </servlet>
 
+  <servlet>
+    <servlet-name>allDeals</servlet-name>
+    <jsp-file>/WEB-INF/jsp/all-deals.jsp</jsp-file>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
@@ -75,5 +80,10 @@
   <servlet-mapping>
     <servlet-name>addRestaurant</servlet-name>
     <url-pattern>/add-restaurant</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>allDeals</servlet-name>
+    <url-pattern>/all-deals</url-pattern>
   </servlet-mapping>
 </web-app>
