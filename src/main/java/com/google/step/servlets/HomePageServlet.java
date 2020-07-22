@@ -53,6 +53,11 @@ public class HomePageServlet extends HttpServlet {
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
+  private static final String TRENDING_SECTION = "trending";
+  private static final String USERS_SECTION = "users";
+  private static final String RESTAURANTS_SECTION = "restaurants";
+  private static final String TAGS_SECTION = "tags";
+
   public HomePageServlet(
       DealManager dealManager,
       UserManager userManager,
@@ -103,6 +108,14 @@ public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String homePageSection = request.getParameter("section");
+    if (homePageSection != null
+        && !homePageSection.equals(TRENDING_SECTION)
+        && !homePageSection.equals(USERS_SECTION)
+        && !homePageSection.equals(RESTAURANTS_SECTION)
+        && !homePageSection.equals(TAGS_SECTION)) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
@@ -135,17 +148,17 @@ public class HomePageServlet extends HttpServlet {
             .println(JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0)));
       }
     } else {
-      if (homePageSection
-          == null) { // user accesses home page when not logged in, only trending will be shown
-        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps("trending", -1);
+      if (homePageSection == null) { // only trending will be shown when not logged in
+        List<List<Map<String, Object>>> homePageDealsMaps =
+            getSectionListMaps(TRENDING_SECTION, -1);
         response.setContentType("application/json;");
         response
             .getWriter()
             .println(
                 JsonFormatter.getHomePageSectionJson(
                     homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList())));
-      } else if (homePageSection.equals(
-          "trending")) { // user clicks on view all deals on home page for trending section
+      } else if (homePageSection.equals(TRENDING_SECTION)) {
+        // User views all deals for trending section
         List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
         response.setContentType("application/json;");
         response
@@ -161,23 +174,23 @@ public class HomePageServlet extends HttpServlet {
   /** Gets a list of list of maps based on the required section(s) */
   private List<List<Map<String, Object>>> getSectionListMaps(String section, long userId) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
-    if (section == null || section.equals("trending")) {
+    if (section == null || section.equals(TRENDING_SECTION)) {
       List<Deal> allDeals = dealManager.getAllDeals();
       List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
       totalDealMaps.add(getHomePageSectionMap(trendingDeals));
     }
-    if (section == null || section.equals("users")) {
+    if (section == null || section.equals(USERS_SECTION)) {
       List<Deal> dealsByUsersFollowed =
           dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
       totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
     }
-    if (section == null || section.equals("restaurants")) {
+    if (section == null || section.equals(RESTAURANTS_SECTION)) {
       List<Deal> dealsByRestaurantsFollowed =
           dealManager.getDealsPublishedByRestaurants(
               followManager.getFollowedRestaurantIds(userId));
       totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
     }
-    if (section == null || section.equals("tags")) {
+    if (section == null || section.equals(TAGS_SECTION)) {
       List<Deal> dealsByTagsFollowed =
           getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
       totalDealMaps.add(getHomePageSectionMap(dealsByTagsFollowed));
