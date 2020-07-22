@@ -73,8 +73,14 @@
                 </form>
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12" id="comment-list"></div>
+            <div>
+              <div id="comment-list"></div>
+              <div class="d-flex justify-content-center">
+                <div id="comment-loading" class="spinner-border" role="status" style="display: none;">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <button id="comment-more" class="btn btn-primary" style="display: none;">Load More</button>
+              </div>
             </div>
           </div>
         </div>
