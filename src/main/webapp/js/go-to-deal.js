@@ -70,7 +70,7 @@ function loadDealDataToPage(deal) {
 /**
  * Returns a container with tag's name.
  * @param {object} tag The tag object.
- * @return {object} a container with tag's name.
+ * @return {HTMLSpanElement} a container with tag's name.
  */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
@@ -94,14 +94,15 @@ function loadCommentsToPage(comments) {
 /**
  * Creates comment element
  * @param {object} comment
- * @return {object} commentElement
+ * @return {HTMLDivElement} commentElement
  */
 function createCommentElement(comment) {
   const commentElement = document.createElement('div');
   commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
 
   const contentElement = document.createElement('div');
-  contentElement.className = 'flex-grow-1';
+  contentElement.className = `flex-grow-1 d-flex flex-column
+    justify-content-between`;
   commentElement.appendChild(contentElement);
 
   const textElement = document.createElement('div');
