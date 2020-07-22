@@ -35,14 +35,22 @@ const sectionDealsData = [
 /**
  * Creates deal elements on on view all deals for each section page
  * @param {object} deals
+ * @param {object} reqSection
  */
-function createAllDealCards(deals) {
+function createAllDealCards(deals, reqSection) {
   const rowElements = document.querySelectorAll('.row.row-deals');
   for (let i = 0; i < rowElements.length; i++) {
     for (let j = 0; j < 4; j++) {
-      rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j]));
+      if (i*4 + j < deals.length) {
+        rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j]));
+      }
     }
   }
+  const dropdownMenu = document.querySelector('.dropdown-sort');
+  console.log('HERE');
+  dropdownMenu.children[0].href = '/all-section-deals/' + reqSection + '/trending';
+  dropdownMenu.children[1].href = '/all-section-deals/' + reqSection + '/votes';
+  dropdownMenu.children[2].href = '/all-section-deals/' + reqSection + '/new';
 }
 
 /**
@@ -50,18 +58,21 @@ function createAllDealCards(deals) {
  */
 function initAllDeals() {
   const myPath = window.location.pathname; // path is /all-section-deals/*
-  const reqSection = myPath.substr(19);
-  console.log(reqSection);
+  const myPathElem = myPath.split('/');
+  const reqSection = myPathElem[2];
+  let reqSort = null;
+  if (myPathElem.length == 4) {
+    reqSort = myPathElem[3];
+  }
   $.ajax({
     url: '/api/home',
     data: {
       section: reqSection,
+      sort: reqSort,
     },
   }).done((deals) => {
     deals = sectionDealsData;
-    console.log(deals);
-    createAllDealCards(deals);
-    setDealInfo(deals);
+    createAllDealCards(deals, reqSection);
   },
   );
 }
