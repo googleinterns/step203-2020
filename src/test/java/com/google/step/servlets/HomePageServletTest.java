@@ -203,18 +203,11 @@ public class HomePageServletTest {
 
     gettingSectionMaps();
 
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
     homePageServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-  }
-
-  @Test
-  public void testDoGet_SectionIsNotValid() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    when(request.getParameter("section")).thenReturn("trash");
-
-    homePageServlet.doGet(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
