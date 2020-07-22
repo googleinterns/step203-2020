@@ -101,8 +101,8 @@ function createCommentElement(comment) {
   commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
 
   const contentElement = document.createElement('div');
-  contentElement.className = `flex-grow-1 d-flex flex-column
-    justify-content-between`;
+  contentElement.className = 'flex-grow-1 d-flex flex-column ' +
+    'justify-content-between';
   commentElement.appendChild(contentElement);
 
   const textElement = document.createElement('div');
