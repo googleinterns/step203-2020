@@ -89,7 +89,6 @@ public class HomePageServlet extends HttpServlet {
     public final double score;
 
     public ScoredDeal(Deal deal, double score) {
-      /* this can accept int or double scores */
       this.deal = deal;
       this.score = score;
     }
