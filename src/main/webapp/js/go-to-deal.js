@@ -2,6 +2,9 @@ let dealId;
 let votes = 0;
 let myVote = 0;
 
+let isLoggedIn;
+let userId = null;
+
 /**
  * Calls the backend to get the list of comments and loads it to the page
  */
@@ -94,19 +97,40 @@ function loadCommentsToPage(comments) {
  * @return {object} commentElement
  */
 function createCommentElement(comment) {
+  console.log(isLoggedIn);
+  console.log(userId);
   const commentElement = document.createElement('div');
-  commentElement.className = 'border border-info py-3 px-3 my-3';
+  commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
+
+  const contentElement = document.createElement('div');
+  contentElement.className = 'flex-grow-1';
+  commentElement.appendChild(contentElement);
 
   const textElement = document.createElement('div');
-  textElement.innerText = comment.user.username +
-  ': ' + comment.content;
-  commentElement.appendChild(textElement);
+  textElement.innerText = comment.user.username + ': ' + comment.content;
+  contentElement.appendChild(textElement);
 
   const timeElement = document.createElement('small');
   timeElement.className = 'text-muted';
   const date = new Date(Date.parse(comment.timestamp));
   timeElement.innerText = 'Posted on: ' + date.toString();
-  commentElement.appendChild(timeElement);
+  contentElement.appendChild(timeElement);
+
+  if (isLoggedIn && comment.user.id == userId) {
+    const deleteEditContainer = document.createElement('div');
+    deleteEditContainer.className = 'd-flex flex-column';
+    commentElement.appendChild(deleteEditContainer);
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-warning btn-sm mb-1';
+    editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true"></i>';
+    deleteEditContainer.appendChild(editBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger btn-sm';
+    deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+    deleteEditContainer.appendChild(deleteBtn);
+  }
 
   return commentElement;
 }
@@ -133,6 +157,9 @@ function updateMyVote() {
  * @param {number} dir
  */
 function postVote(dir) {
+  if (!isLoggedIn) {
+    return;
+  }
   $.ajax({
     url: '/api/vote/' + dealId,
     method: 'POST',
@@ -183,6 +210,9 @@ function showNotFound() {
  * upvote/downvote buttons
  */
 function initVotes() {
+  if (!isLoggedIn) {
+    return;
+  }
   $.ajax('/api/vote/' + dealId)
       .done((dir) => {
         myVote = parseInt(dir);
@@ -210,6 +240,30 @@ function initDeal() {
       });
 }
 
-addLoadEvent(() => {
+/**
+ * Loads user's login info into global variables
+ * @return {Promise} promise of when the info is done loading
+ */
+function loadUserLoginInfo() {
+  return $.ajax('/api/authentication')
+      .done((loginStatus) => {
+        if (loginStatus.isLoggedIn) {
+          isLoggedIn = true;
+          userId = loginStatus.id;
+        } else {
+          isLoggedIn = false;
+        }
+      });
+}
+
+/**
+ * Initializes data on the page
+ */
+async function initPage() {
+  await loadUserLoginInfo();
   initDeal();
+}
+
+addLoadEvent(() => {
+  initPage();
 });
