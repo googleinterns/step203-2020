@@ -243,4 +243,34 @@ public class JsonFormatter {
   private static String getImageUrl(String blobKey) {
     return "/api/images/" + blobKey;
   }
+
+  public static String getHomePageJson(Map<String, Object> homePageDealsMaps) {
+    Gson gson = new Gson();
+    String json = gson.toJson(homePageDealsMaps);
+    return json;
+  }
+
+  /**
+   * Returns a map of brief deal info for home page
+   *
+   * @param deal the deal to create a map for
+   * @param poster the user object of the poster
+   * @param restaurant restaurant the deal is at
+   * @param tags tags associated with the deal
+   * @param votes number of votes the deal received
+   * @return a map of brief deal info for home page
+   */
+  public static Map<String, Object> getBriefHomePageDealMap(
+      Deal deal, User poster, Restaurant restaurant, List<Tag> tags, int votes) {
+    Map<String, Object> dealMap = new HashMap<>();
+    dealMap.put("id", deal.id);
+    dealMap.put("description", deal.description);
+    dealMap.put("pic", getImageUrl(deal.photoBlobkey));
+    dealMap.put("poster", getUserBriefMap(poster));
+    dealMap.put("restaurant", getRestaurantBriefMap(restaurant));
+    dealMap.put("votes", votes);
+    dealMap.put("tags", getTagListBriefMaps(tags));
+    dealMap.put("timestamp", deal.creationTimeStamp);
+    return dealMap;
+  }
 }
