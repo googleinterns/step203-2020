@@ -316,4 +316,16 @@ public class HomePageServletTest {
     homePageServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
+
+  @Test
+  public void testDoGet_SortIsNotValid() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("section")).thenReturn("trending");
+    when(request.getParameter("sort")).thenReturn("trash");
+
+    homePageServlet.doGet(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
 }

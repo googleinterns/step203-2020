@@ -120,6 +120,13 @@ public class HomePageServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    if (sort != null
+        && !sort.equals(TRENDING)
+        && !sort.equals(VOTE_SORT)
+        && !sort.equals(NEW_SORT)) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
@@ -132,8 +139,7 @@ public class HomePageServlet extends HttpServlet {
         Map<String, Object> homePageMap = new HashMap<>();
         // for each section, limit to 8 deals for home page
         homePageMap.put(
-            TRENDING_SECTION,
-            homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+            TRENDING, homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
         homePageMap.put(
             USERS_SECTION, homePageDealsMaps.get(1).stream().limit(8).collect(Collectors.toList()));
         homePageMap.put(
