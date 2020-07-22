@@ -99,12 +99,14 @@
                 <input name="source" type="text" class="form-control" id="source-input">
               </div>
 
-              <div class="form-group">
-                <label>Tags</label>
-                <input name="tags" type="text" data-role="tagsinput">
-                <small class="form-text text-muted">
-                  Start typing and hit enter to enter tags.
-                </small>
+              <div class="d-flex">
+                <label class="mr-2">Tags</label>
+                <div>
+                  <input id="tags-input" name="tags" type="text" data-role="tagsinput">
+                  <small class="form-text text-muted">
+                    Start typing and hit enter to enter tags.
+                  </small>
+                </div>
               </div>
 
               <button type="button" class="btn btn-primary" onclick="handleSubmit()">Save</button>

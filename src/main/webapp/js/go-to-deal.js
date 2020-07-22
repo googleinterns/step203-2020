@@ -96,6 +96,9 @@ function loadDataToForm(deal) {
 
   const restaurantIdInput = document.getElementById('restaurant-id-input');
   restaurantIdInput.value = deal.restaurant.id;
+
+  const tagsInput = document.getElementById('tags-input');
+  $(tagsInput).tagsinput('add', deal.tags.map((tag) => tag.name).join(','));
 }
 
 /**
