@@ -5,7 +5,7 @@ import static com.google.step.TestConstants.PLACE_ID_B;
 import static com.google.step.TestConstants.PLACE_ID_C;
 import static com.google.step.TestConstants.PLACE_ID_D;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -42,7 +42,7 @@ public class RestaurantPlaceManagerDatastoreTest {
     restaurantPlaceManager.updatePlacesOfRestaurants(RESTAURANT_ID_A, placeIds);
 
     Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A);
-    assertThat(actual, hasItems(PLACE_ID_A, PLACE_ID_B));
+    assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_B));
   }
 
   @Test
@@ -53,6 +53,6 @@ public class RestaurantPlaceManagerDatastoreTest {
     restaurantPlaceManager.updatePlacesOfRestaurants(RESTAURANT_ID_A, placeIds);
 
     Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A);
-    assertThat(actual, hasItems(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D));
+    assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D));
   }
 }
