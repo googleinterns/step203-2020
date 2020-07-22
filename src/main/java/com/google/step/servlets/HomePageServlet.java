@@ -95,7 +95,7 @@ public class HomePageServlet extends HttpServlet {
 
     @Override
     public int compareTo(ScoredDeal other) {
-      return Double.compare(score, other.score);
+      return -Double.compare(score, other.score);
     }
   }
 

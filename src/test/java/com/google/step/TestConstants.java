@@ -137,7 +137,7 @@ public class TestConstants {
 
   public static final String HOME_DEAL_B_JSON =
       String.format(
-          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          "{restaurant: {id: %d, name: \"%s\", photoUrl:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
           RESTAURANT_ID_A,
           RESTAURANT_NAME_A,
           BLOBKEY_URL_A,
@@ -154,7 +154,7 @@ public class TestConstants {
 
   public static final String HOME_DEAL_C_JSON =
       String.format(
-          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          "{restaurant: {id: %d, name: \"%s\", photoUrl:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
           RESTAURANT_ID_A,
           RESTAURANT_NAME_A,
           BLOBKEY_URL_A,

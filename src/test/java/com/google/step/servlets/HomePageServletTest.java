@@ -97,6 +97,9 @@ public class HomePageServletTest {
     when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
     when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
     when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
+    when(mockVoteManager.getVotes(DEAL_A.id)).thenReturn(VOTE_A);
+    when(mockVoteManager.getVotes(DEAL_B.id)).thenReturn(VOTE_B);
+    when(mockVoteManager.getVotes(DEAL_C.id)).thenReturn(VOTE_C);
   }
 
   @Test
@@ -237,9 +240,59 @@ public class HomePageServletTest {
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
-    when(mockVoteManager.getVotes(DEAL_A.id)).thenReturn(VOTE_A);
-    when(mockVoteManager.getVotes(DEAL_B.id)).thenReturn(VOTE_B);
-    when(mockVoteManager.getVotes(DEAL_C.id)).thenReturn(VOTE_C);
+    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+
+    gettingSectionMaps_B();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String expected =
+        String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserLoggedInViewOtherSectionSortedNew() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    setUpUserAuthentication();
+    when(request.getParameter("section")).thenReturn("users");
+    when(request.getParameter("sort")).thenReturn("new");
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
+
+    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+
+    gettingSectionMaps_B();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String expected =
+        String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserLoggedInViewOtherSectionSortedTrending() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    setUpUserAuthentication();
+    when(request.getParameter("section")).thenReturn("users");
+    when(request.getParameter("sort")).thenReturn("trending");
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
     when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
 
