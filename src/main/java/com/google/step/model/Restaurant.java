@@ -1,14 +1,30 @@
 package com.google.step.model;
 
 public class Restaurant {
+
+  private static final String API_KEY = "AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28";
+
   public final long id;
   public final String name;
-  public final String photoBlobkey;
+  public final String photoUrl;
 
-  public Restaurant(long id, String name, String photoBlobkey) {
+  private Restaurant(long id, String name, String photoUrl) {
     this.id = id;
     this.name = name;
-    this.photoBlobkey = photoBlobkey;
+    this.photoUrl = photoUrl;
+  }
+
+  public static Restaurant createRestaurantWithBlobkey(long id, String name, String photoBlobKey) {
+    return new Restaurant(id, name, getImageUrlFromBlobKey(photoBlobKey));
+  }
+
+  public static Restaurant createRestaurantWithPhotoReference(
+      long id, String name, String photoReference) {
+    return new Restaurant(id, name, getImageUrlFromPhotoReference(photoReference));
+  }
+
+  public static Restaurant createRestaurantWithPhotoUrl(long id, String name, String photoUrl) {
+    return new Restaurant(id, name, photoUrl);
   }
 
   @Override
@@ -23,7 +39,24 @@ public class Restaurant {
     return (this.id == other.id)
         && ((this.name == null && other.name == null)
             || (this.name != null && this.name.equals(other.name)))
-        && ((this.photoBlobkey == null && other.photoBlobkey == null)
-            || (this.photoBlobkey != null && this.photoBlobkey.equals(other.photoBlobkey)));
+        && ((this.photoUrl == null && other.photoUrl == null)
+            || (this.photoUrl != null && this.photoUrl.equals(other.photoUrl)));
+  }
+
+  public static String getImageUrlFromBlobKey(String blobKey) {
+    return blobKey == null ? null : "/api/images/" + blobKey;
+  }
+
+  public static String getImageUrlFromPhotoReference(String photoReference) {
+    if (photoReference == null) {
+      return null;
+    }
+    String url =
+        "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400"
+            + "&photoreference="
+            + photoReference
+            + "&key="
+            + API_KEY;
+    return url;
   }
 }
