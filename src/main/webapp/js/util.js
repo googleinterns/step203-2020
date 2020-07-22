@@ -79,14 +79,18 @@ function createDealCard(deal) {
 /**
  * Returns a container for a deal.
  * @param {object} deal deal whose info will be shown.
+ * @param {number} numCol the bootstrap width of each deal
+ * @param {number} i the sectionId of each deal
  * @return {object} a DOM element showing deal's info.
  */
-function createHomeDealCard(deal) {
+function createHomeDealCard(deal, numCol, i) {
+  console.log(deal);
   const dealCardCol = document.createElement('div');
-  dealCardCol.className = 'col-md-3';
+  dealCardCol.className = 'col-md-' + numCol;
 
   const dealCard = document.createElement('div');
   dealCard.classList.add('deal-card', 'card', 'h-100');
+  dealCard.id = 'deal-card-' + i;
 
   const dealImage = document.createElement('img');
   dealImage.className = 'card-img-top home-deal-img';
@@ -170,3 +174,33 @@ function throttle(func, limit) {
     }
   };
 }
+/*
+`
+          <div class="${numCol} mt-5">
+            <div id=deal-card-${i} class="card deal-card h-100">
+              <img class="card-img-top home-deal-img" src="" alt="">
+              <div class="card-body d-flex flex-column">
+                <div class="card-text deal-time"></div>
+                <div class="d-flex justify-content-end" 
+                  style="display: none;">
+                  <button type="button" class="btn upvote-btn">
+                    <span class="fas fa-angle-up"></span>
+                  </button>
+                  <span class="my-auto votes-num"></span>
+                  <button type="button" class="btn downvote-btn">
+                    <span class="fas fa-angle-down"></span>
+                  </button>
+                </div>
+                <h5 class="card-title deal-title"></h5>
+                <div>Restaurant: <a href='#' class="card-text deal-restaurant">
+                </a></div>
+                <div>Posted by: <a href='#' class="card-text deal-poster"></a>
+                </div>
+                <div class= "card-text tags" ></div>
+                <a href="#"
+                  class="btn btn-primary align-self-end mt-auto float-right">
+                  See More
+                </a>
+              </div>
+            </div>
+          </div>`*/

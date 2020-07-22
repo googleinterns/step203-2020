@@ -1,30 +1,33 @@
 const homePageDealsData = {
   trending: [
     {
-      restaurant: 'A',
+      restaurant: {id: 1, name: 'A'},
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
       pic: 'a_blob_key',
-      poster: 'Alice',
+      timestamp: '2020-07-10T10:15:30',
+      poster: {id: 1, username: 'Alice'},
       tags: [{'id': 1, 'name': '1for1'}],
     },
     {
-      restaurant: 'A',
+      restaurant: {id: 1, name: 'A'},
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
+      timestamp: '2020-07-10T10:15:30',
       pic: 'a_blob_key',
-      poster: 'Alice',
+      poster: {id: 1, username: 'Alice'},
       tags: [{'id': 1, 'name': '1for1'}],
     },
     {
-      restaurant: 'A',
+      restaurant: {id: 1, name: 'A'},
       description: 'starbucks mocha 1-for-1',
       votes: 0,
       id: 1,
+      timestamp: '2020-07-10T10:15:30',
       pic: 'a_blob_key',
-      poster: 'Alice',
+      poster: {id: 1, username: 'Alice'},
       tags: [{'id': 1, 'name': '1for1'}],
     },
   ],
@@ -35,6 +38,7 @@ const homePageDealsData = {
  * Creates deal elements on home page
  * @param {object} homePage
  */
+/*
 function createHomePage(homePage) {
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
@@ -78,7 +82,7 @@ function createHomePage(homePage) {
     }
   }
 }
-
+*/
 /**
  * Creates carousel on home page
  * @param {object} numCarouselSlidesList
@@ -99,7 +103,7 @@ function createCarouselElements(numCarouselSlidesList,
     const indicatorListElement = carouselElements[i].children[1];
     const carouselItemList = carouselElements[i].children[2];
     const numCarouselSlides = numCarouselSlidesList[i];
-
+    const homePageData = homePageDeals[homePageSections[i]];
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
       indicatorListChild.dataset.target = '#carousel-' + i;
@@ -110,37 +114,12 @@ function createCarouselElements(numCarouselSlidesList,
 
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
-      const numCol = 'col-md-' + 12 / numDealPerSlide;
+      const numCol = 12 / numDealPerSlide;
       for (let k = 0; k < numDealPerSlide; k++) {
-        rowElement.innerHTML += `
-          <div class="${numCol} mt-5">
-            <div id=deal-card-${i} class="card deal-card h-100">
-              <img class="card-img-top home-deal-img" src="" alt="">
-              <div class="card-body d-flex flex-column">
-                <div class="card-text deal-time"></div>
-                <div class="d-flex justify-content-end" 
-                  style="display: none;">
-                  <button type="button" class="btn upvote-btn">
-                    <span class="fas fa-angle-up"></span>
-                  </button>
-                  <span class="my-auto votes-num"></span>
-                  <button type="button" class="btn downvote-btn">
-                    <span class="fas fa-angle-down"></span>
-                  </button>
-                </div>
-                <h5 class="card-title deal-title"></h5>
-                <div>Restaurant: <a href='#' class="card-text deal-restaurant">
-                </a></div>
-                <div>Posted by: <a href='#' class="card-text deal-poster"></a>
-                </div>
-                <div class= "card-text tags" ></div>
-                <a href="#"
-                  class="btn btn-primary align-self-end mt-auto float-right">
-                  See More
-                </a>
-              </div>
-            </div>
-          </div>`;
+        if (j*numDealPerSlide+k < homePageData.length) {
+          rowElement.appendChild(createHomeDealCard(
+              homePageData[j*numDealPerSlide+k], numCol, i));
+        }
       }
       carouselItemListChild.append(rowElement);
       if (j == 0) {
@@ -178,7 +157,7 @@ function initHomePage() {
         homePageDeals = homePageDealsData;
         console.log(homePageDeals);
         createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
-        createHomePage(homePageDeals);
+        // createHomePage(homePageDeals);
       });
 }
 

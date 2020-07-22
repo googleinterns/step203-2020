@@ -40,7 +40,7 @@ function createAllDealCards(deals) {
   const rowElements = document.querySelectorAll('.row.row-deals');
   for (let i = 0; i < rowElements.length; i++) {
     for (let j = 0; j < 4; j++) {
-      rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j]));
+      rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j], 3));
     }
   }
 }
