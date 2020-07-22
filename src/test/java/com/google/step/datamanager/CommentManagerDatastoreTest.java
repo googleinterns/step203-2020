@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Comment;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -55,6 +56,51 @@ public final class CommentManagerDatastoreTest {
     List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
     assertEquals(2, comments.size());
     assertThat(comments, hasItems(commentA, commentB));
+  }
+
+  @Test
+  public void testGetComments_limit() {
+    List<Comment> commentsAdded = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+      Comment comment = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
+      commentsAdded.add(comment);
+    }
+
+    List<Comment> commentsQueried =
+        commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
+
+    assertEquals(5, commentsQueried.size());
+  }
+
+  @Test
+  public void testGetComments_token() {
+    List<Comment> commentsAdded = new ArrayList<>();
+    for (int i = 0; i < 7; i++) {
+      Comment comment = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, "content " + i);
+      commentsAdded.add(comment);
+    }
+
+    CommentsWithToken commentsWithTokenA =
+        commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null);
+    List<Comment> commentsQueriedA = commentsWithTokenA.comments;
+    String tokenA = commentsWithTokenA.token;
+
+    CommentsWithToken commentsWithTokenB =
+        commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, tokenA);
+    List<Comment> commentsQueriedB = commentsWithTokenB.comments;
+    String tokenB = commentsWithTokenB.token;
+
+    CommentsWithToken commentsWithTokenC =
+        commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, tokenB);
+    List<Comment> commentsQueriedC = commentsWithTokenC.comments;
+
+    assertEquals(5, commentsQueriedA.size());
+    assertEquals(2, commentsQueriedB.size());
+    assertEquals(0, commentsQueriedC.size());
+
+    List<Comment> allComments = new ArrayList<>(commentsQueriedA);
+    allComments.addAll(commentsQueriedB);
+    assertTrue(commentsAdded.containsAll(allComments));
   }
 
   @Test
