@@ -1,7 +1,11 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.datamanager.VoteManager;
@@ -13,7 +17,6 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,18 +30,41 @@ public class DealDetailServlet extends HttpServlet {
   private final DealManager dealManager;
   private final UserManager userManager;
   private final VoteManager voteManager;
+  private final RestaurantManager restaurantManager;
+  private final UserService userService;
 
   public DealDetailServlet() {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
+    restaurantManager = new RestaurantManagerDatastore();
+    userService = UserServiceFactory.getUserService();
+  }
+
+  public DealDetailServlet(
+      DealManager dealManager,
+      UserManager userManager,
+      VoteManager voteManager,
+      RestaurantManager restaurantManager,
+      UserService userService) {
+    this.dealManager = dealManager;
+    this.userManager = userManager;
+    this.voteManager = voteManager;
+    this.restaurantManager = restaurantManager;
+    this.userService = userService;
   }
 
   /** Deletes the deal with the given id parameter */
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    // TODO: check user authentication
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User currentUser = userManager.readUserByEmail(email);
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -46,6 +72,20 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
+    Deal deal = dealManager.readDeal(id);
+    if (deal == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    // user can only delete deals they created
+    if (deal.posterId != currentUser.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
+    response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
   }
 
@@ -65,18 +105,16 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    // TODO get real restaurant
-    Restaurant restaurant =
-        Restaurant.createRestaurantWithBlobkey(deal.restaurantId, "Restaurant Name", "ablobkey");
+    Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
 
     User poster = userManager.readUser(deal.posterId);
 
-    // TODO get real tags
-    List<Tag> tags = new ArrayList<>();
+    List<Tag> tags = dealManager.getTags(deal.id);
 
     int votes = voteManager.getVotes(deal.id);
 
     response.setContentType("application/json;");
+    response.setStatus(HttpServletResponse.SC_OK);
     response.getWriter().println(JsonFormatter.getDealJson(deal, restaurant, poster, tags, votes));
   }
 

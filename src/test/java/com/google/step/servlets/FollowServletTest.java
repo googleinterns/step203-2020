@@ -1,7 +1,11 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestConstants.USER_ID_B;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -28,7 +32,7 @@ public class FollowServletTest {
 
   private static final long ID = 123;
 
-  private FollowServlet servlet;
+  private FollowServlet followServlet;
   private FollowManager mockFollowManager;
   private UserService mockUserService;
   private UserManager mockUserManager;
@@ -39,7 +43,7 @@ public class FollowServletTest {
     mockUserService = mock(UserService.class);
     mockUserManager = mock(UserManager.class);
 
-    servlet = new FollowServlet(mockFollowManager, mockUserService, mockUserManager);
+    followServlet = new FollowServlet(mockFollowManager, mockUserService, mockUserManager);
   }
 
   public void setUpUserAuthentication() {
@@ -62,7 +66,7 @@ public class FollowServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockFollowManager).followRestaurant(anyLong(), eq(ID));
@@ -80,7 +84,7 @@ public class FollowServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockFollowManager).followTag(anyLong(), eq(ID));
@@ -98,7 +102,7 @@ public class FollowServletTest {
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockFollowManager).followUser(anyLong(), eq(ID));
@@ -112,7 +116,7 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("/trash/123");
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -125,7 +129,7 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("/tags/123/trash");
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -138,7 +142,7 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("/");
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
@@ -151,12 +155,73 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("");
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
+  public void testDoGet_isFollowingRestaurant() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/restaurants/" + RESTAURANT_ID_A);
+    when(request.getParameter("followerId")).thenReturn(USER_ID_A + "");
+    when(mockFollowManager.isFollowingRestaurant(USER_ID_A, RESTAURANT_ID_A)).thenReturn(true);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    followServlet.doGet(request, response);
+
+    assertTrue(stringWriter.toString().contains("true"));
+  }
+
+  @Test
+  public void testDoGet_isFollowingRestaurant_invalidId() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/restaurants/aa" + RESTAURANT_ID_A);
+    when(request.getParameter("followerId")).thenReturn(USER_ID_A + "");
+    when(mockFollowManager.isFollowingRestaurant(USER_ID_A, RESTAURANT_ID_A)).thenReturn(true);
+
+    followServlet.doGet(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_isFollowingUser() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getPathInfo()).thenReturn("/users/" + USER_ID_B);
+    when(request.getParameter("followerId")).thenReturn(USER_ID_B + "");
+    when(mockFollowManager.isFollowingUser(USER_ID_B, USER_ID_A)).thenReturn(false);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    followServlet.doGet(request, response);
+
+    assertTrue(stringWriter.toString().contains("false"));
+  }
+
+  @Test
+  public void testDoGet_isFollowing_invalidParamters() throws IOException {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("followerId")).thenReturn(USER_ID_B + "");
+
+    followServlet.doGet(request, response);
+
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
   public void testDoPost_userNotLoggedIn_unauthorized() throws IOException {
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -164,7 +229,7 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("/restaurants/" + ID);
 
-    servlet.doPost(request, response);
+    followServlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
@@ -177,7 +242,7 @@ public class FollowServletTest {
 
     when(request.getPathInfo()).thenReturn("/restaurants/" + ID);
 
-    servlet.doDelete(request, response);
+    followServlet.doDelete(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }

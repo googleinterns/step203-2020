@@ -13,19 +13,21 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
-  public static String getCommentsJson(List<Comment> comments) {
+  public static String getCommentsJson(List<Comment> comments, List<User> users) {
     Gson gson = new Gson();
-    List<Map<String, Object>> commentMapList = new ArrayList<Map<String, Object>>();
-    for (Comment comment : comments) {
-      commentMapList.add(getCommentMap(comment));
+    List<Map<String, Object>> commentMapList = new ArrayList<>();
+    for (int i = 0; i < comments.size(); i++) {
+      Comment comment = comments.get(i);
+      User user = users.get(i);
+      commentMapList.add(getCommentMap(comment, user));
     }
     String json = gson.toJson(commentMapList);
     return json;
   }
 
-  public static String getCommentJson(Comment comment) {
+  public static String getCommentJson(Comment comment, User user) {
     Gson gson = new Gson();
-    String json = gson.toJson(getCommentMap(comment));
+    String json = gson.toJson(getCommentMap(comment, user));
     return json;
   }
 
@@ -36,22 +38,23 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getRestaurantJson(Restaurant restaurant) {
+  public static String getRestaurantJson(Restaurant restaurant, List<Deal> deals) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMap(restaurant));
+    String json = gson.toJson(getRestaurantMap(restaurant, deals));
     return json;
   }
 
-  public static String getRestaurantListJson(List<Restaurant> restaurants) {
+  public static String getRestaurantListBriefJson(List<Restaurant> restaurants) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMapsList(restaurants));
+    String json = gson.toJson(getRestaurantBriefMapsList(restaurants));
     return json;
   }
 
-  private static List<Map<String, Object>> getRestaurantMapsList(List<Restaurant> restaurants) {
+  private static List<Map<String, Object>> getRestaurantBriefMapsList(
+      List<Restaurant> restaurants) {
     List<Map<String, Object>> restaurantsMaps = new ArrayList<>();
     for (Restaurant restaurant : restaurants) {
-      restaurantsMaps.add(getRestaurantMap(restaurant));
+      restaurantsMaps.add(getRestaurantBriefMap(restaurant));
     }
     return restaurantsMaps;
   }
@@ -62,11 +65,11 @@ public class JsonFormatter {
     return json;
   }
 
-  private static Map<String, Object> getCommentMap(Comment comment) {
+  private static Map<String, Object> getCommentMap(Comment comment, User poster) {
     Map<String, Object> commentMap = new HashMap<>();
     commentMap.put("id", comment.id);
     commentMap.put("dealId", comment.dealId);
-    commentMap.put("userId", comment.userId);
+    commentMap.put("user", getUserBriefMap(poster));
     commentMap.put("content", comment.content);
     commentMap.put("timestamp", comment.timestamp);
     return commentMap;
@@ -82,7 +85,7 @@ public class JsonFormatter {
     dealMap.put("end", deal.end.toString());
     dealMap.put("source", deal.source);
     dealMap.put("poster", getUserBriefMap(poster));
-    dealMap.put("restaurant", restaurant.name); // TODO use restaurant brief
+    dealMap.put("restaurant", getRestaurantBriefMap(restaurant));
     dealMap.put("tags", getTagListBriefMaps(tags));
     dealMap.put("votes", votes);
     return dealMap;
@@ -93,17 +96,23 @@ public class JsonFormatter {
     dealMap.put("id", deal.id);
     dealMap.put("description", deal.description);
     dealMap.put("image", getImageUrl(deal.photoBlobkey));
-    dealMap.put("poster", deal.posterId); // TODO use user name
-    dealMap.put("restaurant", deal.restaurantId); // TODO use restaurant name
-    dealMap.put("votes", 0); // TODO add votes
     return dealMap;
   }
 
-  private static Map<String, Object> getRestaurantMap(Restaurant restaurant) {
+  private static Map<String, Object> getRestaurantMap(Restaurant restaurant, List<Deal> deals) {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("image", restaurant.photoUrl);
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
+    restaurantMap.put("deals", getDealListBriefMaps(deals));
+    return restaurantMap;
+  }
+
+  private static Map<String, Object> getRestaurantBriefMap(Restaurant restaurant) {
+    Map<String, Object> restaurantMap = new HashMap<>();
+    restaurantMap.put("id", restaurant.id);
+    restaurantMap.put("name", restaurant.name);
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
     return restaurantMap;
   }
 
@@ -166,7 +175,7 @@ public class JsonFormatter {
     userMap.put("following", getUserListBriefMaps(following));
     userMap.put("followers", getUserListBriefMaps(followers));
     userMap.put("tagsFollowed", getTagListBriefMaps(tags));
-    userMap.put("restaurantsFollowed", getRestaurantListBriefMaps(restaurants));
+    userMap.put("restaurantsFollowed", getRestaurantBriefMapsList(restaurants));
     return userMap;
   }
 
@@ -229,11 +238,6 @@ public class JsonFormatter {
     tagMap.put("id", tag.id);
     tagMap.put("name", tag.name);
     return tagMap;
-  }
-
-  private static List<Map<String, Object>> getRestaurantListBriefMaps(
-      List<Restaurant> restaurants) {
-    return new ArrayList<>();
   }
 
   private static String getImageUrl(String blobKey) {

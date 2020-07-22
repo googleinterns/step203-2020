@@ -64,16 +64,11 @@ function createDealCard(deal) {
   dealName.className = 'card-title';
   dealName.innerText = deal.description;
 
-  const dealVotes = document.createElement('p');
-  dealVotes.className = 'card-text';
-  dealVotes.innerText = deal.votes;
-
   const dealLink = document.createElement('a');
   dealLink.innerText = 'See detail';
   dealLink.href = '/deals/' + deal.id;
 
   dealBody.appendChild(dealName);
-  dealBody.appendChild(dealVotes);
   dealBody.appendChild(dealLink);
 
   dealCard.appendChild(dealImage);
