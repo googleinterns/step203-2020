@@ -14,6 +14,8 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
     type="text/css" />
+    <!-- Tags Input CSS -->
+    <link href="/tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="/css/styles.css" rel="stylesheet" />
   <!-- Page CSS-->
@@ -78,7 +80,7 @@
               <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
 
               <div class="form-group validate-me form-inline">
-                <label class="mr-2">Valid Date:</label>
+                <label class="mr-2">Validity:</label>
                 <input name="start" class="form-control" type="date" id="start-input" required
                   onchange="checkDatesOrdered()">
                 <span class="mx-2">to</span>
@@ -95,6 +97,14 @@
               <div class="form-group form-inline">
                 <label for="source-input" class="mr-2">Source:</label>
                 <input name="source" type="text" class="form-control" id="source-input">
+              </div>
+
+              <div class="form-group">
+                <label>Tags</label>
+                <input name="tags" type="text" data-role="tagsinput">
+                <small class="form-text text-muted">
+                  Start typing and hit enter to enter tags.
+                </small>
               </div>
 
               <button type="button" class="btn btn-primary" onclick="handleSubmit()">Save</button>
@@ -140,6 +150,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <!-- Third party plugin JS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="/tagsinput/tagsinput.js"></script>
   <!-- Core theme JS-->
   <script src="/js/scripts.js"></script>
   <!-- Restaurant search JS-->
