@@ -98,12 +98,29 @@ function loadCommentsToPage(comments) {
  */
 function createCommentBox(comment) {
   const commentBox = document.createElement('div');
-  commentBox.className = 'border border-info py-3 px-3 my-3 d-flex';
+  commentBox.className = 'border border-info py-3 px-3 my-3';
+
+  addCommentContentToBox(commentBox, comment);
+
+  return commentBox;
+}
+
+/**
+ * Adds the content and edit/delete buttons to the provided div
+ * @param {HTMLDivElement} commentBox
+ * @param {object} comment
+ */
+function addCommentContentToBox(commentBox, comment) {
+  commentBox.innerHTML = '';
+
+  const commentElement = document.createElement('div');
+  commentElement.className = 'd-flex';
+  commentBox.appendChild(commentElement);
 
   const contentElement = document.createElement('div');
   contentElement.className = `flex-grow-1 d-flex flex-column
     justify-content-between`;
-  commentBox.appendChild(contentElement);
+  commentElement.appendChild(contentElement);
 
   const textElement = document.createElement('div');
   textElement.innerText = comment.user.username + ': ' + comment.content;
@@ -118,14 +135,13 @@ function createCommentBox(comment) {
   if (isLoggedIn && comment.user.id == userId) {
     const deleteEditContainer = document.createElement('div');
     deleteEditContainer.className = 'd-flex flex-column';
-    commentBox.appendChild(deleteEditContainer);
+    commentElement.appendChild(deleteEditContainer);
 
-    // TODO allow edit comment
-    // const editBtn = document.createElement('button');
-    // editBtn.className = 'btn btn-warning btn-sm mb-1';
-    // editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true">
-    //    </i>';
-    // deleteEditContainer.appendChild(editBtn);
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-warning btn-sm mb-1';
+    editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true"></i>';
+    editBtn.onclick = () => addCommentEditToBox(commentBox, comment);
+    deleteEditContainer.appendChild(editBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn btn-danger btn-sm';
@@ -137,8 +153,36 @@ function createCommentBox(comment) {
     };
     deleteEditContainer.appendChild(deleteBtn);
   }
+}
 
-  return commentBox;
+/**
+ * Adds the textarea and save/cancel button to the provided div to edit the
+ * comment
+ * @param {HTMLDivElement} commentBox
+ * @param {object} comment
+ */
+function addCommentEditToBox(commentBox, comment) {
+  commentBox.innerHTML = '';
+
+  const textareaDiv = document.createElement('div');
+  const textarea = document.createElement('textarea');
+  textarea.className = 'w-100 form-control mb-2';
+  textareaDiv.appendChild(textarea);
+  commentBox.appendChild(textareaDiv);
+
+  const buttonDiv = document.createElement('div');
+  commentBox.appendChild(buttonDiv);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.innerText = 'Save';
+  buttonDiv.appendChild(saveBtn);
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-primary ml-2';
+  cancelBtn.innerText = 'Cancel';
+  cancelBtn.onclick = () => addCommentContentToBox(commentBox, comment);
+  buttonDiv.appendChild(cancelBtn);
 }
 
 /**
