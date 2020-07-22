@@ -97,8 +97,6 @@ function loadCommentsToPage(comments) {
  * @return {object} commentElement
  */
 function createCommentElement(comment) {
-  console.log(isLoggedIn);
-  console.log(userId);
   const commentElement = document.createElement('div');
   commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
 
