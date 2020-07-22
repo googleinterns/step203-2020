@@ -117,7 +117,8 @@ public class RestaurantServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(request.getParameter("name")).thenReturn(UPDATE_NAME_A);
-    Restaurant updatedRestaurant = new Restaurant(RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A);
+    Restaurant updatedRestaurant =
+        Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A);
     when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(updatedRestaurant);
 
     StringWriter stringWriter = new StringWriter();
