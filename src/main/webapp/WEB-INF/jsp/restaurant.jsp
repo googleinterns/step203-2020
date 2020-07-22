@@ -35,6 +35,13 @@
       </div>
     </div>
 
+
+    <div id="deals-section" class="container">
+      <h5 id="deals-header" class="mb-3"></h5>
+      <div id="deals-container">
+      </div>
+    </div>
+
     </div>
     <%@include file="/WEB-INF/components/footer.html"%>
     <!-- Bootstrap core JS-->

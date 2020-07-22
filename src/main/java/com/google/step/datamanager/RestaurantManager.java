@@ -1,14 +1,13 @@
 package com.google.step.datamanager;
 
-import com.google.step.model.DefaultRestaurant;
 import com.google.step.model.Restaurant;
 import java.util.List;
 
 public interface RestaurantManager {
 
-  public Restaurant createRestaurant(String name, String photoBlobkey);
+  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobkey);
 
-  public DefaultRestaurant createDefaultRestaurant(String name, String photoUrl);
+  public Restaurant createRestaurantWithPhotoReference(String name, String photoUrl);
 
   public Restaurant readRestaurant(long id);
 
