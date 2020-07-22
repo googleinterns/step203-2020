@@ -15,6 +15,7 @@ public class TestConstants {
 
   public static final String BLOBKEY_URL_A = URL_PREFIX + BLOBKEY_A;
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
+  public static final String BLOBKEY_URL_C = URL_PREFIX + BLOBKEY_C;
 
   // User
   public static final long USER_ID_A = 1;
@@ -81,6 +82,9 @@ public class TestConstants {
   public static final Restaurant RESTAURANT_A =
       new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
+  public static final Restaurant RESTAURANT_B =
+      new Restaurant(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
+
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
           "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
@@ -110,18 +114,9 @@ public class TestConstants {
   public static final String TIME_C = "2020-07-10T14:15:30";
 
   public static final int VOTE_A = 0;
-  /*
-    // Deal Brief JSON
-    public static final String DEAL_A_BRIEF_JSON =
-        String.format(
-            "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-            RESTAURANT_ID_A, DESCRIPTION_A, VOTE_A, DEAL_ID_A, BLOBKEY_URL_A, USER_ID_A);
-    public static final String DEAL_B_BRIEF_JSON =
-        String.format(
-            "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-            RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_URL_B, USER_ID_B);
-    // Deal
-  */
+  public static final int VOTE_B = 5;
+  public static final int VOTE_C = 10;
+
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
@@ -139,6 +134,40 @@ public class TestConstants {
           TAG_ID_A,
           TAG_NAME_A,
           TIME_A);
+
+  public static final String HOME_DEAL_B_JSON =
+      String.format(
+          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          RESTAURANT_ID_A,
+          RESTAURANT_NAME_A,
+          BLOBKEY_URL_A,
+          DESCRIPTION_B,
+          VOTE_B,
+          DEAL_ID_B,
+          BLOBKEY_URL_B,
+          USER_ID_A,
+          USERNAME_A,
+          BLOBKEY_URL_A,
+          TAG_ID_A,
+          TAG_NAME_A,
+          TIME_B);
+
+  public static final String HOME_DEAL_C_JSON =
+      String.format(
+          "{restaurant: {id: %d, name: \"%s\", image:  \"%s\"}, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster:{id: %d, username: \"%s\", picture: \"%s\"}, tags: [{id: %d, name: \"%s\"}], timestamp: \"%s\"}",
+          RESTAURANT_ID_A,
+          RESTAURANT_NAME_A,
+          BLOBKEY_URL_A,
+          DESCRIPTION_C,
+          VOTE_C,
+          DEAL_ID_C,
+          BLOBKEY_URL_C,
+          USER_ID_A,
+          USERNAME_A,
+          BLOBKEY_URL_A,
+          TAG_ID_A,
+          TAG_NAME_A,
+          TIME_C);
 
   public static final Deal DEAL_A =
       new Deal(

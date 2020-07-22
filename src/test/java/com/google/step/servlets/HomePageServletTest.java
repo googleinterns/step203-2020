@@ -1,12 +1,18 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_B;
+import static com.google.step.TestConstants.DEAL_C;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
+import static com.google.step.TestConstants.HOME_DEAL_B_JSON;
+import static com.google.step.TestConstants.HOME_DEAL_C_JSON;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.TAG_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.VOTE_A;
+import static com.google.step.TestConstants.VOTE_B;
+import static com.google.step.TestConstants.VOTE_C;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -80,11 +86,17 @@ public class HomePageServletTest {
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
   }
 
-  private void gettingSectionMaps() {
+  private void gettingSectionMaps_A() {
     when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
     when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
     when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
     when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+  }
+
+  private void gettingSectionMaps_B() {
+    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
+    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
+    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
   }
 
   @Test
@@ -103,7 +115,7 @@ public class HomePageServletTest {
     when(mockDealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
-    gettingSectionMaps();
+    gettingSectionMaps_A();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -121,17 +133,18 @@ public class HomePageServletTest {
   }
 
   @Test
-  public void testDoGet_UserLoggedInViewSection_success() throws Exception {
+  public void testDoGet_UserLoggedInViewSectionNoSort_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(request.getParameter("section")).thenReturn("users");
+    when(request.getParameter("sort")).thenReturn(null);
     setUpUserAuthentication();
     when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
 
-    gettingSectionMaps();
+    gettingSectionMaps_A();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -152,10 +165,11 @@ public class HomePageServletTest {
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(request.getParameter("section")).thenReturn(null);
+    when(request.getParameter("sort")).thenReturn(null);
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
-    gettingSectionMaps();
+    gettingSectionMaps_A();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -177,9 +191,10 @@ public class HomePageServletTest {
 
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     when(request.getParameter("section")).thenReturn("trending");
+    when(request.getParameter("sort")).thenReturn(null);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
-    gettingSectionMaps();
+    gettingSectionMaps_A();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -201,7 +216,7 @@ public class HomePageServletTest {
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     when(request.getParameter("section")).thenReturn("users");
 
-    gettingSectionMaps();
+    gettingSectionMaps_A();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -209,5 +224,36 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoGet_UserLoggedInViewOtherSectionSortedVotes() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    setUpUserAuthentication();
+    when(request.getParameter("section")).thenReturn("users");
+    when(request.getParameter("sort")).thenReturn("votes");
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
+
+    when(mockVoteManager.getVotes(DEAL_A.id)).thenReturn(VOTE_A);
+    when(mockVoteManager.getVotes(DEAL_B.id)).thenReturn(VOTE_B);
+    when(mockVoteManager.getVotes(DEAL_C.id)).thenReturn(VOTE_C);
+
+    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+
+    gettingSectionMaps_B();
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String expected =
+        String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
+
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 }

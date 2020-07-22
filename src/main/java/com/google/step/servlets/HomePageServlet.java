@@ -103,6 +103,7 @@ public class HomePageServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String homePageSection = request.getParameter("section");
+    String sort = request.getParameter("sort");
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
@@ -110,7 +111,7 @@ public class HomePageServlet extends HttpServlet {
       long userId = user.id;
       // Retrieves maps of all the sections
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId);
+          getSectionListMaps(homePageSection, sort, userId);
       if (homePageDealsMaps.size() == 4) {
         Map<String, Object> homePageMap = new HashMap<>();
         // for each section, limit to 8 deals for home page
@@ -134,7 +135,8 @@ public class HomePageServlet extends HttpServlet {
     } else {
       if (homePageSection
           == null) { // user accesses home page when not logged in, only trending will be shown
-        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps("trending", -1);
+        List<List<Map<String, Object>>> homePageDealsMaps =
+            getSectionListMaps("trending", null, -1);
         response.setContentType("application/json;");
         response
             .getWriter()
@@ -143,7 +145,8 @@ public class HomePageServlet extends HttpServlet {
                     homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList())));
       } else if (homePageSection.equals(
           "trending")) { // user clicks on view all deals on home page for trending section
-        List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(homePageSection, -1);
+        List<List<Map<String, Object>>> homePageDealsMaps =
+            getSectionListMaps(homePageSection, null, -1);
         response.setContentType("application/json;");
         response
             .getWriter()
@@ -156,7 +159,8 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Gets a list of list of maps based on the required section(s) */
-  private List<List<Map<String, Object>>> getSectionListMaps(String section, long userId) {
+  private List<List<Map<String, Object>>> getSectionListMaps(
+      String section, String sort, long userId) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
     if (section == null || section.equals("trending")) {
       List<Deal> allDeals = dealManager.getAllDeals();
@@ -166,17 +170,26 @@ public class HomePageServlet extends HttpServlet {
     if (section == null || section.equals("users")) {
       List<Deal> dealsByUsersFollowed =
           dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
+      if (sort != null) {
+        dealsByUsersFollowed = sortDeals(sort, dealsByUsersFollowed);
+      }
       totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
     }
     if (section == null || section.equals("restaurants")) {
       List<Deal> dealsByRestaurantsFollowed =
           dealManager.getDealsPublishedByRestaurants(
               followManager.getFollowedRestaurantIds(userId));
+      if (sort != null) {
+        dealsByRestaurantsFollowed = sortDeals(sort, dealsByRestaurantsFollowed);
+      }
       totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
     }
     if (section == null || section.equals("tags")) {
       List<Deal> dealsByTagsFollowed =
           getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+      if (sort != null) {
+        dealsByTagsFollowed = sortDeals(sort, dealsByTagsFollowed);
+      }
       totalDealMaps.add(getHomePageSectionMap(dealsByTagsFollowed));
     }
     return totalDealMaps;
@@ -273,5 +286,16 @@ public class HomePageServlet extends HttpServlet {
       dealResults.add(scoredDeal.deal);
     }
     return dealResults;
+  }
+
+  private List<Deal> sortDeals(String sort, List<Deal> deals) {
+    if (sort.equals("trending")) {
+      deals = sortDealsBasedOnHotScore(deals);
+    } else if (sort.equals("new")) {
+      deals = sortDealsBasedOnNew(deals);
+    } else if (sort.equals("votes")) {
+      deals = sortDealsBasedOnVotes(deals);
+    }
+    return deals;
   }
 }
