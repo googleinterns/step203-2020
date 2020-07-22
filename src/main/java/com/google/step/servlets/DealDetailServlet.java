@@ -17,6 +17,8 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -142,7 +144,10 @@ public class DealDetailServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      // TODO validate that restaurant ID exists
+      if (restaurantManager.readRestaurant(restaurantId) == null) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
     }
 
     // validate dates
@@ -155,7 +160,11 @@ public class DealDetailServlet extends HttpServlet {
       return;
     }
 
-    List<String> tagNames = null; // TODO get from request parameter
+    String tagParameter = request.getParameter("tags");
+    List<String> tagNames = new ArrayList<>();
+    if (tagParameter != null && !tagParameter.isEmpty()) {
+      tagNames = Arrays.asList(tagParameter.split(","));
+    }
 
     Deal deal =
         new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
