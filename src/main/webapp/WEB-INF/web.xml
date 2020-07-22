@@ -94,6 +94,6 @@
 
   <servlet-mapping>
     <servlet-name>allSectionDeals</servlet-name>
-    <url-pattern>/all-section-deals</url-pattern>
+    <url-pattern>/all-section-deals/*</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -46,8 +46,9 @@ function createAllDealCards() {
  * Calls backend for data on home page deals
  */
 function initAllDeals() {
-  const myPath = window.location.pathname; // path is /all-deals/*
-  const reqSection = myPath.substr(11);
+  const myPath = window.location.pathname; // path is /all-section-deals/*
+  const reqSection = myPath.substr(19);
+  console.log(reqSection);
   $.ajax({
     url: '/api/home',
     data: {
