@@ -30,7 +30,7 @@ public class RestaurantPlaceManagerDatastore implements RestaurantPlaceManager {
       datastore.delete(entity.getKey());
     }
 
-    // Adds remaining tags in the new list
+    // Adds remaining place ids in the new list
     for (String placeId : newPlaceIds) {
       Entity entity = createRestaurantPlaceEntity(restaurantId, placeId);
       datastore.put(entity);
