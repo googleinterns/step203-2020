@@ -59,7 +59,6 @@ function initAllDeals() {
     },
   }).done((deals) => {
     deals = sectionDealsData;
-    console.log(deals);
     createAllDealCards(deals);
     setDealInfo(deals);
   },
