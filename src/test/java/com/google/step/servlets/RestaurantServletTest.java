@@ -2,6 +2,10 @@ package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
+import static com.google.step.TestConstants.PLACE_ID_A;
+import static com.google.step.TestConstants.PLACE_ID_B;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
@@ -19,8 +23,10 @@ import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -58,8 +64,10 @@ public class RestaurantServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
-    List<Deal> deals = new ArrayList<>(); // TODO Arrays.asList(DEAL_A);
+    List<Deal> deals = Arrays.asList(DEAL_A);
     when(dealManager.getDealsOfRestaurant(1)).thenReturn(deals);
+    Set<String> placeIds = new HashSet<>(Arrays.asList(PLACE_ID_A, PLACE_ID_B));
+    when(restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A)).thenReturn(placeIds);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -69,8 +77,13 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals: [],placeIds:[]}",
-            RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals: [%s],placeIds:[%s,%s]}",
+            RESTAURANT_ID_A,
+            RESTAURANT_NAME_A,
+            BLOBKEY_URL_A,
+            DEAL_A_BRIEF_JSON,
+            PLACE_ID_A,
+            PLACE_ID_B);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -121,6 +134,11 @@ public class RestaurantServletTest {
         Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A);
     when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(updatedRestaurant);
 
+    List<Deal> deals = Arrays.asList(DEAL_A);
+    when(dealManager.getDealsOfRestaurant(1)).thenReturn(deals);
+    Set<String> placeIds = new HashSet<>(Arrays.asList(PLACE_ID_A));
+    when(restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A)).thenReturn(placeIds);
+
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
     when(response.getWriter()).thenReturn(writer);
@@ -129,8 +147,8 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[], placeIds:[]}",
-            RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A);
+            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[%s], placeIds:[%s]}",
+            RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A, DEAL_A_BRIEF_JSON, PLACE_ID_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
