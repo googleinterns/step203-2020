@@ -27,6 +27,9 @@ function initComments() {
 function loadDealDataToPage(deal) {
   $('#deal-loading').hide();
   $('#deal-page').show();
+  if (deal.poster.id != userId) {
+    $('#menu-btn').hide();
+  }
 
   const dealTitleElement = document.getElementById('deal-title');
   dealTitleElement.innerText = deal.description;

@@ -31,7 +31,7 @@
             <h2 class="masthead-heading mb-6" id="deal-title">title</h2>
             <img id="deal-image" src="" class="deal-img" />
           </div>
-          <div style="position: absolute;top:5px;right:5px;">
+          <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
             <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
             </button>
