@@ -99,7 +99,7 @@
                 <input name="source" type="text" class="form-control" id="source-input">
               </div>
 
-              <div class="d-flex">
+              <div class="form-group d-flex">
                 <label class="mr-2">Tags</label>
                 <div>
                   <input id="tags-input" name="tags" type="text" data-role="tagsinput">
