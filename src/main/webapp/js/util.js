@@ -79,14 +79,17 @@ function createDealCard(deal) {
 /**
  * Returns a container for a deal.
  * @param {object} deal deal whose info will be shown.
+ * @param {number} numCol the bootstrap width of each deal
+ * @param {number} i the sectionId of each deal
  * @return {object} a DOM element showing deal's info.
  */
-function createHomeDealCard(deal) {
+function createHomeDealCard(deal, numCol, i) {
   const dealCardCol = document.createElement('div');
-  dealCardCol.className = 'col-md-3';
+  dealCardCol.className = 'col-md-' + numCol;
 
   const dealCard = document.createElement('div');
   dealCard.classList.add('deal-card', 'card', 'h-100');
+  dealCard.id = 'deal-card-' + i;
 
   const dealImage = document.createElement('img');
   dealImage.className = 'card-img-top home-deal-img';
@@ -97,6 +100,34 @@ function createHomeDealCard(deal) {
   const dealTime = document.createElement('div');
   dealTime.classList.add('card-text');
   dealTime.innerText = deal.timestamp;
+
+  const dealVotes = document.createElement('div');
+  dealVotes.classList.add('d-flex', 'justify-content-end');
+  dealVotes.style = 'display: none;';
+
+  const dealUpVotesBtn = document.createElement('button');
+  dealUpVotesBtn.classList.add('btn', 'upvote-btn');
+
+  const upBtnAngle = document.createElement('span');
+  upBtnAngle.classList.add('fas', 'fa-angle-up');
+
+  dealUpVotesBtn.appendChild(upBtnAngle);
+
+  const dealVotesValue = document.createElement('span');
+  dealVotesValue.classList.add('my-auto', 'votes-num');
+  dealVotesValue.innerText = deal.votes;
+
+  const dealDownVotesBtn = document.createElement('button');
+  dealDownVotesBtn.classList.add('btn', 'downvote-btn');
+
+  const downBtnAngle = document.createElement('span');
+  downBtnAngle.classList.add('fas', 'fa-angle-down');
+
+  dealDownVotesBtn.appendChild(downBtnAngle);
+
+  dealVotes.appendChild(dealUpVotesBtn);
+  dealVotes.appendChild(dealVotesValue);
+  dealVotes.appendChild(dealDownVotesBtn);
 
   const dealName = document.createElement('h5');
   dealName.className = 'card-title';
@@ -131,6 +162,7 @@ function createHomeDealCard(deal) {
       'mt-auto', 'float-right');
 
   dealBody.appendChild(dealTime);
+  dealBody.appendChild(dealVotes);
   dealBody.appendChild(dealName);
   dealBody.appendChild(dealRestaurant);
   dealBody.appendChild(dealPoster);

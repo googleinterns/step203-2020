@@ -13,6 +13,7 @@ import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.VOTE_A;
 import static com.google.step.TestConstants.VOTE_B;
 import static com.google.step.TestConstants.VOTE_C;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -114,8 +115,8 @@ public class HomePageServletTest {
     setUpUserAuthentication();
 
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_A();
@@ -145,7 +146,7 @@ public class HomePageServletTest {
     when(request.getParameter("section")).thenReturn("users");
     when(request.getParameter("sort")).thenReturn(null);
     setUpUserAuthentication();
-    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
 
     gettingSectionMaps_A();
 
@@ -236,7 +237,7 @@ public class HomePageServletTest {
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
 
     gettingSectionMaps_B();
 
@@ -263,7 +264,7 @@ public class HomePageServletTest {
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
 
     gettingSectionMaps_B();
 
@@ -290,7 +291,7 @@ public class HomePageServletTest {
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
 
     gettingSectionMaps_B();
 
