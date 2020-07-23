@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -146,13 +147,20 @@ public class DealManagerDatastore implements DealManager {
   }
 
   /** Retrieves deals posted by restaurants or users */
-  private List<Deal> getDealsPublishedByRestaurantsOrUsers(Set<Long> ids, String filterAttribute) {
+  private List<Deal> getDealsPublishedByRestaurantsOrUsers(
+      Set<Long> ids, String filterAttribute, int limit) {
     List<Deal> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
       Query query = new Query("Deal").setFilter(propertyFilter);
       PreparedQuery pq = datastore.prepare(query);
-      for (Entity entity : pq.asIterable()) {
+      Iterable<Entity> entities;
+      if (limit > 0) {
+        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
+      } else {
+        entities = pq.asIterable();
+      }
+      for (Entity entity : entities) {
         dealResults.add(readDeal(entity.getKey().getId()));
       }
     }
@@ -161,14 +169,14 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds) {
-    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
+  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds, int limit) {
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId", limit);
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds) {
-    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
+  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit) {
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId", limit);
   }
 
   @Override
