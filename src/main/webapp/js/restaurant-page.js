@@ -17,13 +17,12 @@ function configureRestaurantInfo(restaurant) {
  */
 function configureFollowButton(restaurantId, loggedInUserId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/', {
+  $.ajax('/api/follows/restaurants/' + restaurantId, {
     data: {
-      restaurantId: restaurantId,
       followerId: loggedInUserId,
     },
   }).done((isFollowing) => {
-    if (isFollowing == 'true') {
+    if (isFollowing.startsWith('true')) {
       followButton.innerText = 'Unfollow';
       followButton.onclick = () => unfollow(restaurantId);
     } else {
@@ -128,24 +127,13 @@ function configureDealsHeader(restaurant) {
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
-  // TODO call back end
-  restaurant = {
-    name: 'McDonald',
-    photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
-    placeIds: ['ChIJS5IVbvwa2jERDxPwmWkRghI', 'ChIJuUFoBdcb2jERsu6OBBfVMQQ'],
-    deals: [
-      {
-        id: 1,
-        description: 'bubble tea',
-        image: '/assets/deals/bubble-tea.jpeg',
-      },
-    ],
-  };
-  configureRestaurantInfo(restaurant);
-  initMap(restaurant);
-  configureRestaurantInfo(restaurant);
-  configureDealsOfRestaurant(restaurant.deals);
-  configureDealsHeader(restaurant);
+  $.ajax('/api/restaurants/' + id)
+      .done((restaurant) => {
+        configureRestaurantInfo(restaurant);
+        initMap(restaurant);
+        configureDealsOfRestaurant(restaurant.deals);
+        configureDealsHeader(restaurant);
+      });
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {
