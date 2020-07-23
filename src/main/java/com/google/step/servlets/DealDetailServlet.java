@@ -130,6 +130,12 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    Deal currentDeal = dealManager.readDeal(id);
+    if (currentDeal == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
     String description = request.getParameter("description");
     String photoBlobkey = null; // TODO connect to blobstore
     String start = request.getParameter("start");
@@ -151,11 +157,21 @@ public class DealDetailServlet extends HttpServlet {
     }
 
     // validate dates
-    if (!isValidDate(start) || !isValidDate(end)) {
+    if ((start != null && !isValidDate(start)) || (end != null && !isValidDate(end))) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    if (start.compareTo(end) > 0) {
+
+    // make sure start is before end
+    String resultingStart = start;
+    if (resultingStart == null) {
+      resultingStart = currentDeal.start;
+    }
+    String resultingEnd = end;
+    if (resultingEnd == null) {
+      resultingEnd = currentDeal.end;
+    }
+    if (resultingStart.compareTo(resultingEnd) > 0) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
