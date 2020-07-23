@@ -15,11 +15,18 @@ indexes:
   properties:
   - name: follower
   - name: tag
-  - name: restaurant
+
+- kind: Follow
+  properties:
+  - name: follower
   - name: user
+
+- kind: Follow
+  properties:
+  - name: follower
+  - name: restaurant
 
 - kind: Vote
   properties:
   - name: deal
   - name: user
-
