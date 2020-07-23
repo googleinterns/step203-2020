@@ -92,11 +92,9 @@ function setRestaurantMarkers(placeIds, map) {
         const infoWindow = new google.maps.InfoWindow();
         google.maps.event.addListener(marker, 'click', function() {
           infoWindow.setContent(
-              '<div><h6>' +
-                place.name +
-                '</h6><p>' +
-                place.formatted_address +
-                '</p>');
+              `<div>
+                  <h6> ${place.name} </h6>
+                  <p> ${place.formatted_address} </p>`);
           infoWindow.open(map, marker);
         });
       }
