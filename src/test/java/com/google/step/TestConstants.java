@@ -77,9 +77,14 @@ public class TestConstants {
 
   public static final String RESTAURANT_NAME_A = "A";
   public static final String RESTAURANT_NAME_B = "B";
+  public static final String RESTAURANT_NAME_C = "C";
+
+  public static final String RESTAURANT_PHOTO_REFERENCE_A = "a_photo_reference";
+  public static final String RESTAURANT_PHOTO_REFERENCE_URL_A =
+      Restaurant.getImageUrlFromPhotoReference(RESTAURANT_PHOTO_REFERENCE_A);
 
   public static final Restaurant RESTAURANT_A =
-      new Restaurant(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
@@ -110,17 +115,6 @@ public class TestConstants {
   public static final String TIME_C = "2020-07-10T14:15:30";
 
   public static final int VOTE_A = 0;
-
-  // Deal Brief JSON
-  public static final String DEAL_A_BRIEF_JSON =
-      String.format(
-          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_A, DESCRIPTION_A, VOTE_A, DEAL_ID_A, BLOBKEY_URL_A, USER_ID_A);
-  public static final String DEAL_B_BRIEF_JSON =
-      String.format(
-          "{restaurant: %d, description: \"%s\", votes: %d, id: %d, pic: \"%s\", poster: %d}",
-          RESTAURANT_ID_B, DESCRIPTION_B, VOTE_A, DEAL_ID_B, BLOBKEY_URL_B, USER_ID_B);
-  // Deal
 
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =

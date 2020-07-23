@@ -32,7 +32,7 @@ public class RestaurantPostServlet extends HttpServlet {
     String name = request.getParameter("name");
     String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
 
-    Restaurant restaurant = manager.createRestaurant(name, photoBlobkey);
+    Restaurant restaurant = manager.createRestaurantWithBlobKey(name, photoBlobkey);
     List<Deal> deals = new ArrayList<>();
     response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
 
