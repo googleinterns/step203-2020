@@ -36,7 +36,10 @@ public class RestaurantServlet extends HttpServlet {
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
     dealManager = new DealManagerDatastore();
+<<<<<<< HEAD
     restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
+=======
+>>>>>>> 0e27b6a5e41b14bfc58c31928caadf1caf522b87
   }
 
   /** Deletes the restaurant with the given id parameter */
