@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.model.Deal;
@@ -26,6 +27,7 @@ public class RestaurantServlet extends HttpServlet {
 
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
+    dealManager = new DealManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */

@@ -26,7 +26,6 @@ function initAllDeals() {
       section: reqSection,
     },
   }).done((deals) => {
-    deals = sectionDealsData;
     createAllDealCards(deals);
   });
 }

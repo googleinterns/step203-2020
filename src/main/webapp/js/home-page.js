@@ -9,7 +9,6 @@ function createHomePage(numCarouselSlidesList,
   const carouselElements = document.querySelectorAll('.carousel.slide');
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
-
   // number of sections on homepage
   let i;
   for (i = 0; i < Object.keys(homePageDeals).length; i++) {
