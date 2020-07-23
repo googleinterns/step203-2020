@@ -218,7 +218,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_noFields_success() throws IOException {
+  public void testDoPut_noFields_success() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doPut(mockRequest, mockResponse);
