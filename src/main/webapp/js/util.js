@@ -84,7 +84,6 @@ function createDealCard(deal) {
  * @return {object} a DOM element showing deal's info.
  */
 function createHomeDealCard(deal, numCol, i) {
-  console.log(deal);
   const dealCardCol = document.createElement('div');
   dealCardCol.className = 'col-md-' + numCol;
 
@@ -101,6 +100,34 @@ function createHomeDealCard(deal, numCol, i) {
   const dealTime = document.createElement('div');
   dealTime.classList.add('card-text');
   dealTime.innerText = deal.timestamp;
+
+  const dealVotes = document.createElement('div');
+  dealVotes.classList.add('d-flex', 'justify-content-end');
+  dealVotes.style = 'display: none;';
+
+  const dealUpVotesBtn = document.createElement('button');
+  dealUpVotesBtn.classList.add('btn', 'upvote-btn');
+
+  const upBtnAngle = document.createElement('span');
+  upBtnAngle.classList.add('fas', 'fa-angle-up');
+
+  dealUpVotesBtn.appendChild(upBtnAngle);
+
+  const dealVotesValue = document.createElement('span');
+  dealVotesValue.classList.add('my-auto', 'votes-num');
+  dealVotesValue.innerText = deal.votes;
+
+  const dealDownVotesBtn = document.createElement('button');
+  dealDownVotesBtn.classList.add('btn', 'downvote-btn');
+
+  const downBtnAngle = document.createElement('span');
+  downBtnAngle.classList.add('fas', 'fa-angle-down');
+
+  dealDownVotesBtn.appendChild(downBtnAngle);
+
+  dealVotes.appendChild(dealUpVotesBtn);
+  dealVotes.appendChild(dealVotesValue);
+  dealVotes.appendChild(dealDownVotesBtn);
 
   const dealName = document.createElement('h5');
   dealName.className = 'card-title';
@@ -135,6 +162,7 @@ function createHomeDealCard(deal, numCol, i) {
       'mt-auto', 'float-right');
 
   dealBody.appendChild(dealTime);
+  dealBody.appendChild(dealVotes);
   dealBody.appendChild(dealName);
   dealBody.appendChild(dealRestaurant);
   dealBody.appendChild(dealPoster);
@@ -181,7 +209,7 @@ function throttle(func, limit) {
               <img class="card-img-top home-deal-img" src="" alt="">
               <div class="card-body d-flex flex-column">
                 <div class="card-text deal-time"></div>
-                <div class="d-flex justify-content-end" 
+                <div class="d-flex justify-content-end"
                   style="display: none;">
                   <button type="button" class="btn upvote-btn">
                     <span class="fas fa-angle-up"></span>

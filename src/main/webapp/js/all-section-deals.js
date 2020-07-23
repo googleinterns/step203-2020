@@ -40,7 +40,10 @@ function createAllDealCards(deals) {
   const rowElements = document.querySelectorAll('.row.row-deals');
   for (let i = 0; i < rowElements.length; i++) {
     for (let j = 0; j < 4; j++) {
-      rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j], 3));
+      const indexOfData = i*4 + j;
+      if (indexOfData < deals.length) {
+        rowElements[i].appendChild(createHomeDealCard(deals[i*4 + j], 3));
+      }
     }
   }
 }
@@ -51,7 +54,6 @@ function createAllDealCards(deals) {
 function initAllDeals() {
   const myPath = window.location.pathname; // path is /all-section-deals/*
   const reqSection = myPath.substr(19);
-  console.log(reqSection);
   $.ajax({
     url: '/api/home',
     data: {
@@ -60,9 +62,7 @@ function initAllDeals() {
   }).done((deals) => {
     deals = sectionDealsData;
     createAllDealCards(deals);
-    setDealInfo(deals);
-  },
-  );
+  });
 }
 
 addLoadEvent(() => {

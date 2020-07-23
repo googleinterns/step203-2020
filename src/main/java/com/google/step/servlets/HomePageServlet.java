@@ -129,7 +129,6 @@ public class HomePageServlet extends HttpServlet {
       // Retrieves maps of all the sections
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(homePageSection, userId);
-      System.out.println(homePageDealsMaps);
       if (homePageDealsMaps.size() == 4) {
         Map<String, Object> homePageMap = new HashMap<>();
         // for each section, limit to 8 deals for home page
@@ -143,7 +142,6 @@ public class HomePageServlet extends HttpServlet {
             homePageDealsMaps.get(2).stream().limit(8).collect(Collectors.toList()));
         homePageMap.put(
             TAGS_SECTION, homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
-        System.out.println(homePageMap);
         response.setContentType("application/json;");
         response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
         // user requested to view all deals of particular section

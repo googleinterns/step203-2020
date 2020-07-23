@@ -33,63 +33,13 @@ const homePageDealsData = {
   ],
 };
 
-
-/**
- * Creates deal elements on home page
- * @param {object} homePage
- */
-/*
-function createHomePage(homePage) {
-  const homePageSections = ['trending', 'restaurants',
-    'users', 'tags'];
-  for (let i = 0; i < Object.keys(homePage).length; i++) {
-    const homePageData = homePage[homePageSections[i]];
-    const dealCardId = 'deal-card-' + i;
-    const dealCardElements =
-      document.querySelectorAll('#' + dealCardId + '.deal-card');
-    for (let j = 0; j < homePageData.length; j++) {
-      const childElements = dealCardElements[j].children;
-      const dealImage = childElements[0];
-      dealImage.src = homePageData[j].pic;
-
-      const dealBody = childElements[1];
-
-      const dealTime = dealBody.children[0];
-      dealTime.innerText = homePageData[j].timestamp;
-
-      const dealVotes = dealBody.children[1].children[1];
-      dealVotes.innerText = homePageData[j].votes;
-
-      const dealTitle = dealBody.children[2];
-      dealTitle.innerText = homePageData[j].description;
-
-      const dealRestaurant = dealBody.children[3].children[0];
-      dealRestaurant.innerText = homePageData[j].restaurant.name;
-      dealRestaurant.href = '/restaurants/' + homePageData[j].restaurant.id;
-
-      const dealPoster = dealBody.children[4].children[0];
-      dealPoster.innerText = homePageData[j].poster.username;
-      dealPoster.href = '/users/' + homePageData[j].poster.id;
-
-      const dealTags = dealBody.children[5];
-      const numTags = homePageData[j].tags.length;
-      for (let i = 0; i < numTags; i++) {
-        dealTags.innerText += '#' + homePageData[j].tags[i].name + ', ';
-      };
-
-      const dealLink = dealBody.children[6];
-      dealLink.href = '/deals/' + homePageData[j].id;
-    }
-  }
-}
-*/
 /**
  * Creates carousel on home page
  * @param {object} numCarouselSlidesList
  * @param {object} numDealPerSlide
  * @param {object} homePageDeals
  */
-function createCarouselElements(numCarouselSlidesList,
+function createHomePage(numCarouselSlidesList,
     numDealPerSlide, homePageDeals) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
   const homePageSections = ['trending', 'restaurants',
@@ -98,7 +48,8 @@ function createCarouselElements(numCarouselSlidesList,
   // number of sections on homepage
   let i;
   for (i = 0; i < Object.keys(homePageDeals).length; i++) {
-    carouselElements[i].children[0].href = '/all-section-deals/' + homePageSections[i];
+    carouselElements[i].children[0].href = '/all-section-deals/' +
+      homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[1];
     const carouselItemList = carouselElements[i].children[2];
@@ -116,9 +67,10 @@ function createCarouselElements(numCarouselSlidesList,
       rowElement.className = 'row';
       const numCol = 12 / numDealPerSlide;
       for (let k = 0; k < numDealPerSlide; k++) {
-        if (j*numDealPerSlide+k < homePageData.length) {
+        const indexOfData = j*numDealPerSlide+k;
+        if (indexOfData < homePageData.length) {
           rowElement.appendChild(createHomeDealCard(
-              homePageData[j*numDealPerSlide+k], numCol, i));
+              homePageData[indexOfData], numCol, i));
         }
       }
       carouselItemListChild.append(rowElement);
@@ -156,8 +108,7 @@ function initHomePage() {
       .done((homePageDeals) => {
         homePageDeals = homePageDealsData;
         console.log(homePageDeals);
-        createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
-        // createHomePage(homePageDeals);
+        createHomePage([2, 2, 3, 3], 4, homePageDeals);
       });
 }
 
