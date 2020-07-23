@@ -13,9 +13,16 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 public class VoteManagerDatastore implements VoteManager {
 
   private final DatastoreService datastore;
+  private final DealVoteManager dealVoteManager;
 
   public VoteManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
+    dealVoteManager = new DealVoteManagerDatastore();
+  }
+
+  public VoteManagerDatastore(DealVoteManager dealVoteManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.dealVoteManager = dealVoteManager;
   }
 
   @Override
@@ -47,8 +54,18 @@ public class VoteManagerDatastore implements VoteManager {
       entity = new Entity("Vote");
       entity.setProperty("user", userId);
       entity.setProperty("deal", dealId);
-    }
 
+      dealVoteManager.updateDealVotes(dealId, dir);
+    } else {
+      int prevDir = (int) (long) entity.getProperty("dir");
+      if (prevDir != dir) {
+        if (dir == 0) {
+          dealVoteManager.updateDealVotes(dealId, -prevDir);
+        } else {
+          dealVoteManager.updateDealVotes(dealId, dir * 2);
+        }
+      }
+    }
     entity.setProperty("dir", dir);
     datastore.put(entity);
   }
