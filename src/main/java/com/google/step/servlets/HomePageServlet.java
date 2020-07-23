@@ -6,6 +6,8 @@ import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.DealTagManagerDatastore;
+import com.google.step.datamanager.DealVoteManager;
+import com.google.step.datamanager.DealVoteManagerDatastore;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
@@ -49,7 +51,7 @@ public class HomePageServlet extends HttpServlet {
   private final UserService userService;
   private final TagManager tagManager;
   private final FollowManager followManager;
-
+  private final DealVoteManager dealVoteManager;
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
@@ -69,6 +71,7 @@ public class HomePageServlet extends HttpServlet {
       DealTagManager dealTagManager,
       TagManager tagManager,
       FollowManager followManager,
+      DealVoteManager dealVoteManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
@@ -77,6 +80,7 @@ public class HomePageServlet extends HttpServlet {
     this.dealTagManager = dealTagManager;
     this.tagManager = tagManager;
     this.followManager = followManager;
+    this.dealVoteManager = dealVoteManager;
     this.userService = userService;
   }
 
@@ -88,6 +92,7 @@ public class HomePageServlet extends HttpServlet {
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
+    dealVoteManager = new DealVoteManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -193,32 +198,63 @@ public class HomePageServlet extends HttpServlet {
       totalDealMaps.add(getHomePageSectionMap(trendingDeals));
     }
     if (section == null || section.equals(USERS_SECTION)) {
-      List<Deal> dealsByUsersFollowed =
-          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId), limit);
-      if (sort != null) {
-        dealsByUsersFollowed = sortDeals(sort, dealsByUsersFollowed);
+      // If sorting is by a deal attribute, dealManagerDatastore would be able to sort
+      List<Deal> deals = null;
+      List<Long> dealIdsByUsersFollowed = null;
+      Set<Long> userIds = followManager.getFollowedUserIds(userId);
+      if (sort.equals(NEW_SORT)) {
+        dealIdsByUsersFollowed = dealManager.getDealsPublishedByUsers(userIds, limit, sort);
+        deals = dealManager.readDeals(dealIdsByUsersFollowed);
+      } else { // need to retrieve all deals first, then sort in this servlet
+        dealIdsByUsersFollowed = dealManager.getDealsPublishedByUsers(userIds, -1, null);
+        deals = handleSort(sort, dealIdsByUsersFollowed, limit);
       }
-      totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
+      totalDealMaps.add(getHomePageSectionMap(deals));
     }
     if (section == null || section.equals(RESTAURANTS_SECTION)) {
-      List<Deal> dealsByRestaurantsFollowed =
-          dealManager.getDealsPublishedByRestaurants(
-              followManager.getFollowedRestaurantIds(userId), limit);
-      //
-      if (sort != null) {
-        dealsByRestaurantsFollowed = sortDeals(sort, dealsByRestaurantsFollowed);
+      List<Deal> deals = null;
+      List<Long> dealIdsByRestaurantsFollowed = null;
+      Set<Long> restaurantIds = followManager.getFollowedRestaurantIds(userId);
+      if (sort.equals(NEW_SORT)) {
+        dealIdsByRestaurantsFollowed =
+            dealManager.getDealsPublishedByRestaurants(restaurantIds, limit, sort);
+        deals = dealManager.readDeals(dealIdsByRestaurantsFollowed);
+      } else {
+        dealIdsByRestaurantsFollowed =
+            dealManager.getDealsPublishedByRestaurants(restaurantIds, -1, null);
+        deals = handleSort(sort, dealIdsByRestaurantsFollowed, limit);
       }
-      totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
+      totalDealMaps.add(getHomePageSectionMap(deals));
     }
     if (section == null || section.equals(TAGS_SECTION)) {
-      List<Deal> dealsByTagsFollowed =
+      List<Long> dealsByTagsFollowed =
           getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
-      if (sort != null) {
-        dealsByTagsFollowed = sortDeals(sort, dealsByTagsFollowed);
-      }
-      totalDealMaps.add(getHomePageSectionMap(dealsByTagsFollowed));
+      List<Deal> deals = handleSort(sort, dealsByTagsFollowed, limit);
+      totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
+  }
+
+  private List<Deal> handleSort(String sort, List<Long> dealIds, int limit) {
+    List<Deal> deals = null;
+    if (sort.equals(VOTE_SORT)) {
+      dealIds = dealVoteManager.getDealsWithVotes(dealIds, limit);
+      deals = dealManager.readDeals(dealIds);
+    } else if (sort.equals(TRENDING)) {
+      deals = dealManager.readDeals(dealIds);
+      deals = sortDealsBasedOnHotScore(deals);
+      if (limit > 0) {
+        deals = deals.stream().limit(8).collect(Collectors.toList());
+      }
+    } else if (sort.equals(NEW_SORT)) {
+      deals = dealManager.readDeals(dealIds);
+      deals = sortDealsBasedOnNew(deals);
+      if (limit > 0) {
+        deals = deals.stream().limit(8).collect(Collectors.toList());
+      }
+      // limit to 8
+    }
+    return deals;
   }
 
   /** Creates a list of deal maps for a section */
@@ -237,7 +273,7 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Retrieves deals posted by tags followed by user */
-  private List<Deal> getDealsPublishedByTags(Set<Long> tagIds) {
+  private List<Long> getDealsPublishedByTags(Set<Long> tagIds) {
     Set<Long> dealIdResults = new HashSet<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
@@ -245,21 +281,7 @@ public class HomePageServlet extends HttpServlet {
     }
     // Get rid of duplicate dealID (Deals with multiple tags)
     List<Long> dealsWithoutDuplicates = new ArrayList<>(dealIdResults);
-    return dealManager.readDeals(dealsWithoutDuplicates);
-  }
-
-  /** Sorts deals based on new (Newest to oldest) */
-  private List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return LocalDateTime.parse(deal2.creationTimeStamp)
-                .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
-          }
-        });
-    return deals;
+    return dealsWithoutDuplicates;
   }
 
   private double epochSeconds(String timestamp) {
@@ -288,7 +310,7 @@ public class HomePageServlet extends HttpServlet {
   private List<Deal> sortDealsBasedOnHotScore(List<Deal> deals) {
     List<ScoredDeal> scoredDeals = new ArrayList<>();
     for (Deal deal : deals) {
-      int votes = voteManager.getVotes(deal.id);
+      int votes = dealVoteManager.getVotes(deal.id);
       scoredDeals.add(new ScoredDeal(deal, calculateHotScore(deal, votes)));
     }
     Collections.sort(scoredDeals);
@@ -299,29 +321,17 @@ public class HomePageServlet extends HttpServlet {
     return dealResults;
   }
 
-  /** Sorts deals based on votes */
-  private List<Deal> sortDealsBasedOnVotes(List<Deal> deals) {
-    List<ScoredDeal> scoredDeals = new ArrayList<>();
-    for (Deal deal : deals) {
-      int votes = voteManager.getVotes(deal.id);
-      scoredDeals.add(new ScoredDeal(deal, votes));
-    }
-    Collections.sort(scoredDeals);
-    List<Deal> dealResults = new ArrayList<>(); // creating list of deals
-    for (ScoredDeal scoredDeal : scoredDeals) {
-      dealResults.add(scoredDeal.deal);
-    }
-    return dealResults;
-  }
-
-  private List<Deal> sortDeals(String sort, List<Deal> deals) {
-    if (sort.equals(TRENDING)) {
-      deals = sortDealsBasedOnHotScore(deals);
-    } else if (sort.equals(NEW_SORT)) {
-      deals = sortDealsBasedOnNew(deals);
-    } else if (sort.equals(VOTE_SORT)) {
-      deals = sortDealsBasedOnVotes(deals);
-    }
+  /** Sorts deals based on new (Newest to oldest) */
+  private List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
+    Collections.sort(
+        deals,
+        new Comparator<Deal>() {
+          @Override
+          public int compare(Deal deal1, Deal deal2) {
+            return LocalDateTime.parse(deal2.creationTimeStamp)
+                .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
+          }
+        });
     return deals;
   }
 }

@@ -22,9 +22,9 @@ public interface DealManager {
 
   public void deleteDeal(long id);
 
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds, int limit);
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort);
 
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit);
+  public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit, String sort);
 
   public List<Deal> getAllDeals();
 

@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ public class DealManagerDatastore implements DealManager {
   private final TagManager tagManager;
 
   private final String LOCATION = "Asia/Singapore";
+
+  private final String NEW_SORT = "new";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -147,21 +150,29 @@ public class DealManagerDatastore implements DealManager {
   }
 
   /** Retrieves deals posted by restaurants or users */
-  private List<Deal> getDealsPublishedByRestaurantsOrUsers(
-      Set<Long> ids, String filterAttribute, int limit) {
-    List<Deal> dealResults = new ArrayList<>();
+  private List<Long> getDealsPublishedByRestaurantsOrUsers(
+      Set<Long> ids, String filterAttribute, int limit, String sort) {
+    List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
-      Query query = new Query("Deal").setFilter(propertyFilter);
+      Query query = null;
+      Iterable<Entity> entities = null;
+      if (sort != null) {
+        query =
+            new Query("Deal")
+                .setFilter(propertyFilter)
+                .addSort("timestamp", SortDirection.DESCENDING);
+      } else {
+        query = new Query("Deal").setFilter(propertyFilter);
+      }
       PreparedQuery pq = datastore.prepare(query);
-      Iterable<Entity> entities;
       if (limit > 0) {
         entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
       } else {
         entities = pq.asIterable();
       }
       for (Entity entity : entities) {
-        dealResults.add(readDeal(entity.getKey().getId()));
+        dealResults.add(entity.getKey().getId());
       }
     }
     return dealResults;
@@ -169,14 +180,15 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds, int limit) {
-    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId", limit);
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort) {
+    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId", limit, sort);
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit) {
-    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId", limit);
+  public List<Long> getDealsPublishedByRestaurants(
+      Set<Long> restaurantIds, int limit, String sort) {
+    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId", limit, sort);
   }
 
   @Override

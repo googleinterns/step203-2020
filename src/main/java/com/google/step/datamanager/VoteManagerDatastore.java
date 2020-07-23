@@ -13,9 +13,16 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 public class VoteManagerDatastore implements VoteManager {
 
   private final DatastoreService datastore;
+  private final DealVoteManager dealVoteManager;
 
   public VoteManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
+    dealVoteManager = new DealVoteManagerDatastore();
+  }
+
+  public VoteManagerDatastore(DealVoteManager dealVoteManager) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.dealVoteManager = dealVoteManager;
   }
 
   @Override
@@ -46,38 +53,19 @@ public class VoteManagerDatastore implements VoteManager {
       entity = new Entity("Vote");
       entity.setProperty("user", userId);
       entity.setProperty("deal", dealId);
-      updateDealVotes(dealId, dir);
+
+      dealVoteManager.updateDealVotes(dealId, dir);
     } else {
-      // if user voted before
       int prevDir = (int) (long) entity.getProperty("dir");
       if (prevDir != dir) {
         if (dir == 0) {
-          updateDealVotes(dealId, -prevDir);
+          dealVoteManager.updateDealVotes(dealId, -prevDir);
         } else {
-          updateDealVotes(dealId, dir * 2);
+          dealVoteManager.updateDealVotes(dealId, dir * 2);
         }
       }
     }
     entity.setProperty("dir", dir);
-    datastore.put(entity);
-  }
-
-  private void updateDealVotes(long dealId, int dir) {
-    // check if this user has voted on this deal before
-    Filter filter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
-    Query query = new Query("DealVote").setFilter(filter);
-    PreparedQuery pq = datastore.prepare(query);
-    Entity entity = pq.asSingleEntity();
-
-    // If the deal has not been voted before
-    if (entity == null) {
-      entity = new Entity("DealVote");
-      entity.setProperty("deal", dealId);
-      entity.setProperty("votes", dir);
-    } else {
-      int votes = (int) (long) entity.getProperty("votes");
-      entity.setProperty("votes", votes + dir);
-    }
     datastore.put(entity);
   }
 
