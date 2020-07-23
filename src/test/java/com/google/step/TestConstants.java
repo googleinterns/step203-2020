@@ -122,8 +122,6 @@ public class TestConstants {
 
   public static final int VOTE_A = 0;
 
-  // Deal
-
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
