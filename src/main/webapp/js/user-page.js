@@ -22,43 +22,6 @@ function configureUserProfile(user) {
 }
 
 /**
- * Returns a container for a deal.
- * @param {object} deal deal whose info will be shown.
- * @return {object} a DOM element showing deal's info.
- */
-function createDealCard(deal) {
-  const dealCard = document.createElement('div');
-  dealCard.classList.add('deal-card', 'card');
-  const dealImage = document.createElement('img');
-  dealImage.className = 'card-img-top deal-card-img';
-  dealImage.src = deal.image;
-  dealImage.alt = 'Deal image';
-
-  const dealBody = document.createElement('div');
-  dealBody.className = 'card-body';
-
-  const dealName = document.createElement('h6');
-  dealName.className = 'card-title';
-  dealName.innerText = deal.name;
-
-  const dealVotes = document.createElement('p');
-  dealVotes.className = 'card-text';
-  dealVotes.innerText = deal.votes;
-
-  const dealLink = document.createElement('a');
-  dealLink.innerText = 'See detail';
-  dealLink.href = '/deal/' + deal.id;
-
-  dealBody.appendChild(dealName);
-  dealBody.appendChild(dealVotes);
-  dealBody.appendChild(dealLink);
-
-  dealCard.appendChild(dealImage);
-  dealCard.appendChild(dealBody);
-  return dealCard;
-}
-
-/**
  * Configures deals published by the user.
  * @param {object} user The user whose deals are shown.
  */
@@ -138,7 +101,7 @@ function createSimpleRestaurantContainer(restaurant) {
   const imageContainer = document.createElement('div');
   imageContainer.className = 'w-25 d-inline-block text-center';
   const restaurantImage = document.createElement('img');
-  restaurantImage.src = restaurant.picture;
+  restaurantImage.src = restaurant.photoUrl;
   restaurantImage.alt = 'restaurant photo';
   restaurantImage.className = 'img-fluid w-50 mx-auto';
   imageContainer.appendChild(restaurantImage);
@@ -171,7 +134,7 @@ function configureRestaurantsFollowedBy(user) {
  */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
-  tagContainer.className = 'badge badge-pill badge-primary';
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
   tagContainer.innerText = tag.name;
   return tagContainer;
 }
@@ -182,7 +145,7 @@ function createTagContainer(tag) {
  */
 function configureTagsFollowedBy(user) {
   const tagsContainer = document.getElementById('tags');
-  tagsContainer.classList.add('d-flex', 'flex-wrap');
+  tagsContainer.classList.add('d-flex', 'flex-wrap', 'mt-2');
   for (const tag of user.tagsFollowed) {
     const tagContainer = createTagContainer(tag);
     tagsContainer.appendChild(tagContainer);
@@ -209,11 +172,50 @@ function configureProfileEditButton(user) {
  */
 function configureFollowButton(user, userLoggedInId) {
   const followButton = document.getElementById('follow-btn');
-  followButton.hidden = false;
-  followButton.innerText = 'unfollow';
-  // TODO: Check follow relationship, btn onclick
+  $.ajax('/api/follows/',
+      {data: {followerId: userLoggedInId, followeeId: user.id}})
+      .done((isFollowing) => {
+        followButton.hidden = false;
+        if (isFollowing === 'true') {
+          followButton.innerText = 'Unfollow';
+          followButton.onclick = () => unfollow(user);
+        } else {
+          followButton.innerText = 'Follow';
+          followButton.onclick = () => follow(user);
+        }
+      });
 }
 
+/**
+ * Follows a user and reloads the page.
+ * @param {object} user the user to be followed.
+ */
+function follow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'POST'})
+      .done(() => location.reload());
+}
+
+/**
+ * Unfollows a user and reloads the page.
+ * @param {object} user the user to be unfollowed.
+ */
+function unfollow(user) {
+  $.ajax('/api/follows/users/' + user.id,
+      {method: 'DELETE'})
+      .done(() => location.reload());
+}
+
+/**
+ * Sets profile form url.
+ * @param {String} url url for form submission.
+ */
+function setProfileFormUrl(url) {
+  const profileEditForm = document.getElementById('profile-form');
+  profileEditForm.action = url;
+}
+
+let initialProfilePhotoUrl = undefined;
 /**
  * Shows profile editing form and initializes input values with the user.
  * @param {object} user The user whose profile is being edited.
@@ -221,14 +223,22 @@ function configureFollowButton(user, userLoggedInId) {
 function showProfileEditingForm(user) {
   const profile = document.getElementById('profile');
   profile.hidden = true;
-  const profileForm = document.getElementById('profile-form');
-  profileForm.hidden = false;
+  const profileEditForm = document.getElementById('profile-form');
+  profileEditForm.hidden = false;
   const emailInput = document.getElementById('email-input');
   emailInput.value = user.email;
-  if (typeof user.picture != 'undefined') {
-    const profilePhotoPreview =
+
+  const profilePhotoPreview =
       document.getElementById('profile-photo-preview');
-    profilePhotoPreview.src = user.picture;
+  profilePhotoPreview.src = user.picture;
+  const photoUploadInput = document.getElementById('photo-upload-input');
+  const defaultPhotoCheckbox =
+      document.getElementById('default-photo-checkbox');
+  const isShowingDefaultProfilePicture = isDefaultProfilePicture(user.picture);
+  defaultPhotoCheckbox.checked = isShowingDefaultProfilePicture;
+  photoUploadInput.hidden = isShowingDefaultProfilePicture;
+  if (isShowingDefaultProfilePicture) {
+    initialProfilePhotoUrl = user.picture;
   }
   if (typeof user.username != 'undefined') {
     const usernameInput = document.getElementById('username-input');
@@ -243,6 +253,34 @@ function showProfileEditingForm(user) {
     user.tagsFollowed.forEach((tag) =>
       $('#tags-input').tagsinput('add', tag.name));
   }
+}
+
+/**
+ * Toggles photo upload input when checkbox value changes.
+ * @param {Object} checkbox default photo checkbox
+ */
+function toggleDefaultPhotoCheckbox(checkbox) {
+  const photoUploadInput = document.getElementById('photo-upload-input');
+  const profilePhotoFile = document.getElementById('profile-photo-file');
+  const preview =
+      document.getElementById('profile-photo-preview');
+  if (checkbox.checked) {
+    photoUploadInput.hidden = true;
+    preview.src = '/images/default-profile-pic.svg';
+    profilePhotoFile.value = '';
+  } else {
+    photoUploadInput.hidden = false;
+    preview.src = initialProfilePhotoUrl;
+  }
+}
+
+/**
+ * Returns true if the given url is the default profile image.
+ * @param {String} url picture url
+ * @return {boolean} true if the given url is the default profile image.
+ */
+function isDefaultProfilePicture(url) {
+  return url.startsWith('/images/');
 }
 
 /**
@@ -269,8 +307,8 @@ function profilePhotoPreview(input) {
 function cancelProfileEditing() {
   const profile = document.getElementById('profile');
   profile.hidden = false;
-  const profileForm = document.getElementById('profile-form');
-  profileForm.hidden = true;
+  const profileEditForm = document.getElementById('profile-form');
+  profileEditForm.hidden = true;
 }
 
 /**
@@ -279,9 +317,8 @@ function cancelProfileEditing() {
  * @param {object} user The user whose profile is shown.
  */
 function configureButtons(user) {
-  fetch('/api/authentication')
-      .then((response) =>(response.json()))
-      .then((loginStatus) => {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
         if (loginStatus.isLoggedIn) {
           if (loginStatus.id == user.id) {
             configureProfileEditButton(user);
@@ -291,19 +328,23 @@ function configureButtons(user) {
         }
       });
 }
+
 /**
- * Initializes the user profile based on the id.
+ * Initializes the user profile page based on the id.
  */
-function init() {
+function initRestaurantPage() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
-  fetch('/api/users/' + id)
-      .then((response) => response.json())
-      .then((user) => {
+  $.ajax('/api/users/' + id)
+      .done((user) => {
         configureButtons(user);
         configureUserProfile(user);
+      });
+  $.ajax('/api/user-post-url/' + id)
+      .done((url) => {
+        setProfileFormUrl(url);
       });
 }
 
 addLoadEvent(() => {
-  init();
+  initRestaurantPage();
 });

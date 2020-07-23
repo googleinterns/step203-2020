@@ -1,11 +1,23 @@
 package com.google.step.datamanager;
 
+import static com.google.step.TestConstants.BIO_A;
+import static com.google.step.TestConstants.BIO_B;
+import static com.google.step.TestConstants.BLOBKEY_B;
+import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.EMAIL_B;
+import static com.google.step.TestConstants.USERNAME_A;
+import static com.google.step.TestConstants.USERNAME_B;
+import static com.google.step.TestConstants.USER_ID_C;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.User;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,17 +26,6 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class UserManagerDatastoreTest {
-
-  private static final String EMAIL_A = "testa@example.com";
-  private static final String EMAIL_B = "testb@example.com";
-
-  private static final String USERNAME_A = "Alice";
-  private static final String USERNAME_B = "Bob";
-
-  private static final String BIO_A = "Hello world.";
-  private static final String BIO_B = "Hello I'm Bob.";
-
-  private static final String BLOBKEY = "a_blob_key";
 
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(
@@ -51,24 +52,16 @@ public final class UserManagerDatastoreTest {
     assertFalse(user.photoBlobKey.isPresent());
   }
 
-  @Test
-  public void testReadUserByEmail_firstTime() {
-    User user = userManagerDatastore.readOrCreateUserByEmail(EMAIL_B);
-    assertEquals(EMAIL_B, user.email);
-    assertEquals(EMAIL_B, user.username);
-    assertEquals("", user.bio);
-    assertFalse(user.photoBlobKey.isPresent());
+  @Test(expected = IllegalArgumentException.class)
+  public void testReadUserByEmail_userDoesNotExist() {
+    userManagerDatastore.readUserByEmail(EMAIL_B);
   }
 
   @Test
-  public void testReadUserByEmailExists() {
+  public void testReadUserByEmail_existingUser() {
     User user = userManagerDatastore.createUser(EMAIL_B);
-    User userSecondTime = userManagerDatastore.readOrCreateUserByEmail(EMAIL_B);
-    assertEquals(EMAIL_B, userSecondTime.email);
-    assertEquals(EMAIL_B, userSecondTime.username);
-    assertEquals("", userSecondTime.bio);
-    assertEquals(user.id, userSecondTime.id);
-    assertFalse(userSecondTime.photoBlobKey.isPresent());
+    User userSecondTime = userManagerDatastore.readUserByEmail(EMAIL_B);
+    assertEquals(user, userSecondTime);
   }
 
   @Test
@@ -85,7 +78,7 @@ public final class UserManagerDatastoreTest {
   @Test(expected = IllegalArgumentException.class)
   public void testReadUserById_notExists() {
     userManagerDatastore.createUser(EMAIL_A);
-    User _ = userManagerDatastore.readUser(100000); // a random id
+    userManagerDatastore.readUser(100000); // a random id
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -110,13 +103,32 @@ public final class UserManagerDatastoreTest {
   @Test
   public void testUpdateUser_blobKey() {
     User userB = userManagerDatastore.createUser(EMAIL_B);
-    User updatedUser = new User(userB.id, userB.email, USERNAME_B, BLOBKEY, BIO_B);
+    User updatedUser = new User(userB.id, userB.email, USERNAME_B, BLOBKEY_B, BIO_B);
     userManagerDatastore.updateUser(updatedUser);
-    User userBRead = userManagerDatastore.readOrCreateUserByEmail(EMAIL_B);
-    assertEquals(BLOBKEY, userBRead.photoBlobKey.get());
+    User userBRead = userManagerDatastore.readUserByEmail(EMAIL_B);
+    assertEquals(BLOBKEY_B, userBRead.photoBlobKey.get());
     updatedUser = new User(userB.id, userB.email, USERNAME_B, BIO_B);
     userManagerDatastore.updateUser(updatedUser);
     userBRead = userManagerDatastore.readUser(userB.id);
     assertFalse(userBRead.photoBlobKey.isPresent());
+  }
+
+  @Test
+  public void testReadUsers() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id);
+    List<User> users = userManagerDatastore.readUsers(ids);
+
+    assertThat(users, containsInAnyOrder(userA, userB));
+  }
+
+  @Test
+  public void testReadUsers_idDoesNotExist() {
+    User userA = userManagerDatastore.createUser(EMAIL_A);
+    User userB = userManagerDatastore.createUser(EMAIL_B);
+    List<Long> ids = Arrays.asList(userA.id, userB.id, USER_ID_C);
+    List<User> users = userManagerDatastore.readUsers(ids);
+    assertThat(users, containsInAnyOrder(userA, userB));
   }
 }
