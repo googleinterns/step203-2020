@@ -17,13 +17,12 @@ function configureRestaurantInfo(restaurant) {
  */
 function configureFollowButton(restaurantId, loggedInUserId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/', {
+  $.ajax('/api/follows/restaurants/' + restaurantId, {
     data: {
-      restaurantId: restaurantId,
       followerId: loggedInUserId,
     },
   }).done((isFollowing) => {
-    if (isFollowing == 'true') {
+    if (isFollowing.startsWith('true')) {
       followButton.innerText = 'Unfollow';
       followButton.onclick = () => unfollow(restaurantId);
     } else {
@@ -55,16 +54,37 @@ function unfollow(restaurantId) {
 }
 
 /**
+ * Configures deals of the restaurant.
+ * @param {Object} deals deals of the restaurant
+ */
+function configureDealsOfRestaurant(deals) {
+  const dealsContainer = document.getElementById('deals-container');
+  dealsContainer.classList.add('card-columns');
+  for (const deal of deals) {
+    dealsContainer.appendChild(createDealCard(deal));
+  }
+}
+
+/**
+ * Configures header of deals section.
+ * @param {Object} restaurant restaurant object
+ */
+function configureDealsHeader(restaurant) {
+  const dealsHeader = document.getElementById('deals-header');
+  dealsHeader.innerText = 'Deals from ' + restaurant.name;
+}
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
-  // TODO call back end
-  restaurant = {
-    name: 'McDonald',
-    photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
-  };
-  configureRestaurantInfo(restaurant);
+  $.ajax('/api/restaurants/' + id)
+      .done((restaurant) => {
+        configureRestaurantInfo(restaurant);
+        configureDealsOfRestaurant(restaurant.deals);
+        configureDealsHeader(restaurant);
+      });
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {

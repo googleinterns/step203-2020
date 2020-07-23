@@ -29,16 +29,29 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   /** Creates a new restaurant entity */
   @Override
-  public Restaurant createRestaurant(String name, String photoBlobkey) {
+  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobKey) {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
-    entity.setProperty("photoBlobkey", photoBlobkey);
+    entity.setProperty("photoUrl", Restaurant.getImageUrlFromBlobKey(photoBlobKey));
     entity.setProperty("name_lowercase", name.toLowerCase());
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    return new Restaurant(id, name, photoBlobkey);
+    return Restaurant.createRestaurantWithBlobkey(id, name, photoBlobKey);
+  }
+
+  @Override
+  public Restaurant createRestaurantWithPhotoReference(String name, String photoReference) {
+    Entity entity = new Entity("Restaurant");
+    entity.setProperty("name", name);
+    entity.setProperty("photoUrl", Restaurant.getImageUrlFromPhotoReference(photoReference));
+    entity.setProperty("name_lowercase", name.toLowerCase());
+
+    Key key = datastore.put(entity);
+    long id = key.getId();
+
+    return Restaurant.createRestaurantWithPhotoReference(id, name, photoReference);
   }
 
   /** Gets info on a restaurant given an id */
@@ -68,8 +81,8 @@ public class RestaurantManagerDatastore implements RestaurantManager {
       restaurantEntity.setProperty("name", restaurant.name);
       restaurantEntity.setProperty("name_lowercase", restaurant.name.toLowerCase());
     }
-    if (restaurant.photoBlobkey != null) {
-      restaurantEntity.setProperty("photoBlobkey", restaurant.photoBlobkey);
+    if (restaurant.photoUrl != null) {
+      restaurantEntity.setProperty("photoUrl", restaurant.photoUrl);
     }
     datastore.put(restaurantEntity);
     return transformEntityToRestaurant(restaurantEntity);
@@ -110,9 +123,20 @@ public class RestaurantManagerDatastore implements RestaurantManager {
    */
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
     String name = (String) restaurantEntity.getProperty("name");
-    String photoBlobkey = (String) restaurantEntity.getProperty("photoBlobkey");
+    String photoUrl = (String) restaurantEntity.getProperty("photoUrl");
     long id = restaurantEntity.getKey().getId();
-    return new Restaurant(id, name, photoBlobkey);
+
+    return Restaurant.createRestaurantWithPhotoUrl(id, name, photoUrl);
+  }
+
+  @Override
+  public void deleteAllRestaurants() {
+    Query query = new Query("Restaurant").setKeysOnly();
+    PreparedQuery preparedQuery = datastore.prepare(query);
+
+    List<Key> keys = new ArrayList<>();
+    preparedQuery.asIterable().forEach(entity -> keys.add(entity.getKey()));
+    datastore.delete(keys);
   }
 
   @Override

@@ -48,7 +48,7 @@
   </section>
   <section class="page-section" id="users-you-follow">
     <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Users You Follow</h2>
-    <%@include file="/WEB-INF/components//section-carousel.html"%>
+    <%@include file="/WEB-INF/components/section-carousel.html"%>
   </section>
   <section class="page-section" id="tags-you-follow">
     <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">#Tags You Follow</h2>
