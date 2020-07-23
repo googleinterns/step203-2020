@@ -21,15 +21,14 @@ public class VoteManagerDatastore implements VoteManager {
   @Override
   public int getVotes(long dealId) {
     Filter dealFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
-    Query query = new Query("Vote").setFilter(dealFilter);
+    Query query = new Query("DealVote").setFilter(dealFilter);
     PreparedQuery pq = datastore.prepare(query);
-
-    int totalVotes = 0;
-    for (Entity entity : pq.asIterable()) {
-      int dir = ((Long) entity.getProperty("dir")).intValue();
-      totalVotes += dir;
+    Entity entity = pq.asSingleEntity();
+    if (entity == null) {
+      return 0;
     }
-    return totalVotes;
+    int votes = (int) (long) entity.getProperty("votes");
+    return votes;
   }
 
   @Override
@@ -47,9 +46,38 @@ public class VoteManagerDatastore implements VoteManager {
       entity = new Entity("Vote");
       entity.setProperty("user", userId);
       entity.setProperty("deal", dealId);
+      updateDealVotes(dealId, dir);
+    } else {
+      // if user voted before
+      int prevDir = (int) (long) entity.getProperty("dir");
+      if (prevDir != dir) {
+        if (dir == 0) {
+          updateDealVotes(dealId, -prevDir);
+        } else {
+          updateDealVotes(dealId, dir * 2);
+        }
+      }
     }
-
     entity.setProperty("dir", dir);
+    datastore.put(entity);
+  }
+
+  private void updateDealVotes(long dealId, int dir) {
+    // check if this user has voted on this deal before
+    Filter filter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+    Query query = new Query("DealVote").setFilter(filter);
+    PreparedQuery pq = datastore.prepare(query);
+    Entity entity = pq.asSingleEntity();
+
+    // If the deal has not been voted before
+    if (entity == null) {
+      entity = new Entity("DealVote");
+      entity.setProperty("deal", dealId);
+      entity.setProperty("votes", dir);
+    } else {
+      int votes = (int) (long) entity.getProperty("votes");
+      entity.setProperty("votes", votes + dir);
+    }
     datastore.put(entity);
   }
 
