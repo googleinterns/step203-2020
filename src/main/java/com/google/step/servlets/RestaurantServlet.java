@@ -76,7 +76,7 @@ public class RestaurantServlet extends HttpServlet {
     }
     String name = request.getParameter("name");
     String photoBlobkey = "A_BLOB_KEY"; // TODO Blobkey
-    Restaurant restaurant = new Restaurant(id, name, photoBlobkey);
+    Restaurant restaurant = Restaurant.createRestaurantWithBlobkey(id, name, photoBlobkey);
     Restaurant updatedRestaurant = restaurantManager.updateRestaurant(restaurant);
     if (updatedRestaurant == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);

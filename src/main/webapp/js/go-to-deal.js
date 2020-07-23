@@ -2,6 +2,9 @@ let dealId;
 let votes = 0;
 let myVote = 0;
 
+let isLoggedIn;
+let userId = null;
+
 /**
  * Calls the backend to get the list of comments and loads it to the page
  */
@@ -101,7 +104,7 @@ function loadDataToForm(deal) {
 /**
  * Returns a container with tag's name.
  * @param {object} tag The tag object.
- * @return {object} a container with tag's name.
+ * @return {HTMLSpanElement} a container with tag's name.
  */
 function createTagContainer(tag) {
   const tagContainer = document.createElement('span');
@@ -125,24 +128,65 @@ function loadCommentsToPage(comments) {
 /**
  * Creates comment element
  * @param {object} comment
- * @return {object} commentElement
+ * @return {HTMLDivElement} commentElement
  */
 function createCommentElement(comment) {
   const commentElement = document.createElement('div');
-  commentElement.className = 'border border-info py-3 px-3 my-3';
+  commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
+
+  const contentElement = document.createElement('div');
+  contentElement.className = 'flex-grow-1 d-flex flex-column ' +
+    'justify-content-between';
+  commentElement.appendChild(contentElement);
 
   const textElement = document.createElement('div');
-  textElement.innerText = comment.user.username +
-  ': ' + comment.content;
-  commentElement.appendChild(textElement);
+  textElement.innerText = comment.user.username + ': ' + comment.content;
+  contentElement.appendChild(textElement);
 
   const timeElement = document.createElement('small');
   timeElement.className = 'text-muted';
   const date = new Date(Date.parse(comment.timestamp));
   timeElement.innerText = 'Posted on: ' + date.toString();
-  commentElement.appendChild(timeElement);
+  contentElement.appendChild(timeElement);
+
+  if (isLoggedIn && comment.user.id == userId) {
+    const deleteEditContainer = document.createElement('div');
+    deleteEditContainer.className = 'd-flex flex-column';
+    commentElement.appendChild(deleteEditContainer);
+
+    // TODO allow edit comment
+    // const editBtn = document.createElement('button');
+    // editBtn.className = 'btn btn-warning btn-sm mb-1';
+    // editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true">
+    //    </i>';
+    // deleteEditContainer.appendChild(editBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-danger btn-sm';
+    deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+    deleteBtn.onclick = () => {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        deleteComment(commentElement, comment);
+      }
+    };
+    deleteEditContainer.appendChild(deleteBtn);
+  }
 
   return commentElement;
+}
+
+/**
+ * Makes a request to the backend to delete the comment, and removes the div
+ * element
+ * @param {HTMLDivElement} commentElement div to be deleted
+ * @param {object} comment comment object
+ */
+function deleteComment(commentElement, comment) {
+  commentElement.remove();
+  $.ajax({
+    url: '/api/comments/' + comment.id,
+    method: 'DELETE',
+  });
 }
 
 /**
@@ -307,10 +351,34 @@ function checkDatesOrdered() {
   return true;
 }
 
-addLoadEvent(() => {
+/**
+ * Loads user's login info into global variables
+ * @return {Promise} promise of when the info is done loading
+ */
+function loadUserLoginInfo() {
+  return $.ajax('/api/authentication')
+      .done((loginStatus) => {
+        if (loginStatus.isLoggedIn) {
+          isLoggedIn = true;
+          userId = loginStatus.id;
+        } else {
+          isLoggedIn = false;
+        }
+      });
+}
+
+/**
+ * Initializes data on the page
+ */
+async function initPage() {
+  await loadUserLoginInfo();
   initDeal();
   initSearchRestaurant(
       document.getElementById('search-container'),
       selectRestaurant,
   );
+}
+
+addLoadEvent(() => {
+  initPage();
 });

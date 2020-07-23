@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealTagManager;
@@ -44,6 +46,7 @@ public class HomePageServlet extends HttpServlet {
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
   private final DealTagManager dealTagManager;
+  private final UserService userService;
   private final TagManager tagManager;
   private final FollowManager followManager;
 
@@ -57,7 +60,8 @@ public class HomePageServlet extends HttpServlet {
       VoteManager voteManager,
       DealTagManager dealTagManager,
       TagManager tagManager,
-      FollowManager followManager) {
+      FollowManager followManager,
+      UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
@@ -65,6 +69,7 @@ public class HomePageServlet extends HttpServlet {
     this.dealTagManager = dealTagManager;
     this.tagManager = tagManager;
     this.followManager = followManager;
+    this.userService = userService;
   }
 
   public HomePageServlet() {
@@ -75,6 +80,7 @@ public class HomePageServlet extends HttpServlet {
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
+    userService = UserServiceFactory.getUserService();
   }
 
   /** Class to store deal along with relevant attribute (hot score/votes) to be sorted */
@@ -96,15 +102,22 @@ public class HomePageServlet extends HttpServlet {
   /** Gets the deals for the home page */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long userId = 1;
     List<Deal> allDeals = dealManager.getAllDeals();
     List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
-    List<Deal> dealsByUsersFollowed =
-        dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
-    List<Deal> dealsByRestaurantsFollowed =
-        dealManager.getDealsPublishedByRestaurants(followManager.getFollowedRestaurantIds(userId));
-    List<Deal> dealsByTagsFollowed =
-        getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+    List<Deal> dealsByUsersFollowed = new ArrayList<>();
+    List<Deal> dealsByRestaurantsFollowed = new ArrayList<>();
+    List<Deal> dealsByTagsFollowed = new ArrayList<>();
+    if (userService.isUserLoggedIn()) {
+      String email = userService.getCurrentUser().getEmail();
+      User user = userManager.readUserByEmail(email);
+      long userId = user.id;
+      dealsByUsersFollowed =
+          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
+      dealsByRestaurantsFollowed =
+          dealManager.getDealsPublishedByRestaurants(
+              followManager.getFollowedRestaurantIds(userId));
+      dealsByTagsFollowed = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+    }
     List<List<Deal>> homePageDeals =
         new ArrayList<>(
             Arrays.asList(
