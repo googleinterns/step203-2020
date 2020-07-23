@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.TAG_A;
@@ -12,6 +13,8 @@ import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.FollowManager;
@@ -38,32 +41,35 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class HomePageServletTest {
 
   private HomePageServlet homePageServlet;
-  private DealManager dealManager;
-  private UserManager userManager;
-  private VoteManager voteManager;
-  private RestaurantManager restaurantManager;
-  private DealTagManager dealTagManager;
-  private TagManager tagManager;
-  private FollowManager followManager;
+  private DealManager mockDealManager;
+  private UserManager mockUserManager;
+  private VoteManager mockVoteManager;
+  private RestaurantManager mockRestaurantManager;
+  private DealTagManager mockDealTagManager;
+  private TagManager mockTagManager;
+  private FollowManager mockFollowManager;
+  private UserService mockUserService;
 
   @Before
   public void setUp() {
-    dealManager = mock(DealManager.class);
-    userManager = mock(UserManager.class);
-    voteManager = mock(VoteManager.class);
-    restaurantManager = mock(RestaurantManager.class);
-    dealTagManager = mock(DealTagManager.class);
-    tagManager = mock(TagManager.class);
-    followManager = mock(FollowManager.class);
+    mockDealManager = mock(DealManager.class);
+    mockUserManager = mock(UserManager.class);
+    mockVoteManager = mock(VoteManager.class);
+    mockRestaurantManager = mock(RestaurantManager.class);
+    mockDealTagManager = mock(DealTagManager.class);
+    mockTagManager = mock(TagManager.class);
+    mockUserService = mock(UserService.class);
+    mockFollowManager = mock(FollowManager.class);
     homePageServlet =
         new HomePageServlet(
-            dealManager,
-            userManager,
-            restaurantManager,
-            voteManager,
-            dealTagManager,
-            tagManager,
-            followManager);
+            mockDealManager,
+            mockUserManager,
+            mockRestaurantManager,
+            mockVoteManager,
+            mockDealTagManager,
+            mockTagManager,
+            mockFollowManager,
+            mockUserService);
   }
 
   @Test
@@ -72,16 +78,21 @@ public class HomePageServletTest {
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+    User currentUser = new User(EMAIL_A, "");
 
-    when(dealManager.getAllDeals()).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
-    when(dealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
-    when(dealManager.readDeals(anyList())).thenReturn(DEALS);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
-    when(userManager.readUser(anyLong())).thenReturn(USER_A);
-    when(restaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
-    when(tagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
-    when(voteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+    when(mockDealManager.getAllDeals()).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByRestaurants(anySet())).thenReturn(DEALS);
+    when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
+
+    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
+    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
+    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
+    when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -95,6 +106,37 @@ public class HomePageServletTest {
         String.format(
             "{popularDeals:%s," + "usersIFollow:%s," + "restaurantsIFollow:%s," + "tagsIFollow:%s}",
             expectedDeals, expectedDeals, expectedDeals, expectedDeals);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoGet_UserNotLoggedIn() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    when(mockDealManager.getAllDeals()).thenReturn(DEALS);
+
+    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
+    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
+    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
+    when(mockVoteManager.getVotes(anyLong())).thenReturn(VOTE_A);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    homePageServlet.doGet(request, response);
+
+    String trendingDeals =
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+    String expected =
+        String.format(
+            "{popularDeals:%s," + "usersIFollow:[]," + "restaurantsIFollow:[]," + "tagsIFollow:[]}",
+            trendingDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 }
