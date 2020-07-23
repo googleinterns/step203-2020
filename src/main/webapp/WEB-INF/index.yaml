@@ -1,0 +1,26 @@
+indexes:
+- kind: Deal
+  properties:
+  - name: posterId
+  - name: restaurantId
+- kind: Comment
+  properties:
+  - name: deal
+  - name: timestamp
+    direction: desc
+- kind: Follow
+  properties:
+  - name: restaurant
+  - name: user
+  - name: tag
+  - name: follower
+- kind: DealTag
+  properties:
+  - name: dealId 
+- kind: Vote
+  properties:
+  - name: deal
+  - name: user
+- kind: User
+  properties:
+  - name: email
