@@ -120,12 +120,7 @@ public class HomePageServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) { // all sections are available
       String email = userService.getCurrentUser().getEmail();
       User user = userManager.readUserByEmail(email);
-      long userId;
-      try {
-        userId = user.id;
-      } catch (IllegalArgumentException e) {
-        userId = 5;
-      }
+      long userId = user.id;
       // Retrieves maps of all the sections
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(homePageSection, userId);
