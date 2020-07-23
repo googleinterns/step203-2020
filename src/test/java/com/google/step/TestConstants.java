@@ -115,6 +115,7 @@ public class TestConstants {
   public static final String TIME_C = "2020-07-10T14:15:30";
 
   public static final int VOTE_A = 0;
+
   // Deal Brief for Home Page
   public static final String HOME_DEAL_A_JSON =
       String.format(
