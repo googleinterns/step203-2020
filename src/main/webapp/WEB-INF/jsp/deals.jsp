@@ -36,7 +36,7 @@
               <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-              <button class="dropdown-item" type="button">Delete Deal</button>
+              <button class="dropdown-item" type="button" onclick="handleDeleteDeal()">Delete Deal</button>
             </div>
           </div>
         </div>

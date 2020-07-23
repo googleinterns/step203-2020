@@ -215,6 +215,20 @@ function handleDownvote() {
 }
 
 /**
+ * Called when the user clicks the delete deal button
+ */
+function handleDeleteDeal() {
+  if (confirm('Are you sure you want to delete this deal?')) {
+    $.ajax({
+      url: '/api/deals/' + dealId,
+      method: 'DELETE',
+    }).done(() => {
+      location.reload(); // reloads into the 404 not found page
+    });
+  }
+}
+
+/**
  * Display Deal Not Found on the page
  */
 function showNotFound() {
