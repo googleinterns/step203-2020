@@ -226,7 +226,7 @@ function handleDeleteDeal() {
       url: '/api/deals/' + dealId,
       method: 'DELETE',
     }).done(() => {
-      location.reload(); // reloads into the 404 not found page
+      window.location.href = '/all-deals'; // redirects to all deals page
     });
   }
 }
