@@ -72,14 +72,8 @@ public class VoteServlet extends HttpServlet {
     int prevDir = voteManager.getDirection(userId, dealId);
     int dirInt = Integer.parseInt(dir);
     voteManager.vote(userId, dealId, dirInt);
-    if (prevDir == 0) { // user hasnt voted on it before
-      dealVoteManager.updateDealVotes(dealId, dirInt);
-    } else if (prevDir != dirInt) { // user voted
-      if (dirInt == 0) {
-        dealVoteManager.updateDealVotes(dealId, -prevDir);
-      } else {
-        dealVoteManager.updateDealVotes(dealId, dirInt * 2);
-      }
+    if (dirInt != prevDir) {
+      dealVoteManager.updateDealVotes(dealId, dirInt - prevDir);
     }
     response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }

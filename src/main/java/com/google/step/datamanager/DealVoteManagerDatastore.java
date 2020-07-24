@@ -35,23 +35,28 @@ public class DealVoteManagerDatastore implements DealVoteManager {
   }
 
   @Override
-  public List<Long> getDealsWithVotes(List<Long> dealIds, int limit) {
-    List<Long> dealIdsResults = new ArrayList<>();
-    Filter propertyFilter = new FilterPredicate("deal", FilterOperator.IN, dealIds);
-    Query query =
-        new Query("DealVote").setFilter(propertyFilter).addSort("votes", SortDirection.DESCENDING);
-    PreparedQuery pq = datastore.prepare(query);
-    Iterable<Entity> entities = null;
-    if (limit > 0) {
-      entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
-    } else {
-      entities = pq.asIterable();
+  public List<Long> getDealsInOrderOfVotes(List<Long> dealIds, int limit) {
+    List<Long> dealIdResults = new ArrayList<>();
+    List<Long> dealIdsArrayList = new ArrayList<>(dealIds);
+    if (dealIds.size() > 0) {
+      Filter dealFilter = new FilterPredicate("deal", FilterOperator.IN, dealIds);
+      Query query =
+          new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
+      PreparedQuery pq = datastore.prepare(query);
+      Iterable<Entity> entities = null;
+      if (limit > 0) {
+        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
+      } else {
+        entities = pq.asIterable();
+      }
+      for (Entity entity : entities) {
+        dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
+        dealIdResults.add((long) entity.getProperty("deal"));
+      }
     }
-    for (Entity entity : entities) {
-      dealIdsResults.add((long) entity.getProperty("deal"));
-    }
-    return dealIdsResults;
-    // Add those that have not been voted to the end.
+    // Add those that have not been voted on and not in datastore to the end
+    dealIdResults.addAll(dealIdsArrayList);
+    return dealIdResults;
   }
 
   @Override
