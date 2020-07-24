@@ -162,8 +162,8 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     List<Restaurant> restaurants = new ArrayList<>();
     Query query = new Query("Restaurant");
     PreparedQuery pq = datastore.prepare(query);
-    for (Entity dealEntity : pq.asIterable()) {
-      restaurants.add(transformEntityToRestaurant(dealEntity));
+    for (Entity restaurantEntity : pq.asIterable()) {
+      restaurants.add(transformEntityToRestaurant(restaurantEntity));
     }
     return restaurants;
   }
