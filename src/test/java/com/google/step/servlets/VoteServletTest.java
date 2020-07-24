@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
-import com.google.step.datamanager.DealVoteManager;
+import com.google.step.datamanager.DealVoteCountManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.VoteManager;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class VoteServletTest {
   private UserService userService;
   private UserManager userManager;
   private VoteManager voteManager;
-  private DealVoteManager dealVoteManager;
+  private DealVoteCountManager dealVoteCountManager;
   private HttpServletResponse response;
   private StringWriter stringWriter;
   private PrintWriter writer;
@@ -50,8 +50,8 @@ public class VoteServletTest {
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
     voteManager = mock(VoteManager.class);
-    dealVoteManager = mock(DealVoteManager.class);
-    servlet = new VoteServlet(userService, userManager, voteManager, dealVoteManager);
+    dealVoteCountManager = mock(DealVoteCountManager.class);
+    servlet = new VoteServlet(userService, userManager, voteManager, dealVoteCountManager);
 
     // mock HttpServletResponse
     response = mock(HttpServletResponse.class);
@@ -95,7 +95,7 @@ public class VoteServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
-    verify(dealVoteManager, never()).updateDealVotes(eq(DEAL_ID_A), anyInt());
+    verify(dealVoteCountManager, never()).updateDealVotes(eq(DEAL_ID_A), anyInt());
   }
 
   @Test
@@ -177,7 +177,7 @@ public class VoteServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
-    verify(dealVoteManager).updateDealVotes(eq(DEAL_ID_A), eq(2));
+    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(2));
   }
 
   @Test
@@ -193,7 +193,7 @@ public class VoteServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(-1));
-    verify(dealVoteManager).updateDealVotes(eq(DEAL_ID_A), eq(-2));
+    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-2));
   }
 
   @Test
@@ -209,6 +209,6 @@ public class VoteServletTest {
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(0));
-    verify(dealVoteManager).updateDealVotes(eq(DEAL_ID_A), eq(-1));
+    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-1));
   }
 }

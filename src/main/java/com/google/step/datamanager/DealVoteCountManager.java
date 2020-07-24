@@ -2,7 +2,7 @@ package com.google.step.datamanager;
 
 import java.util.List;
 
-public interface DealVoteManager {
+public interface DealVoteCountManager {
   /** Gets the number of votes for a deal, specified by {@code dealId}. */
   public int getVotes(long dealId);
 

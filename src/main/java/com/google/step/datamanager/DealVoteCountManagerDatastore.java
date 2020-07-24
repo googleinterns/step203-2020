@@ -12,11 +12,11 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DealVoteManagerDatastore implements DealVoteManager {
+public class DealVoteCountManagerDatastore implements DealVoteCountManager {
 
   private final DatastoreService datastore;
 
-  public DealVoteManagerDatastore() {
+  public DealVoteCountManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
   }
 
