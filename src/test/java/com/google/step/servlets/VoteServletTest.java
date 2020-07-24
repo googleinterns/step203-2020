@@ -83,7 +83,7 @@ public class VoteServletTest {
   }
 
   @Test
-  public void testDoPost_successUserUpVotedBefore() throws IOException {
+  public void testDoPost_successUserVotedSameDirectionAsBefore() throws IOException {
     setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
