@@ -258,6 +258,10 @@ function postVote(dir) {
  * Called when the user clicks the upvote button
  */
 function handleUpvote() {
+  if (!isLoggedIn) {
+    alert('You need to be logged in to vote');
+    return;
+  }
   if (myVote == 1) {
     myVote = 0;
     postVote(0);
@@ -272,6 +276,10 @@ function handleUpvote() {
  * Called when the user clicks the downvote button
  */
 function handleDownvote() {
+  if (!isLoggedIn) {
+    alert('You need to be logged in to vote');
+    return;
+  }
   if (myVote == -1) {
     myVote = 0;
     postVote(0);
@@ -309,12 +317,13 @@ function showNotFound() {
  * upvote/downvote buttons
  */
 function initVotes() {
+  if (!isLoggedIn) {
+    return;
+  }
   $.ajax('/api/vote/' + dealId)
       .done((dir) => {
         myVote = parseInt(dir);
         votes -= myVote; // exclude myVote from global vote count
-        const voteDiv = document.getElementById('vote-div');
-        voteDiv.style.display = 'block';
         updateMyVote();
       });
 }
