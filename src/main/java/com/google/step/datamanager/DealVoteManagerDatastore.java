@@ -8,6 +8,9 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DealVoteManagerDatastore implements DealVoteManager {
 
@@ -28,6 +31,26 @@ public class DealVoteManagerDatastore implements DealVoteManager {
     }
     int votes = (int) (long) entity.getProperty("votes");
     return votes;
+  }
+
+  @Override
+  public List<Long> getDealsInOrderOfVotes(List<Long> dealIds) {
+    List<Long> dealIdResults = new ArrayList<>();
+    List<Long> dealIdsArrayList = new ArrayList<>(dealIds);
+    if (dealIds.size() > 0) {
+      Filter dealFilter = new FilterPredicate("deal", FilterOperator.IN, dealIds);
+      Query query =
+          new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
+      PreparedQuery pq = datastore.prepare(query);
+      Iterable<Entity> entities = pq.asIterable();
+      for (Entity entity : entities) {
+        dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
+        dealIdResults.add((long) entity.getProperty("deal"));
+      }
+    }
+    // Add those that have not been voted on and not in datastore to the end
+    dealIdResults.addAll(dealIdsArrayList);
+    return dealIdResults;
   }
 
   @Override
