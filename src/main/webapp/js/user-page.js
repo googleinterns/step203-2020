@@ -176,7 +176,7 @@ function configureFollowButton(user, userLoggedInId) {
       {data: {followerId: userLoggedInId}})
       .done((isFollowing) => {
         followButton.hidden = false;
-        if (isFollowing === 'true') {
+        if (isFollowing.startsWith('true')) {
           followButton.innerText = 'Unfollow';
           followButton.onclick = () => unfollow(user);
         } else {
