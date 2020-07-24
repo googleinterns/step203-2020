@@ -27,10 +27,10 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ImageUploader.class)
-public class RestaurantPostServletTest {
+public class RestaurantPostListServletTest {
 
   private RestaurantManager restaurantManager;
-  private RestaurantPostServlet restaurantPostServlet;
+  private RestaurantPostListServlet restaurantPostServlet;
 
   HttpServletRequest mockRequest;
 
@@ -43,7 +43,7 @@ public class RestaurantPostServletTest {
         .willReturn(BLOBKEY_A);
 
     restaurantManager = mock(RestaurantManager.class);
-    restaurantPostServlet = new RestaurantPostServlet(restaurantManager);
+    restaurantPostServlet = new RestaurantPostListServlet(restaurantManager);
   }
 
   /** Successfully creates a new restaurant */

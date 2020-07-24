@@ -15,15 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
 @WebServlet("/api/restaurants")
-public class RestaurantPostServlet extends HttpServlet {
+public class RestaurantPostListServlet extends HttpServlet {
 
   private RestaurantManager manager;
 
-  public RestaurantPostServlet(RestaurantManager restaurantManager) {
+  public RestaurantPostListServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
   }
 
-  public RestaurantPostServlet() {
+  public RestaurantPostListServlet() {
     manager = new RestaurantManagerDatastore();
   }
 
@@ -46,4 +46,7 @@ public class RestaurantPostServlet extends HttpServlet {
 
     response.sendRedirect("/restaurant/" + restaurant.id);
   }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {}
 }
