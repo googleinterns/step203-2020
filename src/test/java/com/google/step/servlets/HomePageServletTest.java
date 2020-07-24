@@ -25,6 +25,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealTagManager;
+import com.google.step.datamanager.DealVoteCountManager;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.TagManager;
@@ -56,6 +57,7 @@ public class HomePageServletTest {
   private DealTagManager mockDealTagManager;
   private TagManager mockTagManager;
   private FollowManager mockFollowManager;
+  private DealVoteCountManager mockDealVoteManager;
   private UserService mockUserService;
 
   @Before
@@ -68,6 +70,7 @@ public class HomePageServletTest {
     mockTagManager = mock(TagManager.class);
     mockUserService = mock(UserService.class);
     mockFollowManager = mock(FollowManager.class);
+    mockDealVoteManager = mock(DealVoteCountManager.class);
     homePageServlet =
         new HomePageServlet(
             mockDealManager,
@@ -77,6 +80,7 @@ public class HomePageServletTest {
             mockDealTagManager,
             mockTagManager,
             mockFollowManager,
+            mockDealVoteManager,
             mockUserService);
   }
 
@@ -108,15 +112,17 @@ public class HomePageServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
+    List<Long> DEALS = Arrays.asList(DEAL_A.id, DEAL_A.id, DEAL_A.id);
 
     when(request.getParameter("section")).thenReturn(null);
+    when(request.getParameter("sort")).thenReturn(null);
 
     setUpUserAuthentication();
 
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt(), null)).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt(), null))
+        .thenReturn(DEALS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_A();

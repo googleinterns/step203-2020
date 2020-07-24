@@ -296,4 +296,13 @@ public class DealManagerDatastore implements DealManager {
     }
     return deals;
   }
+
+  @Override
+  public List<Deal> readDealsOrder(List<Long> dealIds) {
+    List<Deal> deals = new ArrayList<>();
+    for (Long dealId : dealIds) {
+      deals.add(readDeal(dealId));
+    }
+    return deals;
+  }
 }

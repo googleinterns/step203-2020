@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealVoteCountManagerDatastore implements DealVoteCountManager {
 
@@ -44,23 +45,21 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
           new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
       PreparedQuery pq = datastore.prepare(query);
       Iterable<Entity> entities = null;
-      if (limit > 0) {
-        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
-      } else { //Fetch all
+      if (limit == -1) { // Fetch all
         entities = pq.asIterable();
+      } else {
+        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
       }
-      int i = 0;
       for (Entity entity : entities) {
         dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
         dealIdResults.add((long) entity.getProperty("deal"));
-        i++;
       }
-      while (i < limit) {
-        dealIdResults.add(dealIdsArrayList.)
-      }
+      dealIdResults.addAll(dealIdsArrayList);
     }
-    // Add those that have not been voted on and not in datastore to the end
-    dealIdResults.addAll(dealIdsArrayList);
+    dealIdResults =
+        limit == -1
+            ? dealIdResults
+            : dealIdResults.stream().limit(limit).collect(Collectors.toList());
     return dealIdResults;
   }
 

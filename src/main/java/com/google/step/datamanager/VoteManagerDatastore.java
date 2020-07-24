@@ -21,14 +21,15 @@ public class VoteManagerDatastore implements VoteManager {
   @Override
   public int getVotes(long dealId) {
     Filter dealFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
-    Query query = new Query("DealVote").setFilter(dealFilter);
+    Query query = new Query("Vote").setFilter(dealFilter);
     PreparedQuery pq = datastore.prepare(query);
-    Entity entity = pq.asSingleEntity();
-    if (entity == null) {
-      return 0;
+
+    int totalVotes = 0;
+    for (Entity entity : pq.asIterable()) {
+      int dir = ((Long) entity.getProperty("dir")).intValue();
+      totalVotes += dir;
     }
-    int votes = (int) (long) entity.getProperty("votes");
-    return votes;
+    return totalVotes;
   }
 
   @Override
