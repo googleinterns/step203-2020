@@ -121,18 +121,35 @@ function loadCommentsToPage(comments) {
   const commentListElement = document.getElementById('comment-list');
   commentListElement.innerHTML = '';
   comments.forEach((comment) => {
-    commentListElement.appendChild(createCommentElement(comment));
+    commentListElement.appendChild(createCommentBox(comment));
   });
 }
 
 /**
  * Creates comment element
  * @param {object} comment
- * @return {HTMLDivElement} commentElement
+ * @return {HTMLDivElement} commentBox
  */
-function createCommentElement(comment) {
+function createCommentBox(comment) {
+  const commentBox = document.createElement('div');
+  commentBox.className = 'border border-info py-3 px-3 my-3';
+
+  addCommentContentToBox(commentBox, comment);
+
+  return commentBox;
+}
+
+/**
+ * Adds the content and edit/delete buttons to the provided div
+ * @param {HTMLDivElement} commentBox
+ * @param {object} comment
+ */
+function addCommentContentToBox(commentBox, comment) {
+  commentBox.innerHTML = '';
+
   const commentElement = document.createElement('div');
-  commentElement.className = 'border border-info py-3 px-3 my-3 d-flex';
+  commentElement.className = 'd-flex';
+  commentBox.appendChild(commentElement);
 
   const contentElement = document.createElement('div');
   contentElement.className = 'flex-grow-1 d-flex flex-column ' +
@@ -154,38 +171,86 @@ function createCommentElement(comment) {
     deleteEditContainer.className = 'd-flex flex-column';
     commentElement.appendChild(deleteEditContainer);
 
-    // TODO allow edit comment
-    // const editBtn = document.createElement('button');
-    // editBtn.className = 'btn btn-warning btn-sm mb-1';
-    // editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true">
-    //    </i>';
-    // deleteEditContainer.appendChild(editBtn);
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-warning btn-sm mb-1';
+    editBtn.innerHTML = '<i class="fa fa-pencil-alt" aria-hidden="true"></i>';
+    editBtn.onclick = () => addCommentEditToBox(commentBox, comment);
+    deleteEditContainer.appendChild(editBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn btn-danger btn-sm';
     deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
     deleteBtn.onclick = () => {
       if (confirm('Are you sure you want to delete this comment?')) {
-        deleteComment(commentElement, comment);
+        deleteComment(commentBox, comment);
       }
     };
     deleteEditContainer.appendChild(deleteBtn);
   }
+}
 
-  return commentElement;
+/**
+ * Adds the textarea and save/cancel button to the provided div to edit the
+ * comment
+ * @param {HTMLDivElement} commentBox
+ * @param {object} comment
+ */
+function addCommentEditToBox(commentBox, comment) {
+  commentBox.innerHTML = '';
+
+  const textareaDiv = document.createElement('div');
+  const textarea = document.createElement('textarea');
+  textarea.className = 'w-100 form-control mb-2';
+  textarea.value = comment.content;
+  textareaDiv.appendChild(textarea);
+  commentBox.appendChild(textareaDiv);
+
+  const buttonDiv = document.createElement('div');
+  commentBox.appendChild(buttonDiv);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.innerText = 'Save';
+  saveBtn.onclick = () => {
+    const newContent = textarea.value;
+    comment.content = newContent;
+    updateComment(comment);
+    addCommentContentToBox(commentBox, comment);
+  };
+  buttonDiv.appendChild(saveBtn);
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-primary ml-2';
+  cancelBtn.innerText = 'Cancel';
+  cancelBtn.onclick = () => addCommentContentToBox(commentBox, comment);
+  buttonDiv.appendChild(cancelBtn);
 }
 
 /**
  * Makes a request to the backend to delete the comment, and removes the div
  * element
- * @param {HTMLDivElement} commentElement div to be deleted
+ * @param {HTMLDivElement} commentBox div to be deleted
  * @param {object} comment comment object
  */
-function deleteComment(commentElement, comment) {
-  commentElement.remove();
+function deleteComment(commentBox, comment) {
+  commentBox.remove();
   $.ajax({
     url: '/api/comments/' + comment.id,
     method: 'DELETE',
+  });
+}
+
+/**
+ * Makes a request to the backend to update the comment
+ * @param {object} comment comment object
+ */
+function updateComment(comment) {
+  $.ajax({
+    url: '/api/comments/' + comment.id,
+    method: 'PUT',
+    data: {
+      content: comment.content,
+    },
   });
 }
 

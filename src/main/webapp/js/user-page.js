@@ -101,7 +101,7 @@ function createSimpleRestaurantContainer(restaurant) {
   const imageContainer = document.createElement('div');
   imageContainer.className = 'w-25 d-inline-block text-center';
   const restaurantImage = document.createElement('img');
-  restaurantImage.src = restaurant.picture;
+  restaurantImage.src = restaurant.photoUrl;
   restaurantImage.alt = 'restaurant photo';
   restaurantImage.className = 'img-fluid w-50 mx-auto';
   imageContainer.appendChild(restaurantImage);

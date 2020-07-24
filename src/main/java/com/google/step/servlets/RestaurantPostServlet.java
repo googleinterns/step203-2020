@@ -6,6 +6,7 @@ import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,10 +32,17 @@ public class RestaurantPostServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name");
     String photoBlobkey = ImageUploader.getUploadedImageBlobkey(request, "pic");
+    String places = request.getParameter("places");
+
+    if (places == null) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
     Restaurant restaurant = manager.createRestaurantWithBlobKey(name, photoBlobkey);
     List<Deal> deals = new ArrayList<>();
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
+    List<String> placeIds = Arrays.asList(places.split(","));
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
 
     response.sendRedirect("/restaurant/" + restaurant.id);
   }

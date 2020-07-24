@@ -1,11 +1,15 @@
 package com.google.step.servlets;
 
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
+import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,14 +22,21 @@ public class RestaurantServlet extends HttpServlet {
 
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
+  private RestaurantPlaceManager restaurantPlaceManager;
 
-  public RestaurantServlet(RestaurantManager restaurantManager, DealManager dealManager) {
+  public RestaurantServlet(
+      RestaurantManager restaurantManager,
+      DealManager dealManager,
+      RestaurantPlaceManager restaurantPlaceManager) {
     this.restaurantManager = restaurantManager;
     this.dealManager = dealManager;
+    this.restaurantPlaceManager = restaurantPlaceManager;
   }
 
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
+    dealManager = new DealManagerDatastore();
+    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
@@ -59,9 +70,10 @@ public class RestaurantServlet extends HttpServlet {
     }
 
     List<Deal> deals = dealManager.getDealsOfRestaurant(id);
+    List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
 
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals));
+    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
   }
 
   /** Updates a restaurant with the given id parameter */
@@ -82,7 +94,10 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     } else {
       List<Deal> deals = dealManager.getDealsOfRestaurant(id);
-      response.getWriter().println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals));
+      List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
+      response
+          .getWriter()
+          .println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals, placeIds));
     }
   }
 }
