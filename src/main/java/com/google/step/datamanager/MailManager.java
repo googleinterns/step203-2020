@@ -21,9 +21,9 @@ public class MailManager {
    * Sends emails to notify the recipients of a new deal posted by the poster.
    *
    * @param recipients recipients of the notification email.
-   * @param poster poster of the new deal.
+   * @param user poster of the new deal.
    */
-  public void sendNewPostNotificationMail(List<User> recipients, User poster) {
+  public void sendNewPostNotificationMail(List<User> recipients, User user) {
     if (recipients.isEmpty()) {
       return;
     }
@@ -40,7 +40,7 @@ public class MailManager {
         addresses[i] = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
       }
       msg.addRecipients(Message.RecipientType.TO, addresses);
-      msg.setSubject("New deal post from " + poster.username);
+      msg.setSubject("New deal post from " + user.username);
       msg.setText("There is a new deal post.");
       Transport.send(msg);
     } catch (MessagingException | UnsupportedEncodingException e) {
