@@ -149,8 +149,8 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by restaurants or users */
-  private List<Long> getDealsPublishedByRestaurantsOrUsers(
+  /** Retrieves deals with a filter applied */
+  private List<Long> getDealsWithFilter(
       Set<Long> ids, String filterAttribute, int limit, String sort) {
     List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
@@ -181,14 +181,20 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by users */
   @Override
   public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort) {
-    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId", limit, sort);
+    return getDealsWithFilter(userIds, "posterId", limit, sort);
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
   public List<Long> getDealsPublishedByRestaurants(
       Set<Long> restaurantIds, int limit, String sort) {
-    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId", limit, sort);
+    return getDealsWithFilter(restaurantIds, "restaurantId", limit, sort);
+  }
+
+  /** Retrieves deals given a set of ids */
+  @Override
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit, String sort) {
+    return getDealsWithFilter(ids, "id", limit, sort);
   }
 
   @Override

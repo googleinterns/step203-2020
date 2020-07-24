@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -157,12 +156,10 @@ public class HomePageServlet extends HttpServlet {
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(homePageSection, userId, 8, sort);
       Map<String, Object> homePageMap = new HashMap<>();
-      homePageMap.put(
-          TRENDING, homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
       homePageMap.put(RESTAURANTS_SECTION, homePageDealsMaps.get(2));
-      homePageMap.put(
-          TAGS_SECTION, homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
+      homePageMap.put(TAGS_SECTION, homePageDealsMaps.get(3));
       return JsonFormatter.getHomePageJson(homePageMap);
       // user requested to view all deals of particular section
     } else {
@@ -176,8 +173,7 @@ public class HomePageServlet extends HttpServlet {
     if (homePageSection == null) { // only trending will be shown when not logged in
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(TRENDING, -1, -1, null);
-      return JsonFormatter.getHomePageSectionJson(
-          homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     } else if (homePageSection.equals(TRENDING)) {
       // User views all deals for trending section
       List<List<Map<String, Object>>> homePageDealsMaps =
@@ -195,6 +191,9 @@ public class HomePageServlet extends HttpServlet {
     if (section == null || section.equals(TRENDING)) {
       List<Deal> allDeals = dealManager.getAllDeals();
       List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
+      if (limit > 0) {
+        trendingDeals = trendingDeals.stream().limit(8).collect(Collectors.toList());
+      }
       totalDealMaps.add(getHomePageSectionMap(trendingDeals));
     }
     if (section == null || section.equals(USERS_SECTION)) {
@@ -227,9 +226,17 @@ public class HomePageServlet extends HttpServlet {
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     if (section == null || section.equals(TAGS_SECTION)) {
-      List<Long> dealsByTagsFollowed =
+      List<Deal> deals = null;
+      Set<Long> dealIdsByTagsFollowed =
           getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
-      List<Deal> deals = handleSort(sort, dealsByTagsFollowed, limit);
+      List<Long> dealIdsResults = null;
+      if (sort.equals(NEW_SORT)) {
+        dealIdsResults = dealManager.getDealsWithIds(dealIdsByTagsFollowed, limit, sort);
+        deals = dealManager.readDeals(dealIdsResults);
+      } else {
+        dealIdsResults = dealManager.getDealsWithIds(dealIdsByTagsFollowed, -1, sort);
+        deals = handleSort(sort, dealIdsResults, limit);
+      }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
@@ -246,13 +253,6 @@ public class HomePageServlet extends HttpServlet {
       if (limit > 0) {
         deals = deals.stream().limit(8).collect(Collectors.toList());
       }
-    } else if (sort.equals(NEW_SORT)) {
-      deals = dealManager.readDeals(dealIds);
-      deals = sortDealsBasedOnNew(deals);
-      if (limit > 0) {
-        deals = deals.stream().limit(8).collect(Collectors.toList());
-      }
-      // limit to 8
     }
     return deals;
   }
@@ -273,15 +273,14 @@ public class HomePageServlet extends HttpServlet {
   }
 
   /** Retrieves deals posted by tags followed by user */
-  private List<Long> getDealsPublishedByTags(Set<Long> tagIds) {
+  private Set<Long> getDealsPublishedByTags(Set<Long> tagIds) {
     Set<Long> dealIdResults = new HashSet<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
       dealIdResults.addAll(dealIdsWithTag);
     }
     // Get rid of duplicate dealID (Deals with multiple tags)
-    List<Long> dealsWithoutDuplicates = new ArrayList<>(dealIdResults);
-    return dealsWithoutDuplicates;
+    return dealIdResults;
   }
 
   private double epochSeconds(String timestamp) {
@@ -319,19 +318,5 @@ public class HomePageServlet extends HttpServlet {
       dealResults.add(scoredDeal.deal);
     }
     return dealResults;
-  }
-
-  /** Sorts deals based on new (Newest to oldest) */
-  private List<Deal> sortDealsBasedOnNew(List<Deal> deals) {
-    Collections.sort(
-        deals,
-        new Comparator<Deal>() {
-          @Override
-          public int compare(Deal deal1, Deal deal2) {
-            return LocalDateTime.parse(deal2.creationTimeStamp)
-                .compareTo(LocalDateTime.parse(deal1.creationTimeStamp)); // Descending
-          }
-        });
-    return deals;
   }
 }

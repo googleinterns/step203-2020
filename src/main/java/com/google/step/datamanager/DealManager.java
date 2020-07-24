@@ -26,6 +26,8 @@ public interface DealManager {
 
   public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit, String sort);
 
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit, String sort);
+
   public List<Deal> getAllDeals();
 
   public List<Tag> getTags(long dealId);

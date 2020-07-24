@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.DealVoteManager;
+import com.google.step.datamanager.DealVoteManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.datamanager.VoteManager;
@@ -20,17 +22,24 @@ public class VoteServlet extends HttpServlet {
   private final UserService userService;
   private final UserManager userManager;
   private final VoteManager voteManager;
+  private final DealVoteManager dealVoteManager;
 
-  public VoteServlet(UserService userService, UserManager userManager, VoteManager manager) {
+  public VoteServlet(
+      UserService userService,
+      UserManager userManager,
+      VoteManager manager,
+      DealVoteManager dealVoteManager) {
     this.userService = userService;
     this.userManager = userManager;
     this.voteManager = manager;
+    this.dealVoteManager = dealVoteManager;
   }
 
   public VoteServlet() {
     userService = UserServiceFactory.getUserService();
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
+    dealVoteManager = new DealVoteManagerDatastore();
   }
 
   @Override
@@ -60,7 +69,18 @@ public class VoteServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    voteManager.vote(userId, dealId, Integer.parseInt(dir));
+    int prevDir = voteManager.getDirection(userId, dealId);
+    int dirInt = Integer.parseInt(dir);
+    voteManager.vote(userId, dealId, dirInt);
+    if (prevDir == 0) { // user hasnt voted on it before
+      dealVoteManager.updateDealVotes(dealId, dirInt);
+    } else if (prevDir != dirInt) { // user voted
+      if (dirInt == 0) {
+        dealVoteManager.updateDealVotes(dealId, -prevDir);
+      } else {
+        dealVoteManager.updateDealVotes(dealId, dirInt * 2);
+      }
+    }
     response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
 
