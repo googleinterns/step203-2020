@@ -14,8 +14,10 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
     type="text/css" />
-  <!-- Core theme CSS (includes Bootstrap)-->
-  <link href="css/styles.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/styles.css" rel="stylesheet" />
+    <!-- Page CSS -->
+    <link href="/css/all-restaurants.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
@@ -40,7 +42,7 @@
   <!-- Core theme JS-->
   <script src="js/scripts.js"></script>
   <!-- Page JS -->
-  <script src="js/all-deals.js"></script>
+  <script src="js/all-restaurants.js"></script>
 </body>
 
 </html>
