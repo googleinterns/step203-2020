@@ -41,4 +41,9 @@ public class VoteCache {
 
     datastore.put(entity);
   }
+
+  public void deleteCache(long dealId) {
+    Key key = KeyFactory.createKey("VoteCache", dealId);
+    datastore.delete(key);
+  }
 }

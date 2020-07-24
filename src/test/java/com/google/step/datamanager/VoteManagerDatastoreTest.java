@@ -121,4 +121,15 @@ public final class VoteManagerDatastoreTest {
 
     verify(mockVoteCache).saveVotes(eq(DEAL_ID_A), anyInt());
   }
+
+  @Test
+  public void testCache_deleteCache() {
+    VoteCache mockVoteCache = mock(VoteCache.class);
+    when(mockVoteCache.readVotes(DEAL_ID_A)).thenReturn(new VoteWithExpiry(0, true));
+
+    VoteManagerDatastore voteManagerDatastore = new VoteManagerDatastore(mockVoteCache);
+    voteManagerDatastore.vote(USER_ID_A, DEAL_ID_A, 1);
+
+    verify(mockVoteCache).deleteCache(DEAL_ID_A);
+  }
 }

@@ -69,8 +69,8 @@ public class VoteManagerDatastore implements VoteManager {
     entity.setProperty("dir", dir);
     datastore.put(entity);
 
-    // re-calculate votes for cache
-    voteCache.saveVotes(dealId, computeVotes(dealId));
+    // delete old cache
+    voteCache.deleteCache(dealId);
   }
 
   @Override
