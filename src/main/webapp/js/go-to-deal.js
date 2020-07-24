@@ -27,6 +27,9 @@ function initComments() {
 function loadDealDataToPage(deal) {
   $('#deal-loading').hide();
   $('#deal-page').show();
+  if (deal.poster.id != userId) {
+    $('#menu-btn').hide();
+  }
 
   const dealTitleElement = document.getElementById('deal-title');
   dealTitleElement.innerText = deal.description;
@@ -277,6 +280,20 @@ function handleDownvote() {
     postVote(-1);
   }
   updateMyVote();
+}
+
+/**
+ * Called when the user clicks the delete deal button
+ */
+function handleDeleteDeal() {
+  if (confirm('Are you sure you want to delete this deal?')) {
+    $.ajax({
+      url: '/api/deals/' + dealId,
+      method: 'DELETE',
+    }).done(() => {
+      window.location.href = '/all-deals'; // redirects to all deals page
+    });
+  }
 }
 
 /**

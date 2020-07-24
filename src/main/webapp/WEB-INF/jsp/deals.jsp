@@ -26,10 +26,18 @@
   <div class="container">
     <div class="page-section">
       <div id="deal-page" style="display: none;">
-        <div class="row mb-5 mt-5">
+        <div class="row mb-5 mt-5 position-relative">
           <div class="col-md-8">
             <h2 class="masthead-heading mb-6" id="deal-title">title</h2>
             <img id="deal-image" src="" class="deal-img" />
+          </div>
+          <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
+            <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <button class="dropdown-item" type="button" onclick="handleDeleteDeal()">Delete Deal</button>
+            </div>
           </div>
         </div>
         <nav>
