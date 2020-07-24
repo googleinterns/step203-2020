@@ -156,4 +156,9 @@ public class RestaurantManagerDatastore implements RestaurantManager {
             .collect(Collectors.toList());
     return restaurants;
   }
+
+  @Override
+  public List<Restaurant> getAllRestaurants() {
+    return new ArrayList<>();
+  }
 }
