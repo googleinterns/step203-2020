@@ -151,7 +151,7 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals with a filter applied */
   private List<Long> getDealsWithFilter(
-      Set<Long> ids, String filterAttribute, int limit, String sort) {
+      List<Object> ids, String filterAttribute, int limit, String sort) {
     List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
@@ -181,20 +181,24 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by users */
   @Override
   public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort) {
-    return getDealsWithFilter(userIds, "posterId", limit, sort);
+    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, sort);
+    // List<Long> list = new ArrayList<>(Arrays.asList(1L, 2L));
+    // List<Object> list1 = list;
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
   public List<Long> getDealsPublishedByRestaurants(
       Set<Long> restaurantIds, int limit, String sort) {
-    return getDealsWithFilter(restaurantIds, "restaurantId", limit, sort);
+    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, sort);
   }
 
   /** Retrieves deals given a set of ids */
   @Override
   public List<Long> getDealsWithIds(Set<Long> ids, int limit, String sort) {
-    return getDealsWithFilter(ids, "id", limit, sort);
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, sort);
   }
 
   @Override

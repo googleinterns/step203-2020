@@ -16,8 +16,6 @@ import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.TagManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
-import com.google.step.datamanager.VoteManager;
-import com.google.step.datamanager.VoteManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
@@ -44,7 +42,6 @@ public class HomePageServlet extends HttpServlet {
 
   private final DealManager dealManager;
   private final UserManager userManager;
-  private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
   private final DealTagManager dealTagManager;
   private final UserService userService;
@@ -66,7 +63,6 @@ public class HomePageServlet extends HttpServlet {
       DealManager dealManager,
       UserManager userManager,
       RestaurantManager restaurantManager,
-      VoteManager voteManager,
       DealTagManager dealTagManager,
       TagManager tagManager,
       FollowManager followManager,
@@ -74,7 +70,6 @@ public class HomePageServlet extends HttpServlet {
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
-    this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
     this.dealTagManager = dealTagManager;
     this.tagManager = tagManager;
@@ -86,7 +81,6 @@ public class HomePageServlet extends HttpServlet {
   public HomePageServlet() {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
-    voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
     tagManager = new TagManagerDatastore();
     dealTagManager = new DealTagManagerDatastore();
@@ -171,8 +165,7 @@ public class HomePageServlet extends HttpServlet {
 
   private String userNotLoggedIn(String homePageSection) {
     if (homePageSection == null) { // only trending will be shown when not logged in
-      List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(TRENDING, -1, -1, null);
+      List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(TRENDING, -1, 8, null);
       return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     } else if (homePageSection.equals(TRENDING)) {
       // User views all deals for trending section
@@ -192,7 +185,7 @@ public class HomePageServlet extends HttpServlet {
       List<Deal> allDeals = dealManager.getAllDeals();
       List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
       if (limit > 0) {
-        trendingDeals = trendingDeals.stream().limit(8).collect(Collectors.toList());
+        trendingDeals = trendingDeals.stream().limit(limit).collect(Collectors.toList());
       }
       totalDealMaps.add(getHomePageSectionMap(trendingDeals));
     }
@@ -222,9 +215,12 @@ public class HomePageServlet extends HttpServlet {
     }
     if (section == null || section.equals(TAGS_SECTION)) {
       Set<Long> dealIdsTags = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
-      if (sort == null || sort.equals(NEW_SORT)) {
+      if (sort == null) {
+        deals = dealManager.readDeals(new ArrayList<>(dealIdsTags));
+        deals = limit > 0 ? deals.stream().limit(limit).collect(Collectors.toList()) : deals;
+      } else if (sort.equals(NEW_SORT)) {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, limit, sort);
-        deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
+        deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1, null);
         deals = handleSort(dealIds, limit, sort);
@@ -243,7 +239,7 @@ public class HomePageServlet extends HttpServlet {
       deals = dealManager.readDeals(dealIds);
       deals = sortDealsBasedOnHotScore(deals);
       if (limit > 0) {
-        deals = deals.stream().limit(8).collect(Collectors.toList());
+        deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
     }
     return deals;
@@ -256,7 +252,7 @@ public class HomePageServlet extends HttpServlet {
       User user = userManager.readUser(deal.posterId);
       Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
       List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
-      int votes = voteManager.getVotes(deal.id);
+      int votes = dealVoteCountManager.getVotes(deal.id);
       Map<String, Object> homePageDealMap =
           JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);
       homePageSectionDealMaps.add(homePageDealMap);
@@ -271,7 +267,6 @@ public class HomePageServlet extends HttpServlet {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
       dealIdResults.addAll(dealIdsWithTag);
     }
-    // Get rid of duplicate dealID (Deals with multiple tags)
     return dealIdResults;
   }
 
