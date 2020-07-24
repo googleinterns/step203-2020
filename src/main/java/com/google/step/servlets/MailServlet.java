@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/mail")
+@SuppressWarnings("serial")
 public class MailServlet extends HttpServlet {
 
   @Override
@@ -28,7 +29,7 @@ public class MailServlet extends HttpServlet {
 
     try {
       Message msg = new MimeMessage(session);
-      msg.setFrom(new InternetAddress("yuxinj@google.com"));
+      msg.setFrom(new InternetAddress("noreply@capstone-2020-dealfinder.appspotmail.com"));
       msg.addRecipient(
           Message.RecipientType.TO, new InternetAddress("yuxinj@google.com", "Mr. User"));
       msg.setSubject("New post");
