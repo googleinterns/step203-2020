@@ -5,6 +5,12 @@ import static com.google.step.TestConstants.DEAL_ID_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -91,5 +97,28 @@ public final class VoteManagerDatastoreTest {
       manager.vote(i, DEAL_ID_A, 1);
     }
     assertEquals(100, manager.getVotes(DEAL_ID_A));
+  }
+
+  @Test
+  public void testCache_notExpired() {
+    VoteCache mockVoteCache = mock(VoteCache.class);
+    when(mockVoteCache.readVotes(DEAL_ID_A)).thenReturn(new VoteWithExpiry(0, false));
+
+    VoteManagerDatastore voteManagerDatastore = new VoteManagerDatastore(mockVoteCache);
+    voteManagerDatastore.getVotes(DEAL_ID_A);
+
+    System.out.println(mockVoteCache);
+    verify(mockVoteCache, never()).saveVotes(eq(DEAL_ID_A), anyInt());
+  }
+
+  @Test
+  public void testCache_expired() {
+    VoteCache mockVoteCache = mock(VoteCache.class);
+    when(mockVoteCache.readVotes(DEAL_ID_A)).thenReturn(new VoteWithExpiry(0, true));
+
+    VoteManagerDatastore voteManagerDatastore = new VoteManagerDatastore(mockVoteCache);
+    voteManagerDatastore.getVotes(DEAL_ID_A);
+
+    verify(mockVoteCache).saveVotes(eq(DEAL_ID_A), anyInt());
   }
 }

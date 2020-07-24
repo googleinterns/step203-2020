@@ -33,7 +33,7 @@ public class VoteCache {
     return new VoteWithExpiry(votes, isExpired);
   }
 
-  public void saveVotes(long dealId, long votes) {
+  public void saveVotes(long dealId, int votes) {
     Entity entity = new Entity("VoteCache", dealId);
     entity.setProperty("votes", votes);
     long expiryTime = System.currentTimeMillis() / 1000 + TIME_TO_LIVE;

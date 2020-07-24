@@ -20,6 +20,11 @@ public class VoteManagerDatastore implements VoteManager {
     voteCache = new VoteCache();
   }
 
+  public VoteManagerDatastore(VoteCache voteCache) {
+    datastore = DatastoreServiceFactory.getDatastoreService();
+    this.voteCache = voteCache;
+  }
+
   private int computeVotes(long dealId) {
     Filter dealFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
     Query query = new Query("Vote").setFilter(dealFilter);
