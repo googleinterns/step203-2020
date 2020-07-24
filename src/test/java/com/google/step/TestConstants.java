@@ -69,6 +69,12 @@ public class TestConstants {
 
   public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
 
+  // Place
+  public static final String PLACE_ID_A = "a";
+  public static final String PLACE_ID_B = "b";
+  public static final String PLACE_ID_C = "c";
+  public static final String PLACE_ID_D = "d";
+
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
   public static final long RESTAURANT_ID_B = 2;
