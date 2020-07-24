@@ -13,13 +13,14 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 public class VoteManagerDatastore implements VoteManager {
 
   private final DatastoreService datastore;
+  private final VoteCache voteCache;
 
   public VoteManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
+    voteCache = new VoteCache();
   }
 
-  @Override
-  public int getVotes(long dealId) {
+  private int computeVotes(long dealId) {
     Filter dealFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
     Query query = new Query("Vote").setFilter(dealFilter);
     PreparedQuery pq = datastore.prepare(query);
@@ -30,6 +31,17 @@ public class VoteManagerDatastore implements VoteManager {
       totalVotes += dir;
     }
     return totalVotes;
+  }
+
+  @Override
+  public int getVotes(long dealId) {
+    VoteWithExpiry voteWithExpiry = voteCache.readVotes(dealId);
+    int votes = voteWithExpiry.votes;
+    if (voteWithExpiry.isExpired) {
+      votes = computeVotes(dealId);
+      voteCache.saveVotes(dealId, votes);
+    }
+    return votes;
   }
 
   @Override
@@ -51,6 +63,9 @@ public class VoteManagerDatastore implements VoteManager {
 
     entity.setProperty("dir", dir);
     datastore.put(entity);
+
+    // re-calculate votes for cache
+    voteCache.saveVotes(dealId, computeVotes(dealId));
   }
 
   @Override
