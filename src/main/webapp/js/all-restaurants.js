@@ -46,8 +46,8 @@ function createRestaurantCard(restaurant) {
 }
 
 /**
-   * Calls backend on data on restaurants
-   */
+ * Calls backend on data on restaurants
+ */
 function initRestaurants() {
   $.ajax('/api/restaurants')
       .done((restaurants) => {
