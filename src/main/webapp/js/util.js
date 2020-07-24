@@ -145,7 +145,7 @@ function createHomeDealCard(deal, numCol, i) {
   dealPoster.innerText = 'Poster: ' + deal.poster.username;
 
   const dealPosterLink = document.createElement('a');
-  dealPosterLink.href = '/users/' + deal.poster.id;
+  dealPosterLink.href = '/user/' + deal.poster.id;
 
   dealPoster.appendChild(dealPosterLink);
 
