@@ -245,7 +245,7 @@ public class HomePageServlet extends HttpServlet {
   private List<Deal> handleSort(String sort, List<Long> dealIds, int limit) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
-      dealIds = dealVoteManager.getDealsWithVotes(dealIds, limit);
+      dealIds = dealVoteManager.getDealsInOrderOfVotes(dealIds, limit);
       deals = dealManager.readDeals(dealIds);
     } else if (sort.equals(TRENDING)) {
       deals = dealManager.readDeals(dealIds);
