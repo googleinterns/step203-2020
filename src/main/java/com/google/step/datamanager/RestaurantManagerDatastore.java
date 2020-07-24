@@ -159,6 +159,12 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   @Override
   public List<Restaurant> getAllRestaurants() {
-    return new ArrayList<>();
+    List<Restaurant> restaurants = new ArrayList<>();
+    Query query = new Query("Restaurant");
+    PreparedQuery pq = datastore.prepare(query);
+    for (Entity dealEntity : pq.asIterable()) {
+      restaurants.add(transformEntityToRestaurant(dealEntity));
+    }
+    return restaurants;
   }
 }
