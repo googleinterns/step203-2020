@@ -47,6 +47,7 @@ public class VoteManagerDatastore implements VoteManager {
       entity.setProperty("user", userId);
       entity.setProperty("deal", dealId);
     }
+
     entity.setProperty("dir", dir);
     datastore.put(entity);
   }
