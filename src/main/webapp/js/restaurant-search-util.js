@@ -2,11 +2,12 @@
  * Calls backend for retaurant based on text in restaurant search, and displays
  * results.
  * @param {string} query
- * @param {object} searchResults the DOM element of the search results div
+ * @param {HTMLDivElement} searchResults the DOM element of the search results
+ * div
  * @param {function} callback callback when user selects a restaurant
  */
 function searchRestaurant(query, searchResults, callback) {
-  if (query == '') {
+  if (query === '') {
     searchResults.style.display = 'none';
     return;
   }
@@ -40,7 +41,7 @@ function searchRestaurant(query, searchResults, callback) {
 
 /**
  * Initialize the restaurant search logic
- * @param {object} searchDiv A DOM element to contain the search logic
+ * @param {HTMLDivElement} searchDiv A DOM element to contain the search logic
  * @param {function} callback Callback with selected restaurant
  */
 function initSearchRestaurant(searchDiv, callback) {
