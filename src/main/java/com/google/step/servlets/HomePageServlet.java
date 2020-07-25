@@ -198,7 +198,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
         dealIds = dealManager.getDealsPublishedByUsers(userIds, -1, null);
-        deals = handleSort(dealIds, limit, sort);
+        deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -209,7 +209,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1, null);
-        deals = handleSort(dealIds, limit, sort);
+        deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -217,20 +217,22 @@ public class HomePageServlet extends HttpServlet {
       Set<Long> dealIdsTags = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
       if (sort == null) {
         deals = dealManager.readDeals(new ArrayList<>(dealIdsTags));
-        deals = limit > 0 ? deals.stream().limit(limit).collect(Collectors.toList()) : deals;
+        if (limit > 0) {
+          deals = deals.stream().limit(limit).collect(Collectors.toList());
+        }
       } else if (sort.equals(NEW_SORT)) {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, limit, sort);
         deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1, null);
-        deals = handleSort(dealIds, limit, sort);
+        deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
   }
 
-  private List<Deal> handleSort(List<Long> dealIds, int limit, String sort) {
+  private List<Deal> handleSortVoteTrending(List<Long> dealIds, int limit, String sort) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
       dealIds = dealVoteCountManager.getDealsInOrderOfVotes(dealIds, limit);
