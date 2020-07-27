@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -12,6 +13,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.time.LocalDateTime;
@@ -30,6 +32,8 @@ public class DealManagerDatastore implements DealManager {
   private final TagManager tagManager;
 
   private final String LOCATION = "Asia/Singapore";
+
+  private final String NEW_SORT = "new";
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -145,15 +149,30 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by restaurants or users */
-  private List<Deal> getDealsPublishedByRestaurantsOrUsers(Set<Long> ids, String filterAttribute) {
-    List<Deal> dealResults = new ArrayList<>();
+  /** Retrieves deals with a filter applied */
+  private List<Long> getDealsWithFilter(
+      List<Object> ids, String filterAttribute, int limit, String sort) {
+    List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
-      Query query = new Query("Deal").setFilter(propertyFilter);
+      Query query = null;
+      Iterable<Entity> entities = null;
+      if (sort != null) {
+        query =
+            new Query("Deal")
+                .setFilter(propertyFilter)
+                .addSort("timestamp", SortDirection.DESCENDING);
+      } else {
+        query = new Query("Deal").setFilter(propertyFilter);
+      }
       PreparedQuery pq = datastore.prepare(query);
-      for (Entity entity : pq.asIterable()) {
-        dealResults.add(readDeal(entity.getKey().getId()));
+      if (limit > 0) {
+        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
+      } else {
+        entities = pq.asIterable();
+      }
+      for (Entity entity : entities) {
+        dealResults.add(entity.getKey().getId());
       }
     }
     return dealResults;
@@ -161,14 +180,25 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds) {
-    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId");
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort) {
+    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, sort);
+    // List<Long> list = new ArrayList<>(Arrays.asList(1L, 2L));
+    // List<Object> list1 = list;
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds) {
-    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId");
+  public List<Long> getDealsPublishedByRestaurants(
+      Set<Long> restaurantIds, int limit, String sort) {
+    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, sort);
+  }
+
+  /** Retrieves deals given a set of ids */
+  @Override
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit, String sort) {
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, sort);
   }
 
   @Override
@@ -267,6 +297,15 @@ public class DealManagerDatastore implements DealManager {
     List<Deal> deals = new ArrayList<>();
     for (Entity entity : entities) {
       deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
+  }
+
+  @Override
+  public List<Deal> readDealsOrder(List<Long> dealIds) {
+    List<Deal> deals = new ArrayList<>();
+    for (Long dealId : dealIds) {
+      deals.add(readDeal(dealId));
     }
     return deals;
   }

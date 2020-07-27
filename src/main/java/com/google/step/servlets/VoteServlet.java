@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.DealVoteCountManager;
+import com.google.step.datamanager.DealVoteCountManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.datamanager.VoteManager;
@@ -20,17 +22,24 @@ public class VoteServlet extends HttpServlet {
   private final UserService userService;
   private final UserManager userManager;
   private final VoteManager voteManager;
+  private final DealVoteCountManager dealVoteCountManager;
 
-  public VoteServlet(UserService userService, UserManager userManager, VoteManager manager) {
+  public VoteServlet(
+      UserService userService,
+      UserManager userManager,
+      VoteManager manager,
+      DealVoteCountManager dealVoteCountManager) {
     this.userService = userService;
     this.userManager = userManager;
     this.voteManager = manager;
+    this.dealVoteCountManager = dealVoteCountManager;
   }
 
   public VoteServlet() {
     userService = UserServiceFactory.getUserService();
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
+    dealVoteCountManager = new DealVoteCountManagerDatastore();
   }
 
   @Override
@@ -60,7 +69,12 @@ public class VoteServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    voteManager.vote(userId, dealId, Integer.parseInt(dir));
+    int prevDir = voteManager.getDirection(userId, dealId);
+    int dirInt = Integer.parseInt(dir);
+    voteManager.vote(userId, dealId, dirInt);
+    if (dirInt != prevDir) {
+      dealVoteCountManager.updateDealVotes(dealId, dirInt - prevDir);
+    }
     response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
 
