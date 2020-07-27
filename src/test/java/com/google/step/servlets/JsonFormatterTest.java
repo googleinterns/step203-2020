@@ -111,8 +111,6 @@ public class JsonFormatterTest {
             TAG_A_JSON,
             TAG_B_JSON);
 
-    System.out.println(dealJson);
-
     try {
       JSONAssert.assertEquals(expected, dealJson, JSONCompareMode.STRICT);
     } catch (JSONException e) {
