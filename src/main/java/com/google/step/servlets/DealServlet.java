@@ -116,7 +116,7 @@ public class DealServlet extends HttpServlet {
 
     List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
     List<User> followers = userManager.readUsers(followerIds);
-    mailManager.sendNewPostNotificationMail(followers, poster);
+    mailManager.sendNewPostNotificationMail(followers, deal, poster);
 
     response.sendRedirect("/deals/" + deal.id);
   }
