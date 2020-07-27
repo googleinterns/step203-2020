@@ -1,5 +1,6 @@
 package com.google.step.datamanager;
 
+import com.google.step.model.Deal;
 import com.google.step.model.User;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -21,9 +22,9 @@ public class MailManager {
    * Sends emails to notify the recipients of a new deal posted by the poster.
    *
    * @param recipients recipients of the notification email.
-   * @param user poster of the new deal.
+   * @param poster poster of the new deal.
    */
-  public void sendNewPostNotificationMail(List<User> recipients, User user) {
+  public void sendNewPostNotificationMail(List<User> recipients, Deal newDeal, User poster) {
     if (recipients.isEmpty()) {
       return;
     }
@@ -31,20 +32,33 @@ public class MailManager {
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
 
+    Message msg = new MimeMessage(session);
     try {
-      Message msg = new MimeMessage(session);
-      msg.setFrom(new InternetAddress(sender));
-
-      Address[] addresses = new Address[recipients.size()];
-      for (int i = 0; i < addresses.length; i++) {
-        addresses[i] = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
-      }
-      msg.addRecipients(Message.RecipientType.TO, addresses);
-      msg.setSubject("New deal post from " + user.username);
-      msg.setText("There is a new deal post.");
-      Transport.send(msg);
+      msg.setFrom(new InternetAddress(sender, "DealFinder Team"));
+      msg.setSubject("New deal post from " + poster.username);
     } catch (MessagingException | UnsupportedEncodingException e) {
       e.printStackTrace();
+      return;
     }
+
+    for (int i = 0; i < recipients.size(); i++) {
+      try {
+        Address address = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
+        msg.addRecipient(Message.RecipientType.TO, address);
+        msg.setContent(composeEmail(recipients.get(i), newDeal, poster), "text/html;charset=UTF-8");
+        Transport.send(msg);
+      } catch (MessagingException | UnsupportedEncodingException e) {
+        e.printStackTrace();
+        continue;
+      }
+    }
+  }
+
+  private String composeEmail(User recipient, Deal newDeal, User poster) {
+    return String.format(
+        "Dear %s,\n"
+            + "There is a new deal posted by %s: <a href='/deals/%s'>%s</a>.\n\n"
+            + "Yours sincerely,\nDealFinder Team",
+        recipient.username, poster.username, newDeal.id);
   }
 }
