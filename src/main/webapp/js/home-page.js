@@ -70,6 +70,7 @@ function createHomePage(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
+        homePageDeals = data;
         createHomePage([2, 2, 3, 3], 4, homePageDeals);
       });
 }
