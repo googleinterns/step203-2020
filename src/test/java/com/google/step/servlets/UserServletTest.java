@@ -11,6 +11,7 @@ import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_A_BRIEF_JSON;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_A_JSON;
 import static com.google.step.TestConstants.TAG_B;
 import static com.google.step.TestConstants.TAG_C;
 import static com.google.step.TestConstants.TAG_ID_A;
@@ -156,6 +157,7 @@ public class UserServletTest {
             DEAL_A_BRIEF_JSON,
             USER_B_BRIEF_JSON,
             USER_C_BRIEF_JSON,
+            TAG_A_JSON,
             RESTAURANT_A_BRIEF_JSON);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
