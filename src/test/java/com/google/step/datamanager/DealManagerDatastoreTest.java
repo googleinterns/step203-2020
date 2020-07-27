@@ -19,6 +19,7 @@ import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
 import static com.google.step.TestConstants.USER_ID_C;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -467,8 +468,8 @@ public final class DealManagerDatastoreTest {
         dealManagerDatastore.getDealsWithIds(
             new HashSet<>(Arrays.asList(dealA.id, dealB.id)), -1, "new");
     assertEquals(2, dealIds.size());
-    assertEquals(dealA.id, dealIds.get(0));
-    assertEquals(dealB.id, dealIds.get(1));
+    assertThat(dealA.id, is(dealIds.get(0)));
+    assertThat(dealB.id, is(dealIds.get(1)));
   }
 
   public void testGetDealsWithIdsSortNewLimit() {
@@ -496,7 +497,7 @@ public final class DealManagerDatastoreTest {
         dealManagerDatastore.getDealsWithIds(
             new HashSet<>(Arrays.asList(dealA.id, dealB.id)), 1, "new");
     assertEquals(1, dealIds.size());
-    assertEquals(dealB.id, dealIds.get(0));
+    assertThat(dealIds, hasItem(dealB.id));
   }
 
   @Test
