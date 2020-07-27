@@ -91,11 +91,9 @@ function setRestaurantMarkers(placeIds, map) {
         const infoWindow = new google.maps.InfoWindow();
         google.maps.event.addListener(marker, 'click', function() {
           infoWindow.setContent(
-              '<div><h6>' +
-                place.name +
-                '</h6><p>' +
-                place.formatted_address +
-                '</p>');
+              `<div>
+                  <h6> ${place.name} </h6>
+                  <p> ${place.formatted_address} </p>`);
           infoWindow.open(map, marker);
         });
       }
@@ -129,33 +127,13 @@ function configureDealsHeader(restaurant) {
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
-<<<<<<< HEAD
-  // TODO call back end
-  restaurant = {
-    name: 'McDonald',
-    photoUrl: 'https://d1nqx6es26drid.cloudfront.net/app/uploads/2019/11/05175538/McD_TheToken%C2%AE_1235_RGB.png',
-    placeIds: ['ChIJS5IVbvwa2jERDxPwmWkRghI', 'ChIJuUFoBdcb2jERsu6OBBfVMQQ'],
-    deals: [
-      {
-        id: 1,
-        description: 'bubble tea',
-        image: '/assets/deals/bubble-tea.jpeg',
-      },
-    ],
-  };
-  configureRestaurantInfo(restaurant);
-  initMap(restaurant);
-  configureRestaurantInfo(restaurant);
-  configureDealsOfRestaurant(restaurant.deals);
-  configureDealsHeader(restaurant);
-=======
   $.ajax('/api/restaurants/' + id)
       .done((restaurant) => {
         configureRestaurantInfo(restaurant);
+        initMap(restaurant);
         configureDealsOfRestaurant(restaurant.deals);
         configureDealsHeader(restaurant);
       });
->>>>>>> d57c64e84c139ee257a3415d824ecf5976dc93b1
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {
