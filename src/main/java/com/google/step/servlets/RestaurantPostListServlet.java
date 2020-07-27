@@ -2,11 +2,8 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
-import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,15 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that handles posting restaurants. */
 @WebServlet("/api/restaurants")
-public class RestaurantPostServlet extends HttpServlet {
+public class RestaurantPostListServlet extends HttpServlet {
 
   private RestaurantManager manager;
 
-  public RestaurantPostServlet(RestaurantManager restaurantManager) {
+  public RestaurantPostListServlet(RestaurantManager restaurantManager) {
     manager = restaurantManager;
   }
 
-  public RestaurantPostServlet() {
+  public RestaurantPostListServlet() {
     manager = new RestaurantManagerDatastore();
   }
 
@@ -40,10 +37,16 @@ public class RestaurantPostServlet extends HttpServlet {
     }
 
     Restaurant restaurant = manager.createRestaurantWithBlobKey(name, photoBlobkey);
-    List<Deal> deals = new ArrayList<>();
-    List<String> placeIds = Arrays.asList(places.split(","));
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
 
     response.sendRedirect("/restaurant/" + restaurant.id);
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Restaurant> restaurants = manager.getAllRestaurants();
+
+    response.setStatus(HttpServletResponse.SC_OK);
+    response.setContentType("application/json;");
+    response.getWriter().println(JsonFormatter.getRestaurantListBriefJson(restaurants));
   }
 }
