@@ -116,7 +116,7 @@ public class HomePageServletTest {
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
     String expected =
         String.format(
-            "{trending:%s," + "users:%s," + "restaurants:%s," + "tags:%s}",
+            "{\"trending\":%s, \"users\":%s, \"restaurants\":%s, \"tags\":%s}",
             expectedDeals, expectedDeals, expectedDeals, expectedDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
@@ -163,9 +163,9 @@ public class HomePageServletTest {
     when(response.getWriter()).thenReturn(writer);
 
     homePageServlet.doGet(request, response);
-
-    String expected =
+    String expectedDeals =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
+    String expected = String.format("{\"trending\":%s}", expectedDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 

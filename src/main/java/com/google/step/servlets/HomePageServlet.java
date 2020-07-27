@@ -161,8 +161,11 @@ public class HomePageServlet extends HttpServlet {
     if (homePageSection == null) { // only trending will be shown when not logged in
       List<List<Map<String, Object>>> homePageDealsMaps =
           getSectionListMaps(TRENDING_SECTION, -1, -1);
-      return JsonFormatter.getHomePageSectionJson(
+      Map<String, Object> homePageMap = new HashMap<>();
+      homePageMap.put(
+          TRENDING_SECTION,
           homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      return JsonFormatter.getHomePageJson(homePageMap);
     } else if (homePageSection.equals(TRENDING_SECTION)) {
       // User views all deals for trending section
       List<List<Map<String, Object>>> homePageDealsMaps =
