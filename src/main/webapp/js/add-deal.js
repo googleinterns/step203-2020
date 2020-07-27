@@ -18,7 +18,7 @@ $('#img-input').change((event) => {
 /*
  * Form validation
  */
-$('#from-date, #to-date').change(checkDatesOrdered);
+$('#from-date, #to-date').change(checkFormDates);
 const form = document.getElementsByClassName('needs-validation')[0];
 form.addEventListener('submit', (event) => {
   if (form.checkValidity() === false || !checkFormValid()) {
@@ -48,23 +48,18 @@ $.ajax({
  * @return {boolean}
  */
 function checkFormValid() {
-  return checkDatesOrdered();
+  return checkFormDates();
 }
 
 /**
  * Checks if the dates of the form is ordered and displays error message.
  * @return {boolean}
  */
-function checkDatesOrdered() {
+function checkFormDates() {
   const start = document.getElementById('from-date');
   const end = document.getElementById('to-date');
   const message = document.getElementById('date-error-msg');
-  if (start.value && end.value && start.value > end.value) {
-    message.style.display = 'block';
-    return false;
-  }
-  message.style.display = 'none';
-  return true;
+  return checkDatesOrdered(start, end, message);
 }
 
 /**
@@ -76,7 +71,7 @@ function selectRestaurant(restaurant) {
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
       <span class="flex-grow-1">${restaurant.name}</span>
-      <img class="search-menu-pic" src="${restaurant.image}">
+      <img class="search-menu-pic" src="${restaurant.photoUrl}">
     </div>
   `;
   const restaurantHiddenInput = $('#restaurant-selected-id-input')[0];

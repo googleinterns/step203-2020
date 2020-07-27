@@ -119,6 +119,8 @@
   <script src="js/scripts.js"></script>
   <!-- Restaurant search JS-->
   <script src="/js/restaurant-search-util.js"></script>
+  <!-- Form validity util JS-->
+  <script src="/js/form-validity-util.js"></script>
   <!-- Page JS -->
   <script src="js/add-deal.js"></script>
 </body>
