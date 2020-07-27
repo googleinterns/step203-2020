@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,7 @@ import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.MailManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
+import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -138,6 +140,7 @@ public class DealServletTest {
     List<Long> followerIds = Arrays.asList(USER_ID_B);
     when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
     when(mockUserManager.readUsers(followerIds)).thenReturn(Arrays.asList(USER_B));
+    when(mockRequest.getParameter("notify-followers")).thenReturn("true");
 
     servlet.doPost(mockRequest, mockResponse);
 
@@ -156,11 +159,46 @@ public class DealServletTest {
     ArgumentCaptor<com.google.step.model.User> posterCaptor =
         ArgumentCaptor.forClass(com.google.step.model.User.class);
     ArgumentCaptor<List> recipientsCaptor = ArgumentCaptor.forClass(List.class);
-
+    ArgumentCaptor<Deal> dealCaptor = ArgumentCaptor.forClass(Deal.class);
     verify(mockMailManager)
-        .sendNewPostNotificationMail(recipientsCaptor.capture(), posterCaptor.capture());
+        .sendNewPostNotificationMail(
+            recipientsCaptor.capture(), dealCaptor.capture(), posterCaptor.capture());
     assertEquals(Arrays.asList(USER_B), recipientsCaptor.getValue());
+    assertEquals(DEAL_A, dealCaptor.getValue());
     assertEquals(USER_A, posterCaptor.getValue());
+  }
+
+  @Test
+  public void testDoPost_success_noNotification() throws IOException {
+    when(mockDealManager.createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>())))
+        .thenReturn(DEAL_A);
+
+    List<Long> followerIds = Arrays.asList(USER_ID_B);
+    when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
+    when(mockUserManager.readUsers(followerIds)).thenReturn(Arrays.asList(USER_B));
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockDealManager)
+        .createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>()));
+    verify(mockResponse).sendRedirect(any());
+    verify(mockMailManager, never()).sendNewPostNotificationMail(any(), any(), any());
   }
 
   @Test

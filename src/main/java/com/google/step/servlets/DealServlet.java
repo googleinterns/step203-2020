@@ -114,9 +114,11 @@ public class DealServlet extends HttpServlet {
         dealManager.createDeal(
             description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
 
-    List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
-    List<User> followers = userManager.readUsers(followerIds);
-    mailManager.sendNewPostNotificationMail(followers, deal, poster);
+    if (request.getParameter("notify-followers") != null) {
+      List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
+      List<User> followers = userManager.readUsers(followerIds);
+      mailManager.sendNewPostNotificationMail(followers, deal, poster);
+    }
 
     response.sendRedirect("/deals/" + deal.id);
   }
