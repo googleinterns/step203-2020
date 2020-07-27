@@ -1,24 +1,26 @@
 /**
  * Creates carousel on home page
- * @param {object} numCarouselSlidesList
  * @param {object} numDealPerSlide
  * @param {object} homePageDeals
  */
-function createHomePage(numCarouselSlidesList,
-    numDealPerSlide, homePageDeals) {
+function createHomePage(numDealPerSlide, homePageDeals) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
   // number of sections on homepage
   let i;
   for (i = 0; i < Object.keys(homePageDeals).length; i++) {
+    const homePageData = homePageDeals[homePageSections[i]];
+    if (homePageData.length == 0) {
+      showNotFound(carouselElements[i], false);
+      continue;
+    }
     carouselElements[i].children[0].href = '/all-section-deals/' +
       homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[1];
     const carouselItemList = carouselElements[i].children[2];
-    const numCarouselSlides = numCarouselSlidesList[i];
-    const homePageData = homePageDeals[homePageSections[i]];
+    const numCarouselSlides = Math.ceil(homePageData.length/numDealPerSlide);
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
       indicatorListChild.dataset.target = '#carousel-' + i;
@@ -51,17 +53,29 @@ function createHomePage(numCarouselSlidesList,
   // for subsequent carousel elements, set to no display due to no data
   for (let k = i; k < carouselElements.length; k++) {
     // set display to none if there is no data for that section
-    carouselElements[k].children[0].style.display = 'none';
-    carouselElements[k].children[3].style.display = 'none';
-    carouselElements[k].children[4].style.display = 'none';
-
-    // inform users to log in to view
-    const showNotFound = document.createElement('h5');
-    showNotFound.className = 'text-center mt-5';
-    showNotFound.innerText = 'Please log in to view.';
-    carouselElements[k].appendChild(showNotFound);
-    continue;
+    showNotFound(carouselElements[k], true);
   }
+}
+
+/**
+ * Creates carousel on home page
+ * @param {number} carouselElement
+ * @param {boolean} notLoggedIn
+ */
+function showNotFound(carouselElement, notLoggedIn) {
+  carouselElement.children[0].style.display = 'none';
+  carouselElement.children[3].style.display = 'none';
+  carouselElement.children[4].style.display = 'none';
+
+  // inform users to log in to view
+  const showNotFound = document.createElement('h5');
+  showNotFound.className = 'text-center mt-5';
+  if (notLoggedIn) {
+    showNotFound.innerText = 'Please log in to view.';
+  } else {
+    showNotFound.innerText = 'No data found.';
+  }
+  carouselElement.appendChild(showNotFound);
 }
 
 /**
@@ -70,7 +84,8 @@ function createHomePage(numCarouselSlidesList,
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        createHomePage([2, 2, 3, 3], 4, homePageDeals);
+        console.log(homePageDeals);
+        createHomePage(4, homePageDeals);
       });
 }
 

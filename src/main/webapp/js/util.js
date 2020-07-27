@@ -85,11 +85,9 @@ function createDealCard(deal) {
  */
 function createHomeDealCard(deal, numCol, sectionId) {
   const dealBody = document.createElement('div');
-  dealBody.classList.add('card-body', 'd-flex', 'flex-column');
-
+  dealBody.classList.add('col-md-'+numCol, 'mt-5');
   const date = new Date(Date.parse(deal.timestamp));
   dealBody.innerHTML += `
-    <div class="col-md-${numCol} mt-5">
       <div id=deal-card-${sectionId} class="card deal-card h-100">
         <img class="card-img-top home-deal-img" src=${deal.pic} alt="">
         <div class="card-body d-flex flex-column">
@@ -109,8 +107,7 @@ function createHomeDealCard(deal, numCol, sectionId) {
             See More
           </a>
         </div>
-      </div>
-    </div>`;
+      </div>`;
 
   const dealTags = dealBody.querySelector('.tags');
   for (let i = 0; i < deal.tags.length; i++) {
