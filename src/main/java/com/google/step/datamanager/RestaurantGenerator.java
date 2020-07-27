@@ -17,6 +17,7 @@ import java.nio.file.Files;
 public class RestaurantGenerator {
 
   public static final String API_KEY = readMapApiKey();
+  public static final String FAKE_API_KEY = "api-key";
 
   private static final String SEARCH_URL =
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
@@ -122,13 +123,13 @@ public class RestaurantGenerator {
    * @return the map api key.
    */
   private static String readMapApiKey() {
-    File file = new File(RestaurantGenerator.class.getResource("/api-key.json").getFile());
     String content;
     try {
+      File file = new File(RestaurantGenerator.class.getResource("/api-key.json").getFile());
       content = new String(Files.readAllBytes(file.toPath()));
-    } catch (IOException e) {
+    } catch (IOException | NullPointerException e) {
       e.printStackTrace();
-      return null;
+      return FAKE_API_KEY;
     }
 
     JsonObject jsonObject;
@@ -137,7 +138,7 @@ public class RestaurantGenerator {
       return jsonObject.get("map-api-key").getAsString();
     } catch (JsonSyntaxException e) {
       e.printStackTrace();
-      return null;
+      return FAKE_API_KEY;
     }
   }
 }
