@@ -2,6 +2,7 @@ package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.PLACE_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
@@ -51,7 +52,9 @@ public class RestaurantPostServletTest {
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurant(RESTAURANT_NAME_A, BLOBKEY_A)).thenReturn(RESTAURANT_A);
+    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A))
+        .thenReturn(RESTAURANT_A);
+    when(mockRequest.getParameter("places")).thenReturn(PLACE_ID_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -60,10 +63,22 @@ public class RestaurantPostServletTest {
     restaurantPostServlet.doPost(mockRequest, mockResponse);
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[],placeIds:[]}",
-            RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals:[],placeIds:[%s]}",
+            RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A, PLACE_ID_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
     verify(mockResponse).sendRedirect("/restaurant/" + RESTAURANT_ID_A);
+  }
+
+  @Test
+  public void testDoPost_missingPlaces() throws Exception {
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+    when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
+    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A))
+        .thenReturn(RESTAURANT_A);
+
+    restaurantPostServlet.doPost(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }

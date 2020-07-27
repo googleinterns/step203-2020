@@ -17,13 +17,12 @@ function configureRestaurantInfo(restaurant) {
  */
 function configureFollowButton(restaurantId, loggedInUserId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/', {
+  $.ajax('/api/follows/restaurants/' + restaurantId, {
     data: {
-      restaurantId: restaurantId,
       followerId: loggedInUserId,
     },
   }).done((isFollowing) => {
-    if (isFollowing == 'true') {
+    if (isFollowing.startsWith('true')) {
       followButton.innerText = 'Unfollow';
       followButton.onclick = () => unfollow(restaurantId);
     } else {
@@ -130,6 +129,7 @@ function configureDealsHeader(restaurant) {
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
+<<<<<<< HEAD
   // TODO call back end
   restaurant = {
     name: 'McDonald',
@@ -148,6 +148,14 @@ function initRestaurantPage() {
   configureRestaurantInfo(restaurant);
   configureDealsOfRestaurant(restaurant.deals);
   configureDealsHeader(restaurant);
+=======
+  $.ajax('/api/restaurants/' + id)
+      .done((restaurant) => {
+        configureRestaurantInfo(restaurant);
+        configureDealsOfRestaurant(restaurant.deals);
+        configureDealsHeader(restaurant);
+      });
+>>>>>>> d57c64e84c139ee257a3415d824ecf5976dc93b1
 
   $.ajax('/api/authentication')
       .done((loginStatus) => {

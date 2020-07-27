@@ -26,10 +26,18 @@
   <div class="container">
     <div class="page-section">
       <div id="deal-page" style="display: none;">
-        <div class="row mb-5 mt-5">
+        <div class="row mb-5 mt-5 position-relative">
           <div class="col-md-8">
             <h2 class="masthead-heading mb-6" id="deal-title">title</h2>
             <img id="deal-image" src="" class="deal-img" />
+          </div>
+          <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
+            <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <button class="dropdown-item" type="button" onclick="handleDeleteDeal()">Delete Deal</button>
+            </div>
           </div>
         </div>
         <nav>
@@ -66,7 +74,7 @@
             <div class="row">
               <div class="col-sm-12 mt-3">
                 <form id="comment-form" action="/api/comments" method="POST">
-                  <textarea class="w-100 form-control mb-3" type="text" name="content"
+                  <textarea class="w-100 form-control mb-3" name="content"
                     placeholder="Leave a comment..."></textarea>
                   <input type="hidden" name="dealId" id="dealId-input">
                   <input type="submit" class="btn btn-primary float-right" />
