@@ -344,16 +344,17 @@ public final class DealManagerDatastoreTest {
     List<Long> dealsForAIds =
         dealManagerDatastore.getDealsPublishedByUsers(
             new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), 1, "new");
-    assertEquals(1, dealsForAIds.size());
-    assertThat(dealsForAIds, hasItem(dealC.id));
+    List<Deal> dealsForA = dealManagerDatastore.readDealsOrder(dealsForAIds);
+    assertEquals(1, dealsForA.size());
+    assertThat(dealsForA, hasItem(dealC));
 
     // Get deals published by the users followed by USER_ID_C
     List<Long> dealsForCIds =
         dealManagerDatastore.getDealsPublishedByUsers(
             new HashSet<>(Arrays.asList(USER_ID_A, USER_ID_B)), 1, "new");
-
-    assertEquals(1, dealsForCIds.size());
-    assertThat(dealsForCIds, hasItem(dealB.id));
+    List<Deal> dealsForC = dealManagerDatastore.readDealsOrder(dealsForCIds);
+    assertEquals(1, dealsForC.size());
+    assertThat(dealsForC, hasItem(dealB));
   }
 
   @Test

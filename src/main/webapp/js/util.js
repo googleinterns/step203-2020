@@ -80,101 +80,41 @@ function createDealCard(deal) {
  * Returns a container for a deal.
  * @param {object} deal deal whose info will be shown.
  * @param {number} numCol the bootstrap width of each deal
- * @param {number} i the sectionId of each deal
- * @return {object} a DOM element showing deal's info.
+ * @param {number} sectionId the sectionId of each deal
+ * @return {HTMLDivElement} a DOM element showing deal's info.
  */
-function createHomeDealCard(deal, numCol, i) {
-  const dealCardCol = document.createElement('div');
-  dealCardCol.className = 'col-md-' + numCol;
-
-  const dealCard = document.createElement('div');
-  dealCard.classList.add('deal-card', 'card', 'h-100');
-  dealCard.id = 'deal-card-' + i;
-
-  const dealImage = document.createElement('img');
-  dealImage.className = 'card-img-top home-deal-img';
-
+function createHomeDealCard(deal, numCol, sectionId) {
   const dealBody = document.createElement('div');
-  dealBody.classList.add('card-body', 'd-flex', 'flex-column');
+  dealBody.classList.add('col-md-'+numCol, 'mt-5');
+  const date = new Date(Date.parse(deal.timestamp));
+  dealBody.innerHTML += `
+      <div id=deal-card-${sectionId} class="card deal-card h-100">
+        <img class="card-img-top home-deal-img" src=${deal.pic} alt="">
+        <div class="card-body d-flex flex-column">
+        <div class="card-text float-right"><i class="fa fa-thumbs-up"></i>  
+          ${deal.votes}</div>
+          <div class="card-text">${date.toLocaleString()}</div>
+          <div class="d-flex justify-content-end"></div>
+          <h5 class="card-title">${deal.description}</h5>
+          <div class="card-text">Restaurant: 
+          <a href="/restaurants/${deal.restaurant.id}">
+          ${deal.restaurant.name}</a></div>
+          <div class="card-text">Posted by: 
+          <a href="/user/${deal.poster.id}">${deal.poster.username}</a></div>
+          <div class= "card-text tags" ></div>
+          <a href="/deals/${deal.id}"
+            class="btn btn-primary align-self-end mt-auto float-right">
+            See More
+          </a>
+        </div>
+      </div>`;
 
-  const dealTime = document.createElement('div');
-  dealTime.classList.add('card-text');
-  dealTime.innerText = deal.timestamp;
-
-  const dealVotes = document.createElement('div');
-  dealVotes.classList.add('d-flex', 'justify-content-end');
-  dealVotes.style = 'display: none;';
-
-  const dealUpVotesBtn = document.createElement('button');
-  dealUpVotesBtn.classList.add('btn', 'upvote-btn');
-
-  const upBtnAngle = document.createElement('span');
-  upBtnAngle.classList.add('fas', 'fa-angle-up');
-
-  dealUpVotesBtn.appendChild(upBtnAngle);
-
-  const dealVotesValue = document.createElement('span');
-  dealVotesValue.classList.add('my-auto', 'votes-num');
-  dealVotesValue.innerText = deal.votes;
-
-  const dealDownVotesBtn = document.createElement('button');
-  dealDownVotesBtn.classList.add('btn', 'downvote-btn');
-
-  const downBtnAngle = document.createElement('span');
-  downBtnAngle.classList.add('fas', 'fa-angle-down');
-
-  dealDownVotesBtn.appendChild(downBtnAngle);
-
-  dealVotes.appendChild(dealUpVotesBtn);
-  dealVotes.appendChild(dealVotesValue);
-  dealVotes.appendChild(dealDownVotesBtn);
-
-  const dealName = document.createElement('h5');
-  dealName.className = 'card-title';
-  dealName.innerText = deal.description;
-
-  const dealRestaurant = document.createElement('div');
-  dealRestaurant.innerText = 'Restaurant: ' + deal.restaurant.name;
-
-  const dealRestaurantLink = document.createElement('a');
-  dealRestaurantLink.href = '/restaurants/' + deal.restaurant.id;
-
-  dealRestaurant.appendChild(dealRestaurantLink);
-
-  const dealPoster = document.createElement('div');
-  dealPoster.innerText = 'Poster: ' + deal.poster.username;
-
-  const dealPosterLink = document.createElement('a');
-  dealPosterLink.href = '/users/' + deal.poster.id;
-
-  dealPoster.appendChild(dealPosterLink);
-
-  const dealTags = document.createElement('div');
-
+  const dealTags = dealBody.querySelector('.tags');
   for (let i = 0; i < deal.tags.length; i++) {
     dealTags.innerText += '#' + deal.tags[i].name + ', ';
   };
 
-  const dealSeeMore = document.createElement('a');
-  dealSeeMore.href = '/deals/' + deal.id;
-  dealSeeMore.innerText = 'See More';
-  dealSeeMore.classList.add('btn', 'btn-primary', 'align-self-end',
-      'mt-auto', 'float-right');
-
-  dealBody.appendChild(dealTime);
-  dealBody.appendChild(dealVotes);
-  dealBody.appendChild(dealName);
-  dealBody.appendChild(dealRestaurant);
-  dealBody.appendChild(dealPoster);
-  dealBody.appendChild(dealTags);
-  dealBody.appendChild(dealSeeMore);
-
-  dealCard.appendChild(dealImage);
-  dealCard.appendChild(dealBody);
-
-  dealCardCol.appendChild(dealCard);
-
-  return dealCardCol;
+  return dealBody;
 }
 
 /**
