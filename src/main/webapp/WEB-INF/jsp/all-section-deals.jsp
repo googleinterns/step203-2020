@@ -32,6 +32,7 @@
           <a class="dropdown-item" href="#">Trending</a>
           <a class="dropdown-item" href="#">Votes</a>
           <a class="dropdown-item" href="#">New</a>
+          <a class="dropdown-item" href="#" onclick="getLocation()">Distance</a>
         </div>
       </div>
       <div class="row row-deals"></div>

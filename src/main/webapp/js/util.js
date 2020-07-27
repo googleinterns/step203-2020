@@ -142,3 +142,22 @@ function throttle(func, limit) {
     }
   };
 }
+
+/**
+ * Retreives user's location
+ */
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    x.innerHTML = 'Geolocation is not supported by this browser.';
+  }
+}
+
+/**
+ * @param {position} position
+ */
+function showPosition(position) {
+  console.log('Latitude: ' + position.coords.latitude);
+  console.log('Longitude: ' + position.coords.longitude);
+}
