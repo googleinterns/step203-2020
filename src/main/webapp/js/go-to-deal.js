@@ -361,7 +361,7 @@ function handleSubmit() {
   validateGroup.forEach((element) => {
     element.classList.add('was-validated');
   });
-  if (!form.checkValidity() || !checkDatesOrdered()) {
+  if (!form.checkValidity() || !checkFormDates()) {
     return;
   }
 
@@ -404,16 +404,11 @@ function selectRestaurant(restaurant) {
  * Checks if the dates of the form is ordered and displays error message.
  * @return {boolean}
  */
-function checkDatesOrdered() {
+function checkFormDates() {
   const start = document.getElementById('start-input');
   const end = document.getElementById('end-input');
   const message = document.getElementById('date-error-msg');
-  if (start.value && end.value && start.value > end.value) {
-    message.style.display = 'block';
-    return false;
-  }
-  message.style.display = 'none';
-  return true;
+  return checkDatesOrdered(start, end, message);
 }
 
 /**

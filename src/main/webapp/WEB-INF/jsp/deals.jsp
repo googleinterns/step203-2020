@@ -80,10 +80,10 @@
               <div class="form-group validate-me form-inline">
                 <label class="mr-2">Valid Date:</label>
                 <input name="start" class="form-control" type="date" id="start-input" required
-                  onchange="checkDatesOrdered()">
+                  onchange="checkFormDates()">
                 <span class="mx-2">to</span>
                 <input name="end" class="form-control" type="date" id="end-input" required
-                  onchange="checkDatesOrdered()">
+                  onchange="checkFormDates()">
                 <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div>
               </div>
 
@@ -144,6 +144,8 @@
   <script src="/js/scripts.js"></script>
   <!-- Restaurant search JS-->
   <script src="/js/restaurant-search-util.js"></script>
+  <!-- Form validity util JS-->
+  <script src="/js/form-validity-util.js"></script>
   <!-- Page JS-->
   <script src="/js/go-to-deal.js"></script>
 </body>
