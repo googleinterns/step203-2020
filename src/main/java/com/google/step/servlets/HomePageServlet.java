@@ -142,11 +142,12 @@ public class HomePageServlet extends HttpServlet {
           getSectionListMaps(homePageSection, userId, 8);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(
-          "popularDeals", homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
-      homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-      homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
+          TRENDING_SECTION,
+          homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
+      homePageMap.put(RESTAURANTS_SECTION, homePageDealsMaps.get(2));
       homePageMap.put(
-          "tagsIFollow", homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
+          TAGS_SECTION, homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
       return JsonFormatter.getHomePageJson(homePageMap);
       // user requested to view all deals of particular section, no
     } else {

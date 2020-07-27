@@ -116,7 +116,7 @@ public class HomePageServletTest {
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
     String expected =
         String.format(
-            "{popularDeals:%s," + "usersIFollow:%s," + "restaurantsIFollow:%s," + "tagsIFollow:%s}",
+            "{trending:%s," + "users:%s," + "restaurants:%s," + "tags:%s}",
             expectedDeals, expectedDeals, expectedDeals, expectedDeals);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
