@@ -29,7 +29,7 @@ function searchRestaurant(query, searchResults, callback) {
         row.className = 'd-flex align-items-center search-menu-item p-2';
         row.innerHTML = `
             <span class="flex-grow-1">${restaurant.name}</span>
-            <img class="search-menu-pic" src="${restaurant.image}">
+            <img class="search-menu-pic" src="${restaurant.photoUrl}">
           `;
         row.onmousedown = () => callback(restaurant);
         searchResults.appendChild(row);
