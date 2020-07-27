@@ -27,6 +27,9 @@ function initComments() {
 function loadDealDataToPage(deal) {
   $('#deal-loading').hide();
   $('#deal-page').show();
+  if (deal.poster.id != userId) {
+    $('#menu-btn').hide();
+  }
 
   const dealTitleElement = document.getElementById('deal-title');
   dealTitleElement.innerText = deal.description;
@@ -289,6 +292,10 @@ function postVote(dir) {
  * Called when the user clicks the upvote button
  */
 function handleUpvote() {
+  if (!isLoggedIn) {
+    alert('You need to be logged in to vote');
+    return;
+  }
   if (myVote == 1) {
     myVote = 0;
     postVote(0);
@@ -303,6 +310,10 @@ function handleUpvote() {
  * Called when the user clicks the downvote button
  */
 function handleDownvote() {
+  if (!isLoggedIn) {
+    alert('You need to be logged in to vote');
+    return;
+  }
   if (myVote == -1) {
     myVote = 0;
     postVote(0);
@@ -311,6 +322,20 @@ function handleDownvote() {
     postVote(-1);
   }
   updateMyVote();
+}
+
+/**
+ * Called when the user clicks the delete deal button
+ */
+function handleDeleteDeal() {
+  if (confirm('Are you sure you want to delete this deal?')) {
+    $.ajax({
+      url: '/api/deals/' + dealId,
+      method: 'DELETE',
+    }).done(() => {
+      window.location.href = '/all-deals'; // redirects to all deals page
+    });
+  }
 }
 
 /**
@@ -326,12 +351,13 @@ function showNotFound() {
  * upvote/downvote buttons
  */
 function initVotes() {
+  if (!isLoggedIn) {
+    return;
+  }
   $.ajax('/api/vote/' + dealId)
       .done((dir) => {
         myVote = parseInt(dir);
         votes -= myVote; // exclude myVote from global vote count
-        const voteDiv = document.getElementById('vote-div');
-        voteDiv.style.display = 'block';
         updateMyVote();
       });
 }
