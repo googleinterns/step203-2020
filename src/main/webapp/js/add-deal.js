@@ -16,24 +16,9 @@ $('#img-input').change((event) => {
 });
 
 /*
- * Handles restaurant results when the search bar is typed
- */
-searchRestaurantThrottle = throttle(searchRestaurant, 1000);
-$('#restaurant-input').keyup(function() {
-  searchRestaurantThrottle();
-});
-$('#restaurant-search-results').hide();
-$('#restaurant-input').focus(function() {
-  searchRestaurantThrottle();
-});
-$('#restaurant-input').blur(function() {
-  $('#restaurant-search-results').hide();
-});
-
-/*
  * Form validation
  */
-$('#from-date, #to-date').change(checkDatesOrdered);
+$('#from-date, #to-date').change(checkFormDates);
 const form = document.getElementsByClassName('needs-validation')[0];
 form.addEventListener('submit', (event) => {
   if (form.checkValidity() === false || !checkFormValid()) {
@@ -63,23 +48,18 @@ $.ajax({
  * @return {boolean}
  */
 function checkFormValid() {
-  return checkDatesOrdered();
+  return checkFormDates();
 }
 
 /**
  * Checks if the dates of the form is ordered and displays error message.
  * @return {boolean}
  */
-function checkDatesOrdered() {
+function checkFormDates() {
   const start = document.getElementById('from-date');
   const end = document.getElementById('to-date');
   const message = document.getElementById('date-error-msg');
-  if (start.value && end.value && start.value > end.value) {
-    message.style.display = 'block';
-    return false;
-  }
-  message.style.display = 'none';
-  return true;
+  return checkDatesOrdered(start, end, message);
 }
 
 /**
@@ -91,49 +71,16 @@ function selectRestaurant(restaurant) {
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
       <span class="flex-grow-1">${restaurant.name}</span>
-      <img class="search-menu-pic" src="${restaurant.image}">
+      <img class="search-menu-pic" src="${restaurant.photoUrl}">
     </div>
   `;
   const restaurantHiddenInput = $('#restaurant-selected-id-input')[0];
   restaurantHiddenInput.value = restaurant.id;
 }
 
-/**
- * Calls backend for retaurant based on text in restaurant search, and displays
- * results.
- */
-function searchRestaurant() {
-  const text = $('#restaurant-input').val().trim();
-  if (text == '') {
-    $('#restaurant-search-results').hide();
-    return;
-  }
-  $.ajax({
-    url: '/api/search/restaurants',
-    data: {
-      query: text,
-    },
-  }).done((restaurants) => {
-    const menu = document.getElementById('restaurant-search-results');
-    menu.innerHTML = '';
-    if (restaurants.length == 0) {
-      const row = document.createElement('div');
-      row.className = 'd-flex align-items-center search-menu-item p-2';
-      row.innerHTML = 'No results';
-      menu.appendChild(row);
-    } else {
-      restaurants.forEach((restaurant) => {
-        const row = document.createElement('div');
-        row.className = 'd-flex align-items-center search-menu-item p-2';
-        row.innerHTML = `
-          <span class="flex-grow-1">${restaurant.name}</span>
-          <img class="search-menu-pic" src="${restaurant.image}">
-        `;
-        row.onmousedown = () => selectRestaurant(restaurant);
-        menu.appendChild(row);
-      });
-    }
-    $('#restaurant-search-results').show();
-  });
-}
-
+addLoadEvent(() => {
+  initSearchRestaurant(
+      document.getElementById('search-container'),
+      selectRestaurant,
+  );
+});
