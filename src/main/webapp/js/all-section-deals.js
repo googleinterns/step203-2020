@@ -38,17 +38,26 @@ function initAllDeals() {
   if (myPathElem.length == 4) {
     reqSort = myPathElem[3];
   }
-  $.ajax({
-    url: '/api/home',
-    data: {
-      section: reqSection,
-      sort: reqSort,
-    },
-  }).done((deals) => {
-    deals = sectionDealsData;
-    createAllDealCards(deals, reqSection);
-  },
-  );
+  if (reqSort == null) {
+    $.ajax({
+      url: '/api/home',
+      data: {
+        section: reqSection,
+      },
+    }).done((deals) => {
+      createAllDealCards(deals, reqSection);
+    });
+  } else {
+    $.ajax({
+      url: '/api/home',
+      data: {
+        section: reqSection,
+        sort: reqSort,
+      },
+    }).done((deals) => {
+      createAllDealCards(deals, reqSection);
+    });
+  }
 }
 
 addLoadEvent(() => {

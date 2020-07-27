@@ -30,7 +30,7 @@
         </a>
         <div class="dropdown-menu" id='sort' aria-labelledby="dealDropdown">
           <a class="dropdown-item" href="#">Trending</a>
-          <a class="dropdown-item" href="#">Most Votes</a>
+          <a class="dropdown-item" href="#">Votes</a>
           <a class="dropdown-item" href="#">New</a>
         </div>
       </div>
