@@ -5,15 +5,20 @@ import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
 import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.RESTAURANT_A_BRIEF_JSON;
 import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_A_JSON;
 import static com.google.step.TestConstants.TAG_B;
+import static com.google.step.TestConstants.TAG_B_JSON;
 import static com.google.step.TestConstants.USERNAME_A;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_A_BRIEF_JSON;
 import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_B_BRIEF_JSON;
 import static com.google.step.TestConstants.USER_C;
@@ -24,7 +29,6 @@ import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import com.google.step.model.Tag;
 import com.google.step.model.User;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.json.JSONException;
@@ -39,29 +43,37 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class JsonFormatterTest {
   @Test
   public void testGetUserJson() {
-    // TODO: Add deal, tag, restaurant
-    List<Deal> deals = new ArrayList<>();
+    List<Deal> deals = Arrays.asList(DEAL_A);
     List<User> following = Arrays.asList(USER_B);
     List<User> followers = Arrays.asList(USER_C);
-    List<Tag> tags = new ArrayList<>();
-    List<Restaurant> restaurants = new ArrayList<>();
+    List<Tag> tags = Arrays.asList(TAG_A);
+    List<Restaurant> restaurants = Arrays.asList(RESTAURANT_A);
     String userJson =
         JsonFormatter.getUserJson(USER_A, deals, following, followers, tags, restaurants);
     String expected =
         String.format(
-            "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",picture:\"%s\","
-                + "dealsUploaded:[],"
-                + "following:[%s],"
-                + "followers:[%s],"
-                + "tagsFollowed:[],"
-                + "restaurantsFollowed:[]}",
+            "{"
+                + "  \"id\": %d,"
+                + "  \"email\": \"%s\","
+                + "  \"username\": \"%s\","
+                + "  \"bio\": \"%s\","
+                + "  \"picture\": \"%s\","
+                + "  \"dealsUploaded\": [%s],"
+                + "  \"following\": [%s],"
+                + "  \"followers\": [%s],"
+                + "  \"tagsFollowed\": [%s],"
+                + "  \"restaurantsFollowed\": [%s]"
+                + "}",
             USER_ID_A,
             EMAIL_A,
             USERNAME_A,
             BIO_A,
             BLOBKEY_URL_A,
+            DEAL_A_BRIEF_JSON,
             USER_B_BRIEF_JSON,
-            USER_C_BRIEF_JSON);
+            USER_C_BRIEF_JSON,
+            TAG_A_JSON,
+            RESTAURANT_A_BRIEF_JSON);
     try {
       JSONAssert.assertEquals(expected, userJson, JSONCompareMode.STRICT);
     } catch (JSONException e) {
@@ -83,12 +95,9 @@ public class JsonFormatterTest {
                 + "\"start\": \"%s\","
                 + "\"end\": \"%s\","
                 + "\"source\": \"%s\","
-                + "\"poster\": {"
-                + "\"id\": %d,"
-                + "\"username\": \"%s\""
-                + "},"
-                // + "\"restaurant\": \"Restaurant Name\","
-                // + "\"tags\": [],"
+                + "\"poster\": %s,"
+                + "\"restaurant\": %s,"
+                + "\"tags\": [%s,%s],"
                 + "\"votes\": 123"
                 + "}",
             DEAL_ID_A,
@@ -97,12 +106,13 @@ public class JsonFormatterTest {
             DATE_A,
             DATE_B,
             SOURCE_A,
-            USER_ID_A,
-            USERNAME_A);
+            USER_A_BRIEF_JSON,
+            RESTAURANT_A_BRIEF_JSON,
+            TAG_A_JSON,
+            TAG_B_JSON);
 
     try {
-      // TODO change LENIENT to STRICT after the todo fields in the method are implemented
-      JSONAssert.assertEquals(expected, dealJson, JSONCompareMode.LENIENT);
+      JSONAssert.assertEquals(expected, dealJson, JSONCompareMode.STRICT);
     } catch (JSONException e) {
       Assert.fail();
       e.printStackTrace();
