@@ -1,6 +1,6 @@
 /**
  * Creates carousel on home page
- * @param {object} numDealPerSlide
+ * @param {number} numDealPerSlide
  * @param {object} homePageDeals
  */
 function createHomePage(numDealPerSlide, homePageDeals) {
@@ -11,7 +11,7 @@ function createHomePage(numDealPerSlide, homePageDeals) {
   let i;
   for (i = 0; i < Object.keys(homePageDeals).length; i++) {
     const homePageData = homePageDeals[homePageSections[i]];
-    if (homePageData.length == 0) {
+    if (homePageData.length == 0) { // if no data, set to no data found
       showNotFound(carouselElements[i], false);
       continue;
     }
@@ -52,14 +52,13 @@ function createHomePage(numDealPerSlide, homePageDeals) {
   }
   // for subsequent carousel elements, set to no display due to no data
   for (let k = i; k < carouselElements.length; k++) {
-    // set display to none if there is no data for that section
     showNotFound(carouselElements[k], true);
   }
 }
 
 /**
  * Creates carousel on home page
- * @param {number} carouselElement
+ * @param {HTMLDivElement} carouselElement
  * @param {boolean} notLoggedIn
  */
 function showNotFound(carouselElement, notLoggedIn) {
@@ -84,7 +83,6 @@ function showNotFound(carouselElement, notLoggedIn) {
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        console.log(homePageDeals);
         createHomePage(4, homePageDeals);
       });
 }
