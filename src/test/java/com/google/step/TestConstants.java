@@ -95,10 +95,18 @@ public class TestConstants {
   public static final Restaurant RESTAURANT_A =
       Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
 
+  public static final Restaurant RESTAURANT_B =
+      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
+
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
           "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
           RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+
+  public static final String RESTAURANT_B_BRIEF_JSON =
+      String.format(
+          "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
+          RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_URL_B);
 
   // Deal
   public static final long DEAL_ID_A = 1;
