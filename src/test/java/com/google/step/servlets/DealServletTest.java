@@ -162,7 +162,7 @@ public class DealServletTest {
     ArgumentCaptor<Deal> dealCaptor = ArgumentCaptor.forClass(Deal.class);
     verify(mockMailManager)
         .sendNewPostNotificationMail(
-            recipientsCaptor.capture(), dealCaptor.capture(), posterCaptor.capture(), any());
+            recipientsCaptor.capture(), dealCaptor.capture(), posterCaptor.capture());
     assertEquals(Arrays.asList(USER_B), recipientsCaptor.getValue());
     assertEquals(DEAL_A, dealCaptor.getValue());
     assertEquals(USER_A, posterCaptor.getValue());
@@ -198,7 +198,7 @@ public class DealServletTest {
             eq(RESTAURANT_ID_A),
             eq(new ArrayList<>()));
     verify(mockResponse).sendRedirect(any());
-    verify(mockMailManager, never()).sendNewPostNotificationMail(any(), any(), any(), any());
+    verify(mockMailManager, never()).sendNewPostNotificationMail(any(), any(), any());
   }
 
   @Test

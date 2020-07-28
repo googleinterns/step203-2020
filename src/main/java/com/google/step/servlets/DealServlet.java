@@ -116,10 +116,9 @@ public class DealServlet extends HttpServlet {
 
     if (request.getParameter("notify-followers") != null) {
       String hostUrl = request.getRemoteHost();
-      System.out.println(hostUrl);
       List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
       List<User> followers = userManager.readUsers(followerIds);
-      mailManager.sendNewPostNotificationMail(followers, deal, poster, hostUrl);
+      mailManager.sendNewPostNotificationMail(followers, deal, poster);
     }
 
     response.sendRedirect("/deals/" + deal.id);

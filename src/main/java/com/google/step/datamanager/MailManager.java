@@ -16,7 +16,8 @@ import javax.mail.internet.MimeMessage;
 /** A class that handles sending emails. */
 public class MailManager {
 
-  private static final String sender = "noreply@capstone-2020-dealfinder.appspotmail.com";
+  private static final String SENDER = "noreply@capstone-2020-dealfinder.appspotmail.com";
+  private static final String HOST_URL = "https://capstone-2020-dealfinder.an.r.appspot.com/";
 
   /**
    * Sends emails to notify the recipients of a new deal posted by the poster.
@@ -24,8 +25,7 @@ public class MailManager {
    * @param recipients recipients of the notification email.
    * @param poster poster of the new deal.
    */
-  public void sendNewPostNotificationMail(
-      List<User> recipients, Deal newDeal, User poster, String hostUrl) {
+  public void sendNewPostNotificationMail(List<User> recipients, Deal newDeal, User poster) {
     if (recipients.isEmpty()) {
       return;
     }
@@ -35,7 +35,7 @@ public class MailManager {
 
     Message msg = new MimeMessage(session);
     try {
-      msg.setFrom(new InternetAddress(sender, "DealFinder Team"));
+      msg.setFrom(new InternetAddress(SENDER, "DealFinder Team"));
       msg.setSubject("New deal post from " + poster.username);
     } catch (MessagingException | UnsupportedEncodingException e) {
       e.printStackTrace();
@@ -45,22 +45,20 @@ public class MailManager {
     for (int i = 0; i < recipients.size(); i++) {
       try {
         Address address = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
-        msg.addRecipient(Message.RecipientType.TO, address);
-        msg.setContent(
-            composeEmail(recipients.get(i), newDeal, poster, hostUrl), "text/html;charset=UTF-8");
+        msg.setRecipient(Message.RecipientType.TO, address);
+        msg.setContent(composeEmail(recipients.get(i), newDeal, poster), "text/html;charset=UTF-8");
         Transport.send(msg);
       } catch (MessagingException | UnsupportedEncodingException e) {
         e.printStackTrace();
-        continue;
       }
     }
   }
 
-  private String composeEmail(User recipient, Deal newDeal, User poster, String hostUrl) {
+  private String composeEmail(User recipient, Deal newDeal, User poster) {
     return String.format(
-        "Dear %s,\n"
-            + "There is a new deal posted by %s: <a href='%s/deals/%d'>%s</a>.\n\n"
-            + "Yours sincerely,\nDealFinder Team",
-        recipient.username, poster.username, hostUrl, newDeal.id, newDeal.description);
+        "Dear %s,<br>"
+            + "There is a new deal posted by %s: <a href='%s/deals/%d'>%s</a>.<br><br>"
+            + "Yours sincerely,<br>DealFinder Team",
+        recipient.username, poster.username, HOST_URL, newDeal.id, newDeal.description);
   }
 }
