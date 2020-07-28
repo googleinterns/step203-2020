@@ -10,7 +10,6 @@
   <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="/js/go-to-deal.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
@@ -26,10 +25,18 @@
   <div class="container">
     <div class="page-section">
       <div id="deal-page" style="display: none;">
-        <div class="row mb-5 mt-5">
+        <div class="row mb-5 mt-5 position-relative">
           <div class="col-md-8">
             <h2 class="masthead-heading mb-6" id="deal-title">title</h2>
             <img id="deal-image" src="" class="deal-img" />
+          </div>
+          <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
+            <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <button class="dropdown-item" type="button" onclick="handleDeleteDeal()">Delete Deal</button>
+            </div>
           </div>
         </div>
         <nav>
@@ -51,22 +58,62 @@
         </nav>
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="nav-details-tab">
-            <div class="col-md-8">
-              <p>Description: <span id="deal-info"></span></p>
-              <p>Restaurant: <a id="restaurant-info"></a></p>
-              <ul class="list-group" id="outlet-list"><span id="all-or-selected"></span></ul>
-              <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
-              <p>Posted by: <a id="user-poster" href=""></a></p>
-              <p>Source: <a id="deal-source" href=""></a></p>
-              <p>Tags: <span id="tags"></span></p>
-              <ul class="list-group" id="menu"></ul>
+            <div id="deal-details">
+              <div class="col-md-8">
+                <p>Description: <span id="deal-info"></span></p>
+                <p>Restaurant: <a id="restaurant-info"></a></p>
+                <p>Validity: <span id="start-date"></span> to <span id="end-date"></span></p>
+                <p>Posted by: <a id="user-poster" href=""></a></p>
+                <p>Source: <span id="deal-source"></span></p>
+                <p>Tags: <span id="tags"></span></p>
+              </div>
+              <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
+            <form style="display:none" id="edit-form">
+              <div class="form-group validate-me form-inline">
+                <label for="description-input" class="mr-2">Description:</label>
+                <input name="description" type="text" class="form-control" id="description-input" required>
+                <div class="invalid-feedback">
+                  Please add a description.
+                </div>
+              </div>
+
+              <div class="form-group form-inline">
+                <label for="restaurant-input" class="mr-2">Restaurant:</label>
+                <input disabled type="text" class="form-control" id="restaurant-input">
+              </div>
+              <div class="mb-3" id="search-container"></div>
+              <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
+
+              <div class="form-group validate-me form-inline">
+                <label class="mr-2">Valid Date:</label>
+                <input name="start" class="form-control" type="date" id="start-input" required
+                  onchange="checkFormDates()">
+                <span class="mx-2">to</span>
+                <input name="end" class="form-control" type="date" id="end-input" required
+                  onchange="checkFormDates()">
+                <div id="date-error-msg" class="invalid-feedback">Start date must be before end date.</div>
+              </div>
+
+              <div class="form-group form-inline">
+                <label for="poster-input" class="mr-2">Posted by:</label>
+                <input disabled type="text" class="form-control" id="poster-input">
+              </div>
+
+              <div class="form-group form-inline">
+                <label for="source-input" class="mr-2">Source:</label>
+                <input name="source" type="text" class="form-control" id="source-input">
+              </div>
+
+              <button type="button" class="btn btn-primary" onclick="handleSubmit()">Save</button>
+              <button type="button" class="btn btn-primary ml-2" onclick="handleCancelEdit()">Cancel</button>
+            </form>
           </div>
           <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="nav-comments-tab">
             <div class="row">
               <div class="col-sm-12 mt-3">
                 <form id="comment-form" action="/api/comments" method="POST">
-                  <textarea class="w-100 form-control mb-3" type="text" name="content"
+                  <textarea class="w-100 form-control mb-3" name="content"
                     placeholder="Leave a comment..."></textarea>
                   <input type="hidden" name="dealId" id="dealId-input">
                   <input type="submit" class="btn btn-primary float-right" />
@@ -103,6 +150,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <!-- Core theme JS-->
   <script src="/js/scripts.js"></script>
+  <!-- Restaurant search JS-->
+  <script src="/js/restaurant-search-util.js"></script>
+  <!-- Form validity util JS-->
+  <script src="/js/form-validity-util.js"></script>
+  <!-- Page JS-->
+  <script src="/js/go-to-deal.js"></script>
 </body>
 
 </html>
