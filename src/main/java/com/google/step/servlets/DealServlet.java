@@ -115,9 +115,11 @@ public class DealServlet extends HttpServlet {
             description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
 
     if (request.getParameter("notify-followers") != null) {
+      String hostUrl = request.getRemoteHost();
+      System.out.println(hostUrl);
       List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
       List<User> followers = userManager.readUsers(followerIds);
-      mailManager.sendNewPostNotificationMail(followers, deal, poster);
+      mailManager.sendNewPostNotificationMail(followers, deal, poster, hostUrl);
     }
 
     response.sendRedirect("/deals/" + deal.id);

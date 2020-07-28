@@ -24,7 +24,8 @@ public class MailManager {
    * @param recipients recipients of the notification email.
    * @param poster poster of the new deal.
    */
-  public void sendNewPostNotificationMail(List<User> recipients, Deal newDeal, User poster) {
+  public void sendNewPostNotificationMail(
+      List<User> recipients, Deal newDeal, User poster, String hostUrl) {
     if (recipients.isEmpty()) {
       return;
     }
@@ -45,7 +46,8 @@ public class MailManager {
       try {
         Address address = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
         msg.addRecipient(Message.RecipientType.TO, address);
-        msg.setContent(composeEmail(recipients.get(i), newDeal, poster), "text/html;charset=UTF-8");
+        msg.setContent(
+            composeEmail(recipients.get(i), newDeal, poster, hostUrl), "text/html;charset=UTF-8");
         Transport.send(msg);
       } catch (MessagingException | UnsupportedEncodingException e) {
         e.printStackTrace();
@@ -54,11 +56,11 @@ public class MailManager {
     }
   }
 
-  private String composeEmail(User recipient, Deal newDeal, User poster) {
+  private String composeEmail(User recipient, Deal newDeal, User poster, String hostUrl) {
     return String.format(
         "Dear %s,\n"
-            + "There is a new deal posted by %s: <a href='/deals/%s'>%s</a>.\n\n"
+            + "There is a new deal posted by %s: <a href='%s/deals/%d'>%s</a>.\n\n"
             + "Yours sincerely,\nDealFinder Team",
-        recipient.username, poster.username, newDeal.id);
+        recipient.username, poster.username, hostUrl, newDeal.id, newDeal.description);
   }
 }
