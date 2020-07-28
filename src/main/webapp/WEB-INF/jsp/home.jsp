@@ -21,20 +21,21 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="css/styles.css" rel="stylesheet" />
+  <link href="css/home-page.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
   <%@include file="/WEB-INF/components/header.html"%>
   <!-- Masthead-->
   <header class="header-bg-img masthead text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
+    <div class="container align-items-center">
       <!-- Masthead Heading-->
       <h1 class="masthead-heading text-uppercase mb-2">Deal Finder</h1>
       <!-- Search Bar-->
-      <form class="form-inline" action="/search">
-        <i class="fas fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name="query">
-      </form>
+      <form class="mt-5" action="/search">
+          <input id="search-input" type="text" placeholder="Search for deals..." name="query">
+          <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
+      </form> 
     </div>
   </header>
   <section class="page-section" id="popular-deals">
@@ -47,7 +48,7 @@
   </section>
   <section class="page-section" id="users-you-follow">
     <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Users You Follow</h2>
-    <%@include file="/WEB-INF/components//section-carousel.html"%>
+    <%@include file="/WEB-INF/components/section-carousel.html"%>
   </section>
   <section class="page-section" id="tags-you-follow">
     <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">#Tags You Follow</h2>

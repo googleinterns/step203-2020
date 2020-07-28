@@ -75,7 +75,7 @@ function searchPlace() {
   }
   const request = {
     query: query,
-    type: 'restaurant',
+    type: 'food',
   };
   service.textSearch(request, handleSearchCallback);
 }

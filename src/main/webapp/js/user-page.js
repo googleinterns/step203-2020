@@ -101,7 +101,7 @@ function createSimpleRestaurantContainer(restaurant) {
   const imageContainer = document.createElement('div');
   imageContainer.className = 'w-25 d-inline-block text-center';
   const restaurantImage = document.createElement('img');
-  restaurantImage.src = restaurant.picture;
+  restaurantImage.src = restaurant.photoUrl;
   restaurantImage.alt = 'restaurant photo';
   restaurantImage.className = 'img-fluid w-50 mx-auto';
   imageContainer.appendChild(restaurantImage);
@@ -172,11 +172,11 @@ function configureProfileEditButton(user) {
  */
 function configureFollowButton(user, userLoggedInId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/',
-      {data: {followerId: userLoggedInId, followeeId: user.id}})
+  $.ajax('/api/follows/users/' + user.id,
+      {data: {followerId: userLoggedInId}})
       .done((isFollowing) => {
         followButton.hidden = false;
-        if (isFollowing === 'true') {
+        if (isFollowing.startsWith('true')) {
           followButton.innerText = 'Unfollow';
           followButton.onclick = () => unfollow(user);
         } else {

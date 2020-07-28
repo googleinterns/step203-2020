@@ -5,13 +5,19 @@ import java.util.List;
 
 public interface RestaurantManager {
 
-  public Restaurant createRestaurant(String name, String photoBlobkey);
+  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobkey);
+
+  public Restaurant createRestaurantWithPhotoReference(String name, String photoUrl);
 
   public Restaurant readRestaurant(long id);
 
   public Restaurant updateRestaurant(Restaurant restaurant);
 
   public void deleteRestaurant(long id);
+
+  public void deleteAllRestaurants();
+
+  public List<Restaurant> getAllRestaurants();
 
   public List<Restaurant> readRestaurants(List<Long> ids);
 
