@@ -17,6 +17,8 @@ public class TestConstants {
   public static final String BLOBKEY_URL_B = URL_PREFIX + BLOBKEY_B;
   public static final String BLOBKEY_URL_C = URL_PREFIX + BLOBKEY_C;
 
+  public static final String DEFAULT_PHOTO_URL = "/images/default-profile-pic.svg";
+
   // User
   public static final long USER_ID_A = 1;
   public static final long USER_ID_B = 2;
@@ -50,7 +52,8 @@ public class TestConstants {
       String.format(
           "{id: %d, username: \"%s\", picture: \"%s\"}", USER_ID_B, USERNAME_B, BLOBKEY_URL_B);
   public static final String USER_C_BRIEF_JSON =
-      String.format("{id: %d, username: \"%s\"}", USER_ID_C, USERNAME_C);
+      String.format(
+          "{id: %d, username: \"%s\", picture: \"%s\"}", USER_ID_C, USERNAME_C, DEFAULT_PHOTO_URL);
 
   // Tag
   public static final String TAG_NAME_A = "1for1";
@@ -68,7 +71,19 @@ public class TestConstants {
   public static final Tag TAG_C = new Tag(TAG_ID_C, TAG_NAME_C);
   public static final Tag TAG_D = new Tag(TAG_ID_D, TAG_NAME_D);
 
+  public static final String TAG_A_JSON =
+      String.format("{\"id\": %d, \"name\": %s}", TAG_ID_A, TAG_NAME_A);
+
+  public static final String TAG_B_JSON =
+      String.format("{\"id\": %d, \"name\": %s}", TAG_ID_B, TAG_NAME_B);
+
   public static final String TAG_LIST_ABC = String.join(",", TAG_NAME_A, TAG_NAME_B, TAG_NAME_C);
+
+  // Place
+  public static final String PLACE_ID_A = "a";
+  public static final String PLACE_ID_B = "b";
+  public static final String PLACE_ID_C = "c";
+  public static final String PLACE_ID_D = "d";
 
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
@@ -94,6 +109,11 @@ public class TestConstants {
       String.format(
           "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
           RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_URL_A);
+
+  public static final String RESTAURANT_B_BRIEF_JSON =
+      String.format(
+          "{\"id\": %d," + "\"name\": \"%s\"," + "\"photoUrl\": \"%s\"}",
+          RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_URL_B);
 
   // Deal
   public static final long DEAL_ID_A = 1;

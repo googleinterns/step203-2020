@@ -19,27 +19,30 @@ function addLoadEvent(func) {
  * Configures login status in header.
  */
 function configureHeaderLoginStatus() {
-  $.ajax('/api/authentication')
-      .done((loginStatus) => {
-        const loginLink = document.getElementById('login-link');
-        const headerUsername = document.getElementById('header-username');
-        const usernameDropdown = document.getElementById('username-dropdown');
-        if (loginStatus.isLoggedIn) {
-          loginLink.hidden = true;
-          usernameDropdown.hidden = false;
-          headerUsername.innerHTML =
-              '<i class="fa fa-user-circle"></i> '+ loginStatus.username;
-          const profileLink = document.getElementById('header-profile-link');
-          profileLink.href = '/user/' + loginStatus.id;
-          const logoutLink = document.getElementById('logout-link');
-          logoutLink.href = loginStatus.logoutUrl;
-        } else {
-          loginLink.hidden = false;
-          usernameDropdown.hidden = true;
-          loginLink.href = loginStatus.loginUrl;
-          headerUsername.hidden = true;
-        }
-      });
+  $.ajax('/api/authentication', {
+    data: {
+      target: location.pathname,
+    },
+  }).done((loginStatus) => {
+    const loginLink = document.getElementById('login-link');
+    const headerUsername = document.getElementById('header-username');
+    const usernameDropdown = document.getElementById('username-dropdown');
+    if (loginStatus.isLoggedIn) {
+      loginLink.hidden = true;
+      usernameDropdown.hidden = false;
+      headerUsername.innerHTML =
+        '<i class="fa fa-user-circle"></i> '+ loginStatus.username;
+      const profileLink = document.getElementById('header-profile-link');
+      profileLink.href = '/user/' + loginStatus.id;
+      const logoutLink = document.getElementById('logout-link');
+      logoutLink.href = loginStatus.logoutUrl;
+    } else {
+      loginLink.hidden = false;
+      usernameDropdown.hidden = true;
+      loginLink.href = loginStatus.loginUrl;
+      headerUsername.hidden = true;
+    }
+  });
 }
 
 addLoadEvent(configureHeaderLoginStatus);
