@@ -7,9 +7,9 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
   <title>Deals | Deal Finder</title>
-  <script src="/js/util.js"></script>
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="/js/util.js"></script>
   <script src="/js/all-section-deals.js"></script>
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
@@ -32,7 +32,7 @@
           <a class="dropdown-item" href="#">Trending</a>
           <a class="dropdown-item" href="#">Votes</a>
           <a class="dropdown-item" href="#">New</a>
-          <a id="sort-dist" class="dropdown-item" href="#" onclick="return getLocation();">Distance</a>
+          <a id="sort-dist" class="dropdown-item" href="" onclick="return getLocation();">Distance</a>
         </div>
       </div>
       <div class="row row-deals"></div>

@@ -163,6 +163,9 @@ function showPosition(position) {
   const latitude = position.coords.latitude;
   console.log('Longitude: ' + position.coords.longitude);
   const longitude = position.coords.longitude;
-  const dist = getElementById('#sort-dist');
-  dist.href += '/?latitude=' + latitude + '&?longitude=' + longitude;
+  const dist = document.getElementById('sort-dist');
+  dist.href += '/?latitude=' + latitude + '&longitude=' + longitude;
+  console.log(dist.href);
+  window.location = dist.href;
+  return false;
 }

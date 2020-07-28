@@ -20,8 +20,8 @@ function createAllDealCards(deals, reqSection) {
       reqSection + '/votes';
     dropdownMenu.children[2].href = '/all-section-deals/' +
       reqSection + '/new';
-    //dropdownMenu.children[3].href = '/all-section-deals/' +
-    //  reqSection + '/distance';
+    dropdownMenu.children[3].href = '/all-section-deals/' +
+      reqSection + '/distance';
   } else {
     const dropdownSection = document.querySelector('.dropdown-sort');
     dropdownSection.style.display = 'none';
