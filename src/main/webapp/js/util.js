@@ -144,13 +144,14 @@ function throttle(func, limit) {
 }
 
 /**
- * Retreives user's location
+ * Retrieves user's location
  */
 function getLocation() {
   if (navigator.geolocation) {
+    console.log("HI");
     navigator.geolocation.getCurrentPosition(showPosition);
   } else {
-    x.innerHTML = 'Geolocation is not supported by this browser.';
+    return false;
   }
 }
 
@@ -159,5 +160,9 @@ function getLocation() {
  */
 function showPosition(position) {
   console.log('Latitude: ' + position.coords.latitude);
+  const latitude = position.coords.latitude;
   console.log('Longitude: ' + position.coords.longitude);
+  const longitude = position.coords.longitude;
+  const dist = getElementById('#sort-dist');
+  dist.href += '/?latitude=' + latitude + '&?longitude=' + longitude;
 }
