@@ -96,7 +96,7 @@ function createCarouselElements(numCarouselSlidesList,
         rowElement.innerHTML += `
           <div class="${numCol} mt-5">
             <div id=deal-card-${i} class="card deal-card h-100">
-              <img class="card-img-top home-deal-img" src="" alt="">
+              <img class="card-img-top deal-card-img" src="" alt="">
               <div class="card-body d-flex flex-column">
                 <div class="card-text deal-time"></div>
                 <div class="d-flex justify-content-end" 
