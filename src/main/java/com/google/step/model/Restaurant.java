@@ -1,8 +1,8 @@
 package com.google.step.model;
 
-public class Restaurant {
+import com.google.step.datamanager.RestaurantGenerator;
 
-  private static final String API_KEY = "AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28";
+public class Restaurant {
 
   public final long id;
   public final String name;
@@ -56,7 +56,7 @@ public class Restaurant {
             + "&photoreference="
             + photoReference
             + "&key="
-            + API_KEY;
+            + RestaurantGenerator.API_KEY;
     return url;
   }
 }

@@ -172,11 +172,11 @@ function configureProfileEditButton(user) {
  */
 function configureFollowButton(user, userLoggedInId) {
   const followButton = document.getElementById('follow-btn');
-  $.ajax('/api/follows/',
-      {data: {followerId: userLoggedInId, followeeId: user.id}})
+  $.ajax('/api/follows/users/' + user.id,
+      {data: {followerId: userLoggedInId}})
       .done((isFollowing) => {
         followButton.hidden = false;
-        if (isFollowing === 'true') {
+        if (isFollowing.startsWith('true')) {
           followButton.innerText = 'Unfollow';
           followButton.onclick = () => unfollow(user);
         } else {
