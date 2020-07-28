@@ -15,6 +15,7 @@
 
 .home-deal-img {
   height: 270px;
+  object-fit: cover;
 }
 
 #search-btn {
