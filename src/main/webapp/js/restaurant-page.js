@@ -54,6 +54,54 @@ function unfollow(restaurantId) {
 }
 
 /**
+ * Initializes the restaurant map.
+ * @param {object} restaurant restaurant object.
+ */
+function initMap(restaurant) {
+  const center = {lat: 1.352, lng: 103.8198};
+  const map = new google.maps.Map(document.getElementById('restaurant-map'),
+      {zoom: 13, center: center});
+  setRestaurantMarkers(restaurant.placeIds, map);
+}
+
+/**
+ * Sets markers on the map.
+ * @param {String[]} placeIds place ids of restaurant branches
+ * @param {Object} map google map
+ */
+function setRestaurantMarkers(placeIds, map) {
+  const service = new google.maps.places.PlacesService(map);
+  const bounds = new google.maps.LatLngBounds();
+  for (const placeId of placeIds) {
+    const request = {
+      placeId: placeId,
+      fields: ['formatted_address', 'geometry', 'name'],
+    };
+
+    service.getDetails(request, function(place, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        const marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location,
+        });
+        bounds.extend(marker.position);
+        map.panToBounds(bounds);
+        map.fitBounds(bounds);
+
+        const infoWindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(marker, 'click', function() {
+          infoWindow.setContent(
+              `<div>
+                  <h6> ${place.name} </h6>
+                  <p> ${place.formatted_address} </p>`);
+          infoWindow.open(map, marker);
+        });
+      }
+    });
+  }
+}
+
+/**
  * Configures deals of the restaurant.
  * @param {Object} deals deals of the restaurant
  */
@@ -82,6 +130,7 @@ function initRestaurantPage() {
   $.ajax('/api/restaurants/' + id)
       .done((restaurant) => {
         configureRestaurantInfo(restaurant);
+        initMap(restaurant);
         configureDealsOfRestaurant(restaurant.deals);
         configureDealsHeader(restaurant);
       });

@@ -37,6 +37,21 @@ function loadDealDataToPage(deal) {
   const dealImageElement = document.getElementById('deal-image');
   dealImageElement.src = deal.image;
 
+  const voteElement = document.getElementById('votes-num');
+  votes = deal.votes;
+  voteElement.innerText = deal.votes;
+
+  loadDataToDetails(deal);
+  loadDataToForm(deal);
+
+  dealId = deal.id;
+}
+
+/**
+ * Loads the deal onto the details tab
+ * @param {object} deal
+ */
+function loadDataToDetails(deal) {
   const dealInfoElement = document.getElementById('deal-info');
   dealInfoElement.innerText = deal.description;
 
@@ -53,21 +68,40 @@ function loadDealDataToPage(deal) {
   dealPoster.href = '/user/' + deal.poster.id;
   dealPoster.innerText = deal.poster.username;
 
-  const dealSource = document.getElementById('deal-source');
-  dealSource.innerText = deal.source;
-  dealSource.href = deal.source;
-
-  const voteElement = document.getElementById('votes-num');
-  votes = deal.votes;
-  voteElement.innerText = deal.votes;
-
   const tagsContainer = document.getElementById('tags');
   for (const tag of deal.tags) {
     const tagContainer = createTagContainer(tag);
     tagsContainer.appendChild(tagContainer);
   }
 
-  dealId = deal.id;
+  const dealSource = document.getElementById('deal-source');
+  dealSource.innerText = deal.source;
+}
+
+/**
+ * Loads the deal onto the edit form
+ * @param {object} deal
+ */
+function loadDataToForm(deal) {
+  const descriptionInput = document.getElementById('description-input');
+  descriptionInput.value = deal.description;
+
+  const restaurantInput = document.getElementById('restaurant-input');
+  restaurantInput.value = deal.restaurant.name;
+
+  const startInput = document.getElementById('start-input');
+  startInput.value = deal.start;
+  const endInput = document.getElementById('end-input');
+  endInput.value = deal.end;
+
+  const posterInput = document.getElementById('poster-input');
+  posterInput.value = deal.poster.username;
+
+  const dealSource = document.getElementById('source-input');
+  dealSource.value = deal.source;
+
+  const restaurantIdInput = document.getElementById('restaurant-id-input');
+  restaurantIdInput.value = deal.restaurant.id;
 }
 
 /**
@@ -329,6 +363,44 @@ function initVotes() {
 }
 
 /**
+ * Shows the form to edit the deal, and hides the deal details
+ */
+function handleEdit() {
+  $('#deal-details').hide();
+  $('#edit-form').show();
+}
+
+/**
+ * Shows the deal details and hides the form
+ */
+function handleCancelEdit() {
+  $('#deal-details').show();
+  $('#edit-form').hide();
+}
+
+/**
+ * Submits the form with a PUT request and refreshes the page
+ */
+function handleSubmit() {
+  const form = document.getElementById('edit-form');
+  const validateGroup = form.querySelectorAll('.validate-me');
+  validateGroup.forEach((element) => {
+    element.classList.add('was-validated');
+  });
+  if (!form.checkValidity() || !checkFormDates()) {
+    return;
+  }
+
+  $.ajax({
+    type: 'PUT',
+    url: '/api/deals/' + dealId,
+    data: $(form).serialize(),
+  }).done((a) => {
+    location.reload();
+  });
+}
+
+/**
  * Calls backend for data on deal
  */
 function initDeal() {
@@ -343,6 +415,26 @@ function initDeal() {
       .fail(() => {
         showNotFound();
       });
+}
+
+/**
+ * Handles restaurant selection
+ * @param {object} restaurant
+ */
+function selectRestaurant(restaurant) {
+  document.getElementById('restaurant-id-input').value = restaurant.id;
+  document.getElementById('restaurant-input').value = restaurant.name;
+}
+
+/**
+ * Checks if the dates of the form is ordered and displays error message.
+ * @return {boolean}
+ */
+function checkFormDates() {
+  const start = document.getElementById('start-input');
+  const end = document.getElementById('end-input');
+  const message = document.getElementById('date-error-msg');
+  return checkDatesOrdered(start, end, message);
 }
 
 /**
@@ -367,6 +459,10 @@ function loadUserLoginInfo() {
 async function initPage() {
   await loadUserLoginInfo();
   initDeal();
+  initSearchRestaurant(
+      document.getElementById('search-container'),
+      selectRestaurant,
+  );
 }
 
 addLoadEvent(() => {

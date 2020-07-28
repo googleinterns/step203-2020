@@ -193,11 +193,9 @@ public class JsonFormatter {
     userMap.put("id", user.id);
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
-      if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
-      } else {
-        userMap.put("picture", "/images/default-profile-pic.svg");
-      }
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
     return userMap;
   }

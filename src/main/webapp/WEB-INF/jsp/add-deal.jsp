@@ -78,14 +78,7 @@
 
             <div class="form-group">
               <label for="restaurant-input">Restaurant</label>
-              <div class="d-flex align-items-center">
-                <i class="fa fa-search mr-2"></i>
-                <input autocomplete="off" type="search" placeholder="Search for a restaurant..." id="restaurant-input"
-                  class="flex-grow-1" style="outline: 0;border-width: 0 0 2px;">
-              </div>
-              <div class="search-menu-container">
-                <div id="restaurant-search-results" class="search-menu"></div>
-              </div>
+              <div id="search-container"></div>
               <div class="validate-me mt-2">
                 <div id="restaurant-selected">
                   No Restaurant Selected.
@@ -128,6 +121,10 @@
   <script src="tagsinput/tagsinput.js"></script>
   <!-- Core theme JS-->
   <script src="js/scripts.js"></script>
+  <!-- Restaurant search JS-->
+  <script src="/js/restaurant-search-util.js"></script>
+  <!-- Form validity util JS-->
+  <script src="/js/form-validity-util.js"></script>
   <!-- Page JS -->
   <script src="js/add-deal.js"></script>
 </body>
