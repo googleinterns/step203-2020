@@ -3,8 +3,8 @@
  * @param {object} homePage
  */
 function createHomePage(homePage) {
-  const homePageSections = ['popularDeals', 'restaurantsIFollow',
-    'usersIFollow', 'tagsIFollow'];
+  const homePageSections = ['trending', 'users',
+    'restaurants', 'tags'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
     if (homePage[homePageSections[i]].length == 0) {
