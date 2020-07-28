@@ -44,7 +44,7 @@ public class CommentManagerDatastore implements CommentManager {
       sentiment = getCommentSentiment(content) + "";
       entity.setProperty("sentiment", sentiment);
     } catch (IOException e) {
-
+      entity.setProperty("sentiment", "0");
     }
     Key key = datastore.put(entity);
     long id = key.getId();
@@ -100,7 +100,7 @@ public class CommentManagerDatastore implements CommentManager {
         float sentiment = getCommentSentiment(content);
         commentEntity.setProperty("sentiment", sentiment);
       } catch (IOException e) {
-
+        commentEntity.setProperty("sentiment", "0");
       }
     }
     datastore.put(commentEntity);
