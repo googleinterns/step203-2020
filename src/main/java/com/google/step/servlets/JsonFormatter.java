@@ -252,6 +252,18 @@ public class JsonFormatter {
   }
 
   /**
+   * Returns a json of home page section data.
+   *
+   * @param homePageSectionDealsMaps a list of deal maps for a home page section
+   * @return a json of home page section data
+   */
+  public static String getHomePageSectionJson(List<Map<String, Object>> homePageSectionDealsMaps) {
+    Gson gson = new Gson();
+    String json = gson.toJson(homePageSectionDealsMaps);
+    return json;
+  }
+
+  /**
    * Returns a map of brief deal info for home page
    *
    * @param deal the deal to create a map for

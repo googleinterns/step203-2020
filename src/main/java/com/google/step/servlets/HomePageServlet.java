@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +52,11 @@ public class HomePageServlet extends HttpServlet {
 
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
+
+  private static final String TRENDING_SECTION = "trending";
+  private static final String USERS_SECTION = "users";
+  private static final String RESTAURANTS_SECTION = "restaurants";
+  private static final String TAGS_SECTION = "tags";
 
   public HomePageServlet(
       DealManager dealManager,
@@ -99,71 +104,130 @@ public class HomePageServlet extends HttpServlet {
     }
   }
 
-  /** Gets the deals for the home page */
+  /** Gets the deals for the home page/ view all deals */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Deal> allDeals = dealManager.getAllDeals();
-    List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
-    List<Deal> dealsByUsersFollowed = new ArrayList<>();
-    List<Deal> dealsByRestaurantsFollowed = new ArrayList<>();
-    List<Deal> dealsByTagsFollowed = new ArrayList<>();
-    if (userService.isUserLoggedIn()) {
-      String email = userService.getCurrentUser().getEmail();
-      User user = userManager.readUserByEmail(email);
-      long userId = user.id;
-      dealsByUsersFollowed =
-          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId));
-      dealsByRestaurantsFollowed =
-          dealManager.getDealsPublishedByRestaurants(
-              followManager.getFollowedRestaurantIds(userId));
-      dealsByTagsFollowed = getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+    String homePageSection = request.getParameter("section");
+    if (homePageSection != null
+        && !homePageSection.equals(TRENDING_SECTION)
+        && !homePageSection.equals(USERS_SECTION)
+        && !homePageSection.equals(RESTAURANTS_SECTION)
+        && !homePageSection.equals(TAGS_SECTION)) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     }
-    List<List<Deal>> homePageDeals =
-        new ArrayList<>(
-            Arrays.asList(
-                trendingDeals,
-                dealsByUsersFollowed,
-                dealsByRestaurantsFollowed,
-                dealsByTagsFollowed));
-    response.setContentType("application/json;");
-
-    List<List<Map<String, Object>>> homePageDealsMaps = getHomePageDealMaps(homePageDeals);
-    Map<String, Object> homePageMap = new HashMap<>();
-    homePageMap.put("popularDeals", homePageDealsMaps.get(0));
-    homePageMap.put("usersIFollow", homePageDealsMaps.get(1));
-    homePageMap.put("restaurantsIFollow", homePageDealsMaps.get(2));
-    homePageMap.put("tagsIFollow", homePageDealsMaps.get(3));
-    response.getWriter().println(JsonFormatter.getHomePageJson(homePageMap));
+    // if no home page section is being specified to view all deals, return home page data
+    if (userService.isUserLoggedIn()) { // all sections are available
+      response.setContentType("application/json;");
+      response.getWriter().println(userLoggedIn(homePageSection));
+    } else {
+      String result = userNotLoggedIn(homePageSection);
+      if (result != null) {
+        response.setContentType("application/json;");
+        response.getWriter().println(result);
+      } else {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
+      }
+    }
   }
 
-  /** Creates a list of list of deal maps for the home page */
-  private List<List<Map<String, Object>>> getHomePageDealMaps(List<List<Deal>> homePageDeals) {
-    List<List<Map<String, Object>>> homePageDealsMapList = new ArrayList<>();
-    for (List<Deal> dealList : homePageDeals) {
-      List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<>();
-      for (Deal deal : dealList) {
-        User user = userManager.readUser(deal.posterId);
-        Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
-        List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
-        int votes = voteManager.getVotes(deal.id);
-        Map<String, Object> homePageDealMap =
-            JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);
-        homePageSectionDealMaps.add(homePageDealMap);
-      }
-      homePageDealsMapList.add(homePageSectionDealMaps);
+  private String userLoggedIn(String homePageSection) {
+    String email = userService.getCurrentUser().getEmail();
+    User user = userManager.readUserByEmail(email);
+    long userId = user.id;
+    if (homePageSection == null) {
+      // for each section, limit to 8 deals for home page
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(homePageSection, userId, 8);
+      Map<String, Object> homePageMap = new HashMap<>();
+      homePageMap.put(
+          TRENDING_SECTION,
+          homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
+      homePageMap.put(RESTAURANTS_SECTION, homePageDealsMaps.get(2));
+      homePageMap.put(
+          TAGS_SECTION, homePageDealsMaps.get(3).stream().limit(8).collect(Collectors.toList()));
+      return JsonFormatter.getHomePageJson(homePageMap);
+      // user requested to view all deals of particular section, no
+    } else {
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(homePageSection, userId, -1);
+      return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     }
-    return homePageDealsMapList;
+  }
+
+  private String userNotLoggedIn(String homePageSection) {
+    if (homePageSection == null) { // only trending will be shown when not logged in
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(TRENDING_SECTION, -1, -1);
+      Map<String, Object> homePageMap = new HashMap<>();
+      homePageMap.put(
+          TRENDING_SECTION,
+          homePageDealsMaps.get(0).stream().limit(8).collect(Collectors.toList()));
+      return JsonFormatter.getHomePageJson(homePageMap);
+    } else if (homePageSection.equals(TRENDING_SECTION)) {
+      // User views all deals for trending section
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(homePageSection, -1, -1);
+      return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
+    } else { // user is unable to view all deals for other sections when not logged in
+      return null;
+    }
+  }
+
+  /** Gets a list of list of maps based on the required section(s) */
+  private List<List<Map<String, Object>>> getSectionListMaps(
+      String section, long userId, int limit) {
+    List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
+    if (section == null || section.equals(TRENDING_SECTION)) {
+      List<Deal> allDeals = dealManager.getAllDeals();
+      List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);
+      totalDealMaps.add(getHomePageSectionMap(trendingDeals));
+    }
+    if (section == null || section.equals(USERS_SECTION)) {
+      List<Deal> dealsByUsersFollowed =
+          dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId), limit);
+      totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
+    }
+    if (section == null || section.equals(RESTAURANTS_SECTION)) {
+      List<Deal> dealsByRestaurantsFollowed =
+          dealManager.getDealsPublishedByRestaurants(
+              followManager.getFollowedRestaurantIds(userId), limit);
+      totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
+    }
+    if (section == null || section.equals(TAGS_SECTION)) {
+      List<Deal> dealsByTagsFollowed =
+          getDealsPublishedByTags(followManager.getFollowedTagIds(userId));
+      totalDealMaps.add(getHomePageSectionMap(dealsByTagsFollowed));
+    }
+    return totalDealMaps;
+  }
+
+  /** Creates a list of deal maps for a section */
+  private List<Map<String, Object>> getHomePageSectionMap(List<Deal> sectionDeals) {
+    List<Map<String, Object>> homePageSectionDealMaps = new ArrayList<>();
+    for (Deal deal : sectionDeals) {
+      User user = userManager.readUser(deal.posterId);
+      Restaurant restaurant = restaurantManager.readRestaurant(deal.restaurantId);
+      List<Tag> tags = tagManager.readTags(dealTagManager.getTagIdsOfDeal(deal.id));
+      int votes = voteManager.getVotes(deal.id);
+      Map<String, Object> homePageDealMap =
+          JsonFormatter.getBriefHomePageDealMap(deal, user, restaurant, tags, votes);
+      homePageSectionDealMaps.add(homePageDealMap);
+    }
+    return homePageSectionDealMaps;
   }
 
   /** Retrieves deals posted by tags followed by user */
   private List<Deal> getDealsPublishedByTags(Set<Long> tagIds) {
-    List<Long> dealIdResults = new ArrayList<>();
+    Set<Long> dealIdResults = new HashSet<>();
     for (Long id : tagIds) {
       List<Long> dealIdsWithTag = dealTagManager.getDealIdsWithTag(id);
       dealIdResults.addAll(dealIdsWithTag);
     }
     // Get rid of duplicate dealID (Deals with multiple tags)
-    List<Long> dealsWithoutDuplicates = new ArrayList<>(new HashSet<>(dealIdResults));
+    List<Long> dealsWithoutDuplicates = new ArrayList<>(dealIdResults);
     return dealManager.readDeals(dealsWithoutDuplicates);
   }
 
