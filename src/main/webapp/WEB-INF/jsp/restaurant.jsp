@@ -31,6 +31,7 @@
         <div class="col-sm-8 col-lg-9">
           <h3 id="restaurant-name">
           </h3>
+          <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
         </div>
       </div>
     </div>
@@ -51,6 +52,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <!-- Core theme JS-->
     <script src="/js/scripts.js"></script>
+    <!-- Google Maps-->
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28&libraries=places">
+    </script>
 </body>
 
 </html>
