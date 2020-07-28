@@ -16,9 +16,11 @@ import java.nio.file.Files;
 /** A class that handles populating restaurants database. */
 public class RestaurantGenerator {
 
+  public static final String API_KEY = readMapApiKey();
+  public static final String FAKE_API_KEY = "api-key";
+
   private static final String SEARCH_URL =
       "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-  private static final String API_KEY = "AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28";
   private static final String LOCATION = "1.352,103.8198";
   private static final String RADIUS = "13000";
   private static final String TYPE = "restaurant";
@@ -112,6 +114,31 @@ public class RestaurantGenerator {
       String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
 
       restaurantManager.createRestaurantWithPhotoReference(name, photoReference);
+    }
+  }
+
+  /**
+   * Returns the map api key read from the json file.
+   *
+   * @return the map api key.
+   */
+  private static String readMapApiKey() {
+    String content;
+    try {
+      File file = new File(RestaurantGenerator.class.getResource("/api-key.json").getFile());
+      content = new String(Files.readAllBytes(file.toPath()));
+    } catch (IOException | NullPointerException e) {
+      e.printStackTrace();
+      return FAKE_API_KEY;
+    }
+
+    JsonObject jsonObject;
+    try {
+      jsonObject = JsonParser.parseString(content).getAsJsonObject();
+      return jsonObject.get("map-api-key").getAsString();
+    } catch (JsonSyntaxException e) {
+      e.printStackTrace();
+      return FAKE_API_KEY;
     }
   }
 }
