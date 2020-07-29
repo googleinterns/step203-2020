@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
@@ -31,6 +33,7 @@ public class DealDetailServlet extends HttpServlet {
   private final UserManager userManager;
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
+  private final CommentManager commentManager;
   private final UserService userService;
 
   public DealDetailServlet() {
@@ -38,6 +41,7 @@ public class DealDetailServlet extends HttpServlet {
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
+    commentManager = new CommentManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -46,11 +50,13 @@ public class DealDetailServlet extends HttpServlet {
       UserManager userManager,
       VoteManager voteManager,
       RestaurantManager restaurantManager,
+      CommentManager commentManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
+    this.commentManager = commentManager;
     this.userService = userService;
   }
 
@@ -87,6 +93,7 @@ public class DealDetailServlet extends HttpServlet {
 
     response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
+    commentManager.deleteAllCommentsOfDeal(id);
   }
 
   /** Gets the deal with the given id parameter */
