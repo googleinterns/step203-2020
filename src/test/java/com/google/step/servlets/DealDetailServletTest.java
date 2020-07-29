@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
@@ -12,6 +13,7 @@ import static com.google.step.TestConstants.TAG_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,11 +33,14 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ImageUploader.class)
 public class DealDetailServletTest {
 
   private static final int NUM_VOTES = 123;
@@ -160,12 +165,17 @@ public class DealDetailServletTest {
 
   @Test
   public void testDoDelete_success() throws IOException {
+    // mock static ImageUploader
+    PowerMockito.mockStatic(ImageUploader.class);
+
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doDelete(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
     verify(mockDealManager).deleteDeal(DEAL_ID_A);
+    PowerMockito.verifyStatic(ImageUploader.class, times(1));
+    ImageUploader.deleteImage(BLOBKEY_A);
   }
 
   @Test
