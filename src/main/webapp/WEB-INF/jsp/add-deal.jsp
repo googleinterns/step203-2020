@@ -27,7 +27,7 @@
   <div class="container">
     <section class="page-section">
       <h2 class="page-section-heading text-center text-secondary mb-4">Submit A Deal</h2>
-      <div class="row">
+      <div class="row" id="form-div">
         <div class="col-lg-8 mx-auto">
           <form method="post" id="deal-form" name="dealform" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="form-group validate-me">
@@ -105,6 +105,9 @@
           </form>
         </div>
       </div>
+      <div id="logged-out" style="display: none;">
+        You need to be logged in to submit a deal.
+      </div>
     </section>
   </div>
   </div>
@@ -119,6 +122,8 @@
   <script src="js/scripts.js"></script>
   <!-- Restaurant search JS-->
   <script src="/js/restaurant-search-util.js"></script>
+  <!-- Form validity util JS-->
+  <script src="/js/form-validity-util.js"></script>
   <!-- Page JS -->
   <script src="js/add-deal.js"></script>
 </body>

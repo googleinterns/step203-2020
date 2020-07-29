@@ -22,11 +22,15 @@ public class AuthenticationServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
+    String urlToRedirect = request.getParameter("target");
+    if (urlToRedirect == null) {
+      urlToRedirect = "/";
+    }
+
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      String logoutUrl = "/api/logout";
 
       User user;
       try {
@@ -41,8 +45,7 @@ public class AuthenticationServlet extends HttpServlet {
       jsonObject.addProperty("logoutUrl", logoutUrl);
       response.getWriter().println(jsonObject);
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+      String loginUrl = userService.createLoginURL(urlToRedirect);
 
       JsonObject json = new JsonObject();
       json.addProperty("isLoggedIn", false);

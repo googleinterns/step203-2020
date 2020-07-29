@@ -3,10 +3,13 @@
  * @param {object} homePage
  */
 function createHomePage(homePage) {
-  const homePageSections = ['popularDeals', 'restaurantsIFollow',
-    'usersIFollow', 'tagsIFollow'];
+  const homePageSections = ['trending', 'users',
+    'restaurants', 'tags'];
   const carouselElements = document.querySelectorAll('.carousel.slide');
   for (let i = 0; i < carouselElements.length; i++) {
+    if (homePage[homePageSections[i]].length == 0) {
+      continue;
+    }
     const homePageData = homePage[homePageSections[i]];
     const dealCardId = 'deal-card-' + i;
     const dealCardElements =
@@ -51,21 +54,41 @@ function createHomePage(homePage) {
  * Creates carousel on home page
  * @param {object} numCarouselSlidesList
  * @param {object} numDealPerSlide
+ * @param {object} homePageDeals
  */
-function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
+function createCarouselElements(numCarouselSlidesList,
+    numDealPerSlide, homePageDeals) {
   const carouselElements = document.querySelectorAll('.carousel.slide');
+  const homePageSections = ['popularDeals', 'restaurantsIFollow',
+    'usersIFollow', 'tagsIFollow'];
+
   // number of sections on homepage
   for (let i = 0; i < carouselElements.length; i++) {
+    if (homePageDeals[homePageSections[i]].length == 0) {
+      // set display to none if there is no data for that section
+      carouselElements[i].children[2].style.display = 'none';
+      carouselElements[i].children[3].style.display = 'none';
+
+      // inform users to log in to view
+      const showNotFound = document.createElement('h5');
+      showNotFound.className = 'text-center mt-5';
+      showNotFound.innerText = 'Please log in to view.';
+      carouselElements[i].appendChild(showNotFound);
+      continue;
+    }
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[0];
     const carouselItemList = carouselElements[i].children[1];
     const numCarouselSlides = numCarouselSlidesList[i];
+
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
       indicatorListChild.dataset.target = '#carousel-' + i;
       indicatorListChild.setAttribute('data-slide-to', j);
+
       const carouselItemListChild = document.createElement('div');
       carouselItemListChild.classList.add('carousel-item');
+
       const rowElement = document.createElement('div');
       rowElement.className = 'row';
       const numCol = 'col-md-' + 12 / numDealPerSlide;
@@ -73,7 +96,7 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
         rowElement.innerHTML += `
           <div class="${numCol} mt-5">
             <div id=deal-card-${i} class="card deal-card h-100">
-              <img class="card-img-top home-deal-img" src="" alt="">
+              <img class="card-img-top deal-card-img" src="" alt="">
               <div class="card-body d-flex flex-column">
                 <div class="card-text deal-time"></div>
                 <div class="d-flex justify-content-end" 
@@ -119,7 +142,7 @@ function createCarouselElements(numCarouselSlidesList, numDealPerSlide) {
 function initHomePage() {
   $.ajax('/api/home')
       .done((homePageDeals) => {
-        createCarouselElements([2, 2, 3, 3], 4);
+        createCarouselElements([2, 2, 3, 3], 4, homePageDeals);
         createHomePage(homePageDeals);
       });
 }

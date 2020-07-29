@@ -38,9 +38,10 @@ public class JsonFormatter {
     return json;
   }
 
-  public static String getRestaurantJson(Restaurant restaurant, List<Deal> deals) {
+  public static String getRestaurantJson(
+      Restaurant restaurant, List<Deal> deals, List<String> placeIds) {
     Gson gson = new Gson();
-    String json = gson.toJson(getRestaurantMap(restaurant, deals));
+    String json = gson.toJson(getRestaurantMap(restaurant, deals, placeIds));
     return json;
   }
 
@@ -99,12 +100,14 @@ public class JsonFormatter {
     return dealMap;
   }
 
-  private static Map<String, Object> getRestaurantMap(Restaurant restaurant, List<Deal> deals) {
+  private static Map<String, Object> getRestaurantMap(
+      Restaurant restaurant, List<Deal> deals, List<String> placeIds) {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
     restaurantMap.put("deals", getDealListBriefMaps(deals));
+    restaurantMap.put("placeIds", placeIds);
     return restaurantMap;
   }
 
@@ -112,7 +115,7 @@ public class JsonFormatter {
     Map<String, Object> restaurantMap = new HashMap<>();
     restaurantMap.put("id", restaurant.id);
     restaurantMap.put("name", restaurant.name);
-    restaurantMap.put("photoUrl", getImageUrl(restaurant.photoBlobkey));
+    restaurantMap.put("photoUrl", restaurant.photoUrl);
     return restaurantMap;
   }
 
@@ -190,11 +193,9 @@ public class JsonFormatter {
     userMap.put("id", user.id);
     userMap.put("username", user.username);
     if (user.photoBlobKey.isPresent()) {
-      if (user.photoBlobKey.isPresent()) {
-        userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
-      } else {
-        userMap.put("picture", "/images/default-profile-pic.svg");
-      }
+      userMap.put("picture", getImageUrl(user.photoBlobKey.get()));
+    } else {
+      userMap.put("picture", "/images/default-profile-pic.svg");
     }
     return userMap;
   }
@@ -247,6 +248,18 @@ public class JsonFormatter {
   public static String getHomePageJson(Map<String, Object> homePageDealsMaps) {
     Gson gson = new Gson();
     String json = gson.toJson(homePageDealsMaps);
+    return json;
+  }
+
+  /**
+   * Returns a json of home page section data.
+   *
+   * @param homePageSectionDealsMaps a list of deal maps for a home page section
+   * @return a json of home page section data
+   */
+  public static String getHomePageSectionJson(List<Map<String, Object>> homePageSectionDealsMaps) {
+    Gson gson = new Gson();
+    String json = gson.toJson(homePageSectionDealsMaps);
     return json;
   }
 

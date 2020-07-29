@@ -10284,27 +10284,14 @@ body > .container {
   background-position: center center;
 }
 
-.home-deal-img {
-  height: 270px;
-}
-
 .deal-img {
   height: 300px;
   width: auto;
 }
 
-.carousel-control-prev {
-  margin-left: -125px;
-  filter: invert(100%);
-}
-.carousel-control-next {
-  margin-right: -125px;
-  filter: invert(100%);
-}
-
-.carousel-indicators {
-  filter: invert(100%);
-  margin-bottom: -50px;
+.deal-card-img {
+  height: 270px;
+  object-fit: cover;
 }
 
 .search-menu-container {
@@ -10331,9 +10318,4 @@ body > .container {
   color: #212529;
   background-color: rgba(0, 0, 0, 0.075);
   cursor: pointer;
-}
-
-.deal-card-img {
-  max-height: 200px;
-  object-fit: cover;
 }
