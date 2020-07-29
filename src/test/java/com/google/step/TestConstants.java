@@ -214,6 +214,8 @@ public class TestConstants {
 
   public static final String SENTIMENT_A = "0.5";
   public static final String SENTIMENT_B = "1.0";
+  public static final String TOKEN_A = "ghcnyoawecf";
+  public static final String TOKEN_B = "bhveigsurdk";
 
   public static final Comment COMMENT_A =
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A, SENTIMENT_A);

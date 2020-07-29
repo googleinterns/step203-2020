@@ -1,9 +1,11 @@
 package com.google.step.datamanager;
 
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -12,6 +14,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.QueryResultList;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
@@ -24,6 +27,7 @@ import java.util.List;
 
 public class CommentManagerDatastore implements CommentManager {
 
+  private static final int PAGE_SIZE = 5;
   private final DatastoreService datastore;
 
   public CommentManagerDatastore() {
@@ -52,20 +56,33 @@ public class CommentManagerDatastore implements CommentManager {
     return new Comment(id, dealId, userId, content, timestamp, sentiment);
   }
 
-  /** Gets the list of comments with the given dealId */
   @Override
-  public List<Comment> getCommentsForDeal(long dealId) {
+  public CommentsWithToken getCommentsForDeal(long dealId, String token)
+      throws IllegalArgumentException {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE);
+    if (token != null) {
+      fetchOptions.startCursor(Cursor.fromWebSafeString(token));
+    }
+
     Query query =
         new Query("Comment")
             .setFilter(propertyFilter)
             .addSort("timestamp", SortDirection.DESCENDING);
+
     PreparedQuery pq = datastore.prepare(query);
+    QueryResultList<Entity> results;
+    results = pq.asQueryResultList(fetchOptions);
+
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : pq.asIterable()) {
+    for (Entity entity : results) {
       comments.add(transformEntitytoComment(entity));
     }
-    return comments;
+
+    String newToken = results.getCursor().toWebSafeString();
+
+    return new CommentsWithToken(comments, newToken);
   }
 
   private float getCommentSentiment(String content) throws IOException {

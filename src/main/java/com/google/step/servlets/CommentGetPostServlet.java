@@ -4,6 +4,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
+import com.google.step.datamanager.CommentsWithToken;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Comment;
@@ -46,12 +47,26 @@ public class CommentGetPostServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    List<Comment> comments = commentManager.getCommentsForDeal(dealId);
+
+    String token = request.getParameter("token");
+
+    CommentsWithToken commentsWithToken;
+    try {
+      commentsWithToken = commentManager.getCommentsForDeal(dealId, token);
+    } catch (IllegalArgumentException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+    List<Comment> comments = commentsWithToken.comments;
+    String newToken = commentsWithToken.token;
+
     List<User> users =
         userManager.readUsers(
             comments.stream().map(comment -> comment.userId).collect(Collectors.toList()));
+
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getCommentsJson(comments, users));
+    response.getWriter().println(JsonFormatter.getCommentsWithTokenJson(comments, users, newToken));
   }
 
   /** Posts a comment for the deal with the given id parameter */
