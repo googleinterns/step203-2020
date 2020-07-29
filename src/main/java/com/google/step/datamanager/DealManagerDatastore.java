@@ -182,8 +182,6 @@ public class DealManagerDatastore implements DealManager {
   @Override
   public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort) {
     return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, sort);
-    // List<Long> list = new ArrayList<>(Arrays.asList(1L, 2L));
-    // List<Object> list1 = list;
   }
 
   /** Retrieves deals posted by restaurants */
