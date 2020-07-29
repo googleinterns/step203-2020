@@ -41,6 +41,7 @@ function loadDealDataToPage(deal) {
   $('#deal-page').show();
   if (deal.poster.id != userId) {
     $('#menu-btn').hide();
+    $('#edit-btn').hide();
   }
 
   const dealTitleElement = document.getElementById('deal-title');

@@ -67,7 +67,7 @@
                 <p>Source: <span id="deal-source"></span></p>
                 <p>Tags: <span id="tags"></span></p>
               </div>
-              <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
+              <button id="edit-btn" class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
             <form style="display:none" id="edit-form">
               <div class="form-group validate-me form-inline">
