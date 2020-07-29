@@ -24,22 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.http.client.utils.URIBuilder;
 
-@WebServlet("/api/distance")
-public class DistanceServlet extends HttpServlet {
+public class DistanceUtil {
 
-  private RestaurantPlaceManager restaurantPlaceManager;
-  private String latitude;
-  private String longitude;
-  private Gson gson = new Gson();
-  private String API_KEY;
-
-  public DistanceServlet(RestaurantPlaceManager restaurantPlaceManager) {
-    this.restaurantPlaceManager = restaurantPlaceManager;
-  }
-
-  public DistanceServlet() {
-    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
-  }
+  private static RestaurantPlaceManager restaurantPlaceManager;
+  private static Gson gson = new Gson();
+  private static final String API_KEY= "AIzaSyD7eIOONxtNsDb14Sr7uTtzQJDa7yNb9hI";
 
   private class DistanceResponse {
     private class Row {
@@ -67,27 +56,7 @@ public class DistanceServlet extends HttpServlet {
     private List<Row> rows;
   }
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String latitude = request.getParameter("latitude");
-      this.latitude = latitude;
-      String longitude = request.getParameter("longitude");
-      this.longitude = longitude;
-      List<Deal> deals = new ArrayList<>();
-      Map<Deal, Integer> dealDistMap = new HashMap<>();
-      for (Deal deal: deals) {
-        Map<String, Integer> distances = getDistances(deal, latitude, longitude);
-        if (!distances.isEmpty()) {
-          Integer minDistance = distances.values().stream().min(Integer::compare).get();
-          dealDistMap.put(deal, minDistance);
-        }
-      }
-      List<Entry<Deal, Integer>> list = new ArrayList<>(dealDistMap.entrySet());
-      list.sort(Entry.comparingByValue());
-      return JsonFormatter.getHomePageSectionJson(Util.getHomePageSectionMap(list));
-    }
-
-    private Map<String, Integer> getDistances(Deal deal, String latitude, String longitude)
+    public static Map<String, Integer> getDistances(Deal deal, String latitude, String longitude)
         throws IOException {
       HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
       StringBuilder sb = new StringBuilder();

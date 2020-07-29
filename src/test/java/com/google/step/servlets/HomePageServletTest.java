@@ -10,6 +10,8 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_B_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_C_JSON;
+import static com.google.step.TestConstants.PLACE_ID_A;
+import static com.google.step.TestConstants.PLACE_ID_B;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.TAG_A;
 import static com.google.step.TestConstants.USER_A;
@@ -32,6 +34,7 @@ import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.DealVoteCountManager;
 import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
@@ -39,6 +42,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +64,7 @@ public class HomePageServletTest {
   private TagManager mockTagManager;
   private FollowManager mockFollowManager;
   private DealVoteCountManager mockDealVoteCountManager;
+  private RestaurantPlaceManager mockRestaurantPlaceManager;
   private UserService mockUserService;
 
   @Before
@@ -72,6 +77,7 @@ public class HomePageServletTest {
     mockUserService = mock(UserService.class);
     mockFollowManager = mock(FollowManager.class);
     mockDealVoteCountManager = mock(DealVoteCountManager.class);
+    mockRestaurantPlaceManager = mock(RestaurantPlaceManager.class);
     homePageServlet =
         new HomePageServlet(
             mockDealManager,
@@ -383,5 +389,24 @@ public class HomePageServletTest {
 
     homePageServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_SortDirection() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getParameter("section")).thenReturn("");
+    when(request.getParameter("sort")).thenReturn("distance");
+
+    when(request.getParameter("latitude")).thenReturn("1.2966");
+    when(request.getParameter("longitude")).thenReturn("103.7764");
+
+    setUpUserAuthentication();
+
+    when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_ID_A))
+        .thenReturn(new HashSet<>(Arrays.asList(PLACE_ID_A, PLACE_ID_B)));
+
+    homePageServlet.doGet(request, response);
   }
 }

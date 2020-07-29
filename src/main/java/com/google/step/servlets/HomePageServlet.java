@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -48,6 +49,7 @@ public class HomePageServlet extends HttpServlet {
   private final TagManager tagManager;
   private final FollowManager followManager;
   private final DealVoteCountManager dealVoteCountManager;
+
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
@@ -59,6 +61,9 @@ public class HomePageServlet extends HttpServlet {
   private static final String VOTE_SORT = "votes";
   private static final String NEW_SORT = "new";
   private static final String DISTANCE_SORT = "distance";
+
+  private String latitude = null;
+  private String longitude = null;
 
   public HomePageServlet(
       DealManager dealManager,
@@ -127,6 +132,8 @@ public class HomePageServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    latitude = request.getParameter("latitude");
+    longitude = request.getParameter("longitude");
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       response.setContentType("application/json;");
@@ -249,17 +256,21 @@ public class HomePageServlet extends HttpServlet {
       }
     } else if (sort.equals(DISTANCE_SORT)) {
       deals = dealManager.readDeals(dealIds);
-      Util.getDistances(deals, latitude, longitude);
-      List<Deal> deals = new ArrayList<>();
       Map<Deal, Integer> dealDistMap = new HashMap<>();
       for (Deal deal : deals) {
-        Map<String, Integer> distances = getDistances(deal, latitude, longitude);
-        if (!distances.isEmpty()) {
-          Integer minDistance = distances.values().stream().min(Integer::compare).get();
-          dealDistMap.put(deal, minDistance);
+        try {
+          Map<String, Integer> distances = DistanceUtil.getDistances(deal, latitude, longitude);
+          if (!distances.isEmpty()) {
+            Integer minDistance = distances.values().stream().min(Integer::compare).get();
+            dealDistMap.put(deal, minDistance);
+          }
+        } catch (IOException e) {
+
         }
       }
-      List<Entry<Deal, Integer>> list = new ArrayList<>(dealDistMap.entrySet());
+      List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
+      dealDists.sort(Entry.comparingByValue());
+      deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
     }
     return deals;
   }
