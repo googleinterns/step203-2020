@@ -6,14 +6,33 @@ reader.onload = function(e) {
   $('#img-preview').attr('src', e.target.result);
 };
 $('#img-input').change((event) => {
+  $('#img-preview').hide();
+  $('#image-extension-message').hide();
   const input = event.currentTarget;
+  if (!extensionIsValid(input.value)) {
+    $('#image-extension-message').show();
+    input.value = '';
+  }
   if (input.files && input.files[0]) {
     reader.readAsDataURL(input.files[0]);
     $('#img-preview').show();
-  } else {
-    $('#img-preview').hide();
   }
 });
+
+/**
+ * check if filename has image extension
+ * @param {string} filename
+ * @return {boolean}
+ */
+function extensionIsValid(filename) {
+  const validExtension = ['.png', '.jpg', '.jpeg', '.gif'];
+  for (const extension of validExtension) {
+    if (filename.toLowerCase().endsWith(extension)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /*
  * Form validation
