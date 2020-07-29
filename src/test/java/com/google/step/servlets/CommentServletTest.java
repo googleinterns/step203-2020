@@ -6,8 +6,10 @@ import static com.google.step.TestConstants.COMMENT_ID_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.EMAIL_B;
 import static com.google.step.TestConstants.TIME_A;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -98,6 +100,19 @@ public class CommentServletTest {
   }
 
   @Test
+  public void testDoPut_userIsNotPoster() throws Exception {
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
+    User currentUser = new User(EMAIL_B, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_B.id)).thenReturn(USER_B);
+
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
   public void testDoPut_invalidID() throws Exception {
     when(mockRequest.getPathInfo()).thenReturn("/abcd");
 
@@ -134,6 +149,27 @@ public class CommentServletTest {
 
     verify(mockResponse, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockCommentManager).deleteComment(COMMENT_ID_A);
+  }
+
+  @Test
+  public void testDoDelete_notLoggedIn() throws Exception {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    commentServlet.doDelete(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoDelete_userIsNotPoster() throws Exception {
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
+    User currentUser = new User(EMAIL_B, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_B.id)).thenReturn(USER_B);
+
+    commentServlet.doDelete(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
