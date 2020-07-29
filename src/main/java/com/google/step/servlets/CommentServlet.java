@@ -94,7 +94,7 @@ public class CommentServlet extends HttpServlet {
       return;
     }
 
-    // user can only delete comments they created
+    // user can only update comments they created
     if (comment.userId != currentUser.id) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
