@@ -218,7 +218,17 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_unauthorised() throws IOException {
+  public void tesDoPut_notLoggedIn() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void tesDoPut_userIsNotPoster() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
     User currentUser = new User(EMAIL_B, "");
     when(mockUserService.getCurrentUser()).thenReturn(currentUser);
