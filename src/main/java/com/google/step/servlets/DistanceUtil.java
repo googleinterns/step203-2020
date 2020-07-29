@@ -47,7 +47,7 @@ public class DistanceUtil {
     private List<String> destination_addresses;
     private List<Row> rows;
   }
-  // https://maps.googleapis.com/maps/api/distancematrix/json?origins=1.2966%2C103.7764&destinations=place_id%3AChIJ-QruHn0P2jER8aygW6HXsXM%7Cplace_id%3AChIJ6Zgp8REZ2jERKgNTh7hU5EM&key=AIzaSyD7eIOONxtNsDb14Sr7uTtzQJDa7yNb9hI
+
   public static List<Map<String, Integer>> getDistances(
       List<Deal> deals,
       String latitude,
@@ -76,7 +76,7 @@ public class DistanceUtil {
       ub.addParameter("origins", latitude + "," + longitude);
       ub.addParameter("destinations", sb.toString());
       ub.addParameter("key", API_KEY);
-      System.out.println(ub.toString());
+      // System.out.println(ub.toString());
     } catch (URISyntaxException e) {
       return new ArrayList<>();
     }
@@ -86,7 +86,6 @@ public class DistanceUtil {
     int j = 0;
     List<Map<String, Integer>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
-      System.out.println(placeIds);
       try {
 
         Map<String, Integer> placeIdDist = new HashMap<>();
@@ -96,17 +95,6 @@ public class DistanceUtil {
               Integer.parseInt(distanceResponse.rows.get(0).elements.get(j + k).distance.value));
         }
         distanceDeals.add(placeIdDist);
-        System.out.println(placeIdDist);
-
-        /* Map<String, Integer> placeIdDist =
-        IntStream.range(j, j + placeIds.size())
-            .boxed()
-            .collect(
-                Collectors.toMap(
-                    k -> placeIds.get(k),
-                    k ->
-                        Integer.parseInt(
-                            distanceResponse.rows.get(0).elements.get(j + k).distance.value)));*/
       } catch (NullPointerException | IndexOutOfBoundsException e) {
         distanceDeals.add(new HashMap<>());
       }
