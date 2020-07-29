@@ -113,4 +113,16 @@ public class CommentManagerDatastore implements CommentManager {
     String timestamp = (String) commentEntity.getProperty("timestamp");
     return new Comment(id, dealId, userId, content, timestamp);
   }
+
+  @Override
+  public Comment readComment(long id) {
+    Key key = KeyFactory.createKey("Comment", id);
+    Entity commentEntity;
+    try {
+      commentEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    return transformEntitytoComment(commentEntity);
+  }
 }

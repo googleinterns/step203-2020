@@ -1,5 +1,7 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -16,23 +18,34 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/api/comments/*")
 public class CommentServlet extends HttpServlet {
 
-  private CommentManager commentManager;
-  private UserManager userManager;
+  private final CommentManager commentManager;
+  private final UserManager userManager;
+  private final UserService userService;
 
-  public CommentServlet(CommentManager commentManager, UserManager userManager) {
+  public CommentServlet(
+      CommentManager commentManager, UserManager userManager, UserService userService) {
     this.commentManager = commentManager;
     this.userManager = userManager;
+    this.userService = userService;
   }
 
   public CommentServlet() {
     commentManager = new CommentManagerDatastore();
     userManager = new UserManagerDatastore();
+    userService = UserServiceFactory.getUserService();
   }
 
   /** Deletes the comment with the given id parameter */
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User currentUser = userManager.readUserByEmail(email);
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -40,12 +53,32 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
+    Comment comment = commentManager.readComment(id);
+    if (comment == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    // user can only delete comments they created
+    if (comment.userId != currentUser.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
     commentManager.deleteComment(id);
   }
 
   /** Updates a comment with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User currentUser = userManager.readUserByEmail(email);
+
     long id;
     String content;
     try {
@@ -54,6 +87,19 @@ public class CommentServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
+    Comment comment = commentManager.readComment(id);
+    if (comment == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    // user can only delete comments they created
+    if (comment.userId != currentUser.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
     content = request.getParameter("content");
     Comment updatedComment = commentManager.updateComment(id, content);
 
