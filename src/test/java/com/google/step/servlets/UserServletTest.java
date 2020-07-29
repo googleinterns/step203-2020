@@ -285,4 +285,18 @@ public class UserServletTest {
     userServlet.doPost(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
+
+  @Test
+  public void testDoPost_invalidUsername() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    com.google.appengine.api.users.User currentUser =
+        new com.google.appengine.api.users.User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(request.getParameter("username")).thenReturn("test  123!");
+
+    userServlet.doPost(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
 }
