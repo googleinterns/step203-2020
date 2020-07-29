@@ -8,6 +8,8 @@ public interface CommentManager {
 
   public List<Comment> getCommentsForDeal(long dealId);
 
+  public void deleteAllCommentsOfDeal(long dealId);
+
   public Comment updateComment(long id, String content);
 
   public void deleteComment(long id);
