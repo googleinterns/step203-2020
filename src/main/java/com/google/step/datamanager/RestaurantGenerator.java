@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.google.step.model.User;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,6 +27,8 @@ public class RestaurantGenerator {
   private static final String TYPE = "restaurant";
 
   private static final String FILE_NAME = "restaurants.txt";
+  private static final String ADMIN_EMAIL = "capstone-2020-dealfinder@appspot.gserviceaccount.com";
+
   private static final RestaurantManager restaurantManager = new RestaurantManagerDatastore();
 
   /** Populates restaurant database. */
@@ -106,6 +109,8 @@ public class RestaurantGenerator {
   }
 
   private static void createRestaurants(JsonArray restaurantsJsonArray) {
+    UserManager userManager = new UserManagerDatastore();
+    User admin = userManager.createUser(ADMIN_EMAIL);
 
     for (JsonElement restaurantElement : restaurantsJsonArray) {
       JsonObject restaurantObject = restaurantElement.getAsJsonObject();
@@ -113,7 +118,7 @@ public class RestaurantGenerator {
       JsonElement photo = restaurantObject.get("photos").getAsJsonArray().get(0);
       String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
 
-      restaurantManager.createRestaurantWithPhotoReference(name, photoReference, -1);
+      restaurantManager.createRestaurantWithPhotoReference(name, photoReference, admin.id);
     }
   }
 
