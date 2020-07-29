@@ -200,7 +200,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_success() throws IOException {
+  public void testDoPut_success() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
     when(mockRequest.getParameter("description")).thenReturn(DESCRIPTION_A);
     when(mockRequest.getParameter("start")).thenReturn(DATE_A);
@@ -229,7 +229,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_idNotFound() throws IOException {
+  public void testDoPut_idNotFound() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_B);
 
     servlet.doPut(mockRequest, mockResponse);
@@ -238,7 +238,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_singleDateWrongOrder() throws IOException {
+  public void testDoPut_singleDateWrongOrder() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
     when(mockRequest.getParameter("start")).thenReturn(DATE_C);
 
@@ -248,7 +248,7 @@ public class DealDetailServletTest {
   }
 
   @Test
-  public void tesDoPut_singleDate_success() throws IOException {
+  public void testDoPut_singleDate_success() throws IOException {
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
     when(mockRequest.getParameter("end")).thenReturn(DATE_C);
 
