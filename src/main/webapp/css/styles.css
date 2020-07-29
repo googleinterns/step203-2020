@@ -10284,30 +10284,38 @@ body > .container {
   background-position: center center;
 }
 
-.home-deal-img {
-  height: 270px;
-}
-
 .deal-img {
   height: 300px;
   width: auto;
 }
 
-.carousel-control-prev {
-  margin-left: -125px;
-  filter: invert(100%);
-}
-.carousel-control-next {
-  margin-right: -125px;
-  filter: invert(100%);
-}
-
-.carousel-indicators {
-  filter: invert(100%);
-  margin-bottom: -50px;
-}
-
 .deal-card-img {
-  max-height: 200px;
+  height: 270px;
   object-fit: cover;
+}
+
+.search-menu-container {
+  position: relative;
+}
+
+.search-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0.125rem solid #ced4da;
+  background-color: white;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .175);
+  width: 100%;
+  z-index: 999;
+}
+
+.search-menu-pic {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.search-menu-item:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+  cursor: pointer;
 }
