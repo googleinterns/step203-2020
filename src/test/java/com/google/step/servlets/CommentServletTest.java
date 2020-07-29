@@ -50,6 +50,8 @@ public class CommentServletTest {
 
   @Before
   public void setUp() throws IOException {
+    mockRequest = mock(HttpServletRequest.class);
+    mockResponse = mock(HttpServletResponse.class);
     mockCommentManager = mock(CommentManager.class);
     mockUserManager = mock(UserManager.class);
     mockUserService = mock(UserService.class);
@@ -89,7 +91,10 @@ public class CommentServletTest {
 
   @Test
   public void testDoPut_notLoggedIn() throws Exception {
-    // TODO
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
