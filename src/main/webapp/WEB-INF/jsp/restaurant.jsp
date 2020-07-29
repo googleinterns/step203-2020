@@ -29,8 +29,19 @@
           <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
         </div>
         <div class="col-sm-8 col-lg-9">
-          <h3 id="restaurant-name">
+          <div class="row mb-3">
+            <h3 id="restaurant-name">
+            </h3>
+            <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
+              <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <button id="delete-btn" class="dropdown-item" type="button">Delete Restaurant</button>
+              </div>
+            </div>
           </h3>
+          </div>
           <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
         </div>
       </div>

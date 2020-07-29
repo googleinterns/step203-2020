@@ -113,7 +113,7 @@ public class RestaurantGenerator {
       JsonElement photo = restaurantObject.get("photos").getAsJsonArray().get(0);
       String photoReference = photo.getAsJsonObject().get("photo_reference").getAsString();
 
-      restaurantManager.createRestaurantWithPhotoReference(name, photoReference);
+      restaurantManager.createRestaurantWithPhotoReference(name, photoReference, -1);
     }
   }
 

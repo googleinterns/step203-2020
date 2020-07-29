@@ -1,11 +1,15 @@
 package com.google.step.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
+import com.google.step.datamanager.UserManager;
+import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.IOException;
@@ -23,20 +27,28 @@ public class RestaurantServlet extends HttpServlet {
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
   private RestaurantPlaceManager restaurantPlaceManager;
+  private UserManager userManager;
+  private UserService userService;
 
   public RestaurantServlet(
       RestaurantManager restaurantManager,
       DealManager dealManager,
-      RestaurantPlaceManager restaurantPlaceManager) {
+      RestaurantPlaceManager restaurantPlaceManager,
+      UserManager userManager,
+      UserService userService) {
     this.restaurantManager = restaurantManager;
     this.dealManager = dealManager;
     this.restaurantPlaceManager = restaurantPlaceManager;
+    this.userManager = userManager;
+    this.userService = userService;
   }
 
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
     dealManager = new DealManagerDatastore();
     restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
+    userManager = new UserManagerDatastore();
+    userService = UserServiceFactory.getUserService();
   }
 
   /** Deletes the restaurant with the given id parameter */

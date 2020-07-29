@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface RestaurantManager {
 
-  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobkey);
+  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobkey, long posterId);
 
-  public Restaurant createRestaurantWithPhotoReference(String name, String photoUrl);
+  public Restaurant createRestaurantWithPhotoReference(String name, String photoUrl, long posterId);
 
   public Restaurant readRestaurant(long id);
 

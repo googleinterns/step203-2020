@@ -123,6 +123,14 @@ function configureDealsHeader(restaurant) {
 }
 
 /**
+ * Configures follow button.
+ * @param {number} restaurantId id of the restaurant to be followed or
+ *        unfollowed
+ * @param {number} loggedInUserId id of the logged in user
+ */
+function configureMenuButton(restaurantId, loggedInUserId) {
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
