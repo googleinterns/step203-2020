@@ -1,41 +1,46 @@
 package com.google.step.servlets;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.cloud.spanner.SpannerException;
 import com.google.gson.Gson;
-import com.google.spanner.LibraryFunctions;
+import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
+import com.google.step.model.Deal;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
+
 @WebServlet("/api/distance")
 public class DistanceServlet extends HttpServlet {
+
+  private RestaurantPlaceManager restaurantPlaceManager;
+  private String latitude;
+  private String longitude;
+  private Gson gson = new Gson();
+  private String API_KEY;
+
+  public DistanceServlet(RestaurantPlaceManager restaurantPlaceManager) {
+    this.restaurantPlaceManager = restaurantPlaceManager;
+  }
+
+  public DistanceServlet() {
+    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
+  }
+
   private class DistanceResponse {
     private class Row {
       private List<Element> elements;
@@ -56,62 +61,71 @@ public class DistanceServlet extends HttpServlet {
         }
       }
     }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String latitude = request.getParameter("latitude");
-    String longitude = request.getParameter("longitude");
-    String section = request.getParameter("section");
-    String deals = 
-    Map<String, Integer> distances =
-        getDistances(
-            deals.stream().map(deal -> deal.restaurant.getStoreAddress()).collect(Collectors.toList()),
-            );
-    if (!distances.isEmpty()) {
-      stores =
-          stores.stream()
-              .filter(
-                  store ->
-                      (distances.get(store.getStoreAddress())
-                          < (userPreferences.getDistancePreference() * MILES_TO_METERS)))
-              .collect(Collectors.toList());
-    }
+    private String status;
+    private List<String> origin_addresses;
+    private List<String> destination_addresses;
+    private List<Row> rows;
   }
 
-  public Map<String, Integer> getDistances(
-      List<String> addresses, String latitude, String longitude) throws IOException {
-    HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-    StringBuilder sb = new StringBuilder();
-
-    for (int i = 0; i < addresses.size(); i++) {
-      sb.append(addresses.get(i));
-      if (i != addresses.size() - 1) {
-        sb.append("|");
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String latitude = request.getParameter("latitude");
+      this.latitude = latitude;
+      String longitude = request.getParameter("longitude");
+      this.longitude = longitude;
+      List<Deal> deals = new ArrayList<>();
+      Map<Deal, Integer> dealDistMap = new HashMap<>();
+      for (Deal deal: deals) {
+        Map<String, Integer> distances = getDistances(deal, latitude, longitude);
+        if (!distances.isEmpty()) {
+          Integer minDistance = distances.values().stream().min(Integer::compare).get();
+          dealDistMap.put(deal, minDistance);
+        }
       }
+      List<Entry<Deal, Integer>> list = new ArrayList<>(dealDistMap.entrySet());
+      list.sort(Entry.comparingByValue());
+      return JsonFormatter.getHomePageSectionJson(Util.getHomePageSectionMap(list));
     }
-    try {
-      URIBuilder ub = new URIBuilder("https://maps.googleapis.com/maps/api/distancematrix/json");
-      ub.addParameter("origins", latitude + "," + longitude);
-      ub.addParameter("destinations", sb.toString());
-      ub.addParameter("key", API_KEY);
-      System.out.println(ub.toString());
-    } catch (URISyntaxException e) {
-      return new HashMap<>();
-    }
-    HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(sb.toString()));
-    String response = request.execute().parseAsString();
-    DistanceResponse distanceResponse = g.fromJson(response, DistanceResponse.class);
-    try {
-      return IntStream.range(0, addresses.size())
-          .boxed()
-          .collect(
-              Collectors.toMap(
-                  i -> addresses.get(i),
-                  i ->
-                      Integer.parseInt(
-                          distanceResponse.rows.get(0).elements.get(i).distance.value)));
-    } catch (NullPointerException | IndexOutOfBoundsException e) {
-      return new HashMap<>();
+
+    private Map<String, Integer> getDistances(Deal deal, String latitude, String longitude)
+        throws IOException {
+      HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+      StringBuilder sb = new StringBuilder();
+      Set<String> placeIds = restaurantPlaceManager.getPlaceIdsOfRestaurant(deal.restaurantId);
+      List<String> placeIdsList = new ArrayList<>(placeIds);
+      int i = 0;
+      for (String placeId : placeIdsList) {
+        sb.append(placeId);
+        if (i != placeIds.size() - 1) {
+          sb.append("|");
+        }
+        i++;
+      }
+      try {
+        URIBuilder ub = new URIBuilder("https://maps.googleapis.com/maps/api/distancematrix/json");
+        ub.addParameter("origins", latitude + "," + longitude);
+        ub.addParameter("destinations", sb.toString());
+        ub.addParameter("key", API_KEY);
+        System.out.println(ub.toString());
+      } catch (URISyntaxException e) {
+        return new HashMap<>();
+      }
+
+      HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(sb.toString()));
+      String response = request.execute().parseAsString();
+      DistanceResponse distanceResponse = gson.fromJson(response, DistanceResponse.class);
+      try {
+        return IntStream.range(0, placeIdsList.size())
+            .boxed()
+              .collect(
+                Collectors.toMap(
+                    j -> placeIdsList.get(j),
+                    j ->
+                        Integer.parseInt(
+                            distanceResponse.rows.get(0).elements.get(j).distance.value)));
+      } catch (NullPointerException | IndexOutOfBoundsException e) {
+        return new HashMap<>();
+      }
     }
   }
 }

@@ -58,6 +58,7 @@ public class HomePageServlet extends HttpServlet {
 
   private static final String VOTE_SORT = "votes";
   private static final String NEW_SORT = "new";
+  private static final String DISTANCE_SORT = "distance";
 
   public HomePageServlet(
       DealManager dealManager,
@@ -121,7 +122,8 @@ public class HomePageServlet extends HttpServlet {
     if (sort != null
         && !sort.equals(TRENDING)
         && !sort.equals(VOTE_SORT)
-        && !sort.equals(NEW_SORT)) {
+        && !sort.equals(NEW_SORT)
+        && !sort.equals(DISTANCE_SORT)) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
@@ -245,6 +247,19 @@ public class HomePageServlet extends HttpServlet {
       if (limit > 0) {
         deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
+    } else if (sort.equals(DISTANCE_SORT)) {
+      deals = dealManager.readDeals(dealIds);
+      Util.getDistances(deals, latitude, longitude);
+      List<Deal> deals = new ArrayList<>();
+      Map<Deal, Integer> dealDistMap = new HashMap<>();
+      for (Deal deal : deals) {
+        Map<String, Integer> distances = getDistances(deal, latitude, longitude);
+        if (!distances.isEmpty()) {
+          Integer minDistance = distances.values().stream().min(Integer::compare).get();
+          dealDistMap.put(deal, minDistance);
+        }
+      }
+      List<Entry<Deal, Integer>> list = new ArrayList<>(dealDistMap.entrySet());
     }
     return deals;
   }
