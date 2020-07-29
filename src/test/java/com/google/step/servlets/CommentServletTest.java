@@ -19,6 +19,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
@@ -40,10 +41,15 @@ public class CommentServletTest {
   private UserManager mockUserManager;
   private UserService mockUserService;
 
+  HttpServletRequest mockRequest;
+  HttpServletResponse mockResponse;
+  private StringWriter stringWriter;
+  private PrintWriter writer;
+
   private CommentServlet commentServlet;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     mockCommentManager = mock(CommentManager.class);
     mockUserManager = mock(UserManager.class);
     mockUserService = mock(UserService.class);
@@ -57,99 +63,89 @@ public class CommentServletTest {
     when(mockUserManager.readUser(USER_A.id)).thenReturn(USER_A);
 
     when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
+
+    // mock response
+    mockResponse = mock(HttpServletResponse.class);
+    stringWriter = new StringWriter();
+    writer = new PrintWriter(stringWriter);
+    when(mockResponse.getWriter()).thenReturn(writer);
   }
 
   @Test
   public void testDoPut_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
-    when(request.getParameter("content")).thenReturn(CONTENT_A);
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockRequest.getParameter("content")).thenReturn(CONTENT_A);
     when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
     when(mockCommentManager.updateComment(COMMENT_ID_A, CONTENT_A)).thenReturn(COMMENT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
+    when(mockResponse.getWriter()).thenReturn(writer);
 
-    commentServlet.doPut(request, response);
+    commentServlet.doPut(mockRequest, mockResponse);
 
     JSONAssert.assertEquals(COMMENT_A_JSON, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
+  public void testDoPut_notLoggedIn() throws Exception {
+    // TODO
+  }
+
+  @Test
   public void testDoPut_invalidID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/abcd");
 
-    when(request.getPathInfo()).thenReturn("/abcd");
-
-    commentServlet.doPut(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPut_noID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/");
 
-    when(request.getPathInfo()).thenReturn("/");
-
-    commentServlet.doPut(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPut_notExist() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/100");
 
-    when(request.getPathInfo()).thenReturn("/100");
-
-    when(request.getParameter("content")).thenReturn(CONTENT_A);
+    when(mockRequest.getParameter("content")).thenReturn(CONTENT_A);
     when(mockCommentManager.updateComment(100, CONTENT_A)).thenReturn(null);
 
-    commentServlet.doPut(request, response);
+    commentServlet.doPut(mockRequest, mockResponse);
 
-    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
 
   @Test
   public void testDoDelete_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
     when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
 
-    commentServlet.doDelete(request, response);
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(mockCommentManager).deleteComment(COMMENT_ID_A);
   }
 
   @Test
   public void testDoDelete_invalidID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/abcd");
 
-    when(request.getPathInfo()).thenReturn("/abcd");
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    commentServlet.doDelete(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoDelete_noID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/");
 
-    when(request.getPathInfo()).thenReturn("/");
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    commentServlet.doDelete(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
