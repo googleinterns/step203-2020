@@ -145,30 +145,3 @@ function throttle(func, limit) {
     }
   };
 }
-
-/**
- * Retrieves user's location
- */
-function getLocation() {
-  if (navigator.geolocation) {
-    console.log("HI");
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } else {
-    return false;
-  }
-}
-
-/**
- * @param {position} position
- */
-function showPosition(position) {
-  console.log('Latitude: ' + position.coords.latitude);
-  const latitude = position.coords.latitude;
-  console.log('Longitude: ' + position.coords.longitude);
-  const longitude = position.coords.longitude;
-  const dist = document.getElementById('sort-dist');
-  dist.href += '/?latitude=' + latitude + '&longitude=' + longitude;
-  console.log(dist.href);
-  window.location = dist.href;
-  return false;
-}
