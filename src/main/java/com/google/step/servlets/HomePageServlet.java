@@ -12,6 +12,8 @@ import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
+import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.TagManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -49,6 +51,7 @@ public class HomePageServlet extends HttpServlet {
   private final TagManager tagManager;
   private final FollowManager followManager;
   private final DealVoteCountManager dealVoteCountManager;
+  private final RestaurantPlaceManager restaurantPlaceManager;
 
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
@@ -73,6 +76,7 @@ public class HomePageServlet extends HttpServlet {
       TagManager tagManager,
       FollowManager followManager,
       DealVoteCountManager dealVoteCountManager,
+      RestaurantPlaceManager restaurantPlaceManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
@@ -81,6 +85,7 @@ public class HomePageServlet extends HttpServlet {
     this.tagManager = tagManager;
     this.followManager = followManager;
     this.dealVoteCountManager = dealVoteCountManager;
+    this.restaurantPlaceManager = restaurantPlaceManager;
     this.userService = userService;
   }
 
@@ -92,6 +97,7 @@ public class HomePageServlet extends HttpServlet {
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
     dealVoteCountManager = new DealVoteCountManagerDatastore();
+    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -257,16 +263,17 @@ public class HomePageServlet extends HttpServlet {
     } else if (sort.equals(DISTANCE_SORT)) {
       deals = dealManager.readDeals(dealIds);
       Map<Deal, Integer> dealDistMap = new HashMap<>();
-      for (Deal deal : deals) {
-        try {
-          Map<String, Integer> distances = DistanceUtil.getDistances(deal, latitude, longitude);
-          if (!distances.isEmpty()) {
-            Integer minDistance = distances.values().stream().min(Integer::compare).get();
-            dealDistMap.put(deal, minDistance);
+      try {
+        List<Map<String, Integer>> distances =
+            DistanceUtil.getDistances(deals, latitude, longitude, restaurantPlaceManager);
+        for (int i = 0; i < distances.size(); i++) {
+          if (!distances.get(i).isEmpty()) {
+            Integer minDistance = distances.get(i).values().stream().min(Integer::compare).get();
+            dealDistMap.put(deals.get(i), minDistance);
           }
-        } catch (IOException e) {
-
         }
+      } catch (IOException e) {
+
       }
       List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
       dealDists.sort(Entry.comparingByValue());

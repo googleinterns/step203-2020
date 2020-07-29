@@ -10,8 +10,10 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_B_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_C_JSON;
-import static com.google.step.TestConstants.PLACE_ID_A;
-import static com.google.step.TestConstants.PLACE_ID_B;
+import static com.google.step.TestConstants.REAL_PLACE_ID_A;
+import static com.google.step.TestConstants.REAL_PLACE_ID_B;
+import static com.google.step.TestConstants.REAL_PLACE_ID_C;
+import static com.google.step.TestConstants.REAL_PLACE_ID_D;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.TAG_A;
 import static com.google.step.TestConstants.USER_A;
@@ -87,6 +89,7 @@ public class HomePageServletTest {
             mockTagManager,
             mockFollowManager,
             mockDealVoteCountManager,
+            mockRestaurantPlaceManager,
             mockUserService);
   }
 
@@ -392,11 +395,11 @@ public class HomePageServletTest {
   }
 
   @Test
-  public void testDoGet_SortDirection() throws Exception {
+  public void testDoGet_UserLoggedInViewSectionSortDirection() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    when(request.getParameter("section")).thenReturn("");
+    when(request.getParameter("section")).thenReturn("users");
     when(request.getParameter("sort")).thenReturn("distance");
 
     when(request.getParameter("latitude")).thenReturn("1.2966");
@@ -404,9 +407,26 @@ public class HomePageServletTest {
 
     setUpUserAuthentication();
 
-    when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_ID_A))
-        .thenReturn(new HashSet<>(Arrays.asList(PLACE_ID_A, PLACE_ID_B)));
+    List<Long> DEALIDS = new ArrayList<Long>(Arrays.asList(DEAL_ID_A, DEAL_ID_B));
+    List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B));
+
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1), eq(null))).thenReturn(DEALIDS);
+
+    when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_A.restaurantId))
+        .thenReturn(new HashSet<>(Arrays.asList(REAL_PLACE_ID_A, REAL_PLACE_ID_B)));
+    when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_B.restaurantId))
+        .thenReturn(new HashSet<>(Arrays.asList(REAL_PLACE_ID_C, REAL_PLACE_ID_D)));
+    when(mockDealManager.readDeals(DEALIDS)).thenReturn(DEALS);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(response.getWriter()).thenReturn(writer);
+
+    gettingSectionMaps_ABC();
 
     homePageServlet.doGet(request, response);
+
+    String expected = String.format("[%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_B_JSON);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 }
