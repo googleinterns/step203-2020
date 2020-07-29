@@ -148,27 +148,31 @@ function throttle(func, limit) {
 
 /**
  * Retrieves user's location
+ * @return {boolean} prevents the href from loading
  */
 function getLocation() {
   if (navigator.geolocation) {
-    console.log("HI");
+    console.log('HI');
     navigator.geolocation.getCurrentPosition(showPosition);
-  } else {
-    return false;
   }
+  return false;
 }
 
 /**
- * @param {position} position
+ * Sets the url to have distance in path info and location as parameters
+ * @param {object} position user position
  */
 function showPosition(position) {
-  console.log('Latitude: ' + position.coords.latitude);
   const latitude = position.coords.latitude;
-  console.log('Longitude: ' + position.coords.longitude);
   const longitude = position.coords.longitude;
-  const dist = document.getElementById('sort-dist');
-  dist.href += '/?latitude=' + latitude + '&longitude=' + longitude;
-  console.log(dist.href);
-  window.location = dist.href;
-  return false;
+  const url = new URL(window.location.href);
+  if (window.location.href.split('/').length == 5) {
+    url.href += '/distance';
+  }
+  const params = new URLSearchParams(url.search.slice(1));
+  if (!params.has('longitude') && !params.has('latitude')) {
+    url.searchParams.append('latitude', latitude);
+    url.searchParams.append('longitude', longitude);
+  }
+  window.location = url.href;
 }

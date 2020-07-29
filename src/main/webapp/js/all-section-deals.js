@@ -30,6 +30,9 @@ function createAllDealCards(deals, reqSection) {
  */
 function initAllDeals() {
   const myPath = window.location.pathname; // path is /all-section-deals/*
+  const location = new URLSearchParams(window.location.search);
+  const latitude = location.get('latitude');
+  const longitude = location.get('longitude');
   const myPathElem = myPath.split('/');
   const reqSection = myPathElem[2];
   let reqSort = null;
@@ -41,6 +44,19 @@ function initAllDeals() {
       url: '/api/home',
       data: {
         section: reqSection,
+      },
+    }).done((deals) => {
+      createAllDealCards(deals, reqSection);
+    });
+  } else if (latitude != null && longitude != null) {
+    console.log("HI");
+    $.ajax({
+      url: '/api/home',
+      data: {
+        section: reqSection,
+        sort: reqSort,
+        latitude: latitude,
+        longitude: longitude,
       },
     }).done((deals) => {
       createAllDealCards(deals, reqSection);

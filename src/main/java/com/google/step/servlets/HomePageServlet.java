@@ -140,6 +140,8 @@ public class HomePageServlet extends HttpServlet {
     }
     latitude = request.getParameter("latitude");
     longitude = request.getParameter("longitude");
+    System.out.println(latitude);
+    System.out.println(longitude);
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       response.setContentType("application/json;");
@@ -261,6 +263,7 @@ public class HomePageServlet extends HttpServlet {
         deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
     } else if (sort.equals(DISTANCE_SORT)) {
+      System.out.println("HI");
       deals = dealManager.readDeals(dealIds);
       Map<Deal, Integer> dealDistMap = new HashMap<>();
       try {
@@ -278,6 +281,7 @@ public class HomePageServlet extends HttpServlet {
       List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
       dealDists.sort(Entry.comparingByValue());
       deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
+      System.out.println(deals);
     }
     return deals;
   }
