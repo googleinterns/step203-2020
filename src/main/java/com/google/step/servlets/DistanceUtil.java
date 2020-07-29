@@ -87,7 +87,6 @@ public class DistanceUtil {
     List<Map<String, Integer>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
       try {
-
         Map<String, Integer> placeIdDist = new HashMap<>();
         for (int k = 0; k < placeIds.size(); k++) {
           placeIdDist.put(
