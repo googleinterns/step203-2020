@@ -4,11 +4,15 @@ import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.PLACE_ID_A;
 import static com.google.step.TestConstants.PLACE_ID_B;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
+import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_A_BRIEF_JSON;
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -16,9 +20,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
 import java.io.PrintWriter;
@@ -44,6 +51,8 @@ public class RestaurantServletTest {
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
   private RestaurantPlaceManager restaurantPlaceManager;
+  private UserManager userManager;
+  private UserService userService;
 
   private RestaurantServlet restaurantServlet;
 
@@ -52,8 +61,12 @@ public class RestaurantServletTest {
     restaurantManager = mock(RestaurantManager.class);
     dealManager = mock(DealManager.class);
     restaurantPlaceManager = mock(RestaurantPlaceManager.class);
+    userManager = mock(UserManager.class);
+    userService = mock(UserService.class);
+
     restaurantServlet =
-        new RestaurantServlet(restaurantManager, dealManager, restaurantPlaceManager);
+        new RestaurantServlet(
+            restaurantManager, dealManager, restaurantPlaceManager, userManager, userService);
   }
 
   /** Successfully returns a restaurant */
@@ -64,6 +77,7 @@ public class RestaurantServletTest {
 
     when(request.getPathInfo()).thenReturn("/1");
     when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
+    when(userManager.readUser(USER_ID_A)).thenReturn(USER_A);
     List<Deal> deals = Arrays.asList(DEAL_A);
     when(dealManager.getDealsOfRestaurant(1)).thenReturn(deals);
     Set<String> placeIds = new HashSet<>(Arrays.asList(PLACE_ID_A, PLACE_ID_B));
@@ -77,10 +91,11 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\",deals: [%s],placeIds:[%s,%s]}",
+            "{id:%d,name:\"%s\",photoUrl:\"%s\",poster:%s,deals: [%s],placeIds:[%s,%s]}",
             RESTAURANT_ID_A,
             RESTAURANT_NAME_A,
             BLOBKEY_URL_A,
+            USER_A_BRIEF_JSON,
             DEAL_A_BRIEF_JSON,
             PLACE_ID_A,
             PLACE_ID_B);
@@ -127,11 +142,18 @@ public class RestaurantServletTest {
   public void testDoPut_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
+    when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
 
     when(request.getPathInfo()).thenReturn("/1");
     when(request.getParameter("name")).thenReturn(UPDATE_NAME_A);
     Restaurant updatedRestaurant =
-        Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A);
+        Restaurant.createRestaurantWithBlobkey(
+            RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_A, USER_ID_A);
     when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(updatedRestaurant);
 
     List<Deal> deals = Arrays.asList(DEAL_A);
@@ -147,10 +169,26 @@ public class RestaurantServletTest {
 
     String expected =
         String.format(
-            "{id:%d,name:\"%s\",photoUrl:\"%s\", deals:[%s], placeIds:[%s]}",
-            RESTAURANT_ID_A, UPDATE_NAME_A, BLOBKEY_URL_A, DEAL_A_BRIEF_JSON, PLACE_ID_A);
+            "{id:%d,name:\"%s\",poster:%s,photoUrl:\"%s\", deals:[%s], placeIds:[%s]}",
+            RESTAURANT_ID_A,
+            UPDATE_NAME_A,
+            USER_A_BRIEF_JSON,
+            BLOBKEY_URL_A,
+            DEAL_A_BRIEF_JSON,
+            PLACE_ID_A);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
+  }
+
+  @Test
+  public void testDoPut_userNotLoggedIn() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(userService.isUserLoggedIn()).thenReturn(false);
+
+    restaurantServlet.doPut(request, response);
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   /** In the case of an invalid ID e.g. String */
@@ -158,6 +196,10 @@ public class RestaurantServletTest {
   public void testDoPut_invalidID() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(request.getPathInfo()).thenReturn("/abcd");
 
@@ -170,6 +212,10 @@ public class RestaurantServletTest {
   public void testDoPut_noID() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(request.getPathInfo()).thenReturn("/");
 
@@ -182,11 +228,15 @@ public class RestaurantServletTest {
   public void testDoPut_notExist() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(request.getPathInfo()).thenReturn("/100");
 
     when(request.getParameter("name")).thenReturn(UPDATE_NAME_A);
-    when(restaurantManager.updateRestaurant(any(Restaurant.class))).thenReturn(null);
+    when(restaurantManager.readRestaurant(100)).thenReturn(null);
 
     restaurantServlet.doPut(request, response);
 
@@ -198,8 +248,13 @@ public class RestaurantServletTest {
   public void testDoDelete_success() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(request.getPathInfo()).thenReturn("/1");
+    when(restaurantManager.readRestaurant(1)).thenReturn(RESTAURANT_A);
 
     restaurantServlet.doDelete(request, response);
 
@@ -213,6 +268,11 @@ public class RestaurantServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+
     when(request.getPathInfo()).thenReturn("/abcd");
 
     restaurantServlet.doDelete(request, response);
@@ -224,6 +284,11 @@ public class RestaurantServletTest {
   public void testDoDelete_noID() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(request.getPathInfo()).thenReturn("/");
 

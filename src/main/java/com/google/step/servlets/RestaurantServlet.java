@@ -12,6 +12,7 @@ import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Deal;
 import com.google.step.model.Restaurant;
+import com.google.step.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,11 @@ public class RestaurantServlet extends HttpServlet {
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -62,6 +68,13 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    String email = userService.getCurrentUser().getEmail();
+    User user = userManager.readUserByEmail(email);
+    long posterId = restaurantManager.readRestaurant(id).posterId;
+    if (posterId != user.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
     restaurantManager.deleteRestaurant(id);
   }
 
@@ -81,16 +94,24 @@ public class RestaurantServlet extends HttpServlet {
       return;
     }
 
+    User poster = userManager.readUser(restaurant.posterId);
     List<Deal> deals = dealManager.getDealsOfRestaurant(id);
     List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
 
     response.setContentType("application/json;");
-    response.getWriter().println(JsonFormatter.getRestaurantJson(restaurant, deals, placeIds));
+    response
+        .getWriter()
+        .println(JsonFormatter.getRestaurantJson(restaurant, poster, deals, placeIds));
   }
 
   /** Updates a restaurant with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -98,9 +119,23 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+
+    String email = userService.getCurrentUser().getEmail();
+    User user = userManager.readUserByEmail(email);
+
+    Restaurant currentRestaurant = restaurantManager.readRestaurant(id);
+    if (currentRestaurant == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+    if (currentRestaurant.posterId != user.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+
     String name = request.getParameter("name");
     String photoBlobkey = "A_BLOB_KEY"; // TODO Blobkey
-    Restaurant restaurant = Restaurant.createRestaurantWithBlobkey(id, name, photoBlobkey);
+    Restaurant restaurant = Restaurant.createRestaurantWithBlobkey(id, name, photoBlobkey, user.id);
     Restaurant updatedRestaurant = restaurantManager.updateRestaurant(restaurant);
     if (updatedRestaurant == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -109,7 +144,7 @@ public class RestaurantServlet extends HttpServlet {
       List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
       response
           .getWriter()
-          .println(JsonFormatter.getRestaurantJson(updatedRestaurant, deals, placeIds));
+          .println(JsonFormatter.getRestaurantJson(updatedRestaurant, user, deals, placeIds));
     }
   }
 }

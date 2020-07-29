@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_A;
+import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.PLACE_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_A_BRIEF_JSON;
@@ -8,11 +9,16 @@ import static com.google.step.TestConstants.RESTAURANT_B;
 import static com.google.step.TestConstants.RESTAURANT_B_BRIEF_JSON;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
+import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.UserManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -36,6 +42,8 @@ public class RestaurantPostListServletTest {
 
   private RestaurantManager restaurantManager;
   private RestaurantPostListServlet restaurantPostServlet;
+  private UserManager userManager;
+  private UserService userService;
 
   HttpServletRequest mockRequest;
 
@@ -48,16 +56,24 @@ public class RestaurantPostListServletTest {
         .willReturn(BLOBKEY_A);
 
     restaurantManager = mock(RestaurantManager.class);
-    restaurantPostServlet = new RestaurantPostListServlet(restaurantManager);
+    userManager = mock(UserManager.class);
+    userService = mock(UserService.class);
+
+    restaurantPostServlet =
+        new RestaurantPostListServlet(restaurantManager, userManager, userService);
   }
 
   /** Successfully creates a new restaurant */
   @Test
   public void testDoPost_success() throws Exception {
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A))
+    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
         .thenReturn(RESTAURANT_A);
     when(mockRequest.getParameter("places")).thenReturn(PLACE_ID_A);
 
@@ -68,9 +84,13 @@ public class RestaurantPostListServletTest {
   @Test
   public void testDoPost_missingPlaces() throws Exception {
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    User currentUser = new User(EMAIL_A, "");
+    when(userService.isUserLoggedIn()).thenReturn(true);
+    when(userService.getCurrentUser()).thenReturn(currentUser);
+    when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A))
+    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
         .thenReturn(RESTAURANT_A);
 
     restaurantPostServlet.doPost(mockRequest, mockResponse);

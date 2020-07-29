@@ -99,10 +99,12 @@ public class TestConstants {
       Restaurant.getImageUrlFromPhotoReference(RESTAURANT_PHOTO_REFERENCE_A);
 
   public static final Restaurant RESTAURANT_A =
-      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+      Restaurant.createRestaurantWithBlobkey(
+          RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A);
 
   public static final Restaurant RESTAURANT_B =
-      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
+      Restaurant.createRestaurantWithBlobkey(
+          RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B, USER_ID_B);
 
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
