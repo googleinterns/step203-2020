@@ -137,4 +137,19 @@ public final class CommentManagerDatastoreTest {
     assertEquals(UPDATED_COMMENT_A, comments.get(0));
     assertEquals(1, comments.size());
   }
+
+  @Test
+  public void testReadComment() {
+    Comment createdComment = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
+    Comment comment = commentManagerDatastore.readComment(createdComment.id);
+
+    assertEquals(createdComment, comment);
+  }
+
+  @Test
+  public void testReadComment_null() {
+    Comment comment = commentManagerDatastore.readComment(1);
+
+    assertEquals(null, comment);
+  }
 }
