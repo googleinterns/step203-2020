@@ -5,9 +5,14 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.step.model.Deal;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +22,8 @@ import org.apache.http.client.utils.URIBuilder;
 public class DistanceUtil {
 
   private static Gson gson = new Gson();
-  private static final String API_KEY = "";
+  private static final String FAKE_API_KEY = "api-key";
+  private static final String API_KEY = readMapApiKey();
 
   // Class to represent the json object returned from distance matrix api
   private class DistanceResponse {
@@ -101,5 +107,30 @@ public class DistanceUtil {
       j += placeIds.size();
     }
     return distanceDeals;
+  }
+
+  /**
+   * Returns the map api key read from the json file.
+   *
+   * @return the map api key.
+   */
+  private static String readMapApiKey() {
+    String content;
+    try {
+      File file = new File(DistanceUtil.class.getResource("/api-key.json").getFile());
+      content = new String(Files.readAllBytes(file.toPath()));
+    } catch (IOException | NullPointerException e) {
+      e.printStackTrace();
+      return FAKE_API_KEY;
+    }
+
+    JsonObject jsonObject;
+    try {
+      jsonObject = JsonParser.parseString(content).getAsJsonObject();
+      return jsonObject.get("map-api-key").getAsString();
+    } catch (JsonSyntaxException e) {
+      e.printStackTrace();
+      return FAKE_API_KEY;
+    }
   }
 }
