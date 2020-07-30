@@ -330,18 +330,32 @@ function configureButtons(user) {
 }
 
 /**
+ * Configures the form's post url
+ * @param {string} id
+ */
+function configurePostUrl(id) {
+  $.ajax('/api/user-post-url/' + id)
+      .done((url) => {
+        setProfileFormUrl(url);
+      });
+}
+
+/**
  * Initializes the user profile page based on the id.
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
   $.ajax('/api/users/' + id)
       .done((user) => {
+        $('#user-loading').hide();
+        $('#user-page').show();
         configureButtons(user);
         configureUserProfile(user);
-      });
-  $.ajax('/api/user-post-url/' + id)
-      .done((url) => {
-        setProfileFormUrl(url);
+        configurePostUrl(id);
+      })
+      .fail(() => {
+        $('#user-loading').hide();
+        $('#user-not-found').show();
       });
 }
 
