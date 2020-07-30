@@ -34,7 +34,7 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
   }
 
   @Override
-  public List<Long> getDealsInOrderOfVotes(List<Long> dealIds) {
+  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds) {
     List<Long> dealIdResults = new ArrayList<>();
     List<Long> dealIdsArrayList = new ArrayList<>(dealIds);
     if (dealIds.size() > 0) {
