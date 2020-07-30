@@ -141,17 +141,17 @@ public final class CommentManagerDatastoreTest {
 
   @Test
   public void testDeleteAllCommentsOfDeal_otherDealNotAffected() {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       commentManagerDatastore.createComment(DEAL_ID_B, USER_ID_A, CONTENT_A);
     }
     commentManagerDatastore.deleteAllCommentsOfDeal(DEAL_ID_B);
 
-    List<Comment> commentsA = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A);
-    List<Comment> commentsB = commentManagerDatastore.getCommentsForDeal(DEAL_ID_B);
-    assertEquals(10, commentsA.size());
+    List<Comment> commentsA = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
+    List<Comment> commentsB = commentManagerDatastore.getCommentsForDeal(DEAL_ID_B, null).comments;
+    assertEquals(5, commentsA.size());
     assertEquals(0, commentsB.size());
   }
 }
