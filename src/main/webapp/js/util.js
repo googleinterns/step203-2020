@@ -152,7 +152,9 @@ function throttle(func, limit) {
  */
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(setNewURL);
+    navigator.geolocation.getCurrentPosition(setNewURL, showError);
+  } else {
+    alert('Geolocation is not supported by this browser.');
   }
   return false;
 }
@@ -178,4 +180,25 @@ function setNewURL(position) {
     url.searchParams.append('longitude', longitude);
   }
   window.location = url.href;
+}
+
+/**
+ * Shows the error code
+ * @param {object} error the error when getting user location
+ */
+function showError(error) {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      alert('Request for Geolocation denied. Unable to sort by distance.');
+      break;
+    case error.POSITION_UNAVAILABLE:
+      alert('Location information is unavailable.');
+      break;
+    case error.TIMEOUT:
+      alert('The request to get user location timed out.');
+      break;
+    case error.UNKNOWN_ERROR:
+      alert('An unknown error occurred.');
+      break;
+  }
 }
