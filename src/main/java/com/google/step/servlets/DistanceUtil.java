@@ -90,7 +90,7 @@ public class DistanceUtil {
     DistanceResponse distanceResponse = gson.fromJson(response, DistanceResponse.class);
 
     // Creates a list of maps containing information about the placeids of a deal and its distance
-    int j = 0;
+    int placeIdIndex = 0;
     List<Map<String, Integer>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
       try {
@@ -98,13 +98,14 @@ public class DistanceUtil {
         for (int k = 0; k < placeIds.size(); k++) {
           placeIdDist.put(
               placeIds.get(k),
-              Integer.parseInt(distanceResponse.rows.get(0).elements.get(j + k).distance.value));
+              Integer.parseInt(
+                  distanceResponse.rows.get(0).elements.get(placeIdIndex + k).distance.value));
         }
         distanceDeals.add(placeIdDist);
       } catch (NullPointerException | IndexOutOfBoundsException e) {
         distanceDeals.add(new HashMap<>());
       }
-      j += placeIds.size();
+      placeIdIndex += placeIds.size();
     }
     return distanceDeals;
   }
