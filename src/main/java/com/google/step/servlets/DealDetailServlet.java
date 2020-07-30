@@ -96,6 +96,7 @@ public class DealDetailServlet extends HttpServlet {
     response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
     commentManager.deleteAllCommentsOfDeal(id);
+    ImageUploader.deleteImage(deal.photoBlobkey);
   }
 
   /** Gets the deal with the given id parameter */
