@@ -154,6 +154,7 @@ public final class CommentManagerDatastoreTest {
     assertEquals(null, comment);
   }
 
+  @Test
   public void testDeleteAllCommentsOfDeal_otherDealNotAffected() {
     for (int i = 0; i < 5; i++) {
       commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
