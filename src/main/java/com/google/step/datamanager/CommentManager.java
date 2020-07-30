@@ -13,6 +13,8 @@ public interface CommentManager {
    */
   public CommentsWithToken getCommentsForDeal(long dealId, String token);
 
+  public void deleteAllCommentsOfDeal(long dealId);
+
   public Comment updateComment(long id, String content);
 
   public void deleteComment(long id);

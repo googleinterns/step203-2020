@@ -41,6 +41,7 @@ function loadDealDataToPage(deal) {
   $('#deal-page').show();
   if (deal.poster.id != userId) {
     $('#menu-btn').hide();
+    $('#edit-btn').hide();
   }
 
   const dealTitleElement = document.getElementById('deal-title');
@@ -114,6 +115,9 @@ function loadDataToForm(deal) {
 
   const restaurantIdInput = document.getElementById('restaurant-id-input');
   restaurantIdInput.value = deal.restaurant.id;
+
+  const tagsInput = document.getElementById('tags-input');
+  $(tagsInput).tagsinput('add', deal.tags.map((tag) => tag.name).join(','));
 }
 
 /**

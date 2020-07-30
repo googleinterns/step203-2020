@@ -36,6 +36,9 @@
               <div class="invalid-feedback">
                 Please add an image.
               </div>
+              <div id="image-extension-message" class="invalid-feedback" style="display: none;">
+                File must have extension png, jpg, jpeg, or gif.
+              </div>
             </div>
             <img style="display: none;" id="img-preview" class="mw-100 my-4" src="#" alt="your image" />
 
