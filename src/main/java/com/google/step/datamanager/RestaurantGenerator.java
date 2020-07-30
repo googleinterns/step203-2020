@@ -30,6 +30,7 @@ public class RestaurantGenerator {
   private static final String ADMIN_EMAIL = "capstone-2020-dealfinder@appspot.gserviceaccount.com";
 
   private static final RestaurantManager restaurantManager = new RestaurantManagerDatastore();
+  private static final UserManager userManager = new UserManagerDatastore();
 
   /** Populates restaurant database. */
   public static void populateRestaurantsDatabase() {
@@ -109,9 +110,12 @@ public class RestaurantGenerator {
   }
 
   private static void createRestaurants(JsonArray restaurantsJsonArray) {
-    UserManager userManager = new UserManagerDatastore();
-    User admin = userManager.createUser(ADMIN_EMAIL);
-
+    User admin;
+    try {
+      admin = userManager.readUserByEmail(ADMIN_EMAIL);
+    } catch (IllegalArgumentException e) {
+      admin = userManager.createUser(ADMIN_EMAIL);
+    }
     for (JsonElement restaurantElement : restaurantsJsonArray) {
       JsonObject restaurantObject = restaurantElement.getAsJsonObject();
       String name = restaurantObject.get("name").getAsString();
