@@ -21,6 +21,7 @@ public class DistanceUtil {
   private static Gson gson = new Gson();
   private static final String API_KEY = "";
 
+  // Class to represent the json object returned from distance matrix api
   private class DistanceResponse {
     private class Row {
       private List<Element> elements;
@@ -56,6 +57,7 @@ public class DistanceUtil {
       throws IOException {
     HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
     StringBuilder sb = new StringBuilder();
+
     // Building url with all the placeids of all the deals
     List<List<String>> placeIdsPerDeal = new ArrayList<>();
     for (int i = 0; i < deals.size(); i++) {
@@ -71,6 +73,8 @@ public class DistanceUtil {
         }
       }
     }
+
+    // Adds parameters to URL
     URIBuilder ub;
     try {
       ub = new URIBuilder("https://maps.googleapis.com/maps/api/distancematrix/json");
@@ -86,9 +90,9 @@ public class DistanceUtil {
 
     // Converts json object to a DistanceResponse class
     DistanceResponse distanceResponse = gson.fromJson(response, DistanceResponse.class);
-    int j = 0;
 
     // Creates a list of maps containing information about the placeids of a deal and its distance
+    int j = 0;
     List<Map<String, Integer>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
       try {
