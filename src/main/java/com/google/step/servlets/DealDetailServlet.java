@@ -17,6 +17,8 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -128,6 +130,12 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    Deal currentDeal = dealManager.readDeal(id);
+    if (currentDeal == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
     String description = request.getParameter("description");
     String photoBlobkey = null; // TODO connect to blobstore
     String start = request.getParameter("start");
@@ -142,20 +150,37 @@ public class DealDetailServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      // TODO validate that restaurant ID exists
+      if (restaurantManager.readRestaurant(restaurantId) == null) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
     }
 
     // validate dates
-    if (!isValidDate(start) || !isValidDate(end)) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
-    if (start.compareTo(end) > 0) {
+    if ((start != null && !isValidDate(start)) || (end != null && !isValidDate(end))) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    List<String> tagNames = null; // TODO get from request parameter
+    // make sure start is before end
+    String resultingStart = start;
+    if (resultingStart == null) {
+      resultingStart = currentDeal.start;
+    }
+    String resultingEnd = end;
+    if (resultingEnd == null) {
+      resultingEnd = currentDeal.end;
+    }
+    if (resultingStart.compareTo(resultingEnd) > 0) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    String tagParameter = request.getParameter("tags");
+    List<String> tagNames = new ArrayList<>();
+    if (tagParameter != null && !tagParameter.isEmpty()) {
+      tagNames = Arrays.asList(tagParameter.split(","));
+    }
 
     Deal deal =
         new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
