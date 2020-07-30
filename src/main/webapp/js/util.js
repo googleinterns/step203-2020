@@ -153,7 +153,7 @@ function throttle(func, limit) {
 function getLocation() {
   if (navigator.geolocation) {
     console.log('HI');
-    navigator.geolocation.getCurrentPosition(showPosition);
+    navigator.geolocation.getCurrentPosition(setNewURL);
   }
   return false;
 }
@@ -162,12 +162,16 @@ function getLocation() {
  * Sets the url to have distance in path info and location as parameters
  * @param {object} position user position
  */
-function showPosition(position) {
+function setNewURL(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
   const url = new URL(window.location.href);
   if (window.location.href.split('/').length == 5) {
     url.href += '/distance';
+  } else if (window.location.href.split('/').length == 6) {
+    const myPathElem = window.location.href.split('/');
+    myPathElem[5] = 'distance';
+    url.href = myPathElem.join('/');
   }
   const params = new URLSearchParams(url.search.slice(1));
   if (!params.has('longitude') && !params.has('latitude')) {
