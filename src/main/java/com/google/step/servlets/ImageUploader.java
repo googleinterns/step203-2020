@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,11 +85,21 @@ public class ImageUploader {
    *
    * @param blobKey blobKey of the image file.
    */
-  public static void deleteImage(String blobKey) {
+  public static void deleteImage(String... blobKeys) {
+    BlobKey[] blobKeysArray =
+        Stream.of(blobKeys).map(blobKey -> new BlobKey(blobKey)).toArray(BlobKey[]::new);
     try {
-      blobstoreService.delete(new BlobKey(blobKey));
+      blobstoreService.delete(blobKeysArray);
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  public static String getBlobKeyFromUrl(String url) {
+    if (url.startsWith("/api/images/")) {
+      return url.substring(12);
+    } else {
+      return null;
     }
   }
 }
