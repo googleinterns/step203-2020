@@ -86,6 +86,8 @@ public class DealDetailServletTest {
     when(mockVoteManager.getVotes(DEAL_A.id)).thenReturn(NUM_VOTES);
     when(mockDealManager.getTags(DEAL_A.id)).thenReturn(Arrays.asList(TAG_A, TAG_B));
 
+    PowerMockito.mockStatic(ImageUploader.class);
+
     servlet =
         new DealDetailServlet(
             mockDealManager,
@@ -165,9 +167,6 @@ public class DealDetailServletTest {
 
   @Test
   public void testDoDelete_success() throws IOException {
-    // mock static ImageUploader
-    PowerMockito.mockStatic(ImageUploader.class);
-
     when(mockRequest.getPathInfo()).thenReturn(PATH_A);
 
     servlet.doDelete(mockRequest, mockResponse);
