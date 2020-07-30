@@ -19,7 +19,7 @@ import org.apache.http.client.utils.URIBuilder;
 public class DistanceUtil {
 
   private static Gson gson = new Gson();
-  private static final String API_KEY = "AIzaSyD7eIOONxtNsDb14Sr7uTtzQJDa7yNb9hI";
+  private static final String API_KEY = "";
 
   private class DistanceResponse {
     private class Row {
@@ -76,7 +76,6 @@ public class DistanceUtil {
       ub.addParameter("origins", latitude + "," + longitude);
       ub.addParameter("destinations", sb.toString());
       ub.addParameter("key", API_KEY);
-      // System.out.println(ub.toString());
     } catch (URISyntaxException e) {
       return new ArrayList<>();
     }
