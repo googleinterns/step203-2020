@@ -4,6 +4,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.DealTagManager;
+import com.google.step.datamanager.DealTagManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -31,6 +33,7 @@ public class DealDetailServlet extends HttpServlet {
   private final UserManager userManager;
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
+  private final DealTagManager dealTagManager;
   private final UserService userService;
 
   public DealDetailServlet() {
@@ -38,6 +41,7 @@ public class DealDetailServlet extends HttpServlet {
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -46,11 +50,13 @@ public class DealDetailServlet extends HttpServlet {
       UserManager userManager,
       VoteManager voteManager,
       RestaurantManager restaurantManager,
+      DealTagManager dealTagManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
+    this.dealTagManager = dealTagManager;
     this.userService = userService;
   }
 
@@ -87,6 +93,7 @@ public class DealDetailServlet extends HttpServlet {
 
     response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
+    dealTagManager.deleteAllTagsOfDeal(id);
   }
 
   /** Gets the deal with the given id parameter */
