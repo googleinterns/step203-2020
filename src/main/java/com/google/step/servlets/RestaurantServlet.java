@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.RestaurantPlaceManager;
@@ -23,20 +25,24 @@ public class RestaurantServlet extends HttpServlet {
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
   private RestaurantPlaceManager restaurantPlaceManager;
+  private FollowManager followManager;
 
   public RestaurantServlet(
       RestaurantManager restaurantManager,
       DealManager dealManager,
-      RestaurantPlaceManager restaurantPlaceManager) {
+      RestaurantPlaceManager restaurantPlaceManager,
+      FollowManager followManager) {
     this.restaurantManager = restaurantManager;
     this.dealManager = dealManager;
     this.restaurantPlaceManager = restaurantPlaceManager;
+    this.followManager = followManager;
   }
 
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
     dealManager = new DealManagerDatastore();
     restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
+    followManager = new FollowManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
@@ -51,6 +57,8 @@ public class RestaurantServlet extends HttpServlet {
       return;
     }
     restaurantManager.deleteRestaurant(id);
+    restaurantPlaceManager.deletePlacesOfRestaurant(id);
+    followManager.deleteFollowersOfRestaurant(id);
   }
 
   /** Gets the restaurant with the given id parameter */
