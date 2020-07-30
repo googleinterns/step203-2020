@@ -160,7 +160,7 @@ function getLocation() {
 
 /**
  * Sets the url to have distance in path info and location as parameters
- * @param {object} position user position
+ * @param {object} position user position (latitude and longitude)
  */
 function setNewURL(position) {
   const latitude = position.coords.latitude;

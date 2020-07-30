@@ -37,6 +37,7 @@ function initAllDeals() {
   const longitude = location.get('longitude');
   const myPathElem = myPath.split('/');
   const reqSection = myPathElem[2];
+  console.log(reqSection);
   let reqSort = null;
   if (myPathElem.length == 4) {
     reqSort = myPathElem[3];
@@ -51,7 +52,6 @@ function initAllDeals() {
       createAllDealCards(deals, reqSection);
     });
   } else if (latitude != null && longitude != null) {
-    console.log("HI");
     $.ajax({
       url: '/api/home',
       data: {
