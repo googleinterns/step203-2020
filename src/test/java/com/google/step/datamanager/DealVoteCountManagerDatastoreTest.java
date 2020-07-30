@@ -64,8 +64,7 @@ public class DealVoteCountManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealsInOrderOfVotes() {
-
+  public void testSortDealsInOrderOfVotes() {
     dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
     dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
