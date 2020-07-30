@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
@@ -17,6 +19,8 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +35,7 @@ public class DealDetailServlet extends HttpServlet {
   private final UserManager userManager;
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
+  private final CommentManager commentManager;
   private final UserService userService;
 
   public DealDetailServlet() {
@@ -38,6 +43,7 @@ public class DealDetailServlet extends HttpServlet {
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
+    commentManager = new CommentManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -46,11 +52,13 @@ public class DealDetailServlet extends HttpServlet {
       UserManager userManager,
       VoteManager voteManager,
       RestaurantManager restaurantManager,
+      CommentManager commentManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
+    this.commentManager = commentManager;
     this.userService = userService;
   }
 
@@ -87,6 +95,7 @@ public class DealDetailServlet extends HttpServlet {
 
     response.setStatus(HttpServletResponse.SC_OK);
     dealManager.deleteDeal(id);
+    commentManager.deleteAllCommentsOfDeal(id);
     ImageUploader.deleteImage(deal.photoBlobkey);
   }
 
@@ -129,6 +138,12 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    Deal currentDeal = dealManager.readDeal(id);
+    if (currentDeal == null) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
     String description = request.getParameter("description");
     String photoBlobkey = null; // TODO connect to blobstore
     String start = request.getParameter("start");
@@ -143,20 +158,37 @@ public class DealDetailServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
-      // TODO validate that restaurant ID exists
+      if (restaurantManager.readRestaurant(restaurantId) == null) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
     }
 
     // validate dates
-    if (!isValidDate(start) || !isValidDate(end)) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return;
-    }
-    if (start.compareTo(end) > 0) {
+    if ((start != null && !isValidDate(start)) || (end != null && !isValidDate(end))) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    List<String> tagNames = null; // TODO get from request parameter
+    // make sure start is before end
+    String resultingStart = start;
+    if (resultingStart == null) {
+      resultingStart = currentDeal.start;
+    }
+    String resultingEnd = end;
+    if (resultingEnd == null) {
+      resultingEnd = currentDeal.end;
+    }
+    if (resultingStart.compareTo(resultingEnd) > 0) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    String tagParameter = request.getParameter("tags");
+    List<String> tagNames = new ArrayList<>();
+    if (tagParameter != null && !tagParameter.isEmpty()) {
+      tagNames = Arrays.asList(tagParameter.split(","));
+    }
 
     Deal deal =
         new Deal(id, description, photoBlobkey, start, end, source, posterId, restaurantId, null);
