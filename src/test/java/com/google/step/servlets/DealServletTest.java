@@ -19,7 +19,6 @@ import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,7 +35,6 @@ import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.MailManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
-import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -50,7 +48,6 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.BDDMockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -156,16 +153,7 @@ public class DealServletTest {
             eq(new ArrayList<>()));
     verify(mockResponse).sendRedirect(any());
 
-    ArgumentCaptor<com.google.step.model.User> posterCaptor =
-        ArgumentCaptor.forClass(com.google.step.model.User.class);
-    ArgumentCaptor<List> recipientsCaptor = ArgumentCaptor.forClass(List.class);
-    ArgumentCaptor<Deal> dealCaptor = ArgumentCaptor.forClass(Deal.class);
-    verify(mockMailManager)
-        .sendNewPostNotificationMail(
-            recipientsCaptor.capture(), dealCaptor.capture(), posterCaptor.capture());
-    assertEquals(Arrays.asList(USER_B), recipientsCaptor.getValue());
-    assertEquals(DEAL_A, dealCaptor.getValue());
-    assertEquals(USER_A, posterCaptor.getValue());
+    verify(mockMailManager).sendNewPostNotificationMail(Arrays.asList(USER_B), DEAL_A, USER_A);
   }
 
   @Test

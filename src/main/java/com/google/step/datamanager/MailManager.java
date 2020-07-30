@@ -30,8 +30,7 @@ public class MailManager {
       return;
     }
 
-    Properties props = new Properties();
-    Session session = Session.getDefaultInstance(props, null);
+    Session session = Session.getDefaultInstance(new Properties(), null);
 
     Message msg = new MimeMessage(session);
     try {
@@ -42,11 +41,11 @@ public class MailManager {
       return;
     }
 
-    for (int i = 0; i < recipients.size(); i++) {
+    for (User recipient : recipients) {
       try {
-        Address address = new InternetAddress(recipients.get(i).email, recipients.get(i).username);
+        Address address = new InternetAddress(recipient.email, recipient.username);
         msg.setRecipient(Message.RecipientType.TO, address);
-        msg.setContent(composeEmail(recipients.get(i), newDeal, poster), "text/html;charset=UTF-8");
+        msg.setContent(composeEmail(recipient, newDeal, poster), "text/html;charset=UTF-8");
         Transport.send(msg);
       } catch (MessagingException | UnsupportedEncodingException e) {
         e.printStackTrace();
