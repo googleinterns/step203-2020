@@ -163,8 +163,8 @@ public class UserServlet extends HttpServlet {
     if (username.isEmpty()) {
       return false;
     }
-    Pattern p = Pattern.compile(USERNAME_PATTERN);
-    Matcher m = p.matcher(username);
-    return m.matches();
+    Pattern pattern = Pattern.compile(USERNAME_PATTERN);
+    Matcher matcher = pattern.matcher(username);
+    return matcher.matches();
   }
 }
