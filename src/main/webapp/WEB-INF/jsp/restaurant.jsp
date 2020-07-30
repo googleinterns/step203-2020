@@ -23,21 +23,36 @@
   <%@include file="/WEB-INF/components/header.html"%>
   <div class="page-section flex-grow-1">
     <div class="container">
-      <h3 id="restaurant-name"></h3>
-      <div class="row mb-5">
-        <div class="col-sm-4 col-lg-3">
-          <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
-          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+      <div id="restaurant-page" style="display: none;">
+        <h3 id="restaurant-name"></h3>
+        <div class="row mb-5">
+          <div class="col-sm-4 col-lg-3">
+            <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
+            <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+          </div>
+          <div class="col-sm-8 col-lg-9">
+            <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
+          </div>
         </div>
-        <div class="col-sm-8 col-lg-9">
-          <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
+  
+        <div id="deals-section">
+          <h5 id="deals-header" class="mb-3"></h5>
+          <div id="deals-container">
+          </div>
         </div>
       </div>
-    </div>
-
-    <div id="deals-section" class="container">
-      <h5 id="deals-header" class="mb-3"></h5>
-      <div id="deals-container">
+      <div id="restaurant-not-found" style="display: none;">
+        <div class="row mb-5 mt-5">
+          <div class="col-md-8">
+            <h3 id="restaurant-name">Restaurant Not Found</h3>
+            <div>This restaurant does not exist.</div>
+          </div>
+        </div>
+      </div>
+      <div id="restaurant-loading">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
     </div>
   </div>
