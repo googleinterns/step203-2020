@@ -10,6 +10,8 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_B_JSON;
 import static com.google.step.TestConstants.HOME_DEAL_C_JSON;
+import static com.google.step.TestConstants.LATITUDE;
+import static com.google.step.TestConstants.LONGITUDE;
 import static com.google.step.TestConstants.REAL_PLACE_ID_A;
 import static com.google.step.TestConstants.REAL_PLACE_ID_B;
 import static com.google.step.TestConstants.REAL_PLACE_ID_C;
@@ -402,8 +404,8 @@ public class HomePageServletTest {
     when(request.getParameter("section")).thenReturn("users");
     when(request.getParameter("sort")).thenReturn("distance");
 
-    when(request.getParameter("latitude")).thenReturn("1.2966");
-    when(request.getParameter("longitude")).thenReturn("103.7764");
+    when(request.getParameter("latitude")).thenReturn(LATITUDE);
+    when(request.getParameter("longitude")).thenReturn(LONGITUDE);
 
     setUpUserAuthentication();
 

@@ -56,6 +56,7 @@ public class DistanceUtil {
       throws IOException {
     HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
     StringBuilder sb = new StringBuilder();
+    // Building url with all the placeids of all the deals
     List<List<String>> placeIdsPerDeal = new ArrayList<>();
     for (int i = 0; i < deals.size(); i++) {
       Set<String> placeIds =
@@ -79,10 +80,15 @@ public class DistanceUtil {
     } catch (URISyntaxException e) {
       return new ArrayList<>();
     }
+    // Making a get request with the url
     HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(ub.toString()));
     String response = request.execute().parseAsString();
+
+    // Converts json object to a DistanceResponse class
     DistanceResponse distanceResponse = gson.fromJson(response, DistanceResponse.class);
     int j = 0;
+
+    // Creates a list of maps containing information about the placeids of a deal and its distance
     List<Map<String, Integer>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
       try {

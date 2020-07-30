@@ -90,6 +90,9 @@ public class TestConstants {
   public static final String REAL_PLACE_ID_C = "ChIJGddBg6MZ2jERACsxW7Ovm_4";
   public static final String REAL_PLACE_ID_D = "ChIJA5LATO4Z2jER111V-v6abAI";
 
+  public static final String LATITUDE = "1.2966";
+  public static final String LONGITUDE = "103.7764";
+
   // Restaurant
   public static final long RESTAURANT_ID_A = 1;
   public static final long RESTAURANT_ID_B = 2;
