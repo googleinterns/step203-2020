@@ -140,7 +140,11 @@ public class RestaurantManagerDatastore implements RestaurantManager {
     List<Entity> entities = preparedQuery.asList(FetchOptions.Builder.withDefaults());
     List<Key> keys = entities.stream().map(entity -> entity.getKey()).collect(Collectors.toList());
     datastore.delete(keys);
-    String[] blobKeys = entities.stream().map(entity -> entity.getKey()).toArray(String[]::new);
+    String[] blobKeys =
+        entities.stream()
+            .map(entity -> ImageUploader.getBlobKeyFromUrl((String) entity.getProperty("photoUrl")))
+            .filter(blobKey -> blobKey != null)
+            .toArray(String[]::new);
     ImageUploader.deleteImage(blobKeys);
   }
 

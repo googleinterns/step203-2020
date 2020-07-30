@@ -87,7 +87,10 @@ public class ImageUploader {
    */
   public static void deleteImage(String... blobKeys) {
     BlobKey[] blobKeysArray =
-        Stream.of(blobKeys).map(blobKey -> new BlobKey(blobKey)).toArray(BlobKey[]::new);
+        Stream.of(blobKeys)
+            .filter(blobKey -> blobKey != null)
+            .map(blobKey -> new BlobKey(blobKey))
+            .toArray(BlobKey[]::new);
     try {
       blobstoreService.delete(blobKeysArray);
     } catch (Exception e) {
