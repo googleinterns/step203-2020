@@ -94,17 +94,6 @@ public final class CommentManagerDatastoreTest {
   }
 
   @Test
-  public void testDeleteAllCommentsOfDeal() {
-    for (int i = 0; i < 10; i++) {
-      commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
-    }
-    commentManagerDatastore.deleteAllCommentsOfDeal(DEAL_ID_A);
-
-    List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A);
-    assertEquals(0, comments.size());
-  }
-
-  @Test
   public void testDeleteAllCommentsOfDeal_otherDealNotAffected() {
     for (int i = 0; i < 10; i++) {
       commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
