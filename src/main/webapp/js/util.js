@@ -152,7 +152,6 @@ function throttle(func, limit) {
  */
 function getLocation() {
   if (navigator.geolocation) {
-    console.log('HI');
     navigator.geolocation.getCurrentPosition(setNewURL);
   }
   return false;

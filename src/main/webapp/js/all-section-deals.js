@@ -32,12 +32,11 @@ function createAllDealCards(deals, reqSection) {
  */
 function initAllDeals() {
   const myPath = window.location.pathname; // path is /all-section-deals/*
+  const myPathElem = myPath.split('/');
+  const reqSection = myPathElem[2];
   const location = new URLSearchParams(window.location.search);
   const latitude = location.get('latitude');
   const longitude = location.get('longitude');
-  const myPathElem = myPath.split('/');
-  const reqSection = myPathElem[2];
-  console.log(reqSection);
   let reqSort = null;
   if (myPathElem.length == 4) {
     reqSort = myPathElem[3];
