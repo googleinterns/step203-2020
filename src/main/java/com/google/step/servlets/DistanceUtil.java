@@ -5,7 +5,6 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.gson.Gson;
-import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.model.Deal;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.http.client.utils.URIBuilder;
 
 public class DistanceUtil {
@@ -50,25 +48,18 @@ public class DistanceUtil {
   }
 
   public static List<Map<String, Integer>> getDistances(
-      List<Deal> deals,
-      String latitude,
-      String longitude,
-      RestaurantPlaceManager restaurantPlaceManager)
+      List<Deal> deals, String latitude, String longitude, List<List<String>> placeIdsPerDeal)
       throws IOException {
     HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
     StringBuilder sb = new StringBuilder();
 
     // Building url with all the placeids of all the deals
-    List<List<String>> placeIdsPerDeal = new ArrayList<>();
-    for (int i = 0; i < deals.size(); i++) {
-      Set<String> placeIds =
-          restaurantPlaceManager.getPlaceIdsOfRestaurant(deals.get(i).restaurantId);
-      List<String> placeIdsList = new ArrayList<>(placeIds);
-      placeIdsPerDeal.add(placeIdsList);
-      for (int j = 0; j < placeIdsList.size(); j++) {
+    for (int i = 0; i < placeIdsPerDeal.size(); i++) {
+      List<String> placeIdsOfDeal = placeIdsPerDeal.get(i);
+      for (int j = 0; j < placeIdsOfDeal.size(); j++) {
         sb.append("place_id:");
-        sb.append(placeIdsList.get(j));
-        if (j != placeIds.size() - 1 || i != deals.size() - 1) {
+        sb.append(placeIdsOfDeal.get(j));
+        if (j != placeIdsOfDeal.size() - 1 || i != placeIdsPerDeal.size() - 1) {
           sb.append("|");
         }
       }
@@ -81,6 +72,7 @@ public class DistanceUtil {
       ub.addParameter("origins", latitude + "," + longitude);
       ub.addParameter("destinations", sb.toString());
       ub.addParameter("key", API_KEY);
+      System.out.println(ub.toString());
     } catch (URISyntaxException e) {
       return new ArrayList<>();
     }

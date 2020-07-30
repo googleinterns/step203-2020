@@ -215,7 +215,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
         dealIds = dealManager.getDealsPublishedByUsers(userIds, -1, null);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -226,7 +226,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1, null);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -242,14 +242,14 @@ public class HomePageServlet extends HttpServlet {
         deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1, null);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
   }
 
-  private List<Deal> handleSortVoteTrending(List<Long> dealIds, int limit, String sort) {
+  private List<Deal> handleSortVoteTrendingDistance(List<Long> dealIds, int limit, String sort) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
       dealIds = dealVoteCountManager.getDealsInOrderOfVotes(dealIds, limit);
@@ -264,8 +264,15 @@ public class HomePageServlet extends HttpServlet {
       deals = dealManager.readDeals(dealIds);
       Map<Deal, Integer> dealDistMap = new HashMap<>();
       try {
+        List<List<String>> placeIdsPerDeal = new ArrayList<>();
+        for (int i = 0; i < deals.size(); i++) {
+          Set<String> placeIds =
+              restaurantPlaceManager.getPlaceIdsOfRestaurant(deals.get(i).restaurantId);
+          List<String> placeIdsList = new ArrayList<>(placeIds);
+          placeIdsPerDeal.add(placeIdsList);
+        }
         List<Map<String, Integer>> distances =
-            DistanceUtil.getDistances(deals, latitude, longitude, restaurantPlaceManager);
+            DistanceUtil.getDistances(deals, latitude, longitude, placeIdsPerDeal);
         // Gets the min distance for each deal as there are many placeids and put in new map
         for (int i = 0; i < distances.size(); i++) {
           if (!distances.get(i).isEmpty()) {
