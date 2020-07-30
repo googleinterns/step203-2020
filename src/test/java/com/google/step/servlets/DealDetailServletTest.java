@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
@@ -58,6 +59,7 @@ public class DealDetailServletTest {
   private UserManager mockUserManager;
   private VoteManager mockVoteManager;
   private RestaurantManager mockRestaurantManager;
+  private CommentManager mockCommentManager;
   private UserService mockUserService;
   private HttpServletResponse mockResponse;
   private StringWriter stringWriter;
@@ -69,6 +71,7 @@ public class DealDetailServletTest {
     mockUserManager = mock(UserManager.class);
     mockVoteManager = mock(VoteManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
+    mockCommentManager = mock(CommentManager.class);
     mockUserService = mock(UserService.class);
     mockRequest = mock(HttpServletRequest.class);
 
@@ -97,6 +100,7 @@ public class DealDetailServletTest {
             mockUserManager,
             mockVoteManager,
             mockRestaurantManager,
+            mockCommentManager,
             mockUserService);
   }
 
@@ -176,6 +180,7 @@ public class DealDetailServletTest {
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
     verify(mockDealManager).deleteDeal(DEAL_ID_A);
+    verify(mockCommentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
   }
 
   @Test
