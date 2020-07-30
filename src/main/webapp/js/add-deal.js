@@ -101,7 +101,7 @@ function selectRestaurant(restaurant) {
   const restaurantDiv = $('#restaurant-selected')[0];
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
-      <span class="flex-grow-1">${restaurant.name}</span>
+      <span class="flex-grow-1">${escapeHtml(restaurant.name)}</span>
       <img class="search-menu-pic" src="${restaurant.photoUrl}">
     </div>
   `;

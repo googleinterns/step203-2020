@@ -1,14 +1,22 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.DATE_A;
+import static com.google.step.TestConstants.DATE_B;
+import static com.google.step.TestConstants.DATE_C;
 import static com.google.step.TestConstants.DEAL_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DEAL_ID_B;
+import static com.google.step.TestConstants.DESCRIPTION_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.EMAIL_B;
 import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
+import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.TAG_A;
 import static com.google.step.TestConstants.TAG_B;
+import static com.google.step.TestConstants.TAG_NAME_A;
+import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static org.mockito.Mockito.mock;
@@ -17,14 +25,17 @@ import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.VoteManager;
+import com.google.step.model.Deal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +60,7 @@ public class DealDetailServletTest {
   private UserManager mockUserManager;
   private VoteManager mockVoteManager;
   private RestaurantManager mockRestaurantManager;
+  private CommentManager mockCommentManager;
   private DealTagManager mockDealTagManager;
   private UserService mockUserService;
   private HttpServletResponse mockResponse;
@@ -61,6 +73,7 @@ public class DealDetailServletTest {
     mockUserManager = mock(UserManager.class);
     mockVoteManager = mock(VoteManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
+    mockCommentManager = mock(CommentManager.class);
     mockDealTagManager = mock(DealTagManager.class);
     mockUserService = mock(UserService.class);
     mockRequest = mock(HttpServletRequest.class);
@@ -90,6 +103,7 @@ public class DealDetailServletTest {
             mockUserManager,
             mockVoteManager,
             mockRestaurantManager,
+            mockCommentManager,
             mockDealTagManager,
             mockUserService);
   }
@@ -170,6 +184,7 @@ public class DealDetailServletTest {
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
     verify(mockDealManager).deleteDeal(DEAL_ID_A);
+    verify(mockCommentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
     verify(mockDealTagManager).deleteAllTagsOfDeal(DEAL_ID_A);
   }
 
@@ -192,5 +207,65 @@ public class DealDetailServletTest {
     servlet.doDelete(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
+  }
+
+  @Test
+  public void testDoPut_success() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    when(mockRequest.getParameter("description")).thenReturn(DESCRIPTION_A);
+    when(mockRequest.getParameter("start")).thenReturn(DATE_A);
+    when(mockRequest.getParameter("end")).thenReturn(DATE_B);
+    when(mockRequest.getParameter("source")).thenReturn(SOURCE_A);
+    when(mockRequest.getParameter("restaurant")).thenReturn(Long.toString(RESTAURANT_ID_A));
+    when(mockRequest.getParameter("tags")).thenReturn(TAG_NAME_A + "," + TAG_NAME_B);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    Deal expectedDeal =
+        new Deal(
+            DEAL_ID_A, DESCRIPTION_A, null, DATE_A, DATE_B, SOURCE_A, -1, RESTAURANT_ID_A, null);
+    verify(mockDealManager).updateDeal(expectedDeal, Arrays.asList(TAG_NAME_A, TAG_NAME_B));
+  }
+
+  @Test
+  public void testDoPut_noFields_success() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    Deal expectedDeal = new Deal(DEAL_ID_A, null, null, null, null, null, -1, -1, null);
+    verify(mockDealManager).updateDeal(expectedDeal, new ArrayList<>());
+    verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
+  }
+
+  @Test
+  public void testDoPut_idNotFound() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_B);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
+  }
+
+  @Test
+  public void testDoPut_singleDateWrongOrder() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    when(mockRequest.getParameter("start")).thenReturn(DATE_C);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoPut_singleDate_success() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    when(mockRequest.getParameter("end")).thenReturn(DATE_C);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    Deal expectedDeal = new Deal(DEAL_ID_A, null, null, null, DATE_C, null, -1, -1, null);
+    verify(mockDealManager).updateDeal(expectedDeal, new ArrayList<>());
+    verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
   }
 }

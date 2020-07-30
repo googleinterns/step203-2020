@@ -4,8 +4,14 @@ import static com.google.step.TestConstants.BIO_A;
 import static com.google.step.TestConstants.BIO_A_NEW;
 import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
+import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_A_BRIEF_JSON;
 import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.RESTAURANT_A;
+import static com.google.step.TestConstants.RESTAURANT_A_BRIEF_JSON;
+import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.TAG_A;
+import static com.google.step.TestConstants.TAG_A_JSON;
 import static com.google.step.TestConstants.TAG_B;
 import static com.google.step.TestConstants.TAG_C;
 import static com.google.step.TestConstants.TAG_ID_A;
@@ -19,8 +25,12 @@ import static com.google.step.TestConstants.USERNAME_A;
 import static com.google.step.TestConstants.USERNAME_A_NEW;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
+import static com.google.step.TestConstants.USER_B_BRIEF_JSON;
+import static com.google.step.TestConstants.USER_C;
+import static com.google.step.TestConstants.USER_C_BRIEF_JSON;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
+import static com.google.step.TestConstants.USER_ID_C;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.validateMockitoUsage;
@@ -39,7 +49,6 @@ import com.google.step.model.Tag;
 import com.google.step.model.User;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -100,28 +109,28 @@ public class UserServletTest {
     when(request.getPathInfo()).thenReturn("/" + USER_ID_A);
     when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
 
-    List<Deal> deals = new ArrayList<>();
+    List<Deal> deals = Arrays.asList(DEAL_A);
     when(mockDealManager.getDealsPublishedByUser(USER_ID_A)).thenReturn(deals);
 
-    List<Long> followingIds = new ArrayList<>();
+    List<Long> followingIds = Arrays.asList(USER_ID_B);
     when(mockFollowManager.getFollowedUserIds(USER_ID_A)).thenReturn(new HashSet<>(followingIds));
-    List<User> following = new ArrayList<>();
+    List<User> following = Arrays.asList(USER_B);
     when(mockUserManager.readUsers(followingIds)).thenReturn(following);
 
-    List<Long> followerIds = new ArrayList<>();
+    List<Long> followerIds = Arrays.asList(USER_ID_C);
     when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
-    List<User> followers = new ArrayList<>();
+    List<User> followers = Arrays.asList(USER_C);
     when(mockUserManager.readUsers(followerIds)).thenReturn(followers);
 
-    List<Long> tagIds = new ArrayList<>();
+    List<Long> tagIds = Arrays.asList(TAG_ID_A);
     when(mockFollowManager.getFollowedTagIds(USER_ID_A)).thenReturn(new HashSet<>(tagIds));
-    List<Tag> tags = new ArrayList<>();
+    List<Tag> tags = Arrays.asList(TAG_A);
     when(mockTagManager.readTags(tagIds)).thenReturn(tags);
 
-    List<Long> restaurantIds = new ArrayList<>();
+    List<Long> restaurantIds = Arrays.asList(RESTAURANT_ID_A);
     when(mockFollowManager.getFollowedRestaurantIds(USER_ID_A))
         .thenReturn(new HashSet<>(restaurantIds));
-    List<Restaurant> restaurants = new ArrayList<>();
+    List<Restaurant> restaurants = Arrays.asList(RESTAURANT_A);
     when(mockRestaurantManager.readRestaurants(restaurantIds)).thenReturn(restaurants);
 
     StringWriter stringWriter = new StringWriter();
@@ -135,12 +144,21 @@ public class UserServletTest {
     String expected =
         String.format(
             "{id:%d,email:\"%s\",username:\"%s\",bio:\"%s\",picture:\"%s\","
-                + "dealsUploaded:[],"
-                + "following:[],"
-                + "followers:[],"
-                + "tagsFollowed:[],"
-                + "restaurantsFollowed:[]}",
-            USER_ID_A, EMAIL_A, USERNAME_A, BIO_A, BLOBKEY_URL_A);
+                + "dealsUploaded:[%s],"
+                + "following:[%s],"
+                + "followers:[%s],"
+                + "tagsFollowed:[%s],"
+                + "restaurantsFollowed:[%s]}",
+            USER_ID_A,
+            EMAIL_A,
+            USERNAME_A,
+            BIO_A,
+            BLOBKEY_URL_A,
+            DEAL_A_BRIEF_JSON,
+            USER_B_BRIEF_JSON,
+            USER_C_BRIEF_JSON,
+            TAG_A_JSON,
+            RESTAURANT_A_BRIEF_JSON);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
