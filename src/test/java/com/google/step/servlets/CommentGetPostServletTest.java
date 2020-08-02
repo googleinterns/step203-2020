@@ -8,6 +8,8 @@ import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.EMAIL_B;
+import static com.google.step.TestConstants.TOKEN_A;
+import static com.google.step.TestConstants.TOKEN_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.CommentsWithToken;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
 import java.io.PrintWriter;
@@ -74,11 +77,12 @@ public class CommentGetPostServletTest {
     List<Comment> comments = new ArrayList<>();
     comments.add(COMMENT_A);
     comments.add(COMMENT_B);
+    CommentsWithToken commentsWithToken = new CommentsWithToken(comments, TOKEN_A);
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
     when(request.getParameter("dealId")).thenReturn(Long.toString(DEAL_ID_A));
-    when(mockCommentManager.getCommentsForDeal(DEAL_ID_A)).thenReturn(comments);
+    when(mockCommentManager.getCommentsForDeal(DEAL_ID_A, null)).thenReturn(commentsWithToken);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -86,8 +90,11 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
 
-    String expected = "[" + COMMENT_A_JSON + "," + COMMENT_B_JSON + "]";
+    String expected =
+        String.format(
+            "{\"comments\": [%s, %s], \"token\": %s}", COMMENT_A_JSON, COMMENT_B_JSON, TOKEN_A);
 
+    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
@@ -96,7 +103,8 @@ public class CommentGetPostServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(request.getParameter("dealId")).thenReturn("1000");
-    when(mockCommentManager.getCommentsForDeal(1000)).thenReturn(new ArrayList<>());
+    when(mockCommentManager.getCommentsForDeal(1000, null))
+        .thenReturn(new CommentsWithToken(new ArrayList<>(), TOKEN_A));
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -104,8 +112,9 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
 
-    String expected = "[]";
+    String expected = String.format("{\"comments\": [], \"token\": %s}", TOKEN_A);
 
+    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
@@ -128,6 +137,33 @@ public class CommentGetPostServletTest {
 
     commentGetPostServlet.doGet(request, response);
     verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+  }
+
+  @Test
+  public void testDoGet_nextToken() throws Exception {
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    when(mockResponse.getWriter()).thenReturn(writer);
+
+    when(mockRequest.getParameter("dealId")).thenReturn(Long.toString(DEAL_ID_A));
+    when(mockRequest.getParameter("token")).thenReturn(TOKEN_A);
+    List<Comment> comments = new ArrayList<>();
+    comments.add(COMMENT_A);
+    comments.add(COMMENT_B);
+    CommentsWithToken commentsWithToken = new CommentsWithToken(comments, TOKEN_B);
+    when(mockCommentManager.getCommentsForDeal(DEAL_ID_A, TOKEN_A)).thenReturn(commentsWithToken);
+
+    commentGetPostServlet.doGet(mockRequest, mockResponse);
+
+    String expected =
+        String.format(
+            "{\"comments\": [%s, %s], \"token\": %s}", COMMENT_A_JSON, COMMENT_B_JSON, TOKEN_B);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_ACCEPTED);
+    JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
