@@ -13,15 +13,21 @@ import java.util.Map;
 
 /** A class that handles converting entities to json format. */
 public class JsonFormatter {
-  public static String getCommentsJson(List<Comment> comments, List<User> users) {
-    Gson gson = new Gson();
+  public static String getCommentsWithTokenJson(
+      List<Comment> comments, List<User> users, String token) {
     List<Map<String, Object>> commentMapList = new ArrayList<>();
     for (int i = 0; i < comments.size(); i++) {
       Comment comment = comments.get(i);
       User user = users.get(i);
       commentMapList.add(getCommentMap(comment, user));
     }
-    String json = gson.toJson(commentMapList);
+
+    Map<String, Object> commentsAndTokenMap = new HashMap<>();
+    commentsAndTokenMap.put("comments", commentMapList);
+    commentsAndTokenMap.put("token", token);
+
+    Gson gson = new Gson();
+    String json = gson.toJson(commentsAndTokenMap);
     return json;
   }
 
@@ -73,6 +79,7 @@ public class JsonFormatter {
     commentMap.put("user", getUserBriefMap(poster));
     commentMap.put("content", comment.content);
     commentMap.put("timestamp", comment.timestamp);
+    commentMap.put("sentiment", comment.sentiment);
     return commentMap;
   }
 

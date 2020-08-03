@@ -27,7 +27,7 @@
   <div class="container">
     <section class="page-section">
       <h2 class="page-section-heading text-center text-secondary mb-4">Submit A Deal</h2>
-      <div class="row">
+      <div class="row" id="form-div">
         <div class="col-lg-8 mx-auto">
           <form method="post" id="deal-form" name="dealform" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="form-group validate-me">
@@ -35,6 +35,9 @@
               <input name="pic" type="file" class="form-control-file" id="img-input" required>
               <div class="invalid-feedback">
                 Please add an image.
+              </div>
+              <div id="image-extension-message" class="invalid-feedback" style="display: none;">
+                File must have extension png, jpg, jpeg, or gif.
               </div>
             </div>
             <img style="display: none;" id="img-preview" class="mw-100 my-4" src="#" alt="your image" />
@@ -97,6 +100,10 @@
                 Start typing and hit enter to enter tags.
               </small>
             </div>
+            <div class="form-check mb-2">
+              <input type="checkbox" class="form-check-input" id="notify-followers" name="notify-followers" value="default">
+              <label class="form-check-label">Notify my followers</label>
+            </div>
 
             <div class="form-group d-flex flex-row-reverse">
               <button class="btn btn-primary" id="sendMessageButton" type="submit">Submit Deal
@@ -104,6 +111,9 @@
             </div>
           </form>
         </div>
+      </div>
+      <div id="logged-out" style="display: none;">
+        You need to be logged in to submit a deal.
       </div>
     </section>
   </div>

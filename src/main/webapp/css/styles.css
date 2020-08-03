@@ -10289,6 +10289,11 @@ body > .container {
   width: auto;
 }
 
+.deal-card-img {
+  height: 270px;
+  object-fit: cover;
+}
+
 .search-menu-container {
   position: relative;
 }

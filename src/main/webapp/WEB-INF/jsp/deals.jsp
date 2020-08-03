@@ -14,6 +14,8 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
     type="text/css" />
+    <!-- Tags Input CSS -->
+    <link href="/tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="/css/styles.css" rel="stylesheet" />
   <!-- Page CSS-->
@@ -67,7 +69,7 @@
                 <p>Source: <span id="deal-source"></span></p>
                 <p>Tags: <span id="tags"></span></p>
               </div>
-              <button class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
+              <button id="edit-btn" class="btn btn-primary" onclick="handleEdit()">Edit Deal</button>
             </div>
             <form style="display:none" id="edit-form">
               <div class="form-group validate-me form-inline">
@@ -86,7 +88,7 @@
               <input name="restaurant" id="restaurant-id-input" type="text" class="d-none">
 
               <div class="form-group validate-me form-inline">
-                <label class="mr-2">Valid Date:</label>
+                <label class="mr-2">Validity:</label>
                 <input name="start" class="form-control" type="date" id="start-input" required
                   onchange="checkFormDates()">
                 <span class="mx-2">to</span>
@@ -105,6 +107,16 @@
                 <input name="source" type="text" class="form-control" id="source-input">
               </div>
 
+              <div class="form-group d-flex">
+                <label class="mr-2">Tags</label>
+                <div>
+                  <input id="tags-input" name="tags" type="text" data-role="tagsinput">
+                  <small class="form-text text-muted">
+                    Start typing and hit enter to enter tags.
+                  </small>
+                </div>
+              </div>
+
               <button type="button" class="btn btn-primary" onclick="handleSubmit()">Save</button>
               <button type="button" class="btn btn-primary ml-2" onclick="handleCancelEdit()">Cancel</button>
             </form>
@@ -120,8 +132,14 @@
                 </form>
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-12" id="comment-list"></div>
+            <div>
+              <div id="comment-list"></div>
+              <div class="d-flex justify-content-center">
+                <div id="comment-loading" class="spinner-border" role="status" style="display: none;">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <button id="comment-more" class="btn btn-primary" style="display: none;">Load More</button>
+              </div>
             </div>
           </div>
         </div>
@@ -148,6 +166,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <!-- Third party plugin JS-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="/tagsinput/tagsinput.js"></script>
   <!-- Core theme JS-->
   <script src="/js/scripts.js"></script>
   <!-- Restaurant search JS-->

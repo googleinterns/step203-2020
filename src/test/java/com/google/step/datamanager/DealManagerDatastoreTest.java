@@ -247,7 +247,7 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the users followed by USER_ID_A
     List<Long> dealsForAIds =
         dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), -1, null);
+            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), -1);
     List<Deal> dealsForA = dealManagerDatastore.readDeals(dealsForAIds);
     assertEquals(2, dealsForA.size());
     assertEquals(dealB, dealsForA.get(0));
@@ -255,8 +255,7 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_B
     List<Long> dealsForBIds =
-        dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_A)), -1, null);
+        dealManagerDatastore.getDealsPublishedByUsers(new HashSet<>(Arrays.asList(USER_ID_A)), -1);
     List<Deal> dealsForB = dealManagerDatastore.readDeals(dealsForBIds);
     assertEquals(1, dealsForB.size());
     assertEquals(dealA, dealsForB.get(0));
@@ -298,8 +297,8 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_A
     List<Long> dealsForAIds =
-        dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), -1, "new");
+        dealManagerDatastore.getDealsPublishedByUsersSortByNew(
+            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), -1);
     List<Deal> dealsForA = dealManagerDatastore.readDealsOrder(dealsForAIds);
     assertEquals(2, dealsForA.size());
     assertEquals(dealC, dealsForA.get(0));
@@ -307,8 +306,8 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_B
     List<Long> dealsForBIds =
-        dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_A)), -1, "new");
+        dealManagerDatastore.getDealsPublishedByUsersSortByNew(
+            new HashSet<>(Arrays.asList(USER_ID_A)), -1);
     List<Deal> dealsForB = dealManagerDatastore.readDealsOrder(dealsForBIds);
     assertEquals(1, dealsForB.size());
     assertThat(dealsForB, hasItem(dealA));
@@ -342,16 +341,16 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the users followed by USER_ID_A
     List<Long> dealsForAIds =
-        dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), 1, "new");
+        dealManagerDatastore.getDealsPublishedByUsersSortByNew(
+            new HashSet<>(Arrays.asList(USER_ID_B, USER_ID_C)), 1);
     List<Deal> dealsForA = dealManagerDatastore.readDealsOrder(dealsForAIds);
     assertEquals(1, dealsForA.size());
     assertThat(dealsForA, hasItem(dealC));
 
     // Get deals published by the users followed by USER_ID_C
     List<Long> dealsForCIds =
-        dealManagerDatastore.getDealsPublishedByUsers(
-            new HashSet<>(Arrays.asList(USER_ID_A, USER_ID_B)), 1, "new");
+        dealManagerDatastore.getDealsPublishedByUsersSortByNew(
+            new HashSet<>(Arrays.asList(USER_ID_A, USER_ID_B)), 1);
     List<Deal> dealsForC = dealManagerDatastore.readDealsOrder(dealsForCIds);
     assertEquals(1, dealsForC.size());
     assertThat(dealsForC, hasItem(dealB));
@@ -384,7 +383,7 @@ public final class DealManagerDatastoreTest {
     // Get deals published by the restaurants followed by USER_ID_B
     List<Long> dealIds =
         dealManagerDatastore.getDealsPublishedByRestaurants(
-            new HashSet<>(Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B)), -1, null);
+            new HashSet<>(Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B)), -1);
     List<Deal> deals = dealManagerDatastore.readDeals(dealIds);
     assertEquals(2, deals.size());
     assertEquals(dealA, deals.get(0));
@@ -409,8 +408,8 @@ public final class DealManagerDatastoreTest {
 
     // Get deals published by the restaurants followed by USER_ID_B, with limit of 1
     List<Long> dealIds =
-        dealManagerDatastore.getDealsPublishedByRestaurants(
-            new HashSet<>(Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B)), 1, "new");
+        dealManagerDatastore.getDealsPublishedByRestaurantsSortByNew(
+            new HashSet<>(Arrays.asList(RESTAURANT_ID_A, RESTAURANT_ID_B)), 1);
     List<Deal> deals = dealManagerDatastore.readDealsOrder(dealIds);
     assertEquals(1, deals.size());
     assertThat(deals, hasItem(dealB));
@@ -466,8 +465,8 @@ public final class DealManagerDatastoreTest {
             RESTAURANT_ID_B,
             EMPTY_LIST);
     List<Long> dealIds =
-        dealManagerDatastore.getDealsWithIds(
-            new HashSet<>(Arrays.asList(dealA.id, dealB.id)), -1, "new");
+        dealManagerDatastore.getDealsWithIdsSortByNew(
+            new HashSet<>(Arrays.asList(dealA.id, dealB.id)), -1);
     assertEquals(2, dealIds.size());
     assertThat(dealA.id, is(dealIds.get(0)));
     assertThat(dealB.id, is(dealIds.get(1)));
@@ -495,8 +494,8 @@ public final class DealManagerDatastoreTest {
             RESTAURANT_ID_B,
             EMPTY_LIST);
     List<Long> dealIds =
-        dealManagerDatastore.getDealsWithIds(
-            new HashSet<>(Arrays.asList(dealA.id, dealB.id)), 1, "new");
+        dealManagerDatastore.getDealsWithIdsSortByNew(
+            new HashSet<>(Arrays.asList(dealA.id, dealB.id)), 1);
     assertEquals(1, dealIds.size());
     assertThat(dealIds, hasItem(dealB.id));
   }
