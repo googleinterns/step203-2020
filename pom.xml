@@ -114,13 +114,7 @@
       <artifactId>httpclient</artifactId>
       <version>4.3.2</version>
     </dependency>
-
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-language</artifactId>
-      <version>1.55.0</version>
-    </dependency>
-
+    
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>

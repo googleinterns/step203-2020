@@ -8,16 +8,13 @@ public class Comment {
   public final long userId;
   public final String content;
   public final String timestamp;
-  public final String sentiment;
 
-  public Comment(
-      long id, long dealId, long userId, String content, String timestamp, String sentiment) {
+  public Comment(long id, long dealId, long userId, String content, String timestamp) {
     this.id = id;
     this.dealId = dealId;
     this.userId = userId;
     this.content = content;
     this.timestamp = timestamp;
-    this.sentiment = sentiment;
   }
 
   @Override
