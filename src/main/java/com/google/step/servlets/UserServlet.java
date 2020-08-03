@@ -21,6 +21,8 @@ import com.google.step.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that handles users. */
 @WebServlet("/api/users/*")
 public class UserServlet extends HttpServlet {
+  private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_@\\.]*$";
 
   private UserManager userManager = new UserManagerDatastore();
   private UserService userService = UserServiceFactory.getUserService();
@@ -120,6 +123,10 @@ public class UserServlet extends HttpServlet {
     }
 
     String username = (String) request.getParameter("username");
+    if (username != null && !validateUserName(username)) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
     String bio = (String) request.getParameter("bio");
     String photoBlobKey = getUploadedImageBlobkey(request, "picture");
     boolean isUsingDefaultPhoto = request.getParameter("default-photo") != null;
@@ -150,5 +157,14 @@ public class UserServlet extends HttpServlet {
     }
 
     followManager.updateFollowedTagIds(userId, tagIds);
+  }
+
+  private boolean validateUserName(String username) {
+    if (username.isEmpty()) {
+      return false;
+    }
+    Pattern pattern = Pattern.compile(USERNAME_PATTERN);
+    Matcher matcher = pattern.matcher(username);
+    return matcher.matches();
   }
 }

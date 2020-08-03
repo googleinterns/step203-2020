@@ -6,14 +6,33 @@ reader.onload = function(e) {
   $('#img-preview').attr('src', e.target.result);
 };
 $('#img-input').change((event) => {
+  $('#img-preview').hide();
+  $('#image-extension-message').hide();
   const input = event.currentTarget;
+  if (!extensionIsValid(input.value)) {
+    $('#image-extension-message').show();
+    input.value = '';
+  }
   if (input.files && input.files[0]) {
     reader.readAsDataURL(input.files[0]);
     $('#img-preview').show();
-  } else {
-    $('#img-preview').hide();
   }
 });
+
+/**
+ * check if filename has image extension
+ * @param {string} filename
+ * @return {boolean}
+ */
+function extensionIsValid(filename) {
+  const validExtension = ['.png', '.jpg', '.jpeg', '.gif'];
+  for (const extension of validExtension) {
+    if (filename.toLowerCase().endsWith(extension)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /*
  * Form validation
@@ -43,6 +62,18 @@ $.ajax({
   form.style.display = 'block';
 });
 
+/*
+ * If user is not logged in, hide the form and ask the user to log in
+ */
+$.ajax('/api/authentication')
+    .done((loginStatus) => {
+      if (!loginStatus.isLoggedIn) {
+        $('#form-div').hide();
+        $('#logged-out').show();
+      }
+    });
+
+
 /**
  * Custom validation for form
  * @return {boolean}
@@ -70,7 +101,7 @@ function selectRestaurant(restaurant) {
   const restaurantDiv = $('#restaurant-selected')[0];
   restaurantDiv.innerHTML = `
     <div class="d-flex align-items-center p-2">
-      <span class="flex-grow-1">${restaurant.name}</span>
+      <span class="flex-grow-1">${escapeHtml(restaurant.name)}</span>
       <img class="search-menu-pic" src="${restaurant.photoUrl}">
     </div>
   `;

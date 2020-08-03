@@ -16,17 +16,23 @@ import static com.google.step.TestConstants.SOURCE_A;
 import static com.google.step.TestConstants.TAG_NAME_A;
 import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_B;
+import static com.google.step.TestConstants.USER_ID_A;
+import static com.google.step.TestConstants.USER_ID_B;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.MailManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
 import java.io.IOException;
@@ -34,6 +40,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
@@ -59,6 +67,8 @@ public class DealServletTest {
   private UserService mockUserService;
   private UserManager mockUserManager;
   private RestaurantManager mockRestaurantManager;
+  private MailManager mockMailManager;
+  private FollowManager mockFollowManager;
   private HttpServletResponse mockResponse;
   private StringWriter stringWriter;
   private PrintWriter writer;
@@ -75,6 +85,8 @@ public class DealServletTest {
     mockUserService = mock(UserService.class);
     mockUserManager = mock(UserManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
+    mockFollowManager = mock(FollowManager.class);
+    mockMailManager = mock(MailManager.class);
     User currentUser = new User(EMAIL_A, "");
 
     // mock response
@@ -100,7 +112,13 @@ public class DealServletTest {
     when(mockRestaurantManager.readRestaurant(RESTAURANT_ID_A)).thenReturn(RESTAURANT_A);
 
     servlet =
-        new DealServlet(mockDealManager, mockUserManager, mockUserService, mockRestaurantManager);
+        new DealServlet(
+            mockDealManager,
+            mockUserManager,
+            mockUserService,
+            mockRestaurantManager,
+            mockFollowManager,
+            mockMailManager);
   }
 
   @Test
@@ -116,6 +134,11 @@ public class DealServletTest {
             eq(new ArrayList<>())))
         .thenReturn(DEAL_A);
 
+    List<Long> followerIds = Arrays.asList(USER_ID_B);
+    when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
+    when(mockUserManager.readUsers(followerIds)).thenReturn(Arrays.asList(USER_B));
+    when(mockRequest.getParameter("notify-followers")).thenReturn("true");
+
     servlet.doPost(mockRequest, mockResponse);
 
     verify(mockDealManager)
@@ -129,6 +152,41 @@ public class DealServletTest {
             eq(RESTAURANT_ID_A),
             eq(new ArrayList<>()));
     verify(mockResponse).sendRedirect(any());
+
+    verify(mockMailManager).sendNewPostNotificationMail(Arrays.asList(USER_B), DEAL_A, USER_A);
+  }
+
+  @Test
+  public void testDoPost_success_noNotification() throws IOException {
+    when(mockDealManager.createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>())))
+        .thenReturn(DEAL_A);
+
+    List<Long> followerIds = Arrays.asList(USER_ID_B);
+    when(mockFollowManager.getFollowerIdsOfUser(USER_ID_A)).thenReturn(new HashSet<>(followerIds));
+    when(mockUserManager.readUsers(followerIds)).thenReturn(Arrays.asList(USER_B));
+
+    servlet.doPost(mockRequest, mockResponse);
+
+    verify(mockDealManager)
+        .createDeal(
+            eq(DESCRIPTION_A),
+            anyString(),
+            eq(DATE_A),
+            eq(DATE_B),
+            eq(SOURCE_A),
+            anyLong(),
+            eq(RESTAURANT_ID_A),
+            eq(new ArrayList<>()));
+    verify(mockResponse).sendRedirect(any());
+    verify(mockMailManager, never()).sendNewPostNotificationMail(any(), any(), any());
   }
 
   @Test
