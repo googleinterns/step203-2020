@@ -46,10 +46,10 @@ public class CommentManagerDatastore implements CommentManager {
     String sentiment = null;
     try {
       sentiment = getCommentSentiment(content) + "";
-      entity.setProperty("sentiment", sentiment);
     } catch (IOException e) {
-      entity.setProperty("sentiment", "0");
+      sentiment = "0";
     }
+    entity.setProperty("sentiment", sentiment);
     Key key = datastore.put(entity);
     long id = key.getId();
 
@@ -67,7 +67,7 @@ public class CommentManagerDatastore implements CommentManager {
 
     double totalSentimentScore = 0;
     for (Entity entity : entities) {
-      totalSentimentScore += (double) entity.getProperty("sentiment");
+      totalSentimentScore += Double.valueOf((String) entity.getProperty("sentiment"));
     }
     return totalSentimentScore / entities.size();
   }
