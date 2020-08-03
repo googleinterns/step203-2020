@@ -343,7 +343,7 @@ function configurePostUrl(userId) {
 /**
  * Initializes the user profile page based on the id.
  */
-function initRestaurantPage() {
+function initUserPage() {
   const id = window.location.pathname.substring(6); // Remove '/user/'
   $.ajax('/api/users/' + id)
       .done((user) => {
@@ -359,6 +359,23 @@ function initRestaurantPage() {
       });
 }
 
+/**
+ * Initializes forms validation.
+ */
+function initializeForms() {
+  const forms = document.getElementsByClassName('needs-validation');
+  const validation = Array.prototype.filter.call(forms, function(form) {
+    form.addEventListener('submit', function(event) {
+      if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  });
+}
+
 addLoadEvent(() => {
-  initRestaurantPage();
+  initializeForms();
+  initUserPage();
 });

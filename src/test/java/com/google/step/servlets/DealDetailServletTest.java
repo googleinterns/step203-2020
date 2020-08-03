@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
@@ -20,6 +21,7 @@ import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,11 +44,14 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ImageUploader.class)
 public class DealDetailServletTest {
 
   private static final int NUM_VOTES = 123;
@@ -93,6 +98,8 @@ public class DealDetailServletTest {
     when(mockRestaurantManager.readRestaurant(DEAL_A.restaurantId)).thenReturn(RESTAURANT_A);
     when(mockVoteManager.getVotes(DEAL_A.id)).thenReturn(NUM_VOTES);
     when(mockDealManager.getTags(DEAL_A.id)).thenReturn(Arrays.asList(TAG_A, TAG_B));
+
+    PowerMockito.mockStatic(ImageUploader.class);
 
     servlet =
         new DealDetailServlet(
@@ -181,6 +188,8 @@ public class DealDetailServletTest {
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
     verify(mockDealManager).deleteDeal(DEAL_ID_A);
     verify(mockCommentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
+    PowerMockito.verifyStatic(ImageUploader.class, times(1));
+    ImageUploader.deleteImage(BLOBKEY_A);
   }
 
   @Test
@@ -220,6 +229,28 @@ public class DealDetailServletTest {
         new Deal(
             DEAL_ID_A, DESCRIPTION_A, null, DATE_A, DATE_B, SOURCE_A, -1, RESTAURANT_ID_A, null);
     verify(mockDealManager).updateDeal(expectedDeal, Arrays.asList(TAG_NAME_A, TAG_NAME_B));
+  }
+
+  @Test
+  public void tesDoPut_notLoggedIn() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void tesDoPut_userIsNotPoster() throws IOException {
+    when(mockRequest.getPathInfo()).thenReturn(PATH_A);
+    User currentUser = new User(EMAIL_B, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+
+    servlet.doPut(mockRequest, mockResponse);
+
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test

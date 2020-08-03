@@ -80,6 +80,47 @@ function createDealCard(deal) {
 }
 
 /**
+ * Returns a container for a deal.
+ * @param {object} deal deal whose info will be shown.
+ * @param {number} numCol the bootstrap width of each deal
+ * @param {number} sectionId the sectionId of each deal
+ * @return {HTMLDivElement} a DOM element showing deal's info.
+ */
+function createHomeDealCard(deal, numCol, sectionId) {
+  const dealBody = document.createElement('div');
+  dealBody.classList.add('col-md-'+numCol, 'mt-5');
+  const date = new Date(Date.parse(deal.timestamp));
+  dealBody.innerHTML += `
+      <div id=deal-card-${sectionId} class="card deal-card h-100">
+        <img class="card-img-top home-deal-img" src=${deal.pic} alt="">
+        <div class="card-body d-flex flex-column">
+        <div class="card-text float-right"><i class="fa fa-thumbs-up"></i>  
+          ${deal.votes}</div>
+          <div class="card-text">${date.toLocaleString()}</div>
+          <div class="d-flex justify-content-end"></div>
+          <h5 class="card-title">${deal.description}</h5>
+          <div class="card-text">Restaurant: 
+          <a href="/restaurant/${deal.restaurant.id}">
+          ${deal.restaurant.name}</a></div>
+          <div class="card-text">Posted by: 
+          <a href="/user/${deal.poster.id}">${deal.poster.username}</a></div>
+          <div class= "card-text tags" ></div>
+          <a href="/deals/${deal.id}"
+            class="btn btn-primary align-self-end mt-auto float-right">
+            See More
+          </a>
+        </div>
+      </div>`;
+
+  const dealTags = dealBody.querySelector('.tags');
+  for (let i = 0; i < deal.tags.length; i++) {
+    dealTags.innerText += '#' + deal.tags[i].name + ', ';
+  };
+
+  return dealBody;
+}
+
+/**
  * Throttles a function. The function can be called at most once in limit
  * milliseconds.
  * @param {function} func
