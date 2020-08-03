@@ -9,10 +9,12 @@ import static com.google.step.TestConstants.TAG_ID_B;
 import static com.google.step.TestConstants.TAG_ID_C;
 import static com.google.step.TestConstants.TAG_ID_D;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -129,5 +131,17 @@ public class DealTagManagerDatastoreTest {
     List<Long> dealIds = dealTagManagerDatastore.getDealIdsWithTag(TAG_ID_D);
 
     assertTrue(dealIds.isEmpty());
+  }
+
+  @Test
+  public void testDeleteAllTagsOfDeal_otherDealNotAffected() {
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_A, Arrays.asList(TAG_ID_A));
+    dealTagManagerDatastore.updateTagsOfDeal(DEAL_ID_B, Arrays.asList(TAG_ID_A));
+    dealTagManagerDatastore.deleteAllTagsOfDeal(DEAL_ID_B);
+
+    List<Long> tagsA = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_A);
+    List<Long> tagsB = dealTagManagerDatastore.getTagIdsOfDeal(DEAL_ID_B);
+    assertEquals(Arrays.asList(TAG_ID_A), tagsA);
+    assertEquals(new ArrayList<>(), tagsB);
   }
 }

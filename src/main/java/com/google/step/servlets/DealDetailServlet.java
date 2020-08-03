@@ -6,6 +6,8 @@ import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.DealTagManager;
+import com.google.step.datamanager.DealTagManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -36,6 +38,7 @@ public class DealDetailServlet extends HttpServlet {
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
   private final CommentManager commentManager;
+  private final DealTagManager dealTagManager;
   private final UserService userService;
 
   public DealDetailServlet() {
@@ -44,6 +47,7 @@ public class DealDetailServlet extends HttpServlet {
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
     commentManager = new CommentManagerDatastore();
+    dealTagManager = new DealTagManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -53,12 +57,14 @@ public class DealDetailServlet extends HttpServlet {
       VoteManager voteManager,
       RestaurantManager restaurantManager,
       CommentManager commentManager,
+      DealTagManager dealTagManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
     this.commentManager = commentManager;
+    this.dealTagManager = dealTagManager;
     this.userService = userService;
   }
 
@@ -97,6 +103,7 @@ public class DealDetailServlet extends HttpServlet {
     dealManager.deleteDeal(id);
     commentManager.deleteAllCommentsOfDeal(id);
     ImageUploader.deleteImage(deal.photoBlobkey);
+    dealTagManager.deleteAllTagsOfDeal(id);
   }
 
   /** Gets the deal with the given id parameter */
