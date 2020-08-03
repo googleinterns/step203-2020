@@ -183,6 +183,7 @@ public class HomePageServlet extends HttpServlet {
   private List<List<Map<String, Object>>> getSectionListMaps(
       String section, long userId, int limit, String sort) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
+    // for trending section, there is no sorting available as it is already sorted by trending
     if (section == null || section.equals(TRENDING)) {
       List<Deal> allDeals = dealManager.getAllDeals();
       List<Deal> trendingDeals = sortDealsBasedOnHotScore(allDeals);

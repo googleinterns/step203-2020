@@ -157,11 +157,13 @@ public class DealManagerDatastore implements DealManager {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
       Query query = null;
       Iterable<Entity> entities = null;
-      if (sort.equals(NEW_SORT)) {
-        query =
-            new Query("Deal")
-                .setFilter(propertyFilter)
-                .addSort("timestamp", SortDirection.DESCENDING);
+      if (sort != null) {
+        if (sort.equals(NEW_SORT)) {
+          query =
+              new Query("Deal")
+                  .setFilter(propertyFilter)
+                  .addSort("timestamp", SortDirection.DESCENDING);
+        }
       } else {
         query = new Query("Deal").setFilter(propertyFilter);
       }
