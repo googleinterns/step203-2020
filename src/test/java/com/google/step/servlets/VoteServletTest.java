@@ -5,10 +5,7 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,15 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(VotingHelper.class)
 public class VoteServletTest {
 
   private static final String DEAL_PATH = "/" + DEAL_ID_A;
   private static final String DIR_ONE = "1";
-  private static final String DIR_NEG_ONE = "-1";
-  private static final String DIR_UNDO = "0";
 
   private VoteServlet servlet;
   private UserService userService;
@@ -83,19 +81,20 @@ public class VoteServletTest {
   }
 
   @Test
-  public void testDoPost_successUserVotedSameDirectionAsBefore() throws IOException {
+  public void testDoPost_success() throws IOException {
     setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     when(request.getParameter("dir")).thenReturn(DIR_ONE);
     when(request.getPathInfo()).thenReturn(DEAL_PATH);
-    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
+    PowerMockito.mockStatic(VotingHelper.class);
 
     servlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager, never()).vote(eq(USER_ID_A), eq(DEAL_ID_A), anyInt());
-    verify(dealVoteCountManager, never()).updateDealVotes(eq(DEAL_ID_A), anyInt());
+
+    PowerMockito.verifyStatic(VotingHelper.class);
+    VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
   }
 
   @Test
@@ -162,53 +161,5 @@ public class VoteServletTest {
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
     writer.flush();
     assertEquals("1", stringWriter.toString().trim());
-  }
-
-  @Test
-  public void testDoPost_successUserChangedDirection() throws IOException {
-    setUpUserAuthentication();
-    HttpServletRequest request = mock(HttpServletRequest.class);
-
-    when(request.getParameter("dir")).thenReturn(DIR_ONE);
-    when(request.getPathInfo()).thenReturn(DEAL_PATH);
-    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(-1);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
-    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(2));
-  }
-
-  @Test
-  public void testDoPost_successUserChangedAnotherDirection() throws IOException {
-    setUpUserAuthentication();
-    HttpServletRequest request = mock(HttpServletRequest.class);
-
-    when(request.getParameter("dir")).thenReturn(DIR_NEG_ONE);
-    when(request.getPathInfo()).thenReturn(DEAL_PATH);
-    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(-1));
-    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-2));
-  }
-
-  @Test
-  public void testDoPost_successUserUndoesVote() throws IOException {
-    setUpUserAuthentication();
-    HttpServletRequest request = mock(HttpServletRequest.class);
-
-    when(request.getParameter("dir")).thenReturn(DIR_UNDO);
-    when(request.getPathInfo()).thenReturn(DEAL_PATH);
-    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
-
-    servlet.doPost(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(0));
-    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-1));
   }
 }
