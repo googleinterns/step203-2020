@@ -22,11 +22,17 @@ public interface DealManager {
 
   public void deleteDeal(long id);
 
-  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit, String sort);
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit);
 
-  public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit, String sort);
+  public List<Long> getDealsPublishedByUsersSortByNew(Set<Long> userIds, int limit);
 
-  public List<Long> getDealsWithIds(Set<Long> ids, int limit, String sort);
+  public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit);
+
+  public List<Long> getDealsPublishedByRestaurantsSortByNew(Set<Long> restaurantIds, int limit);
+
+  public List<Long> getDealsWithIdsSortByNew(Set<Long> ids, int limit);
+
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit);
 
   public List<Deal> getAllDeals();
 

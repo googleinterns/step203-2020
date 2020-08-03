@@ -196,10 +196,10 @@ public class HomePageServlet extends HttpServlet {
     if (section == null || section.equals(USERS_SECTION)) {
       Set<Long> userIds = followManager.getFollowedUserIds(userId);
       if (sort == null || sort.equals(NEW_SORT)) {
-        dealIds = dealManager.getDealsPublishedByUsers(userIds, limit, sort);
+        dealIds = dealManager.getDealsPublishedByUsersSortByNew(userIds, limit);
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
-        dealIds = dealManager.getDealsPublishedByUsers(userIds, -1, null);
+        dealIds = dealManager.getDealsPublishedByUsers(userIds, -1);
         deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
@@ -207,10 +207,10 @@ public class HomePageServlet extends HttpServlet {
     if (section == null || section.equals(RESTAURANTS_SECTION)) {
       Set<Long> restaurantIds = followManager.getFollowedRestaurantIds(userId);
       if (sort == null || sort.equals(NEW_SORT)) {
-        dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, limit, sort);
+        dealIds = dealManager.getDealsPublishedByRestaurantsSortByNew(restaurantIds, limit);
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
-        dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1, null);
+        dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1);
         deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
@@ -223,10 +223,10 @@ public class HomePageServlet extends HttpServlet {
           deals = deals.stream().limit(limit).collect(Collectors.toList());
         }
       } else if (sort.equals(NEW_SORT)) {
-        dealIds = dealManager.getDealsWithIds(dealIdsTags, limit, sort);
+        dealIds = dealManager.getDealsWithIdsSortByNew(dealIdsTags, limit);
         deals = dealManager.readDealsOrder(dealIds);
       } else {
-        dealIds = dealManager.getDealsWithIds(dealIdsTags, -1, null);
+        dealIds = dealManager.getDealsWithIds(dealIdsTags, -1);
         deals = handleSortVoteTrending(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
