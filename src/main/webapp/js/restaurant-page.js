@@ -124,15 +124,15 @@ function configureDealsHeader(restaurant) {
 
 /**
  * Gets authentication status to and configures follow button
- * @param {string} id ID of restaurant
+ * @param {string} restaurantId ID of restaurant
  */
-function initAuthentication(id) {
+function initAuthentication(restaurantId) {
   $.ajax('/api/authentication')
       .done((loginStatus) => {
         if (!loginStatus.isLoggedIn) {
           return;
         }
-        configureFollowButton(id, loginStatus.id);
+        configureFollowButton(restaurantId, loginStatus.id);
       });
 }
 
