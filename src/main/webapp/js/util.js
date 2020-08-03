@@ -100,7 +100,7 @@ function createHomeDealCard(deal, numCol, sectionId) {
           <div class="d-flex justify-content-end"></div>
           <h5 class="card-title">${deal.description}</h5>
           <div class="card-text">Restaurant: 
-          <a href="/restaurants/${deal.restaurant.id}">
+          <a href="/restaurant/${deal.restaurant.id}">
           ${deal.restaurant.name}</a></div>
           <div class="card-text">Posted by: 
           <a href="/user/${deal.poster.id}">${deal.poster.username}</a></div>
