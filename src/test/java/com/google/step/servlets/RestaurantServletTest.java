@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.model.Deal;
@@ -44,6 +45,7 @@ public class RestaurantServletTest {
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
   private RestaurantPlaceManager restaurantPlaceManager;
+  private FollowManager followManager;
 
   private RestaurantServlet restaurantServlet;
 
@@ -52,8 +54,11 @@ public class RestaurantServletTest {
     restaurantManager = mock(RestaurantManager.class);
     dealManager = mock(DealManager.class);
     restaurantPlaceManager = mock(RestaurantPlaceManager.class);
+    followManager = mock(FollowManager.class);
+
     restaurantServlet =
-        new RestaurantServlet(restaurantManager, dealManager, restaurantPlaceManager);
+        new RestaurantServlet(
+            restaurantManager, dealManager, restaurantPlaceManager, followManager);
   }
 
   /** Successfully returns a restaurant */
@@ -205,6 +210,8 @@ public class RestaurantServletTest {
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(restaurantManager).deleteRestaurant(anyLong());
+    verify(restaurantPlaceManager).deletePlacesOfRestaurant(1);
+    verify(followManager).deleteFollowersOfRestaurant(1);
   }
 
   /** Invalid ID is given for deleting e.g. String */
