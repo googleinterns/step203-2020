@@ -43,6 +43,18 @@ $.ajax({
   form.style.display = 'block';
 });
 
+/*
+ * If user is not logged in, hide the form and ask the user to log in
+ */
+$.ajax('/api/authentication')
+    .done((loginStatus) => {
+      if (!loginStatus.isLoggedIn) {
+        $('#form-div').hide();
+        $('#logged-out').show();
+      }
+    });
+
+
 /**
  * Custom validation for form
  * @return {boolean}
