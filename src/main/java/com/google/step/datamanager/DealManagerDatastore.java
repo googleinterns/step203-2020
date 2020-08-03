@@ -33,7 +33,9 @@ public class DealManagerDatastore implements DealManager {
 
   private final String LOCATION = "Asia/Singapore";
 
-  private final String NEW_SORT = "new";
+  enum Sort {
+    NEW
+  }
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -151,14 +153,14 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals with a filter applied */
   private List<Long> getDealsWithFilter(
-      List<Object> ids, String filterAttribute, int limit, String sort) {
+      List<Object> ids, String filterAttribute, int limit, Sort sort) {
     List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
       Query query = null;
       Iterable<Entity> entities = null;
       if (sort != null) {
-        if (sort.equals(NEW_SORT)) {
+        if (sort == Sort.NEW) {
           query =
               new Query("Deal")
                   .setFilter(propertyFilter)
@@ -189,7 +191,7 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by users, sorted by new */
   @Override
   public List<Long> getDealsPublishedByUsersSortByNew(Set<Long> userIds, int limit) {
-    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, NEW_SORT);
+    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, Sort.NEW);
   }
 
   /** Retrieves deals posted by restaurants */
@@ -201,7 +203,7 @@ public class DealManagerDatastore implements DealManager {
   /** Retrieves deals posted by restaurants, sorted by new */
   @Override
   public List<Long> getDealsPublishedByRestaurantsSortByNew(Set<Long> restaurantIds, int limit) {
-    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, NEW_SORT);
+    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, Sort.NEW);
   }
 
   /** Retrieves deals given a set of ids */
@@ -217,7 +219,7 @@ public class DealManagerDatastore implements DealManager {
   public List<Long> getDealsWithIdsSortByNew(Set<Long> ids, int limit) {
     List<Key> keys =
         ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
-    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, NEW_SORT);
+    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, Sort.NEW);
   }
 
   @Override
