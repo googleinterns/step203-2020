@@ -57,6 +57,22 @@ public class CommentManagerDatastore implements CommentManager {
   }
 
   @Override
+  public double getAvgCommentSentiment(long dealId) {
+    Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+    Query query = new Query("Comment").setFilter(propertyFilter);
+
+    PreparedQuery pq = datastore.prepare(query);
+
+    List<Entity> entities = pq.asList(FetchOptions.Builder.withDefaults());
+
+    double totalSentimentScore = 0;
+    for (Entity entity : entities) {
+      totalSentimentScore += (double) entity.getProperty("sentiment");
+    }
+    return totalSentimentScore / entities.size();
+  }
+
+  @Override
   public CommentsWithToken getCommentsForDeal(long dealId, String token)
       throws IllegalArgumentException {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);

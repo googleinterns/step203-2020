@@ -11,6 +11,9 @@ public interface CommentManager {
    */
   public CommentsWithToken getCommentsForDeal(long dealId, String token);
 
+  /** Gets the average comment sentiment of the deal */
+  public double getAvgCommentSentiment(long dealId);
+
   public Comment updateComment(long id, String content);
 
   public void deleteComment(long id);
