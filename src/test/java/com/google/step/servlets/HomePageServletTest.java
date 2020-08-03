@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.DealVoteCountManager;
@@ -60,6 +61,7 @@ public class HomePageServletTest {
   private TagManager mockTagManager;
   private FollowManager mockFollowManager;
   private DealVoteCountManager mockDealVoteCountManager;
+  private CommentManager mockCommentManager;
   private UserService mockUserService;
 
   @Before
@@ -72,6 +74,7 @@ public class HomePageServletTest {
     mockUserService = mock(UserService.class);
     mockFollowManager = mock(FollowManager.class);
     mockDealVoteCountManager = mock(DealVoteCountManager.class);
+    mockCommentManager = mock(CommentManager.class);
     homePageServlet =
         new HomePageServlet(
             mockDealManager,
@@ -81,6 +84,7 @@ public class HomePageServletTest {
             mockTagManager,
             mockFollowManager,
             mockDealVoteCountManager,
+            mockCommentManager,
             mockUserService);
   }
 
