@@ -70,7 +70,7 @@ public class VoteServlet extends HttpServlet {
       return;
     }
 
-    UpdateVote.updateVote(userId, dealId, dir, voteManager, dealVoteCountManager);
+    VotingHelper.updateVote(userId, dealId, dir, voteManager, dealVoteCountManager);
     response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
 

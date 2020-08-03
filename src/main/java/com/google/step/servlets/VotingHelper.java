@@ -3,7 +3,7 @@ package com.google.step.servlets;
 import com.google.step.datamanager.DealVoteCountManager;
 import com.google.step.datamanager.VoteManager;
 
-public class UpdateVote {
+public class VotingHelper {
 
   public static void updateVote(
       long userId,
