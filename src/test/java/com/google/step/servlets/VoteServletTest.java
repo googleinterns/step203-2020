@@ -94,7 +94,7 @@ public class VoteServletTest {
     servlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
+    verify(voteManager, never()).vote(eq(USER_ID_A), eq(DEAL_ID_A), anyInt());
     verify(dealVoteCountManager, never()).updateDealVotes(eq(DEAL_ID_A), anyInt());
   }
 

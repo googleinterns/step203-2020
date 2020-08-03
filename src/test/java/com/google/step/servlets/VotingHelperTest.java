@@ -39,7 +39,7 @@ public class VotingHelperTest {
 
     VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
 
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
+    verify(voteManager, never()).vote(eq(USER_ID_A), eq(DEAL_ID_A), anyInt());
     verify(dealVoteCountManager, never()).updateDealVotes(eq(DEAL_ID_A), anyInt());
   }
 

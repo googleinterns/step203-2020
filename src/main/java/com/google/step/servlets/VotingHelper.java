@@ -13,8 +13,9 @@ public class VotingHelper {
       DealVoteCountManager dealVoteCountManager) {
     int prevDir = voteManager.getDirection(userId, dealId);
     int dirInt = Integer.parseInt(dir);
-    voteManager.vote(userId, dealId, dirInt);
+    // voteManager.vote(userId, dealId, dirInt);
     if (dirInt != prevDir) {
+      voteManager.vote(userId, dealId, dirInt);
       dealVoteCountManager.updateDealVotes(dealId, dirInt - prevDir);
     }
   }
