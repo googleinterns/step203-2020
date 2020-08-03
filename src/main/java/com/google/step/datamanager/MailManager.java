@@ -17,7 +17,7 @@ import javax.mail.internet.MimeMessage;
 public class MailManager {
 
   private static final String SENDER = "noreply@capstone-2020-dealfinder.appspotmail.com";
-  private static final String HOST_URL = "https://capstone-2020-dealfinder.an.r.appspot.com/";
+  private static final String HOST_URL = "https://capstone-2020-dealfinder.an.r.appspot.com";
 
   /**
    * Sends emails to notify the recipients of a new deal posted by the poster.
