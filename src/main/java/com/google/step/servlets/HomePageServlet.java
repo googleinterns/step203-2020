@@ -215,7 +215,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
         dealIds = dealManager.getDealsPublishedByUsers(userIds, -1, null);
-        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -226,7 +226,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1, null);
-        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -242,14 +242,14 @@ public class HomePageServlet extends HttpServlet {
         deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1, null);
-        deals = handleSortVoteTrendingDistance(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
   }
 
-  private List<Deal> handleSortVoteTrendingDistance(List<Long> dealIds, int limit, String sort) {
+  private List<Deal> handleOtherSorts(List<Long> dealIds, int limit, String sort) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
       dealIds = dealVoteCountManager.getDealsInOrderOfVotes(dealIds, limit);
@@ -262,32 +262,40 @@ public class HomePageServlet extends HttpServlet {
       }
     } else if (sort.equals(DISTANCE_SORT)) {
       deals = dealManager.readDeals(dealIds);
-      Map<Deal, Integer> dealDistMap = new HashMap<>();
-      try {
-        List<List<String>> placeIdsPerDeal = new ArrayList<>();
-        for (int i = 0; i < deals.size(); i++) {
-          Set<String> placeIds =
-              restaurantPlaceManager.getPlaceIdsOfRestaurant(deals.get(i).restaurantId);
-          List<String> placeIdsList = new ArrayList<>(placeIds);
-          placeIdsPerDeal.add(placeIdsList);
-        }
-        List<Map<String, Integer>> distances =
-            DistanceUtil.getDistances(deals, latitude, longitude, placeIdsPerDeal);
-        // Gets the min distance for each deal as there are many placeids and put in new map
-        for (int i = 0; i < distances.size(); i++) {
-          if (!distances.get(i).isEmpty()) {
-            Integer minDistance = distances.get(i).values().stream().min(Integer::compare).get();
-            dealDistMap.put(deals.get(i), minDistance);
-          }
-        }
-      } catch (IOException e) {
-
+      deals = sortByDistance(deals, limit);
+      if (limit > 0) {
+        deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
-      // Sort the deals based on distance
-      List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
-      dealDists.sort(Entry.comparingByValue());
-      deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
     }
+    return deals;
+  }
+
+  private List<Deal> sortByDistance(List<Deal> deals, int limit) {
+    Map<Deal, Integer> dealDistMap = new HashMap<>();
+    try {
+      List<List<String>> placeIdsPerDeal = new ArrayList<>();
+      for (int i = 0; i < deals.size(); i++) {
+        Set<String> placeIds =
+            restaurantPlaceManager.getPlaceIdsOfRestaurant(deals.get(i).restaurantId);
+        List<String> placeIdsList = new ArrayList<>(placeIds);
+        placeIdsPerDeal.add(placeIdsList);
+      }
+      List<Map<String, Integer>> distances =
+          DistanceUtil.getDistances(deals, latitude, longitude, placeIdsPerDeal);
+      // Gets the min distance for each deal as there are many placeids and put in new map
+      for (int i = 0; i < distances.size(); i++) {
+        if (!distances.get(i).isEmpty()) {
+          Integer minDistance = distances.get(i).values().stream().min(Integer::compare).get();
+          dealDistMap.put(deals.get(i), minDistance);
+        }
+      }
+    } catch (IOException e) {
+      return new ArrayList<>();
+    }
+    // Sort the deals based on distance
+    List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
+    dealDists.sort(Entry.comparingByValue());
+    deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
     return deals;
   }
 
