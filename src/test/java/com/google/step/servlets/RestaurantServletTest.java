@@ -10,14 +10,12 @@ import static com.google.step.TestConstants.RESTAURANT_A;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
 import static com.google.step.TestConstants.RESTAURANT_NAME_A;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.step.datamanager.DealManager;
-import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.model.Deal;
@@ -44,8 +42,8 @@ public class RestaurantServletTest {
 
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
+  private DeleteHelper deleteHelper;
   private RestaurantPlaceManager restaurantPlaceManager;
-  private FollowManager followManager;
 
   private RestaurantServlet restaurantServlet;
 
@@ -53,12 +51,11 @@ public class RestaurantServletTest {
   public void setUp() {
     restaurantManager = mock(RestaurantManager.class);
     dealManager = mock(DealManager.class);
+    deleteHelper = mock(DeleteHelper.class);
     restaurantPlaceManager = mock(RestaurantPlaceManager.class);
-    followManager = mock(FollowManager.class);
 
     restaurantServlet =
-        new RestaurantServlet(
-            restaurantManager, dealManager, restaurantPlaceManager, followManager);
+        new RestaurantServlet(restaurantManager, dealManager, restaurantPlaceManager, deleteHelper);
   }
 
   /** Successfully returns a restaurant */
@@ -209,9 +206,7 @@ public class RestaurantServletTest {
     restaurantServlet.doDelete(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(restaurantManager).deleteRestaurant(anyLong());
-    verify(restaurantPlaceManager).deletePlacesOfRestaurant(1);
-    verify(followManager).deleteFollowersOfRestaurant(1);
+    verify(deleteHelper).deleteRestaurant(RESTAURANT_ID_A);
   }
 
   /** Invalid ID is given for deleting e.g. String */

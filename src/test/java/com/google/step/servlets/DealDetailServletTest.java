@@ -1,6 +1,5 @@
 package com.google.step.servlets;
 
-import static com.google.step.TestConstants.BLOBKEY_A;
 import static com.google.step.TestConstants.BLOBKEY_URL_A;
 import static com.google.step.TestConstants.DATE_A;
 import static com.google.step.TestConstants.DATE_B;
@@ -21,7 +20,6 @@ import static com.google.step.TestConstants.TAG_NAME_B;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_B;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +66,7 @@ public class DealDetailServletTest {
   private CommentManager mockCommentManager;
   private DealTagManager mockDealTagManager;
   private UserService mockUserService;
+  private DeleteHelper mockDeleteHelper;
   private HttpServletResponse mockResponse;
   private StringWriter stringWriter;
   private PrintWriter writer;
@@ -78,8 +77,7 @@ public class DealDetailServletTest {
     mockUserManager = mock(UserManager.class);
     mockVoteManager = mock(VoteManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
-    mockCommentManager = mock(CommentManager.class);
-    mockDealTagManager = mock(DealTagManager.class);
+    mockDeleteHelper = mock(DeleteHelper.class);
     mockUserService = mock(UserService.class);
     mockRequest = mock(HttpServletRequest.class);
 
@@ -110,8 +108,7 @@ public class DealDetailServletTest {
             mockUserManager,
             mockVoteManager,
             mockRestaurantManager,
-            mockCommentManager,
-            mockDealTagManager,
+            mockDeleteHelper,
             mockUserService);
   }
 
@@ -190,11 +187,7 @@ public class DealDetailServletTest {
     servlet.doDelete(mockRequest, mockResponse);
 
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
-    verify(mockDealManager).deleteDeal(DEAL_ID_A);
-    verify(mockCommentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
-    PowerMockito.verifyStatic(ImageUploader.class, times(1));
-    ImageUploader.deleteImage(BLOBKEY_A);
-    verify(mockDealTagManager).deleteAllTagsOfDeal(DEAL_ID_A);
+    verify(mockDeleteHelper).deleteDeal(DEAL_ID_A);
   }
 
   @Test
