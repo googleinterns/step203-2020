@@ -49,7 +49,8 @@
         </div>
 
 
-        <form id="profile-form" method="POST" enctype="multipart/form-data" class="row mb-5 needs-validation" novalidate hidden>
+        <form id="profile-form" method="POST" enctype="multipart/form-data" class="row mb-5 needs-validation" novalidate
+          hidden>
           <div class="col-sm-4 col-lg-3">
             <img id="profile-photo-preview" class="img-fluid mb-4" alt="profile-photo" />
           </div>
@@ -57,8 +58,8 @@
             <div class="form-group row">
               <label for="username-input" class="col-sm-2 col-form-label">Username</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" id="username-input" placeholder="Enter a username"
-                required pattern="^[a-zA-Z0-9_@\.]*$" maxlength="16">
+                <input type="text" class="form-control" name="username" id="username-input"
+                  placeholder="Enter a username" required pattern="^[a-zA-Z0-9_@\.]*$" maxlength="16">
                 <div class="invalid-feedback">
                   Username can contain at most 16 characters(numbers, alphabets, _, . and @ only) and cannot be empty.
                 </div>
