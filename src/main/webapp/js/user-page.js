@@ -331,10 +331,10 @@ function configureButtons(user) {
 
 /**
  * Configures the form's post url
- * @param {string} id
+ * @param {string} userId
  */
-function configurePostUrl(id) {
-  $.ajax('/api/user-post-url/' + id)
+function configurePostUrl(userId) {
+  $.ajax('/api/user-post-url/' + userId)
       .done((url) => {
         setProfileFormUrl(url);
       });
