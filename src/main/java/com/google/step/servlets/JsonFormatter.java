@@ -79,7 +79,6 @@ public class JsonFormatter {
     commentMap.put("user", getUserBriefMap(poster));
     commentMap.put("content", comment.content);
     commentMap.put("timestamp", comment.timestamp);
-    commentMap.put("sentiment", comment.sentiment);
     return commentMap;
   }
 
