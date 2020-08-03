@@ -1,5 +1,6 @@
 package com.google.step.servlets;
 
+import static com.google.step.TestConstants.COMMENT_A;
 import static com.google.step.TestConstants.COMMENT_A_JSON;
 import static com.google.step.TestConstants.COMMENT_ID_A;
 import static com.google.step.TestConstants.CONTENT_A;
