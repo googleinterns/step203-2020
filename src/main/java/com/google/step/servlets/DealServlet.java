@@ -4,6 +4,9 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.FollowManagerDatastore;
+import com.google.step.datamanager.MailManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -29,16 +32,22 @@ public class DealServlet extends HttpServlet {
   private final DealManager dealManager;
   private final UserManager userManager;
   private final RestaurantManager restaurantManager;
+  private final FollowManager followManager;
+  private final MailManager mailManager;
 
   public DealServlet(
       DealManager dealManager,
       UserManager userManager,
       UserService userService,
-      RestaurantManager restaurantManager) {
+      RestaurantManager restaurantManager,
+      FollowManager followManager,
+      MailManager mailManager) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.userService = userService;
     this.restaurantManager = restaurantManager;
+    this.followManager = followManager;
+    this.mailManager = mailManager;
   }
 
   public DealServlet() {
@@ -46,6 +55,8 @@ public class DealServlet extends HttpServlet {
     dealManager = new DealManagerDatastore();
     userManager = new UserManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
+    followManager = new FollowManagerDatastore();
+    mailManager = new MailManager();
   }
 
   /** Posts the deal with the given id parameter */
@@ -102,6 +113,13 @@ public class DealServlet extends HttpServlet {
     Deal deal =
         dealManager.createDeal(
             description, photoBlobkey, start, end, source, posterId, restaurantId, tagNames);
+
+    if (request.getParameter("notify-followers") != null) {
+      String hostUrl = request.getRemoteHost();
+      List<Long> followerIds = new ArrayList<>(followManager.getFollowerIdsOfUser(posterId));
+      List<User> followers = userManager.readUsers(followerIds);
+      mailManager.sendNewPostNotificationMail(followers, deal, poster);
+    }
 
     response.sendRedirect("/deals/" + deal.id);
   }

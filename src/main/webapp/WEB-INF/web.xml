@@ -33,6 +33,11 @@
   </servlet>
 
   <servlet>
+    <servlet-name>allDeals</servlet-name>
+    <jsp-file>/WEB-INF/jsp/all-deals.jsp</jsp-file>
+  </servlet>
+  
+  <servlet>
     <servlet-name>restaurant</servlet-name>
     <jsp-file>/WEB-INF/jsp/restaurant.jsp</jsp-file>
   </servlet>
@@ -43,8 +48,8 @@
   </servlet>
 
   <servlet>
-    <servlet-name>allDeals</servlet-name>
-    <jsp-file>/WEB-INF/jsp/all-deals.jsp</jsp-file>
+    <servlet-name>allSectionDeals</servlet-name>
+    <jsp-file>/WEB-INF/jsp/all-section-deals.jsp</jsp-file>
   </servlet>
 
   <servlet>
@@ -78,6 +83,11 @@
   </servlet-mapping>
 
   <servlet-mapping>
+    <servlet-name>allDeals</servlet-name>
+    <url-pattern>/all-deals/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
     <servlet-name>restaurant</servlet-name>
     <url-pattern>/restaurant/*</url-pattern>
   </servlet-mapping>
@@ -88,8 +98,8 @@
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>allDeals</servlet-name>
-    <url-pattern>/all-deals</url-pattern>
+    <servlet-name>allSectionDeals</servlet-name>
+    <url-pattern>/all-section-deals/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

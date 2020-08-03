@@ -139,4 +139,14 @@ public class CommentManagerDatastore implements CommentManager {
     String sentiment = (String) commentEntity.getProperty("sentiment");
     return new Comment(id, dealId, userId, content, timestamp, sentiment);
   }
+
+  @Override
+  public void deleteAllCommentsOfDeal(long dealId) {
+    Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+    Query query = new Query("Comment").setFilter(propertyFilter).setKeysOnly();
+    PreparedQuery pq = datastore.prepare(query);
+    List<Key> keys = new ArrayList<>();
+    pq.asIterable().forEach(entity -> keys.add(entity.getKey()));
+    datastore.delete(keys);
+  }
 }

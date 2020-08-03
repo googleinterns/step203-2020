@@ -36,6 +36,9 @@
               <div class="invalid-feedback">
                 Please add an image.
               </div>
+              <div id="image-extension-message" class="invalid-feedback" style="display: none;">
+                File must have extension png, jpg, jpeg, or gif.
+              </div>
             </div>
             <img style="display: none;" id="img-preview" class="mw-100 my-4" src="#" alt="your image" />
 
@@ -96,6 +99,10 @@
               <small class="form-text text-muted">
                 Start typing and hit enter to enter tags.
               </small>
+            </div>
+            <div class="form-check mb-2">
+              <input type="checkbox" class="form-check-input" id="notify-followers" name="notify-followers" value="default">
+              <label class="form-check-label">Notify my followers</label>
             </div>
 
             <div class="form-group d-flex flex-row-reverse">
