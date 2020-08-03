@@ -2,6 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.step.datamanager.CommentManager;
+import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
 import com.google.step.datamanager.DealTagManager;
@@ -48,6 +50,7 @@ public class HomePageServlet extends HttpServlet {
   private final TagManager tagManager;
   private final FollowManager followManager;
   private final DealVoteCountManager dealVoteCountManager;
+  private final CommentManager commentManager;
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
@@ -67,6 +70,7 @@ public class HomePageServlet extends HttpServlet {
       TagManager tagManager,
       FollowManager followManager,
       DealVoteCountManager dealVoteCountManager,
+      CommentManager commentManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
@@ -75,6 +79,7 @@ public class HomePageServlet extends HttpServlet {
     this.tagManager = tagManager;
     this.followManager = followManager;
     this.dealVoteCountManager = dealVoteCountManager;
+    this.commentManager = commentManager;
     this.userService = userService;
   }
 
@@ -86,6 +91,7 @@ public class HomePageServlet extends HttpServlet {
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
     dealVoteCountManager = new DealVoteCountManagerDatastore();
+    commentManager = new CommentManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -293,7 +299,9 @@ public class HomePageServlet extends HttpServlet {
       sign = -1;
     }
     double seconds = epochSeconds((String) deal.creationTimeStamp) - OLDEST_DEAL_TIMESTAMP;
-    return sign * order + seconds / 45000;
+    double hotScore = sign * order + seconds / 45000;
+    double dealAvgSentiment = commentManager.getAvgCommentSentiment(deal.id);
+    return hotScore * dealAvgSentiment;
   }
 
   /** Sorts deals based on hot score */
