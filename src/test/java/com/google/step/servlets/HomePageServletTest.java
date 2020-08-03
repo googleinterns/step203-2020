@@ -408,7 +408,7 @@ public class HomePageServletTest {
     List<Long> DEALIDS = new ArrayList<Long>(Arrays.asList(DEAL_ID_A, DEAL_ID_B));
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1), eq(null))).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
 
     when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_A.restaurantId))
         .thenReturn(new HashSet<>(Arrays.asList(REAL_PLACE_ID_A, REAL_PLACE_ID_B)));
