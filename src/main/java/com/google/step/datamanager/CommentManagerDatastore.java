@@ -39,6 +39,7 @@ public class CommentManagerDatastore implements CommentManager {
     entity.setProperty("deal", dealId);
     entity.setProperty("user", userId);
     entity.setProperty("content", content);
+
     Key key = datastore.put(entity);
     long id = key.getId();
 
