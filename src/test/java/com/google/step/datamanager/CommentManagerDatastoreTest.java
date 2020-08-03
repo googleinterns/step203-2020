@@ -4,6 +4,7 @@ import static com.google.step.TestConstants.COMMENT_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.CONTENT_B;
 import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.DEAL_ID_B;
 import static com.google.step.TestConstants.UPDATED_COMMENT_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static com.google.step.TestConstants.USER_ID_B;
@@ -136,5 +137,21 @@ public final class CommentManagerDatastoreTest {
     List<Comment> comments = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
     assertEquals(UPDATED_COMMENT_A, comments.get(0));
     assertEquals(1, comments.size());
+  }
+
+  @Test
+  public void testDeleteAllCommentsOfDeal_otherDealNotAffected() {
+    for (int i = 0; i < 5; i++) {
+      commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
+    }
+    for (int i = 0; i < 5; i++) {
+      commentManagerDatastore.createComment(DEAL_ID_B, USER_ID_A, CONTENT_A);
+    }
+    commentManagerDatastore.deleteAllCommentsOfDeal(DEAL_ID_B);
+
+    List<Comment> commentsA = commentManagerDatastore.getCommentsForDeal(DEAL_ID_A, null).comments;
+    List<Comment> commentsB = commentManagerDatastore.getCommentsForDeal(DEAL_ID_B, null).comments;
+    assertEquals(5, commentsA.size());
+    assertEquals(0, commentsB.size());
   }
 }

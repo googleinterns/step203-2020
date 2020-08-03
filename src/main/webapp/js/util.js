@@ -145,3 +145,15 @@ function throttle(func, limit) {
     }
   };
 }
+
+/**
+ * Escapes HTML string
+ * @param {string} unsafe unsafe string that might contain HTML elements
+ * @return {string} safe HTML string
+ */
+function escapeHtml(unsafe) {
+  const text = document.createTextNode(unsafe);
+  const p = document.createElement('p');
+  p.appendChild(text);
+  return p.innerHTML;
+}
