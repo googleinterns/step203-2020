@@ -103,6 +103,7 @@ public class DealDetailServlet extends HttpServlet {
     dealManager.deleteDeal(id);
     commentManager.deleteAllCommentsOfDeal(id);
     dealTagManager.deleteAllTagsOfDeal(id);
+    ImageUploader.deleteImage(deal.photoBlobkey);
   }
 
   /** Gets the deal with the given id parameter */
@@ -137,6 +138,13 @@ public class DealDetailServlet extends HttpServlet {
   /** Updates the deal with the given id parameter */
   @Override
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
+    }
+    String email = userService.getCurrentUser().getEmail();
+    User currentUser = userManager.readUserByEmail(email);
+
     long id;
     try {
       id = Long.parseLong(request.getPathInfo().substring(1));
@@ -147,6 +155,12 @@ public class DealDetailServlet extends HttpServlet {
     Deal currentDeal = dealManager.readDeal(id);
     if (currentDeal == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    // user can only update deals they created
+    if (currentDeal.posterId != currentUser.id) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
 
