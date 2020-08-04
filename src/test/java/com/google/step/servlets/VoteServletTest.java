@@ -51,6 +51,7 @@ public class VoteServletTest {
     dealVoteCountManager = mock(DealVoteCountManager.class);
     servlet = new VoteServlet(userService, userManager, voteManager, dealVoteCountManager);
 
+    // mock static
     PowerMockito.mockStatic(VotingHelper.class);
 
     // mock HttpServletResponse
