@@ -78,8 +78,7 @@ function initAllDeals() {
 }
 
 /**
- * Retrieves user's location
- * @return {boolean} prevents the href from loading
+ * Retrieves user's locatio
  */
 function getLocation() {
   if (navigator.geolocation) {
@@ -87,7 +86,6 @@ function getLocation() {
   } else {
     alert('Geolocation is not supported by this browser.');
   }
-  return false;
 }
 
 /**
