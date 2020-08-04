@@ -22,15 +22,25 @@ public interface DealManager {
 
   public void deleteDeal(long id);
 
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds, int limit);
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit);
 
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit);
+  public List<Long> getDealsPublishedByUsersSortByNew(Set<Long> userIds, int limit);
+
+  public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit);
+
+  public List<Long> getDealsPublishedByRestaurantsSortByNew(Set<Long> restaurantIds, int limit);
+
+  public List<Long> getDealsWithIdsSortByNew(Set<Long> ids, int limit);
+
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit);
 
   public List<Deal> getAllDeals();
 
   public List<Tag> getTags(long dealId);
 
   public List<Deal> readDeals(List<Long> ids);
+
+  public List<Deal> readDealsOrder(List<Long> ids);
 
   public List<Deal> getDealsOfRestaurant(long restaurantId);
 

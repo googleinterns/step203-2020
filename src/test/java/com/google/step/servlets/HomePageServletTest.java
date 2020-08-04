@@ -1,6 +1,7 @@
 package com.google.step.servlets;
 
 import static com.google.step.TestConstants.DEAL_A;
+import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.HOME_DEAL_A_JSON;
 import static com.google.step.TestConstants.RESTAURANT_A;
@@ -93,6 +94,7 @@ public class HomePageServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
+    List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(request.getParameter("section")).thenReturn(null);
@@ -100,8 +102,8 @@ public class HomePageServletTest {
     setUpUserAuthentication();
 
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
-    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
@@ -126,11 +128,14 @@ public class HomePageServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
 
+    List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(request.getParameter("section")).thenReturn("users");
     setUpUserAuthentication();
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALS);
+
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
+    when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
 
