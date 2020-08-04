@@ -77,6 +77,63 @@ function initAllDeals() {
   }
 }
 
+/**
+ * Retrieves user's location
+ * @return {boolean} prevents the href from loading
+ */
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(setNewURL, showError);
+  } else {
+    alert('Geolocation is not supported by this browser.');
+  }
+  return false;
+}
+
+/**
+ * Sets the url to have distance in path info and location as parameters
+ * @param {object} position user position (latitude and longitude)
+ */
+function setNewURL(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  const url = new URL(window.location.href);
+  if (window.location.href.split('/').length == 5) {
+    url.href += '/distance';
+  } else if (window.location.href.split('/').length == 6) {
+    const myPathElem = window.location.href.split('/');
+    myPathElem[5] = 'distance';
+    url.href = myPathElem.join('/');
+  }
+  const params = new URLSearchParams(url.search.slice(1));
+  if (!params.has('longitude') && !params.has('latitude')) {
+    url.searchParams.append('latitude', latitude);
+    url.searchParams.append('longitude', longitude);
+  }
+  window.location = url.href;
+}
+
+/**
+ * Shows the error code
+ * @param {object} error the error when getting user location
+ */
+function showError(error) {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      alert('Request for Geolocation denied. Unable to sort by distance.');
+      break;
+    case error.POSITION_UNAVAILABLE:
+      alert('Location information is unavailable.');
+      break;
+    case error.TIMEOUT:
+      alert('The request to get user location timed out.');
+      break;
+    case error.UNKNOWN_ERROR:
+      alert('An unknown error occurred.');
+      break;
+  }
+}
+
 addLoadEvent(() => {
   initAllDeals();
 });
