@@ -65,9 +65,6 @@ public class HomePageServlet extends HttpServlet {
   private static final String NEW_SORT = "new";
   private static final String DISTANCE_SORT = "distance";
 
-  private String latitude = null;
-  private String longitude = null;
-
   public HomePageServlet(
       DealManager dealManager,
       UserManager userManager,
@@ -138,12 +135,12 @@ public class HomePageServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    latitude = request.getParameter("latitude");
-    longitude = request.getParameter("longitude");
+    String lat = request.getParameter("latitude");
+    String lng = request.getParameter("longitude");
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       response.setContentType("application/json;");
-      response.getWriter().println(userLoggedIn(homePageSection, sort));
+      response.getWriter().println(userLoggedIn(homePageSection, sort, lat, lng));
     } else {
       String result = userNotLoggedIn(homePageSection);
       if (result != null) {
@@ -156,14 +153,14 @@ public class HomePageServlet extends HttpServlet {
     }
   }
 
-  private String userLoggedIn(String homePageSection, String sort) {
+  private String userLoggedIn(String homePageSection, String sort, String lat, String lng) {
     String email = userService.getCurrentUser().getEmail();
     User user = userManager.readUserByEmail(email);
     long userId = user.id;
     if (homePageSection == null) {
       // for each section, limit to 8 deals for home page
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId, 8, sort);
+          getSectionListMaps(homePageSection, userId, 8, sort, lat, lng);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
@@ -173,21 +170,22 @@ public class HomePageServlet extends HttpServlet {
       // user requested to view all deals of particular section
     } else {
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId, -1, sort);
+          getSectionListMaps(homePageSection, userId, -1, sort, lat, lng);
       return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     }
   }
 
   private String userNotLoggedIn(String homePageSection) {
     if (homePageSection == null) { // only trending will be shown when not logged in
-      List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(TRENDING, -1, 8, null);
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(TRENDING, -1, 8, null, null, null);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       return JsonFormatter.getHomePageJson(homePageMap);
     } else if (homePageSection.equals(TRENDING)) {
       // User views all deals for trending section
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, -1, -1, null);
+          getSectionListMaps(homePageSection, -1, -1, null, null, null);
       return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     } else { // user is unable to view all deals for other sections when not logged in
       return null;
@@ -196,7 +194,7 @@ public class HomePageServlet extends HttpServlet {
 
   /** Gets a list of list of maps based on the required section(s) */
   private List<List<Map<String, Object>>> getSectionListMaps(
-      String section, long userId, int limit, String sort) {
+      String section, long userId, int limit, String sort, String lat, String lng) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
     // for trending section, there is no sorting available as it is already sorted by trending
     if (section == null || section.equals(TRENDING)) {
@@ -216,7 +214,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
         dealIds = dealManager.getDealsPublishedByUsers(userIds, -1);
-        deals = handleOtherSorts(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -227,7 +225,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1);
-        deals = handleOtherSorts(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -243,14 +241,15 @@ public class HomePageServlet extends HttpServlet {
         deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1);
-        deals = handleOtherSorts(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
   }
 
-  private List<Deal> handleOtherSorts(List<Long> dealIds, int limit, String sort) {
+  private List<Deal> handleOtherSorts(
+      List<Long> dealIds, int limit, String sort, String lat, String lng) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
       dealIds = dealVoteCountManager.getDealsInOrderOfVotes(dealIds, limit);
@@ -263,7 +262,7 @@ public class HomePageServlet extends HttpServlet {
       }
     } else if (sort.equals(DISTANCE_SORT)) {
       deals = dealManager.readDeals(dealIds);
-      deals = sortByDistance(deals, limit);
+      deals = sortByDistance(deals, limit, lat, lng);
       if (limit > 0) {
         deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
@@ -271,7 +270,8 @@ public class HomePageServlet extends HttpServlet {
     return deals;
   }
 
-  private List<Deal> sortByDistance(List<Deal> deals, int limit) {
+  private List<Deal> sortByDistance(
+      List<Deal> deals, int limit, String latitude, String longitude) {
     Map<Deal, Integer> dealDistMap = new HashMap<>();
     try {
       List<List<String>> placeIdsPerDeal = new ArrayList<>();
