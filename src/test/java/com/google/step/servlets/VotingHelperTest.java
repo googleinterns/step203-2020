@@ -34,7 +34,6 @@ public class VotingHelperTest {
 
   @Test
   public void testVotingHelperSameDirection() throws IOException {
-
     when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
 
     VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
@@ -45,7 +44,6 @@ public class VotingHelperTest {
 
   @Test
   public void testVotingHelperOppDirection() throws IOException {
-
     when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(-1);
 
     VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
@@ -56,7 +54,6 @@ public class VotingHelperTest {
 
   @Test
   public void testVotingHelperUndo() throws IOException {
-
     when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
 
     VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_UNDO, voteManager, dealVoteCountManager);
@@ -67,12 +64,31 @@ public class VotingHelperTest {
 
   @Test
   public void testVotingHelperDiffOppDir() throws IOException {
-
     when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(1);
 
     VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_NEG_ONE, voteManager, dealVoteCountManager);
 
     verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(-1));
     verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-2));
+  }
+
+  @Test
+  public void testNormalUpVote() throws IOException {
+    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(0);
+
+    VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
+
+    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
+    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(1));
+  }
+
+  @Test
+  public void testNormalDownVote() throws IOException {
+    when(voteManager.getDirection(USER_ID_A, DEAL_ID_A)).thenReturn(0);
+
+    VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_NEG_ONE, voteManager, dealVoteCountManager);
+
+    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(-1));
+    verify(dealVoteCountManager).updateDealVotes(eq(DEAL_ID_A), eq(-1));
   }
 }
