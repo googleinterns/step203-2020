@@ -201,6 +201,8 @@ function showError(error) {
       alert('An unknown error occurred.');
       break;
   }
+}
+
 /**
  * Escapes HTML string
  * @param {string} unsafe unsafe string that might contain HTML elements
