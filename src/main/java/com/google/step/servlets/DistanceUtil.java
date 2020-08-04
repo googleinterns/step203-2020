@@ -56,6 +56,9 @@ public class DistanceUtil {
   public static List<Map<String, Integer>> getDistances(
       List<Deal> deals, String latitude, String longitude, List<List<String>> placeIdsPerDeal)
       throws IOException {
+    if (API_KEY.equals("api-key")) {
+      return new ArrayList<>();
+    }
     HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
     StringBuilder sb = new StringBuilder();
 
