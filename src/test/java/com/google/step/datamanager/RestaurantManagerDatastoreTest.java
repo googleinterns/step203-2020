@@ -20,19 +20,25 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.step.model.Restaurant;
+import com.google.step.servlets.ImageUploader;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.BDDMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ImageUploader.class)
 public final class RestaurantManagerDatastoreTest {
 
   private final LocalServiceTestHelper helper =
@@ -119,7 +125,13 @@ public final class RestaurantManagerDatastoreTest {
     Restaurant restaurantA =
         restaurantManagerDatastore.createRestaurantWithBlobKey(
             RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A);
+
+    mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getBlobKeyFromUrl(restaurantA.photoUrl)).willReturn(BLOBKEY_A);
+
     restaurantManagerDatastore.deleteRestaurant(restaurantA.id);
+    verifyStatic(ImageUploader.class);
+    ImageUploader.deleteImage(BLOBKEY_A);
 
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
   }
@@ -179,8 +191,15 @@ public final class RestaurantManagerDatastoreTest {
         restaurantManagerDatastore.createRestaurantWithPhotoReference(
             RESTAURANT_NAME_C, RESTAURANT_PHOTO_REFERENCE_A, USER_ID_A);
 
+    mockStatic(ImageUploader.class);
+    BDDMockito.given(ImageUploader.getBlobKeyFromUrl(restaurantA.photoUrl)).willReturn(BLOBKEY_A);
+    BDDMockito.given(ImageUploader.getBlobKeyFromUrl(restaurantB.photoUrl)).willReturn(BLOBKEY_B);
+    BDDMockito.given(ImageUploader.getBlobKeyFromUrl(restaurantC.photoUrl)).willReturn(null);
+
     restaurantManagerDatastore.deleteAllRestaurants();
 
+    verifyStatic(ImageUploader.class);
+    ImageUploader.deleteImage(BLOBKEY_A, BLOBKEY_B);
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantA.id));
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantB.id));
     assertNull(restaurantManagerDatastore.readRestaurant(restaurantC.id));

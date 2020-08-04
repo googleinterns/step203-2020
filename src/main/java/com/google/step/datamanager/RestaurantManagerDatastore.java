@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.step.model.Restaurant;
+import com.google.step.servlets.ImageUploader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -95,7 +96,9 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   @Override
   public void deleteRestaurant(long id) {
     Key key = KeyFactory.createKey("Restaurant", id);
+    Restaurant restaurant = readRestaurant(id);
     datastore.delete(key);
+    ImageUploader.deleteImage(ImageUploader.getBlobKeyFromUrl(restaurant.photoUrl));
   }
 
   @Override
@@ -135,12 +138,18 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   @Override
   public void deleteAllRestaurants() {
-    Query query = new Query("Restaurant").setKeysOnly();
+    Query query = new Query("Restaurant");
     PreparedQuery preparedQuery = datastore.prepare(query);
 
-    List<Key> keys = new ArrayList<>();
-    preparedQuery.asIterable().forEach(entity -> keys.add(entity.getKey()));
+    List<Entity> entities = preparedQuery.asList(FetchOptions.Builder.withDefaults());
+    List<Key> keys = entities.stream().map(entity -> entity.getKey()).collect(Collectors.toList());
     datastore.delete(keys);
+    String[] blobKeys =
+        entities.stream()
+            .map(entity -> ImageUploader.getBlobKeyFromUrl((String) entity.getProperty("photoUrl")))
+            .filter(blobKey -> blobKey != null)
+            .toArray(String[]::new);
+    ImageUploader.deleteImage(blobKeys);
   }
 
   @Override
