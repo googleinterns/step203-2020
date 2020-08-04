@@ -3,6 +3,7 @@ package com.google.step.datamanager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -11,6 +12,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealVoteCountManagerDatastore implements DealVoteCountManager {
 
@@ -34,7 +36,7 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
   }
 
   @Override
-  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds) {
+  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds, int limit) {
     List<Long> dealIdResults = new ArrayList<>();
     List<Long> dealIdsArrayList = new ArrayList<>(dealIds);
     if (dealIds.size() > 0) {
@@ -42,14 +44,22 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
       Query query =
           new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
       PreparedQuery pq = datastore.prepare(query);
-      Iterable<Entity> entities = pq.asIterable();
+      Iterable<Entity> entities = null;
+      if (limit == -1) { // Fetch all
+        entities = pq.asIterable();
+      } else {
+        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
+      }
       for (Entity entity : entities) {
         dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
         dealIdResults.add((long) entity.getProperty("deal"));
       }
+      dealIdResults.addAll(dealIdsArrayList);
     }
-    // Add those that have not been voted on and not in datastore to the end
-    dealIdResults.addAll(dealIdsArrayList);
+    dealIdResults =
+        limit == -1
+            ? dealIdResults
+            : dealIdResults.stream().limit(limit).collect(Collectors.toList());
     return dealIdResults;
   }
 
