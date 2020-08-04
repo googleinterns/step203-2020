@@ -59,6 +59,8 @@ public class HomePageServlet extends HttpServlet {
   private static final String VOTE_SORT = "votes";
   private static final String NEW_SORT = "new";
 
+  private static final int NUM_HOMEPAGE_DEALS = 8;
+
   public HomePageServlet(
       DealManager dealManager,
       UserManager userManager,
@@ -146,9 +148,8 @@ public class HomePageServlet extends HttpServlet {
     User user = userManager.readUserByEmail(email);
     long userId = user.id;
     if (homePageSection == null) {
-      // for each section, limit to 8 deals for home page
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId, 8, sort);
+          getSectionListMaps(homePageSection, userId, NUM_HOMEPAGE_DEALS, sort);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
@@ -165,7 +166,8 @@ public class HomePageServlet extends HttpServlet {
 
   private String userNotLoggedIn(String homePageSection) {
     if (homePageSection == null) { // only trending will be shown when not logged in
-      List<List<Map<String, Object>>> homePageDealsMaps = getSectionListMaps(TRENDING, -1, 8, null);
+      List<List<Map<String, Object>>> homePageDealsMaps =
+          getSectionListMaps(TRENDING, -1, NUM_HOMEPAGE_DEALS, null);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       return JsonFormatter.getHomePageJson(homePageMap);
