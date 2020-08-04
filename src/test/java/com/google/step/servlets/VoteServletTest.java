@@ -51,6 +51,8 @@ public class VoteServletTest {
     dealVoteCountManager = mock(DealVoteCountManager.class);
     servlet = new VoteServlet(userService, userManager, voteManager, dealVoteCountManager);
 
+    PowerMockito.mockStatic(VotingHelper.class);
+
     // mock HttpServletResponse
     response = mock(HttpServletResponse.class);
     stringWriter = new StringWriter();
@@ -87,7 +89,6 @@ public class VoteServletTest {
 
     when(request.getParameter("dir")).thenReturn(DIR_ONE);
     when(request.getPathInfo()).thenReturn(DEAL_PATH);
-    PowerMockito.mockStatic(VotingHelper.class);
 
     servlet.doPost(request, response);
 
