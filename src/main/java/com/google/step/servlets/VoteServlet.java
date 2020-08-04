@@ -69,12 +69,8 @@ public class VoteServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    int prevDir = voteManager.getDirection(userId, dealId);
-    int dirInt = Integer.parseInt(dir);
-    voteManager.vote(userId, dealId, dirInt);
-    if (dirInt != prevDir) {
-      dealVoteCountManager.updateDealVotes(dealId, dirInt - prevDir);
-    }
+
+    VotingHelper.updateVote(userId, dealId, dir, voteManager, dealVoteCountManager);
     response.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
 

@@ -123,24 +123,37 @@ function configureDealsHeader(restaurant) {
 }
 
 /**
+ * Gets authentication status to and configures follow button
+ * @param {string} restaurantId ID of restaurant
+ */
+function initAuthentication(restaurantId) {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
+        if (!loginStatus.isLoggedIn) {
+          return;
+        }
+        configureFollowButton(restaurantId, loginStatus.id);
+      });
+}
+
+/**
  * Initializes the restaurant page based on the id.
  */
 function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
   $.ajax('/api/restaurants/' + id)
       .done((restaurant) => {
+        $('#restaurant-loading').hide();
+        $('#restaurant-page').show();
+        initAuthentication(id);
         configureRestaurantInfo(restaurant);
         initMap(restaurant);
         configureDealsOfRestaurant(restaurant.deals);
         configureDealsHeader(restaurant);
-      });
-
-  $.ajax('/api/authentication')
-      .done((loginStatus) => {
-        if (!loginStatus.isLoggedIn) {
-          return;
-        }
-        configureFollowButton(id, loginStatus.id);
+      })
+      .fail(() => {
+        $('#restaurant-loading').hide();
+        $('#restaurant-not-found').show();
       });
 }
 

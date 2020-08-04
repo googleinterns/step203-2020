@@ -23,7 +23,7 @@ public class DealVoteCountManagerDatastoreTest {
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-  private final DealVoteCountManagerDatastore mockDealVoteCountManager =
+  private final DealVoteCountManagerDatastore dealVoteCountManager =
       new DealVoteCountManagerDatastore();
 
   @Before
@@ -38,50 +38,50 @@ public class DealVoteCountManagerDatastoreTest {
 
   @Test
   public void getVotes_returnsZeroAtFirst() {
-    assertEquals(0, mockDealVoteCountManager.getVotes(DEAL_ID_A));
+    assertEquals(0, dealVoteCountManager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_incrementsVotesCorrectly() {
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    assertEquals(1, mockDealVoteCountManager.getVotes(DEAL_ID_A));
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    assertEquals(2, mockDealVoteCountManager.getVotes(DEAL_ID_A));
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    assertEquals(1, dealVoteCountManager.getVotes(DEAL_ID_A));
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    assertEquals(2, dealVoteCountManager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void vote_decrementsVotesCorrectly() {
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    assertEquals(1, mockDealVoteCountManager.getVotes(DEAL_ID_A));
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, -1);
-    assertEquals(0, mockDealVoteCountManager.getVotes(DEAL_ID_A));
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    assertEquals(1, dealVoteCountManager.getVotes(DEAL_ID_A));
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, -1);
+    assertEquals(0, dealVoteCountManager.getVotes(DEAL_ID_A));
   }
 
   @Test
   public void testManyVotes() {
     for (int i = 1; i <= 100; i++) {
-      mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+      dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
     }
-    assertEquals(100, mockDealVoteCountManager.getVotes(DEAL_ID_A));
+    assertEquals(100, dealVoteCountManager.getVotes(DEAL_ID_A));
   }
 
   @Test
-  public void testGetDealsInOrderOfVotesNoLimit() {
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
+  public void testSortDealsInOrderOfVotes() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
-        mockDealVoteCountManager.getDealsInOrderOfVotes(
+        dealVoteCountManager.sortDealsInOrderOfVotes(
             Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), -1);
     List<Long> expected = Arrays.asList(DEAL_ID_B, DEAL_ID_A, DEAL_ID_C);
     assertEquals(expected, deals);
   }
 
   @Test
-  public void testGetDealsInOrderOfVotesLimit() {
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
+  public void testSortDealsInOrderOfVotesLimit() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
-        mockDealVoteCountManager.getDealsInOrderOfVotes(
+        dealVoteCountManager.sortDealsInOrderOfVotes(
             Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 1);
     List<Long> expected = Arrays.asList(DEAL_ID_B);
     assertEquals(1, expected.size());
@@ -89,11 +89,11 @@ public class DealVoteCountManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealsInOrderOfVotesLimitMoreThanDeals() {
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
-    mockDealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
+  public void testSortDealsInOrderOfVotesLimitMoreThanDeals() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
-        mockDealVoteCountManager.getDealsInOrderOfVotes(
+        dealVoteCountManager.sortDealsInOrderOfVotes(
             Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 4);
     List<Long> expected = Arrays.asList(DEAL_ID_B, DEAL_ID_A, DEAL_ID_C);
     assertEquals(expected, deals);
