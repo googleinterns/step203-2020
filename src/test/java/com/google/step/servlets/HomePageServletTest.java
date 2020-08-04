@@ -91,14 +91,7 @@ public class HomePageServletTest {
     when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
   }
 
-  private void gettingSectionMaps_A() {
-    when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
-    when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
-    when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
-    when(mockDealVoteCountManager.getVotes(anyLong())).thenReturn(VOTE_A);
-  }
-
-  private void gettingSectionMaps_ABC() {
+  private void gettingSectionMaps() {
     when(mockUserManager.readUser(anyLong())).thenReturn(USER_A);
     when(mockRestaurantManager.readRestaurant(anyLong())).thenReturn(RESTAURANT_A);
     when(mockTagManager.readTags(anyList())).thenReturn(Arrays.asList(TAG_A));
@@ -138,7 +131,7 @@ public class HomePageServletTest {
     when(mockDealManager.getDealsWithIds(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
-    gettingSectionMaps_ABC();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -190,7 +183,7 @@ public class HomePageServletTest {
     when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
-    gettingSectionMaps_A();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -215,7 +208,7 @@ public class HomePageServletTest {
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
-    gettingSectionMaps_A();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -240,7 +233,7 @@ public class HomePageServletTest {
     when(request.getParameter("sort")).thenReturn(null);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
-    gettingSectionMaps_A();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -283,7 +276,7 @@ public class HomePageServletTest {
     when(mockDealVoteCountManager.sortDealsInOrderOfVotes(anyList(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealManager.readDealsOrder(anyList())).thenReturn(DEALS);
 
-    gettingSectionMaps_A();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -312,7 +305,7 @@ public class HomePageServletTest {
     when(mockDealManager.getDealsPublishedByUsersSortByNew(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDealsOrder(anyList())).thenReturn(DEALS);
 
-    gettingSectionMaps_A();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
@@ -344,7 +337,7 @@ public class HomePageServletTest {
     when(mockDealVoteCountManager.getVotes(DEAL_ID_B)).thenReturn(VOTE_B);
     when(mockDealVoteCountManager.getVotes(DEAL_ID_C)).thenReturn(VOTE_C);
 
-    gettingSectionMaps_ABC();
+    gettingSectionMaps();
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
