@@ -131,6 +131,9 @@ public class HomePageServletTest {
 
     // Trending section
     when(mockDealManager.getAllDeals()).thenReturn(DEALS_TRENDING);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_A)).thenReturn(1.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_B)).thenReturn(0.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_C)).thenReturn(0.5);
 
     // Users section
     when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt(), eq(null)))
@@ -155,14 +158,14 @@ public class HomePageServletTest {
     String expectedTrendingDeals =
         String.format(
             "[%s,%s,%s,%s,%s,%s,%s,%s]",
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_B_JSON,
-            HOME_DEAL_B_JSON,
-            HOME_DEAL_B_JSON,
             HOME_DEAL_A_JSON,
-            HOME_DEAL_A_JSON);
+            HOME_DEAL_A_JSON,
+            HOME_DEAL_A_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_B_JSON,
+            HOME_DEAL_B_JSON);
 
     String expectedDeals =
         String.format(
@@ -352,6 +355,10 @@ public class HomePageServletTest {
     when(mockDealVoteCountManager.getVotes(DEAL_ID_B)).thenReturn(VOTE_B);
     when(mockDealVoteCountManager.getVotes(DEAL_ID_C)).thenReturn(VOTE_C);
 
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_A)).thenReturn(1.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_B)).thenReturn(0.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_C)).thenReturn(0.5);
+
     gettingSectionMaps_ABC();
 
     StringWriter stringWriter = new StringWriter();
@@ -361,7 +368,7 @@ public class HomePageServletTest {
     homePageServlet.doGet(request, response);
 
     String expected =
-        String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_C_JSON, HOME_DEAL_B_JSON);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
