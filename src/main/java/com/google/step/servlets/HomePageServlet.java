@@ -51,7 +51,7 @@ public class HomePageServlet extends HttpServlet {
   private final FollowManager followManager;
   private final DealVoteCountManager dealVoteCountManager;
   private final CommentManager commentManager;
-  private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
+  private final Long OLDEST_DEAL_TIMESTAMP = 1593561600L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
   private static final String TRENDING = "trending";

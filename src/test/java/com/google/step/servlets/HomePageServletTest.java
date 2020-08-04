@@ -134,6 +134,9 @@ public class HomePageServletTest {
     when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.getDealsWithIds(anySet(), anyInt())).thenReturn(DEALIDS);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_A)).thenReturn(1.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_B)).thenReturn(0.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_C)).thenReturn(0.5);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
@@ -143,14 +146,14 @@ public class HomePageServletTest {
     String expectedTrendingDeals =
         String.format(
             "[%s,%s,%s,%s,%s,%s,%s,%s]",
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_C_JSON,
-            HOME_DEAL_B_JSON,
-            HOME_DEAL_B_JSON,
-            HOME_DEAL_B_JSON,
             HOME_DEAL_A_JSON,
-            HOME_DEAL_A_JSON);
+            HOME_DEAL_A_JSON,
+            HOME_DEAL_A_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_C_JSON,
+            HOME_DEAL_B_JSON,
+            HOME_DEAL_B_JSON);
 
     String expectedDeals =
         String.format(
@@ -295,11 +298,14 @@ public class HomePageServletTest {
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_A)).thenReturn(1.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_B)).thenReturn(0.0);
+    when(mockCommentManager.getAvgCommentSentiment(DEAL_ID_C)).thenReturn(0.5);
 
     homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
-        String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
+        String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_C_JSON, HOME_DEAL_B_JSON);
 
     JSONAssert.assertEquals(expected, stringWriter.toString(), JSONCompareMode.STRICT);
   }
