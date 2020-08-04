@@ -280,7 +280,7 @@ public class HomePageServletTest {
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
-    when(mockDealVoteCountManager.getDealsInOrderOfVotes(anyList(), eq(-1))).thenReturn(DEALIDS);
+    when(mockDealVoteCountManager.sortDealsInOrderOfVotes(anyList(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealManager.readDealsOrder(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_A();
