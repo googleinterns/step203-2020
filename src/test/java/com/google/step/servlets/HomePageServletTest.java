@@ -35,6 +35,7 @@ import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Deal;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -61,9 +62,13 @@ public class HomePageServletTest {
   private FollowManager mockFollowManager;
   private DealVoteCountManager mockDealVoteCountManager;
   private UserService mockUserService;
+  private HttpServletRequest mockRequest;
+  private HttpServletResponse mockResponse;
+  private StringWriter stringWriter;
+  private PrintWriter writer;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     mockDealManager = mock(DealManager.class);
     mockUserManager = mock(UserManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
@@ -82,6 +87,12 @@ public class HomePageServletTest {
             mockFollowManager,
             mockDealVoteCountManager,
             mockUserService);
+    mockRequest = mock(HttpServletRequest.class);
+    mockResponse = mock(HttpServletResponse.class);
+    stringWriter = new StringWriter();
+    writer = new PrintWriter(stringWriter);
+    when(mockResponse.getWriter()).thenReturn(writer);
+    when(mockResponse.getWriter()).thenReturn(writer);
   }
 
   private void setUpUserAuthentication() {
@@ -102,9 +113,6 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGetAllDeals_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     List<Deal> DEALS_TRENDING =
         Arrays.asList(DEAL_A, DEAL_B, DEAL_C, DEAL_A, DEAL_B, DEAL_C, DEAL_A, DEAL_B, DEAL_C);
     List<Long> DEALIDS =
@@ -113,31 +121,20 @@ public class HomePageServletTest {
     List<Deal> DEALS =
         Arrays.asList(DEAL_A, DEAL_A, DEAL_A, DEAL_A, DEAL_A, DEAL_A, DEAL_A, DEAL_A);
 
-    when(request.getParameter("section")).thenReturn(null);
-    when(request.getParameter("sort")).thenReturn(null);
+    when(mockRequest.getParameter("section")).thenReturn(null);
+    when(mockRequest.getParameter("sort")).thenReturn(null);
 
     setUpUserAuthentication();
 
-    // Trending section
     when(mockDealManager.getAllDeals()).thenReturn(DEALS_TRENDING);
-
-    // Users section
     when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
-
-    // Restaurants section
     when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALIDS);
-
-    // Tags section
     when(mockDealManager.getDealsWithIds(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expectedTrendingDeals =
         String.format(
@@ -171,25 +168,18 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserLoggedInViewSectionNoSort() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    when(request.getParameter("section")).thenReturn("users");
-    when(request.getParameter("sort")).thenReturn(null);
+    when(mockRequest.getParameter("section")).thenReturn("users");
+    when(mockRequest.getParameter("sort")).thenReturn(null);
     setUpUserAuthentication();
     when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
@@ -198,23 +188,16 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserNotLoggedInAllDeals() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    when(request.getParameter("section")).thenReturn(null);
-    when(request.getParameter("sort")).thenReturn(null);
+    when(mockRequest.getParameter("section")).thenReturn(null);
+    when(mockRequest.getParameter("sort")).thenReturn(null);
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
     String expectedDeals =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
     String expected = String.format("{\"trending\":%s}", expectedDeals);
@@ -223,23 +206,16 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserNotLoggedInViewTrending() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
-    when(request.getParameter("section")).thenReturn("trending");
-    when(request.getParameter("sort")).thenReturn(null);
+    when(mockRequest.getParameter("section")).thenReturn("trending");
+    when(mockRequest.getParameter("sort")).thenReturn(null);
     when(mockDealManager.getAllDeals()).thenReturn(DEALS);
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
@@ -249,25 +225,19 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserNotLoggedInViewOtherSection() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     when(mockUserService.isUserLoggedIn()).thenReturn(false);
-    when(request.getParameter("section")).thenReturn("users");
-    when(request.getParameter("sort")).thenReturn(null);
+    when(mockRequest.getParameter("section")).thenReturn("users");
+    when(mockRequest.getParameter("sort")).thenReturn(null);
 
-    homePageServlet.doGet(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    homePageServlet.doGet(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
   public void testDoGet_UserLoggedInViewSectionSortedVotes() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     setUpUserAuthentication();
-    when(request.getParameter("section")).thenReturn("users");
-    when(request.getParameter("sort")).thenReturn("votes");
+    when(mockRequest.getParameter("section")).thenReturn("users");
+    when(mockRequest.getParameter("sort")).thenReturn("votes");
 
     List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
@@ -278,11 +248,7 @@ public class HomePageServletTest {
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
@@ -292,12 +258,9 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserLoggedInViewSectionSortedNew() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     setUpUserAuthentication();
-    when(request.getParameter("section")).thenReturn("users");
-    when(request.getParameter("sort")).thenReturn("new");
+    when(mockRequest.getParameter("section")).thenReturn("users");
+    when(mockRequest.getParameter("sort")).thenReturn("new");
 
     List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
@@ -307,11 +270,7 @@ public class HomePageServletTest {
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_A_JSON, HOME_DEAL_A_JSON, HOME_DEAL_A_JSON);
@@ -321,29 +280,19 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_UserLoggedInViewOtherSectionSortedTrending() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
     setUpUserAuthentication();
-    when(request.getParameter("section")).thenReturn("users");
-    when(request.getParameter("sort")).thenReturn("trending");
+    when(mockRequest.getParameter("section")).thenReturn("users");
+    when(mockRequest.getParameter("sort")).thenReturn("trending");
 
     List<Long> DEALIDS = new ArrayList<Long>(Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C));
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
     when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
-    when(mockDealVoteCountManager.getVotes(DEAL_ID_A)).thenReturn(VOTE_A);
-    when(mockDealVoteCountManager.getVotes(DEAL_ID_B)).thenReturn(VOTE_B);
-    when(mockDealVoteCountManager.getVotes(DEAL_ID_C)).thenReturn(VOTE_C);
 
     gettingSectionMaps();
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
-
-    homePageServlet.doGet(request, response);
+    homePageServlet.doGet(mockRequest, mockResponse);
 
     String expected =
         String.format("[%s,%s,%s]", HOME_DEAL_C_JSON, HOME_DEAL_B_JSON, HOME_DEAL_A_JSON);
@@ -353,24 +302,18 @@ public class HomePageServletTest {
 
   @Test
   public void testDoGet_SectionIsNotValid() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("section")).thenReturn("trash");
 
-    when(request.getParameter("section")).thenReturn("trash");
-
-    homePageServlet.doGet(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    homePageServlet.doGet(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoGet_SortIsNotValid() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getParameter("section")).thenReturn("trending");
+    when(mockRequest.getParameter("sort")).thenReturn("trash");
 
-    when(request.getParameter("section")).thenReturn("trending");
-    when(request.getParameter("sort")).thenReturn("trash");
-
-    homePageServlet.doGet(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    homePageServlet.doGet(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }
