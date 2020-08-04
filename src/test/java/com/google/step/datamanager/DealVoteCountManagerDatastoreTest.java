@@ -3,7 +3,9 @@ package com.google.step.datamanager;
 import static com.google.step.TestConstants.DEAL_ID_A;
 import static com.google.step.TestConstants.DEAL_ID_B;
 import static com.google.step.TestConstants.DEAL_ID_C;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -69,7 +71,30 @@ public class DealVoteCountManagerDatastoreTest {
     dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
         dealVoteCountManager.sortDealsInOrderOfVotes(
-            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C));
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), -1);
+    List<Long> expected = Arrays.asList(DEAL_ID_B, DEAL_ID_A, DEAL_ID_C);
+    assertEquals(expected, deals);
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesLimit() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 1);
+    List<Long> expected = Arrays.asList(DEAL_ID_B);
+    assertEquals(1, expected.size());
+    assertThat(deals, hasItem(DEAL_ID_B));
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesLimitMoreThanDeals() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 4);
     List<Long> expected = Arrays.asList(DEAL_ID_B, DEAL_ID_A, DEAL_ID_C);
     assertEquals(expected, deals);
   }
