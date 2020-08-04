@@ -257,6 +257,9 @@ public class TestConstants {
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
 
+  public static final String TOKEN_A = "ghcnyoawecf";
+  public static final String TOKEN_B = "bhveigsurdk";
+
   public static final Comment COMMENT_A =
       new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
 

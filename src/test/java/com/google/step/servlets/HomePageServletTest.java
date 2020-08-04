@@ -140,15 +140,13 @@ public class HomePageServletTest {
     when(mockDealManager.getAllDeals()).thenReturn(DEALS_TRENDING);
 
     // Users section
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt(), eq(null)))
-        .thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
 
     // Restaurants section
-    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt(), eq(null)))
-        .thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByRestaurants(anySet(), anyInt())).thenReturn(DEALIDS);
 
     // Tags section
-    when(mockDealManager.getDealsWithIds(anySet(), anyInt(), eq(null))).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsWithIds(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_ABC();
@@ -200,8 +198,7 @@ public class HomePageServletTest {
     when(request.getParameter("section")).thenReturn("users");
     when(request.getParameter("sort")).thenReturn(null);
     setUpUserAuthentication();
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt(), eq(null)))
-        .thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_A();
@@ -293,7 +290,7 @@ public class HomePageServletTest {
     List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1), eq(null))).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealVoteCountManager.getDealsInOrderOfVotes(anyList(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealManager.readDealsOrder(anyList())).thenReturn(DEALS);
 
@@ -323,8 +320,7 @@ public class HomePageServletTest {
     List<Long> DEALIDS = Arrays.asList(DEAL_ID_A, DEAL_ID_A, DEAL_ID_A);
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_A, DEAL_A));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), anyInt(), eq("new")))
-        .thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsersSortByNew(anySet(), anyInt())).thenReturn(DEALIDS);
     when(mockDealManager.readDealsOrder(anyList())).thenReturn(DEALS);
 
     gettingSectionMaps_A();
@@ -353,7 +349,7 @@ public class HomePageServletTest {
     List<Long> DEALIDS = new ArrayList<Long>(Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C));
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B, DEAL_C));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1), eq(null))).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
     when(mockDealManager.readDeals(anyList())).thenReturn(DEALS);
     when(mockDealVoteCountManager.getVotes(DEAL_ID_A)).thenReturn(VOTE_A);
     when(mockDealVoteCountManager.getVotes(DEAL_ID_B)).thenReturn(VOTE_B);
@@ -412,7 +408,7 @@ public class HomePageServletTest {
     List<Long> DEALIDS = new ArrayList<Long>(Arrays.asList(DEAL_ID_A, DEAL_ID_B));
     List<Deal> DEALS = new ArrayList<Deal>(Arrays.asList(DEAL_A, DEAL_B));
 
-    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1), eq(null))).thenReturn(DEALIDS);
+    when(mockDealManager.getDealsPublishedByUsers(anySet(), eq(-1))).thenReturn(DEALIDS);
 
     when(mockRestaurantPlaceManager.getPlaceIdsOfRestaurant(DEAL_A.restaurantId))
         .thenReturn(new HashSet<>(Arrays.asList(REAL_PLACE_ID_A, REAL_PLACE_ID_B)));

@@ -78,7 +78,6 @@ public class DistanceUtil {
       ub.addParameter("origins", latitude + "," + longitude);
       ub.addParameter("destinations", sb.toString());
       ub.addParameter("key", API_KEY);
-      System.out.println(ub.toString());
     } catch (URISyntaxException e) {
       return new ArrayList<>();
     }

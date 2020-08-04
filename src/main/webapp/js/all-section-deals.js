@@ -14,6 +14,8 @@ function createAllDealCards(deals, reqSection) {
     }
   }
   const dropdownMenu = document.getElementById('sort');
+  // for trending section, the deals are already sorted by trending,
+  // so no sorting option is available
   if (reqSection !== 'trending') {
     dropdownMenu.children[0].href = '/all-section-deals/' +
       reqSection + '/trending';

@@ -10,13 +10,25 @@ let userId = null;
  */
 function initComments() {
   document.getElementById('dealId-input').value = dealId;
+  fetchMoreComments(null);
+}
+
+/**
+ * Calls the backend for more comments
+ * @param {string} token
+ */
+function fetchMoreComments(token) {
+  $('#comment-loading').show();
+  $('#comment-more').hide();
+
   $.ajax({
     url: '/api/comments',
     data: {
       dealId: dealId,
+      token: token,
     },
-  }).done((comments) => {
-    loadCommentsToPage(comments);
+  }).done((commentsWithToken) => {
+    addCommentsToPage(commentsWithToken);
   });
 }
 
@@ -29,6 +41,7 @@ function loadDealDataToPage(deal) {
   $('#deal-page').show();
   if (deal.poster.id != userId) {
     $('#menu-btn').hide();
+    $('#edit-btn').hide();
   }
 
   const dealTitleElement = document.getElementById('deal-title');
@@ -102,6 +115,9 @@ function loadDataToForm(deal) {
 
   const restaurantIdInput = document.getElementById('restaurant-id-input');
   restaurantIdInput.value = deal.restaurant.id;
+
+  const tagsInput = document.getElementById('tags-input');
+  $(tagsInput).tagsinput('add', deal.tags.map((tag) => tag.name).join(','));
 }
 
 /**
@@ -118,14 +134,23 @@ function createTagContainer(tag) {
 
 /**
  * Get comments for a deal
- * @param {array} comments
+ * @param {object} commentsWithToken
  */
-function loadCommentsToPage(comments) {
+function addCommentsToPage(commentsWithToken) {
+  const comments = commentsWithToken.comments;
   const commentListElement = document.getElementById('comment-list');
-  commentListElement.innerHTML = '';
   comments.forEach((comment) => {
     commentListElement.appendChild(createCommentBox(comment));
   });
+  $('#comment-loading').hide();
+
+  const loadMoreBtn = document.getElementById('comment-more');
+  if (comments.length == 5) {
+    loadMoreBtn.style.display = 'block';
+    loadMoreBtn.onclick = () => fetchMoreComments(commentsWithToken.token);
+  } else {
+    loadMoreBtn.style.display = 'none';
+  }
 }
 
 /**
