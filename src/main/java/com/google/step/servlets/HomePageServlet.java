@@ -272,7 +272,7 @@ public class HomePageServlet extends HttpServlet {
 
   private List<Deal> sortByDistance(
       List<Deal> deals, int limit, String latitude, String longitude) {
-    Map<Deal, Integer> dealDistMap = new HashMap<>();
+    Map<Deal, Double> dealDistMap = new HashMap<>();
     try {
       List<List<String>> placeIdsPerDeal = new ArrayList<>();
       for (int i = 0; i < deals.size(); i++) {
@@ -281,12 +281,12 @@ public class HomePageServlet extends HttpServlet {
         List<String> placeIdsList = new ArrayList<>(placeIds);
         placeIdsPerDeal.add(placeIdsList);
       }
-      List<Map<String, Integer>> distances =
+      List<Map<String, Double>> distances =
           DistanceUtil.getDistances(deals, latitude, longitude, placeIdsPerDeal);
       // Gets the min distance for each deal as there are many placeids and put in new map
       for (int i = 0; i < distances.size(); i++) {
         if (!distances.get(i).isEmpty()) {
-          Integer minDistance = distances.get(i).values().stream().min(Integer::compare).get();
+          Double minDistance = distances.get(i).values().stream().min(Double::compare).get();
           dealDistMap.put(deals.get(i), minDistance);
         }
       }
@@ -294,7 +294,7 @@ public class HomePageServlet extends HttpServlet {
       return new ArrayList<>();
     }
     // Sort the deals based on distance
-    List<Entry<Deal, Integer>> dealDists = new ArrayList<>(dealDistMap.entrySet());
+    List<Entry<Deal, Double>> dealDists = new ArrayList<>(dealDistMap.entrySet());
     dealDists.sort(Entry.comparingByValue());
     deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
     return deals;

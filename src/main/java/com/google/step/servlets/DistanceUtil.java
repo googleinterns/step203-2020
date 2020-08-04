@@ -53,7 +53,7 @@ public class DistanceUtil {
     private List<Row> rows;
   }
 
-  public static List<Map<String, Integer>> getDistances(
+  public static List<Map<String, Double>> getDistances(
       List<Deal> deals, String latitude, String longitude, List<List<String>> placeIdsPerDeal)
       throws IOException {
     if (API_KEY.equals("api-key")) {
@@ -93,14 +93,14 @@ public class DistanceUtil {
 
     // Creates a list of maps containing information about the placeids of a deal and its distance
     int placeIdIndex = 0;
-    List<Map<String, Integer>> distanceDeals = new ArrayList<>();
+    List<Map<String, Double>> distanceDeals = new ArrayList<>();
     for (List<String> placeIds : placeIdsPerDeal) {
       try {
-        Map<String, Integer> placeIdDist = new HashMap<>();
+        Map<String, Double> placeIdDist = new HashMap<>();
         for (int k = 0; k < placeIds.size(); k++) {
           placeIdDist.put(
               placeIds.get(k),
-              Integer.parseInt(
+              Double.parseDouble(
                   distanceResponse.rows.get(0).elements.get(placeIdIndex + k).distance.value));
         }
         distanceDeals.add(placeIdDist);
