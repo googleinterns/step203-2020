@@ -78,7 +78,7 @@ function initAllDeals() {
 }
 
 /**
- * Retrieves user's locatio
+ * Retrieves user's location
  */
 function getLocation() {
   if (navigator.geolocation) {
