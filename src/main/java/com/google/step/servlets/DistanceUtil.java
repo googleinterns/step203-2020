@@ -49,8 +49,8 @@ public class DistanceUtil {
     }
 
     private String status;
-    private List<String> origin_addresses;
-    private List<String> destination_addresses;
+    private List<String> originAddresses;
+    private List<String> destinationAddresses;
     private List<Row> rows;
   }
 
