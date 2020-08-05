@@ -3,6 +3,8 @@ package com.google.step.datamanager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
@@ -12,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FollowManagerDatastore implements FollowManager {
 
@@ -170,5 +173,14 @@ public class FollowManagerDatastore implements FollowManager {
     PreparedQuery pq = datastore.prepare(query);
 
     return pq.asSingleEntity() != null;
+  }
+
+  @Override
+  public void deleteFollowersOfRestaurant(long restaurantId) {
+    Filter filter = new FilterPredicate(RESTAURANT_FIELD_NAME, FilterOperator.EQUAL, restaurantId);
+    Query query = new Query(ENTITY_NAME).setFilter(filter).setKeysOnly();
+    List<Entity> entities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+    List<Key> keys = entities.stream().map(entity -> entity.getKey()).collect(Collectors.toList());
+    datastore.delete(keys);
   }
 }
