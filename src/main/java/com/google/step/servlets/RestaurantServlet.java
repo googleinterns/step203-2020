@@ -146,5 +146,11 @@ public class RestaurantServlet extends HttpServlet {
           .getWriter()
           .println(JsonFormatter.getRestaurantJson(updatedRestaurant, user, deals, placeIds));
     }
+
+    List<Deal> deals = dealManager.getDealsOfRestaurant(id);
+    List<String> placeIds = new ArrayList<>(restaurantPlaceManager.getPlaceIdsOfRestaurant(id));
+    response
+        .getWriter()
+        .println(JsonFormatter.getRestaurantJson(updatedRestaurant, user, deals, placeIds));
   }
 }
