@@ -5,13 +5,13 @@ import static com.google.step.TestConstants.EMAIL_A;
 import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
+import com.google.step.datamanager.DealVoteCountManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.VoteManager;
 import java.io.IOException;
@@ -22,9 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(JUnit4.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(VotingHelper.class)
 public class VoteServletTest {
 
   private static final String DEAL_PATH = "/" + DEAL_ID_A;
@@ -34,6 +37,7 @@ public class VoteServletTest {
   private UserService userService;
   private UserManager userManager;
   private VoteManager voteManager;
+  private DealVoteCountManager dealVoteCountManager;
   private HttpServletResponse response;
   private StringWriter stringWriter;
   private PrintWriter writer;
@@ -44,7 +48,11 @@ public class VoteServletTest {
     userService = mock(UserService.class);
     userManager = mock(UserManager.class);
     voteManager = mock(VoteManager.class);
-    servlet = new VoteServlet(userService, userManager, voteManager);
+    dealVoteCountManager = mock(DealVoteCountManager.class);
+    servlet = new VoteServlet(userService, userManager, voteManager, dealVoteCountManager);
+
+    // mock static
+    PowerMockito.mockStatic(VotingHelper.class);
 
     // mock HttpServletResponse
     response = mock(HttpServletResponse.class);
@@ -76,7 +84,7 @@ public class VoteServletTest {
   }
 
   @Test
-  public void testDoPost_sucess() throws IOException {
+  public void testDoPost_success() throws IOException {
     setUpUserAuthentication();
     HttpServletRequest request = mock(HttpServletRequest.class);
 
@@ -86,7 +94,9 @@ public class VoteServletTest {
     servlet.doPost(request, response);
 
     verify(response).setStatus(HttpServletResponse.SC_ACCEPTED);
-    verify(voteManager).vote(eq(USER_ID_A), eq(DEAL_ID_A), eq(1));
+
+    PowerMockito.verifyStatic(VotingHelper.class);
+    VotingHelper.updateVote(USER_ID_A, DEAL_ID_A, DIR_ONE, voteManager, dealVoteCountManager);
   }
 
   @Test
