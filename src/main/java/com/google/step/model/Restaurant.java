@@ -7,24 +7,28 @@ public class Restaurant {
   public final long id;
   public final String name;
   public final String photoUrl;
+  public final long posterId;
 
-  private Restaurant(long id, String name, String photoUrl) {
+  private Restaurant(long id, String name, String photoUrl, long posterId) {
     this.id = id;
     this.name = name;
     this.photoUrl = photoUrl;
+    this.posterId = posterId;
   }
 
-  public static Restaurant createRestaurantWithBlobkey(long id, String name, String photoBlobKey) {
-    return new Restaurant(id, name, getImageUrlFromBlobKey(photoBlobKey));
+  public static Restaurant createRestaurantWithBlobkey(
+      long id, String name, String photoBlobKey, long posterId) {
+    return new Restaurant(id, name, getImageUrlFromBlobKey(photoBlobKey), posterId);
   }
 
   public static Restaurant createRestaurantWithPhotoReference(
-      long id, String name, String photoReference) {
-    return new Restaurant(id, name, getImageUrlFromPhotoReference(photoReference));
+      long id, String name, String photoReference, long posterId) {
+    return new Restaurant(id, name, getImageUrlFromPhotoReference(photoReference), posterId);
   }
 
-  public static Restaurant createRestaurantWithPhotoUrl(long id, String name, String photoUrl) {
-    return new Restaurant(id, name, photoUrl);
+  public static Restaurant createRestaurantWithPhotoUrl(
+      long id, String name, String photoUrl, long posterId) {
+    return new Restaurant(id, name, photoUrl, posterId);
   }
 
   @Override
@@ -37,6 +41,7 @@ public class Restaurant {
     }
     Restaurant other = (Restaurant) obj;
     return (this.id == other.id)
+        && (this.posterId == other.posterId)
         && ((this.name == null && other.name == null)
             || (this.name != null && this.name.equals(other.name)))
         && ((this.photoUrl == null && other.photoUrl == null)

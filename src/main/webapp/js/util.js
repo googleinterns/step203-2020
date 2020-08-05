@@ -113,9 +113,10 @@ function createHomeDealCard(deal, numCol, sectionId) {
       </div>`;
 
   const dealTags = dealBody.querySelector('.tags');
-  for (let i = 0; i < deal.tags.length; i++) {
-    dealTags.innerText += '#' + deal.tags[i].name + ', ';
-  };
+  for (const tag of deal.tags) {
+    const tagContainer = createTagContainer(tag);
+    dealTags.appendChild(tagContainer);
+  }
 
   return dealBody;
 }
@@ -156,4 +157,16 @@ function escapeHtml(unsafe) {
   const p = document.createElement('p');
   p.appendChild(text);
   return p.innerHTML;
+}
+
+/**
+ * Returns a container with tag's name.
+ * @param {object} tag The tag object.
+ * @return {HTMLSpanElement} a container with tag's name.
+ */
+function createTagContainer(tag) {
+  const tagContainer = document.createElement('span');
+  tagContainer.className = 'badge badge-pill badge-primary mx-1';
+  tagContainer.innerText = tag.name;
+  return tagContainer;
 }
