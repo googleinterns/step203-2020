@@ -1,13 +1,22 @@
 # run the following commands if you change this file
 # gcloud datastore indexes create index.yaml
-# gcloud datastore cleanup-indexes index.yaml
+# gcloud datastore indexes cleanup index.yaml
 
 indexes:
 
 - kind: Deal
   properties:
   - name: posterId
+    direction: asc
+  - name: timestamp
+    direction: desc
+
+- kind: Deal
+  properties:
   - name: restaurantId
+    direction: asc
+  - name: timestamp
+    direction: desc
 
 - kind: Comment
   properties:
@@ -34,3 +43,8 @@ indexes:
   properties:
   - name: deal
   - name: user
+
+- kind: DealVote
+  properties:
+  - name: deal
+  - name: votes

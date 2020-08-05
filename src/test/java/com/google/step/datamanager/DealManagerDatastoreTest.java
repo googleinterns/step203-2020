@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -262,7 +263,7 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealPublishedByUsersSortNewNoLimit_success() {
+  public void testGetDealPublishedByUsersSortNewNoLimit_success() throws InterruptedException {
     // Add deals published by USER_ID_A and USER_ID_B
     Deal dealA =
         dealManagerDatastore.createDeal(
@@ -274,6 +275,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -284,6 +286,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_B,
             RESTAURANT_ID_A,
             EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealC =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -314,10 +317,11 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealPublishedByUsersSortNewLimit_success() {
+  public void testGetDealPublishedByUsersSortNewLimit_success() throws InterruptedException {
     // Add deals published by USER_ID_A and USER_ID_B
     dealManagerDatastore.createDeal(
         DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A, EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -328,6 +332,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_B,
             RESTAURANT_ID_A,
             EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealC =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -391,10 +396,11 @@ public final class DealManagerDatastoreTest {
   }
 
   @Test
-  public void testGetDealPublishedByRestaurantsSortNewLimit_success() {
+  public void testGetDealPublishedByRestaurantsSortNewLimit_success() throws InterruptedException {
     // Add deals published by RESTAURANT_ID_A and RESTAURANT_ID_B
     dealManagerDatastore.createDeal(
         DESCRIPTION_A, BLOBKEY_A, DATE_A, DATE_B, SOURCE_A, USER_ID_A, RESTAURANT_ID_A, EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
