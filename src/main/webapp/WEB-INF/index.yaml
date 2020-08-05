@@ -49,4 +49,4 @@ indexes:
   - name: deal
     direction: asc
   - name: votes
-    direction: asc
+    direction: desc
