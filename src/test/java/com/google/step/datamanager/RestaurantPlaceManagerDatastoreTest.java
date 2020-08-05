@@ -5,8 +5,10 @@ import static com.google.step.TestConstants.PLACE_ID_B;
 import static com.google.step.TestConstants.PLACE_ID_C;
 import static com.google.step.TestConstants.PLACE_ID_D;
 import static com.google.step.TestConstants.RESTAURANT_ID_A;
+import static com.google.step.TestConstants.RESTAURANT_ID_B;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -53,6 +55,21 @@ public class RestaurantPlaceManagerDatastoreTest {
     restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_A, placeIds);
 
     Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A);
+    assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D));
+  }
+
+  @Test
+  public void testDeletePlacesOfRestaurant() {
+    List<String> placeIds = Arrays.asList(PLACE_ID_A, PLACE_ID_B);
+    restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_A, placeIds);
+    placeIds = Arrays.asList(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D);
+    restaurantPlaceManager.updatePlacesOfRestaurant(RESTAURANT_ID_B, placeIds);
+
+    restaurantPlaceManager.deletePlacesOfRestaurant(RESTAURANT_ID_A);
+
+    assertTrue(restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_A).isEmpty());
+
+    Set<String> actual = restaurantPlaceManager.getPlaceIdsOfRestaurant(RESTAURANT_ID_B);
     assertThat(actual, containsInAnyOrder(PLACE_ID_A, PLACE_ID_C, PLACE_ID_D));
   }
 }

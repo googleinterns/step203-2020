@@ -123,33 +123,55 @@ function configureDealsHeader(restaurant) {
 }
 
 /**
- * Gets authentication status to and configures follow button
- * @param {string} restaurantId ID of restaurant
+ * Configures menu button.
+ * @param {object} restaurant the restaurant shown on the page
+ * @param {number} loggedInUserId id of the logged in user
  */
-function initAuthentication(restaurantId) {
+function configureMenuButton(restaurant, loggedInUserId) {
+  const menuBtn = document.getElementById('menu-btn');
+  if (restaurant.poster.id != loggedInUserId) {
+    menuBtn.hidden = true;
+    return;
+  }
+
+  const deleteBtn = document.getElementById('delete-btn');
+  deleteBtn.onclick = function() {
+    if (confirm('Are you sure you want to delete this restaurant?')) {
+      $.ajax('/api/restaurants/' + restaurant.id, {method: 'DELETE'})
+          .done(() => {
+            window.location.href = '/all-restaurants';
+          });
+    }
+  };
+}
+
+let loginStatus;
+/**
+ * Fetches login status and stores in global variable.
+ */
+function fetchLoginStatus() {
   $.ajax('/api/authentication')
-      .done((loginStatus) => {
-        if (!loginStatus.isLoggedIn) {
-          return;
-        }
-        configureFollowButton(restaurantId, loginStatus.id);
+      .done((response) => {
+        loginStatus = response;
       });
 }
 
 /**
  * Initializes the restaurant page based on the id.
  */
-function initRestaurantPage() {
+async function initRestaurantPage() {
   const id = window.location.pathname.substring(12); // Remove '/restaurant/'
+  await fetchLoginStatus();
   $.ajax('/api/restaurants/' + id)
       .done((restaurant) => {
         $('#restaurant-loading').hide();
         $('#restaurant-page').show();
-        initAuthentication(id);
         configureRestaurantInfo(restaurant);
         initMap(restaurant);
         configureDealsOfRestaurant(restaurant.deals);
         configureDealsHeader(restaurant);
+        configureFollowButton(id, loginStatus.id);
+        configureMenuButton(restaurant, loginStatus.id);
       })
       .fail(() => {
         $('#restaurant-loading').hide();
