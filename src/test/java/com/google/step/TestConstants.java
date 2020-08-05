@@ -99,10 +99,12 @@ public class TestConstants {
       Restaurant.getImageUrlFromPhotoReference(RESTAURANT_PHOTO_REFERENCE_A);
 
   public static final Restaurant RESTAURANT_A =
-      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A);
+      Restaurant.createRestaurantWithBlobkey(
+          RESTAURANT_ID_A, RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A);
 
   public static final Restaurant RESTAURANT_B =
-      Restaurant.createRestaurantWithBlobkey(RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B);
+      Restaurant.createRestaurantWithBlobkey(
+          RESTAURANT_ID_B, RESTAURANT_NAME_B, BLOBKEY_B, USER_ID_B);
 
   public static final String RESTAURANT_A_BRIEF_JSON =
       String.format(
@@ -212,17 +214,19 @@ public class TestConstants {
   public static final String CONTENT_A = "Hello world";
   public static final String CONTENT_B = "Hello world2";
 
+  public static final String SENTIMENT_A = "0.5";
+  public static final String SENTIMENT_B = "1.0";
   public static final String TOKEN_A = "ghcnyoawecf";
   public static final String TOKEN_B = "bhveigsurdk";
 
   public static final Comment COMMENT_A =
-      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A);
+      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_A, TIME_A, SENTIMENT_A);
 
   public static final Comment COMMENT_B =
-      new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B);
+      new Comment(COMMENT_ID_B, DEAL_ID_A, USER_ID_B, CONTENT_B, TIME_B, SENTIMENT_B);
 
   public static final Comment UPDATED_COMMENT_A =
-      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_B, TIME_A);
+      new Comment(COMMENT_ID_A, DEAL_ID_A, USER_ID_A, CONTENT_B, TIME_A, SENTIMENT_B);
 
   public static final String COMMENT_A_JSON =
       String.format(
@@ -235,9 +239,17 @@ public class TestConstants {
               + "\"id\": %d,"
               + "\"picture\": \"%s\","
               + "\"username\": \"%s\""
-              + "}"
+              + "},"
+              + "\"sentiment\": \"%s\""
               + "}",
-          COMMENT_ID_A, DEAL_ID_A, CONTENT_A, TIME_A, USER_ID_A, BLOBKEY_URL_A, USERNAME_A);
+          COMMENT_ID_A,
+          DEAL_ID_A,
+          CONTENT_A,
+          TIME_A,
+          USER_ID_A,
+          BLOBKEY_URL_A,
+          USERNAME_A,
+          SENTIMENT_A);
 
   public static final String COMMENT_B_JSON =
       String.format(
@@ -250,7 +262,15 @@ public class TestConstants {
               + "\"id\": %d,"
               + "\"picture\": \"%s\","
               + "\"username\": \"%s\""
-              + "}"
+              + "},"
+              + "\"sentiment\": \"%s\""
               + "}",
-          COMMENT_ID_B, DEAL_ID_A, CONTENT_B, TIME_B, USER_ID_B, BLOBKEY_URL_B, USERNAME_B);
+          COMMENT_ID_B,
+          DEAL_ID_A,
+          CONTENT_B,
+          TIME_B,
+          USER_ID_B,
+          BLOBKEY_URL_B,
+          USERNAME_B,
+          SENTIMENT_B);
 }

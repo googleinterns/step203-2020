@@ -154,12 +154,12 @@ public final class FollowManagerDatastoreTest {
 
   @Test
   public void testIsFollowingRestaurant() {
-    followManager.followRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B);
-    followManager.followRestaurant(RESTAURANT_ID_B, RESTAURANT_ID_C);
-    followManager.followRestaurant(RESTAURANT_ID_C, RESTAURANT_ID_A);
+    followManager.followRestaurant(USER_ID_A, RESTAURANT_ID_B);
+    followManager.followRestaurant(USER_ID_B, RESTAURANT_ID_C);
+    followManager.followRestaurant(USER_ID_C, RESTAURANT_ID_A);
 
-    assertTrue(followManager.isFollowingRestaurant(RESTAURANT_ID_A, RESTAURANT_ID_B));
-    assertFalse(followManager.isFollowingRestaurant(RESTAURANT_ID_C, RESTAURANT_ID_B));
+    assertTrue(followManager.isFollowingRestaurant(USER_ID_A, RESTAURANT_ID_B));
+    assertFalse(followManager.isFollowingRestaurant(USER_ID_C, RESTAURANT_ID_B));
   }
 
   public void testGetFollowerIdsOfUser() {
@@ -186,5 +186,18 @@ public final class FollowManagerDatastoreTest {
     assertThat(followManager.getFollowedTagIds(USER_ID_B), hasItems(TAG_ID_A, TAG_ID_B));
 
     assertTrue(followManager.getFollowedTagIds(USER_ID_C).isEmpty());
+  }
+
+  public void testDeleteFollowersOfRestaurant() {
+    followManager.followRestaurant(USER_ID_B, RESTAURANT_ID_C);
+    followManager.followRestaurant(USER_ID_C, RESTAURANT_ID_A);
+    followManager.followRestaurant(USER_ID_A, RESTAURANT_ID_A);
+
+    followManager.deleteFollowersOfRestaurant(RESTAURANT_ID_A);
+
+    assertTrue(followManager.getFollowedRestaurantIds(USER_ID_A).isEmpty());
+    assertTrue(followManager.getFollowedRestaurantIds(USER_ID_C).isEmpty());
+    assertThat(
+        followManager.getFollowedRestaurantIds(USER_ID_B), containsInAnyOrder(RESTAURANT_ID_C));
   }
 }

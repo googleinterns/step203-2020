@@ -30,29 +30,32 @@ public class RestaurantManagerDatastore implements RestaurantManager {
 
   /** Creates a new restaurant entity */
   @Override
-  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobKey) {
+  public Restaurant createRestaurantWithBlobKey(String name, String photoBlobKey, long posterId) {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
     entity.setProperty("photoUrl", Restaurant.getImageUrlFromBlobKey(photoBlobKey));
     entity.setProperty("name_lowercase", name.toLowerCase());
+    entity.setProperty("posterId", posterId);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    return Restaurant.createRestaurantWithBlobkey(id, name, photoBlobKey);
+    return Restaurant.createRestaurantWithBlobkey(id, name, photoBlobKey, posterId);
   }
 
   @Override
-  public Restaurant createRestaurantWithPhotoReference(String name, String photoReference) {
+  public Restaurant createRestaurantWithPhotoReference(
+      String name, String photoReference, long posterId) {
     Entity entity = new Entity("Restaurant");
     entity.setProperty("name", name);
     entity.setProperty("photoUrl", Restaurant.getImageUrlFromPhotoReference(photoReference));
     entity.setProperty("name_lowercase", name.toLowerCase());
+    entity.setProperty("posterId", posterId);
 
     Key key = datastore.put(entity);
     long id = key.getId();
 
-    return Restaurant.createRestaurantWithPhotoReference(id, name, photoReference);
+    return Restaurant.createRestaurantWithPhotoReference(id, name, photoReference, posterId);
   }
 
   /** Gets info on a restaurant given an id */
@@ -127,9 +130,10 @@ public class RestaurantManagerDatastore implements RestaurantManager {
   private Restaurant transformEntityToRestaurant(Entity restaurantEntity) {
     String name = (String) restaurantEntity.getProperty("name");
     String photoUrl = (String) restaurantEntity.getProperty("photoUrl");
+    long posterId = (long) restaurantEntity.getProperty("posterId");
     long id = restaurantEntity.getKey().getId();
 
-    return Restaurant.createRestaurantWithPhotoUrl(id, name, photoUrl);
+    return Restaurant.createRestaurantWithPhotoUrl(id, name, photoUrl, posterId);
   }
 
   @Override

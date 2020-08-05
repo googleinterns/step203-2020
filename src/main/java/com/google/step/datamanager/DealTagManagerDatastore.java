@@ -3,10 +3,17 @@ package com.google.step.datamanager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealTagManagerDatastore implements DealTagManager {
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -25,8 +32,7 @@ public class DealTagManagerDatastore implements DealTagManager {
   @Override
   public List<Long> getDealIdsWithTag(long id) {
     Query query =
-        new Query("DealTag")
-            .setFilter(new Query.FilterPredicate("tagId", Query.FilterOperator.EQUAL, id));
+        new Query("DealTag").setFilter(new FilterPredicate("tagId", FilterOperator.EQUAL, id));
 
     Iterable<Entity> results = datastore.prepare(query).asIterable();
     List<Long> dealIds = new ArrayList<>();
@@ -67,8 +73,7 @@ public class DealTagManagerDatastore implements DealTagManager {
    */
   private Iterable<Entity> getDealTagEntitiesOfDeal(long dealId) {
     Query query =
-        new Query("DealTag")
-            .setFilter(new Query.FilterPredicate("dealId", Query.FilterOperator.EQUAL, dealId));
+        new Query("DealTag").setFilter(new FilterPredicate("dealId", FilterOperator.EQUAL, dealId));
 
     Iterable<Entity> results = datastore.prepare(query).asIterable();
     return results;
@@ -86,5 +91,17 @@ public class DealTagManagerDatastore implements DealTagManager {
     entity.setProperty("dealId", dealId);
     entity.setProperty("tagId", tagId);
     return entity;
+  }
+
+  @Override
+  public void deleteAllTagsOfDeal(long dealId) {
+    Filter propertyFilter = new FilterPredicate("dealId", FilterOperator.EQUAL, dealId);
+    Query query = new Query("DealTag").setFilter(propertyFilter).setKeysOnly();
+    PreparedQuery pq = datastore.prepare(query);
+    List<Key> keys =
+        pq.asList(FetchOptions.Builder.withDefaults()).stream()
+            .map(entity -> entity.getKey())
+            .collect(Collectors.toList());
+    datastore.delete(keys);
   }
 }
