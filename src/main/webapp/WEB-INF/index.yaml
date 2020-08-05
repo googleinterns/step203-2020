@@ -34,3 +34,8 @@ indexes:
   properties:
   - name: deal
   - name: user
+
+- kind: DealVote
+  properties:
+  - name: deal
+  - name: votes
