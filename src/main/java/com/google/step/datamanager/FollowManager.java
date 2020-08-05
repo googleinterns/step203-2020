@@ -12,6 +12,8 @@ public interface FollowManager {
 
   public boolean isFollowingRestaurant(long followerId, long followeeId);
 
+  public void deleteFollowersOfRestaurant(long restaurantId);
+
   public void followUser(long followerId, long userId);
 
   public void unfollowUser(long followerId, long userId);

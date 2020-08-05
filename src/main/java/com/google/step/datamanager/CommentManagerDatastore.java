@@ -141,6 +141,18 @@ public class CommentManagerDatastore implements CommentManager {
   }
 
   @Override
+  public Comment readComment(long id) {
+    Key key = KeyFactory.createKey("Comment", id);
+    Entity commentEntity;
+    try {
+      commentEntity = datastore.get(key);
+    } catch (EntityNotFoundException e) {
+      return null;
+    }
+    return transformEntitytoComment(commentEntity);
+  }
+
+  @Override
   public void deleteAllCommentsOfDeal(long dealId) {
     Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
     Query query = new Query("Comment").setFilter(propertyFilter).setKeysOnly();
