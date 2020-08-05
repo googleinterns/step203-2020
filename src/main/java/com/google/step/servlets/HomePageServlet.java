@@ -306,7 +306,7 @@ public class HomePageServlet extends HttpServlet {
       int votes = dealVoteCountManager.getVotes(deal.id);
       scoredDeals.add(new ScoredDeal(deal, calculateHotScore(deal, votes)));
     }
-    Collections.sort(scoredDeals);
+    Collections.sort(scoredDeals, Collections.reverseOrder());
     List<Deal> dealResults = new ArrayList<>(); // creating list of deals
     for (ScoredDeal scoredDeal : scoredDeals) {
       dealResults.add(scoredDeal.deal);
