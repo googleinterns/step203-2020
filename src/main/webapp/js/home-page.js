@@ -4,6 +4,7 @@
  * @param {object} homePageDeals
  */
 function createHomePage(numDealPerSlide, homePageDeals) {
+  $('.section-loading').hide();
   const carouselElements = document.querySelectorAll('.carousel.slide');
   const homePageSections = ['trending', 'restaurants',
     'users', 'tags'];
@@ -18,8 +19,8 @@ function createHomePage(numDealPerSlide, homePageDeals) {
     carouselElements[i].children[0].href = '/all-section-deals/' +
       homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
-    const indicatorListElement = carouselElements[i].children[1];
-    const carouselItemList = carouselElements[i].children[2];
+    const indicatorListElement = carouselElements[i].children[2];
+    const carouselItemList = carouselElements[i].children[3];
     const numCarouselSlides = Math.ceil(homePageData.length/numDealPerSlide);
     for (let j = 0; j < numCarouselSlides; j++) { // number of carousel slides
       const indicatorListChild = document.createElement('li');
@@ -47,8 +48,8 @@ function createHomePage(numDealPerSlide, homePageDeals) {
       indicatorListElement.appendChild(indicatorListChild);
       carouselItemList.appendChild(carouselItemListChild);
     }
-    carouselElements[i].children[3].href = '#carousel-' + i;
     carouselElements[i].children[4].href = '#carousel-' + i;
+    carouselElements[i].children[5].href = '#carousel-' + i;
   }
   // for subsequent carousel elements, set to no display due to no data
   for (let k = i; k < carouselElements.length; k++) {
@@ -62,9 +63,9 @@ function createHomePage(numDealPerSlide, homePageDeals) {
  * @param {boolean} notLoggedIn
  */
 function showNotFound(carouselElement, notLoggedIn) {
-  carouselElement.children[0].style.display = 'none';
-  carouselElement.children[3].style.display = 'none';
+  carouselElement.children[1].style.display = 'none';
   carouselElement.children[4].style.display = 'none';
+  carouselElement.children[5].style.display = 'none';
 
   // inform users to log in to view
   const showNotFound = document.createElement('h5');
