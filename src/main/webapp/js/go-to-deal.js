@@ -121,18 +121,6 @@ function loadDataToForm(deal) {
 }
 
 /**
- * Returns a container with tag's name.
- * @param {object} tag The tag object.
- * @return {HTMLSpanElement} a container with tag's name.
- */
-function createTagContainer(tag) {
-  const tagContainer = document.createElement('span');
-  tagContainer.className = 'badge badge-pill badge-primary mx-1';
-  tagContainer.innerText = tag.name;
-  return tagContainer;
-}
-
-/**
  * Get comments for a deal
  * @param {object} commentsWithToken
  */
