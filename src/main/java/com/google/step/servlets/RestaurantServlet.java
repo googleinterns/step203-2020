@@ -4,6 +4,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
+import com.google.step.datamanager.FollowManager;
+import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.RestaurantPlaceManager;
@@ -30,18 +32,21 @@ public class RestaurantServlet extends HttpServlet {
   private RestaurantPlaceManager restaurantPlaceManager;
   private UserManager userManager;
   private UserService userService;
+  private FollowManager followManager;
 
   public RestaurantServlet(
       RestaurantManager restaurantManager,
       DealManager dealManager,
       RestaurantPlaceManager restaurantPlaceManager,
       UserManager userManager,
-      UserService userService) {
+      UserService userService,
+      FollowManager followManager) {
     this.restaurantManager = restaurantManager;
     this.dealManager = dealManager;
     this.restaurantPlaceManager = restaurantPlaceManager;
     this.userManager = userManager;
     this.userService = userService;
+    this.followManager = followManager;
   }
 
   public RestaurantServlet() {
@@ -50,6 +55,7 @@ public class RestaurantServlet extends HttpServlet {
     restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
     userManager = new UserManagerDatastore();
     userService = UserServiceFactory.getUserService();
+    followManager = new FollowManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
@@ -76,6 +82,8 @@ public class RestaurantServlet extends HttpServlet {
     }
 
     restaurantManager.deleteRestaurant(id);
+    restaurantPlaceManager.deletePlacesOfRestaurant(id);
+    followManager.deleteFollowersOfRestaurant(id);
   }
 
   /** Gets the restaurant with the given id parameter */

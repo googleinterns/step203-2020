@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.datamanager.UserManager;
@@ -53,6 +54,7 @@ public class RestaurantServletTest {
   private RestaurantPlaceManager restaurantPlaceManager;
   private UserManager userManager;
   private UserService userService;
+  private FollowManager followManager;
 
   private RestaurantServlet restaurantServlet;
 
@@ -63,10 +65,16 @@ public class RestaurantServletTest {
     restaurantPlaceManager = mock(RestaurantPlaceManager.class);
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
+    followManager = mock(FollowManager.class);
 
     restaurantServlet =
         new RestaurantServlet(
-            restaurantManager, dealManager, restaurantPlaceManager, userManager, userService);
+            restaurantManager,
+            dealManager,
+            restaurantPlaceManager,
+            userManager,
+            userService,
+            followManager);
   }
 
   /** Successfully returns a restaurant */
@@ -260,6 +268,8 @@ public class RestaurantServletTest {
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     verify(restaurantManager).deleteRestaurant(anyLong());
+    verify(restaurantPlaceManager).deletePlacesOfRestaurant(1);
+    verify(followManager).deleteFollowersOfRestaurant(1);
   }
 
   /** Invalid ID is given for deleting e.g. String */
