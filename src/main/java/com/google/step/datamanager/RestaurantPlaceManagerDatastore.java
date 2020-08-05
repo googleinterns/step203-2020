@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,5 +61,10 @@ public class RestaurantPlaceManagerDatastore implements RestaurantPlaceManager {
     Filter filter = new FilterPredicate("restaurantId", FilterOperator.EQUAL, restaurantId);
     query.setFilter(filter);
     return datastore.prepare(query).asIterable();
+  }
+
+  @Override
+  public void deletePlacesOfRestaurant(long restaurantId) {
+    updatePlacesOfRestaurant(restaurantId, new ArrayList<>());
   }
 }
