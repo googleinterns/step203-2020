@@ -29,6 +29,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.DealManager;
+import com.google.step.datamanager.DealTagManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.VoteManager;
@@ -65,6 +66,7 @@ public class DealDetailServletTest {
   private VoteManager mockVoteManager;
   private RestaurantManager mockRestaurantManager;
   private CommentManager mockCommentManager;
+  private DealTagManager mockDealTagManager;
   private UserService mockUserService;
   private HttpServletResponse mockResponse;
   private StringWriter stringWriter;
@@ -77,6 +79,7 @@ public class DealDetailServletTest {
     mockVoteManager = mock(VoteManager.class);
     mockRestaurantManager = mock(RestaurantManager.class);
     mockCommentManager = mock(CommentManager.class);
+    mockDealTagManager = mock(DealTagManager.class);
     mockUserService = mock(UserService.class);
     mockRequest = mock(HttpServletRequest.class);
 
@@ -108,6 +111,7 @@ public class DealDetailServletTest {
             mockVoteManager,
             mockRestaurantManager,
             mockCommentManager,
+            mockDealTagManager,
             mockUserService);
   }
 
@@ -188,6 +192,7 @@ public class DealDetailServletTest {
     verify(mockResponse).setStatus(HttpServletResponse.SC_OK);
     verify(mockDealManager).deleteDeal(DEAL_ID_A);
     verify(mockCommentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
+    verify(mockDealTagManager).deleteAllTagsOfDeal(DEAL_ID_A);
     PowerMockito.verifyStatic(ImageUploader.class, times(1));
     ImageUploader.deleteImage(BLOBKEY_A);
   }
