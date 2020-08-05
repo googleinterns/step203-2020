@@ -84,7 +84,7 @@ function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(setNewURL, showError);
   } else {
-    alert('Geolocation is not supported by this browser.');
+    console.log('Geolocation is not supported by this browser.');
   }
 }
 
@@ -118,16 +118,16 @@ function setNewURL(position) {
 function showError(error) {
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      alert('Request for Geolocation denied. Unable to sort by distance.');
+      console.log('Location access denied. Unable to sort by distance.');
       break;
     case error.POSITION_UNAVAILABLE:
-      alert('Location information is unavailable.');
+      console.log('Location information is unavailable.');
       break;
     case error.TIMEOUT:
-      alert('The request to get user location timed out.');
+      console.log('The request to get user location timed out.');
       break;
     case error.UNKNOWN_ERROR:
-      alert('An unknown error occurred.');
+      console.log('An unknown error occurred.');
       break;
   }
 }
