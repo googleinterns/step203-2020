@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.http.client.utils.URIBuilder;
 
 public class DistanceUtil {
@@ -60,26 +61,20 @@ public class DistanceUtil {
       return new ArrayList<>();
     }
     HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-    StringBuilder sb = new StringBuilder();
 
     // Building url with all the placeids of all the deals
-    for (int i = 0; i < placeIdsPerDeal.size(); i++) {
-      List<String> placeIdsOfDeal = placeIdsPerDeal.get(i);
-      for (int j = 0; j < placeIdsOfDeal.size(); j++) {
-        sb.append("place_id:");
-        sb.append(placeIdsOfDeal.get(j));
-        if (j != placeIdsOfDeal.size() - 1 || i != placeIdsPerDeal.size() - 1) {
-          sb.append("|");
-        }
-      }
-    }
+    String destinations =
+        placeIdsPerDeal.stream()
+            .flatMap(placeIdsForDeal -> placeIdsForDeal.stream())
+            .map(placeId -> "place_id:" + placeId)
+            .collect(Collectors.joining("|"));
 
     // Adds parameters to URL
     URIBuilder ub;
     try {
       ub = new URIBuilder("https://maps.googleapis.com/maps/api/distancematrix/json");
       ub.addParameter("origins", latitude + "," + longitude);
-      ub.addParameter("destinations", sb.toString());
+      ub.addParameter("destinations", destinations);
       ub.addParameter("key", API_KEY);
     } catch (URISyntaxException e) {
       return new ArrayList<>();
