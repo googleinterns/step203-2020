@@ -5,18 +5,23 @@ import static com.google.step.TestConstants.COMMENT_A_JSON;
 import static com.google.step.TestConstants.COMMENT_ID_A;
 import static com.google.step.TestConstants.CONTENT_A;
 import static com.google.step.TestConstants.DEAL_ID_A;
+import static com.google.step.TestConstants.EMAIL_A;
+import static com.google.step.TestConstants.EMAIL_B;
 import static com.google.step.TestConstants.TIME_A;
 import static com.google.step.TestConstants.USER_A;
+import static com.google.step.TestConstants.USER_B;
 import static com.google.step.TestConstants.USER_ID_A;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.CommentManager;
 import com.google.step.datamanager.UserManager;
 import com.google.step.model.Comment;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
@@ -36,107 +41,152 @@ public class CommentServletTest {
 
   private CommentManager mockCommentManager;
   private UserManager mockUserManager;
+  private UserService mockUserService;
+
+  HttpServletRequest mockRequest;
+  HttpServletResponse mockResponse;
+  private StringWriter stringWriter;
+  private PrintWriter writer;
 
   private CommentServlet commentServlet;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
+    mockRequest = mock(HttpServletRequest.class);
+    mockResponse = mock(HttpServletResponse.class);
     mockCommentManager = mock(CommentManager.class);
     mockUserManager = mock(UserManager.class);
-    commentServlet = new CommentServlet(mockCommentManager, mockUserManager);
+    mockUserService = mock(UserService.class);
+    commentServlet = new CommentServlet(mockCommentManager, mockUserManager, mockUserService);
+
+    // behaviour when user is logged in
+    when(mockUserService.isUserLoggedIn()).thenReturn(true);
+    User currentUser = new User(EMAIL_A, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
+    when(mockUserManager.readUser(USER_A.id)).thenReturn(USER_A);
 
     when(mockUserManager.readUser(USER_ID_A)).thenReturn(USER_A);
+
+    // mock response
+    mockResponse = mock(HttpServletResponse.class);
+    stringWriter = new StringWriter();
+    writer = new PrintWriter(stringWriter);
+    when(mockResponse.getWriter()).thenReturn(writer);
   }
 
   @Test
   public void testDoPut_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
-    when(request.getParameter("content")).thenReturn(CONTENT_A);
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockRequest.getParameter("content")).thenReturn(CONTENT_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
     when(mockCommentManager.updateComment(COMMENT_ID_A, CONTENT_A)).thenReturn(COMMENT_A);
 
     StringWriter stringWriter = new StringWriter();
     PrintWriter writer = new PrintWriter(stringWriter);
-    when(response.getWriter()).thenReturn(writer);
+    when(mockResponse.getWriter()).thenReturn(writer);
 
-    commentServlet.doPut(request, response);
+    commentServlet.doPut(mockRequest, mockResponse);
 
     JSONAssert.assertEquals(COMMENT_A_JSON, stringWriter.toString(), JSONCompareMode.STRICT);
   }
 
   @Test
+  public void testDoPut_notLoggedIn() throws Exception {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoPut_userIsNotPoster() throws Exception {
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
+    User currentUser = new User(EMAIL_B, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_B.id)).thenReturn(USER_B);
+
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
   public void testDoPut_invalidID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/abcd");
 
-    when(request.getPathInfo()).thenReturn("/abcd");
-
-    commentServlet.doPut(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPut_noID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/");
 
-    when(request.getPathInfo()).thenReturn("/");
-
-    commentServlet.doPut(request, response);
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    commentServlet.doPut(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoPut_notExist() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/100");
 
-    when(request.getPathInfo()).thenReturn("/100");
-
-    when(request.getParameter("content")).thenReturn(CONTENT_A);
+    when(mockRequest.getParameter("content")).thenReturn(CONTENT_A);
     when(mockCommentManager.updateComment(100, CONTENT_A)).thenReturn(null);
 
-    commentServlet.doPut(request, response);
+    commentServlet.doPut(mockRequest, mockResponse);
 
-    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
 
   @Test
   public void testDoDelete_success() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
 
-    when(request.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    commentServlet.doDelete(request, response);
+    verify(mockResponse, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockCommentManager).deleteComment(COMMENT_ID_A);
+  }
 
-    verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(mockCommentManager).deleteComment(anyLong());
+  @Test
+  public void testDoDelete_notLoggedIn() throws Exception {
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+
+    commentServlet.doDelete(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+
+  @Test
+  public void testDoDelete_userIsNotPoster() throws Exception {
+    when(mockRequest.getPathInfo()).thenReturn("/" + COMMENT_ID_A);
+    when(mockCommentManager.readComment(COMMENT_ID_A)).thenReturn(COMMENT_A);
+    User currentUser = new User(EMAIL_B, "");
+    when(mockUserService.getCurrentUser()).thenReturn(currentUser);
+    when(mockUserManager.readUserByEmail(EMAIL_B)).thenReturn(USER_B);
+    when(mockUserManager.readUser(USER_B.id)).thenReturn(USER_B);
+
+    commentServlet.doDelete(mockRequest, mockResponse);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
   public void testDoDelete_invalidID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/abcd");
 
-    when(request.getPathInfo()).thenReturn("/abcd");
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    commentServlet.doDelete(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 
   @Test
   public void testDoDelete_noID() throws Exception {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
+    when(mockRequest.getPathInfo()).thenReturn("/");
 
-    when(request.getPathInfo()).thenReturn("/");
+    commentServlet.doDelete(mockRequest, mockResponse);
 
-    commentServlet.doDelete(request, response);
-
-    verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    verify(mockResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
   }
 }

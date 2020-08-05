@@ -4,11 +4,14 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
+import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
 import com.google.step.datamanager.UserManager;
 import com.google.step.datamanager.UserManagerDatastore;
 import com.google.step.model.Restaurant;
 import com.google.step.model.User;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,18 +25,24 @@ public class RestaurantPostListServlet extends HttpServlet {
   private RestaurantManager restaurantManager;
   private UserManager userManager;
   private UserService userService;
+  private final RestaurantPlaceManager restaurantPlaceManager;
 
   public RestaurantPostListServlet(
-      RestaurantManager restaurantManager, UserManager userManager, UserService userService) {
+      RestaurantManager restaurantManager,
+      UserManager userManager,
+      UserService userService,
+      RestaurantPlaceManager restaurantPlaceManager) {
     this.restaurantManager = restaurantManager;
     this.userManager = userManager;
     this.userService = userService;
+    this.restaurantPlaceManager = restaurantPlaceManager;
   }
 
   public RestaurantPostListServlet() {
     restaurantManager = new RestaurantManagerDatastore();
     userManager = new UserManagerDatastore();
     userService = UserServiceFactory.getUserService();
+    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
   }
 
   /** Posts the restaurant with the given id parameter */
@@ -58,6 +67,8 @@ public class RestaurantPostListServlet extends HttpServlet {
 
     Restaurant restaurant =
         restaurantManager.createRestaurantWithBlobKey(name, photoBlobkey, poster.id);
+    List<String> placeIds = Arrays.asList(places.split(","));
+    restaurantPlaceManager.updatePlacesOfRestaurant(restaurant.id, placeIds);
 
     response.sendRedirect("/restaurant/" + restaurant.id);
   }

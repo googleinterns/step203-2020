@@ -21,13 +21,20 @@
 
 <body id="page-t">
   <%@include file="/WEB-INF/components/header.html"%>
-  <div class="page-section">
+  <div class="page-section flex-grow-1">
     <div class="container">
-      <div class="row mb-5">
-        <div class="col-sm-4 col-lg-3">
-          <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
-          <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+      <div id="restaurant-page" style="display: none;">
+        <h3 id="restaurant-name"></h3>
+        <div class="row mb-5">
+          <div class="col-sm-4 col-lg-3">
+            <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
+            <button id="follow-btn" type="button" class="btn btn-primary" hidden>Follow</button>
+          </div>
+          <div class="col-sm-8 col-lg-9">
+            <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
+          </div>
         </div>
+<<<<<<< HEAD
         <div class="col-sm-8 col-lg-9">
           <div class="row mb-3">
             <h3 id="restaurant-name">
@@ -43,28 +50,40 @@
           </h3>
           </div>
           <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
+=======
+  
+        <div id="deals-section">
+          <h5 id="deals-header" class="mb-3"></h5>
+          <div id="deals-container">
+          </div>
+>>>>>>> 4a097a6fa66c11ae63538e96ecce40c7900d1577
+        </div>
+      </div>
+      <div id="restaurant-not-found" style="display: none;">
+        <div class="row mb-5 mt-5">
+          <div class="col-md-8">
+            <h3 id="restaurant-name">Restaurant Not Found</h3>
+            <div>This restaurant does not exist.</div>
+          </div>
+        </div>
+      </div>
+      <div id="restaurant-loading">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
         </div>
       </div>
     </div>
-
-
-    <div id="deals-section" class="container">
-      <h5 id="deals-header" class="mb-3"></h5>
-      <div id="deals-container">
-      </div>
-    </div>
-
-    </div>
-    <%@include file="/WEB-INF/components/footer.html"%>
-    <!-- Bootstrap core JS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <!-- Third party plugin JS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="/js/scripts.js"></script>
-    <!-- Google Maps-->
-    <script async defer
+  </div>
+  <%@include file="/WEB-INF/components/footer.html"%>
+  <!-- Bootstrap core JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+  <!-- Third party plugin JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <!-- Core theme JS-->
+  <script src="/js/scripts.js"></script>
+  <!-- Google Maps-->
+  <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmdO6DpMLWi4ZdW6nHgvmQF9zDNiY3k28&libraries=places">
     </script>
 </body>

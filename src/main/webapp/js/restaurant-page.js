@@ -123,6 +123,7 @@ function configureDealsHeader(restaurant) {
 }
 
 /**
+<<<<<<< HEAD
  * Configures menu button.
  * @param {object} restaurant the restaurant shown on the page
  * @param {number} loggedInUserId id of the logged in user
@@ -153,6 +154,18 @@ function fetchLoginStatus() {
   $.ajax('/api/authentication')
       .done((response) => {
         loginStatus = response;
+=======
+ * Gets authentication status to and configures follow button
+ * @param {string} restaurantId ID of restaurant
+ */
+function initAuthentication(restaurantId) {
+  $.ajax('/api/authentication')
+      .done((loginStatus) => {
+        if (!loginStatus.isLoggedIn) {
+          return;
+        }
+        configureFollowButton(restaurantId, loginStatus.id);
+>>>>>>> 4a097a6fa66c11ae63538e96ecce40c7900d1577
       });
 }
 
@@ -164,12 +177,22 @@ async function initRestaurantPage() {
   await fetchLoginStatus();
   $.ajax('/api/restaurants/' + id)
       .done((restaurant) => {
+        $('#restaurant-loading').hide();
+        $('#restaurant-page').show();
+        initAuthentication(id);
         configureRestaurantInfo(restaurant);
         initMap(restaurant);
         configureDealsOfRestaurant(restaurant.deals);
         configureDealsHeader(restaurant);
+<<<<<<< HEAD
         configureFollowButton(id, loginStatus.id);
         configureMenuButton(restaurant, loginStatus.id);
+=======
+      })
+      .fail(() => {
+        $('#restaurant-loading').hide();
+        $('#restaurant-not-found').show();
+>>>>>>> 4a097a6fa66c11ae63538e96ecce40c7900d1577
       });
 }
 

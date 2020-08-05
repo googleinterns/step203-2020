@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.RestaurantManager;
+import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.datamanager.UserManager;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,7 +41,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 @PrepareForTest(ImageUploader.class)
 public class RestaurantPostListServletTest {
 
-  private RestaurantManager restaurantManager;
+  private RestaurantManager mockRestaurantManager;
+  private RestaurantPlaceManager mockRestaurantPlaceManager;
   private RestaurantPostListServlet restaurantPostServlet;
   private UserManager userManager;
   private UserService userService;
@@ -55,12 +57,13 @@ public class RestaurantPostListServletTest {
     BDDMockito.given(ImageUploader.getUploadedImageBlobkey(mockRequest, "pic"))
         .willReturn(BLOBKEY_A);
 
-    restaurantManager = mock(RestaurantManager.class);
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
-
+    mockRestaurantManager = mock(RestaurantManager.class);
+    mockRestaurantPlaceManager = mock(RestaurantPlaceManager.class);
     restaurantPostServlet =
-        new RestaurantPostListServlet(restaurantManager, userManager, userService);
+        new RestaurantPostListServlet(
+            mockRestaurantManager, userManager, userService, mockRestaurantPlaceManager);
   }
 
   /** Successfully creates a new restaurant */
@@ -73,12 +76,14 @@ public class RestaurantPostListServletTest {
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
+    when(mockRestaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
         .thenReturn(RESTAURANT_A);
     when(mockRequest.getParameter("places")).thenReturn(PLACE_ID_A);
 
     restaurantPostServlet.doPost(mockRequest, mockResponse);
     verify(mockResponse).sendRedirect("/restaurant/" + RESTAURANT_ID_A);
+    verify(mockRestaurantPlaceManager)
+        .updatePlacesOfRestaurant(RESTAURANT_ID_A, Arrays.asList(PLACE_ID_A));
   }
 
   @Test
@@ -90,7 +95,7 @@ public class RestaurantPostListServletTest {
     when(userManager.readUserByEmail(EMAIL_A)).thenReturn(USER_A);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
+    when(mockRestaurantManager.createRestaurantWithBlobKey(RESTAURANT_NAME_A, BLOBKEY_A, USER_ID_A))
         .thenReturn(RESTAURANT_A);
 
     restaurantPostServlet.doPost(mockRequest, mockResponse);
@@ -102,7 +107,7 @@ public class RestaurantPostListServletTest {
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
     when(mockRequest.getParameter("name")).thenReturn(RESTAURANT_NAME_A);
-    when(restaurantManager.getAllRestaurants())
+    when(mockRestaurantManager.getAllRestaurants())
         .thenReturn(Arrays.asList(RESTAURANT_A, RESTAURANT_B));
 
     StringWriter stringWriter = new StringWriter();
