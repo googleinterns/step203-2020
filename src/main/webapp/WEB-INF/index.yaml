@@ -47,4 +47,6 @@ indexes:
 - kind: DealVote
   properties:
   - name: deal
+    direction: asc
   - name: votes
+    direction: asc
