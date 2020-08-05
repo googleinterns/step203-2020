@@ -24,7 +24,19 @@
   <div class="page-section flex-grow-1">
     <div class="container">
       <div id="restaurant-page" style="display: none;">
-        <h3 id="restaurant-name"></h3>
+        <div class="row mb-3 mb-5 mt-5 position-relative">
+          <h3 id="restaurant-name" class="col-md-8">
+          </h3>
+          <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
+            <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <button id="delete-btn" class="dropdown-item" type="button">Delete Restaurant</button>
+            </div>
+          </div>
+        </div>
+
         <div class="row mb-5">
           <div class="col-sm-4 col-lg-3">
             <img id="restaurant-photo" class="img-fluid mb-4" alt="restaurant-photo" />
@@ -34,29 +46,10 @@
             <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
           </div>
         </div>
-<<<<<<< HEAD
-        <div class="col-sm-8 col-lg-9">
-          <div class="row mb-3">
-            <h3 id="restaurant-name">
-            </h3>
-            <div id="menu-btn" style="position: absolute;top:5px;right:5px;">
-              <button type="button" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right">
-                <button id="delete-btn" class="dropdown-item" type="button">Delete Restaurant</button>
-              </div>
-            </div>
-          </h3>
-          </div>
-          <div id="restaurant-map" class="w-100" style="height: 300px;"></div>
-=======
-  
         <div id="deals-section">
           <h5 id="deals-header" class="mb-3"></h5>
           <div id="deals-container">
           </div>
->>>>>>> 4a097a6fa66c11ae63538e96ecce40c7900d1577
         </div>
       </div>
       <div id="restaurant-not-found" style="display: none;">
