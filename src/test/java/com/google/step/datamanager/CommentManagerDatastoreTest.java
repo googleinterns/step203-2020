@@ -140,6 +140,21 @@ public final class CommentManagerDatastoreTest {
   }
 
   @Test
+  public void testReadComment() {
+    Comment createdComment = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
+    Comment comment = commentManagerDatastore.readComment(createdComment.id);
+
+    assertEquals(createdComment, comment);
+  }
+
+  @Test
+  public void testReadComment_null() {
+    Comment comment = commentManagerDatastore.readComment(1);
+
+    assertEquals(null, comment);
+  }
+
+  @Test
   public void testDeleteAllCommentsOfDeal_otherDealNotAffected() {
     for (int i = 0; i < 5; i++) {
       commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
