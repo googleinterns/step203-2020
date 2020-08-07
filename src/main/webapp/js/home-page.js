@@ -16,7 +16,7 @@ function createHomePage(numDealPerSlide, homePageDeals) {
       showNotFound(carouselElements[i], false);
       continue;
     }
-    carouselElements[i].children[0].href = '/all-section-deals/' +
+    carouselElements[i].children[1].href = '/all-section-deals/' +
       homePageSections[i];
     carouselElements[i].id = 'carousel-' + i;
     const indicatorListElement = carouselElements[i].children[2];

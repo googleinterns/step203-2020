@@ -30,8 +30,10 @@ public interface DealManager {
 
   public List<Long> getDealsPublishedByRestaurantsSortByNew(Set<Long> restaurantIds, int limit);
 
+  // Returns a list of deals with the deal ids matching the ids in the set, sorted by new
   public List<Long> getDealsWithIdsSortByNew(Set<Long> ids, int limit);
 
+  // Returns a list of deals with the deal ids matching the ids in the set
   public List<Long> getDealsWithIds(Set<Long> ids, int limit);
 
   public List<Deal> getAllDeals();
@@ -40,6 +42,7 @@ public interface DealManager {
 
   public List<Deal> readDeals(List<Long> ids);
 
+  // Returns a list of deals in the order of the ids given
   public List<Deal> readDealsOrder(List<Long> ids);
 
   public List<Deal> getDealsOfRestaurant(long restaurantId);

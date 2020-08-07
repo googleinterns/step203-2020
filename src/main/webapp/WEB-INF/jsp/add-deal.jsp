@@ -18,8 +18,6 @@
   <link href="tagsinput/tagsinput.css" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="css/styles.css" rel="stylesheet" />
-  <!-- Page CSS-->
-  <link href="css/add-deal.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
