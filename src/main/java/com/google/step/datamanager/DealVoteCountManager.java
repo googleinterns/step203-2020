@@ -10,5 +10,5 @@ public interface DealVoteCountManager {
   public void updateDealVotes(long dealId, int dir);
 
   /** Retrieves deals in order of votes */
-  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds);
+  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds, int limit);
 }

@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealVoteCountManagerDatastore implements DealVoteCountManager {
 
@@ -34,7 +35,7 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
   }
 
   @Override
-  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds) {
+  public List<Long> sortDealsInOrderOfVotes(List<Long> dealIds, int limit) {
     List<Long> dealIdResults = new ArrayList<>();
     List<Long> dealIdsArrayList = new ArrayList<>(dealIds);
     if (dealIds.size() > 0) {
@@ -42,14 +43,25 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
       Query query =
           new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
       PreparedQuery pq = datastore.prepare(query);
-      Iterable<Entity> entities = pq.asIterable();
-      for (Entity entity : entities) {
+      // Represents the index where the vote count is 0
+      int indexWithZeroVotes = 0;
+      for (Entity entity : pq.asIterable()) {
+        if ((int) (long) entity.getProperty("votes") > 0) {
+          indexWithZeroVotes += 1;
+        }
+        // Removes the deals that have been voted on
         dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
         dealIdResults.add((long) entity.getProperty("deal"));
       }
+      // dealIdArrayList contains the unvoted deals that wont be in the database, and these deals
+      // should be treated as having a vote count of 0
+      dealIdResults.addAll(indexWithZeroVotes, dealIdsArrayList);
+      // If limit == -1, return all dealIds
+      dealIdResults =
+          limit == -1
+              ? dealIdResults
+              : dealIdResults.stream().limit(limit).collect(Collectors.toList());
     }
-    // Add those that have not been voted on and not in datastore to the end
-    dealIdResults.addAll(dealIdsArrayList);
     return dealIdResults;
   }
 
