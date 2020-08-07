@@ -57,6 +57,7 @@ public class DeleteHelperTest {
   @Test
   public void testDeleteDeal() {
     when(dealManager.readDeal(DEAL_ID_A)).thenReturn(DEAL_A);
+
     deleteHelper.deleteDeal(DEAL_ID_A);
 
     verify(dealManager).deleteDeal(DEAL_ID_A);
