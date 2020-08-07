@@ -23,6 +23,11 @@
   <%@include file="/WEB-INF/components/header.html"%>
   <div class="container">
     <div class="page-section">
+      <div id="deals-loading">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
       <div class="row row-deals"></div>
       <div class="row row-deals"></div>
       <div class="row row-deals"></div>
