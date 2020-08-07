@@ -3,7 +3,7 @@
  * @param {object} deals
  * @param {object} reqSection
  */
-function createAllDealCards(deals) {
+function createAllDealCards(deals, reqSection) {
   $('#deals-loading').hide();
   const rowElements = document.querySelectorAll('.row.row-deals');
   for (let i = 0; i < rowElements.length; i++) {
