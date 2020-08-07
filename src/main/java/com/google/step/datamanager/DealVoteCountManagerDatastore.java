@@ -3,7 +3,6 @@ package com.google.step.datamanager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -44,22 +43,25 @@ public class DealVoteCountManagerDatastore implements DealVoteCountManager {
       Query query =
           new Query("DealVote").setFilter(dealFilter).addSort("votes", SortDirection.DESCENDING);
       PreparedQuery pq = datastore.prepare(query);
-      Iterable<Entity> entities = null;
-      if (limit == -1) { // Fetch all
-        entities = pq.asIterable();
-      } else {
-        entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
-      }
-      for (Entity entity : entities) {
+      // Represents the index where the vote count is 0
+      int indexWithZeroVotes = 0;
+      for (Entity entity : pq.asIterable()) {
+        if ((int) (long) entity.getProperty("votes") > 0) {
+          indexWithZeroVotes += 1;
+        }
+        // Removes the deals that have been voted on
         dealIdsArrayList.remove(new Long((long) entity.getProperty("deal")));
         dealIdResults.add((long) entity.getProperty("deal"));
       }
-      dealIdResults.addAll(dealIdsArrayList);
+      // dealIdArrayList contains the unvoted deals that wont be in the database, and these deals
+      // should be treated as having a vote count of 0
+      dealIdResults.addAll(indexWithZeroVotes, dealIdsArrayList);
+      // If limit == -1, return all dealIds
+      dealIdResults =
+          limit == -1
+              ? dealIdResults
+              : dealIdResults.stream().limit(limit).collect(Collectors.toList());
     }
-    dealIdResults =
-        limit == -1
-            ? dealIdResults
-            : dealIdResults.stream().limit(limit).collect(Collectors.toList());
     return dealIdResults;
   }
 
