@@ -66,7 +66,7 @@ public class DealVoteCountManagerDatastoreTest {
   }
 
   @Test
-  public void testSortDealsInOrderOfVotes() {
+  public void testSortDealsInOrderOfVotesAddCAtEnd() {
     dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
     dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
@@ -77,7 +77,51 @@ public class DealVoteCountManagerDatastoreTest {
   }
 
   @Test
-  public void testSortDealsInOrderOfVotesLimit() {
+  public void testSortDealsInOrderOfVotesAddCInMiddle() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, -1);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), -1);
+    List<Long> expected = Arrays.asList(DEAL_ID_A, DEAL_ID_C, DEAL_ID_B);
+    assertEquals(expected, deals);
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesAddCInMiddleLimit() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, -1);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 2);
+    List<Long> expected = Arrays.asList(DEAL_ID_A, DEAL_ID_C);
+    assertEquals(expected, deals);
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesAddCStart() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 0);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, -1);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), -1);
+    List<Long> expected = Arrays.asList(DEAL_ID_C, DEAL_ID_A, DEAL_ID_B);
+    assertEquals(expected, deals);
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesAddCStartLimit() {
+    dealVoteCountManager.updateDealVotes(DEAL_ID_A, 0);
+    dealVoteCountManager.updateDealVotes(DEAL_ID_B, -1);
+    List<Long> deals =
+        dealVoteCountManager.sortDealsInOrderOfVotes(
+            Arrays.asList(DEAL_ID_A, DEAL_ID_B, DEAL_ID_C), 2);
+    List<Long> expected = Arrays.asList(DEAL_ID_C, DEAL_ID_A);
+    assertEquals(expected, deals);
+  }
+
+  @Test
+  public void testSortDealsInOrderOfVotesAddCEndLimit() {
     dealVoteCountManager.updateDealVotes(DEAL_ID_A, 1);
     dealVoteCountManager.updateDealVotes(DEAL_ID_B, 2);
     List<Long> deals =
