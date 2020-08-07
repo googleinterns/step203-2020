@@ -71,13 +71,14 @@ public class DeleteHelperTest {
   public void testDeleteRestaurant() {
     when(dealManager.getDealsOfRestaurant(RESTAURANT_ID_A)).thenReturn(Arrays.asList(DEAL_A));
     when(dealManager.readDeal(DEAL_ID_A)).thenReturn(DEAL_A);
-    deleteHelper.deleteRestaurant(RESTAURANT_ID_A);
-    verify(restaurantManager).deleteRestaurant(RESTAURANT_ID_A);
 
+    deleteHelper.deleteRestaurant(RESTAURANT_ID_A);
+
+    verify(restaurantManager).deleteRestaurant(RESTAURANT_ID_A);
+    verify(restaurantPlaceManager).deletePlacesOfRestaurant(RESTAURANT_ID_A);
+    verify(followManager).deleteFollowersOfRestaurant(RESTAURANT_ID_A);
     verify(dealManager).deleteDeal(DEAL_ID_A);
     verify(dealTagManager).deleteAllTagsOfDeal(DEAL_ID_A);
     verify(commentManager).deleteAllCommentsOfDeal(DEAL_ID_A);
-    verify(restaurantPlaceManager).deletePlacesOfRestaurant(RESTAURANT_ID_A);
-    verify(followManager).deleteFollowersOfRestaurant(RESTAURANT_ID_A);
   }
 }
