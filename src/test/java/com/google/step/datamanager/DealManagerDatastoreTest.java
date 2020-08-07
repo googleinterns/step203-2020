@@ -449,7 +449,7 @@ public final class DealManagerDatastoreTest {
     assertEquals(dealB, deals.get(1));
   }
 
-  public void testGetDealsWithIdsSortNewNoLimit() {
+  public void testGetDealsWithIdsSortNewNoLimit() throws InterruptedException {
     Deal dealA =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -460,6 +460,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -478,7 +479,7 @@ public final class DealManagerDatastoreTest {
     assertThat(dealB.id, is(dealIds.get(1)));
   }
 
-  public void testGetDealsWithIdsSortNewLimit() {
+  public void testGetDealsWithIdsSortNewLimit() throws InterruptedException {
     Deal dealA =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
@@ -489,6 +490,7 @@ public final class DealManagerDatastoreTest {
             USER_ID_A,
             RESTAURANT_ID_A,
             EMPTY_LIST);
+    TimeUnit.SECONDS.sleep(1);
     Deal dealB =
         dealManagerDatastore.createDeal(
             DESCRIPTION_A,
