@@ -28,6 +28,17 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
+      <div class="dropdown-sort float-right">
+        <a class="nav-link py-3 px-0 px-lg-3 rounded dropdown-toggle" href="#" id="dealDropdown" role="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sort by
+        </a>
+        <div class="dropdown-menu" id='sort' aria-labelledby="dealDropdown">
+          <a class="dropdown-item" href="#">Trending</a>
+          <a class="dropdown-item" href="#">Votes</a>
+          <a class="dropdown-item" href="#">New</a>
+        </div>
+      </div>
       <div class="row row-deals"></div>
       <div class="row row-deals"></div>
       <div class="row row-deals"></div>
