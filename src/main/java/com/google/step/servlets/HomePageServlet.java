@@ -186,14 +186,16 @@ public class HomePageServlet extends HttpServlet {
       totalDealMaps.add(getHomePageSectionMap(trendingDeals));
     }
     if (section == null || section.equals(USERS_SECTION)) {
-      List<Deal> dealsByUsersFollowed =
+      List<Long> dealIdsByUsersFollowed =
           dealManager.getDealsPublishedByUsers(followManager.getFollowedUserIds(userId), limit);
+      List<Deal> dealsByUsersFollowed = dealManager.readDeals(dealIdsByUsersFollowed);
       totalDealMaps.add(getHomePageSectionMap(dealsByUsersFollowed));
     }
     if (section == null || section.equals(RESTAURANTS_SECTION)) {
-      List<Deal> dealsByRestaurantsFollowed =
+      List<Long> dealIdsByRestaurantsFollowed =
           dealManager.getDealsPublishedByRestaurants(
               followManager.getFollowedRestaurantIds(userId), limit);
+      List<Deal> dealsByRestaurantsFollowed = dealManager.readDeals(dealIdsByRestaurantsFollowed);
       totalDealMaps.add(getHomePageSectionMap(dealsByRestaurantsFollowed));
     }
     if (section == null || section.equals(TAGS_SECTION)) {

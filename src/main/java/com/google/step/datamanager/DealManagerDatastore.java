@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.step.model.Deal;
 import com.google.step.model.Tag;
 import java.time.LocalDateTime;
@@ -31,6 +32,10 @@ public class DealManagerDatastore implements DealManager {
   private final TagManager tagManager;
 
   private final String LOCATION = "Asia/Singapore";
+
+  enum Sort {
+    NEW
+  }
 
   public DealManagerDatastore() {
     datastore = DatastoreServiceFactory.getDatastoreService();
@@ -146,22 +151,32 @@ public class DealManagerDatastore implements DealManager {
     return transformEntityToDeal(dealEntity);
   }
 
-  /** Retrieves deals posted by restaurants or users */
-  private List<Deal> getDealsPublishedByRestaurantsOrUsers(
-      Set<Long> ids, String filterAttribute, int limit) {
-    List<Deal> dealResults = new ArrayList<>();
+  /** Retrieves deals with a filter applied */
+  private List<Long> getDealsWithFilter(
+      List<Object> ids, String filterAttribute, int limit, Sort sort) {
+    List<Long> dealResults = new ArrayList<>();
     if (ids.size() > 0) {
       Filter propertyFilter = new FilterPredicate(filterAttribute, FilterOperator.IN, ids);
-      Query query = new Query("Deal").setFilter(propertyFilter);
+      Query query = null;
+      Iterable<Entity> entities = null;
+      if (sort != null) {
+        if (sort == Sort.NEW) {
+          query =
+              new Query("Deal")
+                  .setFilter(propertyFilter)
+                  .addSort("timestamp", SortDirection.DESCENDING);
+        }
+      } else {
+        query = new Query("Deal").setFilter(propertyFilter);
+      }
       PreparedQuery pq = datastore.prepare(query);
-      Iterable<Entity> entities;
       if (limit > 0) {
         entities = pq.asIterable(FetchOptions.Builder.withLimit(limit));
       } else {
         entities = pq.asIterable();
       }
       for (Entity entity : entities) {
-        dealResults.add(readDeal(entity.getKey().getId()));
+        dealResults.add(entity.getKey().getId());
       }
     }
     return dealResults;
@@ -169,14 +184,42 @@ public class DealManagerDatastore implements DealManager {
 
   /** Retrieves deals posted by users */
   @Override
-  public List<Deal> getDealsPublishedByUsers(Set<Long> userIds, int limit) {
-    return getDealsPublishedByRestaurantsOrUsers(userIds, "posterId", limit);
+  public List<Long> getDealsPublishedByUsers(Set<Long> userIds, int limit) {
+    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, null);
+  }
+
+  /** Retrieves deals posted by users, sorted by new */
+  @Override
+  public List<Long> getDealsPublishedByUsersSortByNew(Set<Long> userIds, int limit) {
+    return getDealsWithFilter(new ArrayList<>(userIds), "posterId", limit, Sort.NEW);
   }
 
   /** Retrieves deals posted by restaurants */
   @Override
-  public List<Deal> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit) {
-    return getDealsPublishedByRestaurantsOrUsers(restaurantIds, "restaurantId", limit);
+  public List<Long> getDealsPublishedByRestaurants(Set<Long> restaurantIds, int limit) {
+    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, null);
+  }
+
+  /** Retrieves deals posted by restaurants, sorted by new */
+  @Override
+  public List<Long> getDealsPublishedByRestaurantsSortByNew(Set<Long> restaurantIds, int limit) {
+    return getDealsWithFilter(new ArrayList<>(restaurantIds), "restaurantId", limit, Sort.NEW);
+  }
+
+  /** Retrieves deals given a set of ids */
+  @Override
+  public List<Long> getDealsWithIds(Set<Long> ids, int limit) {
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, null);
+  }
+
+  /** Retrieves deals given a set of ids */
+  @Override
+  public List<Long> getDealsWithIdsSortByNew(Set<Long> ids, int limit) {
+    List<Key> keys =
+        ids.stream().map(id -> KeyFactory.createKey("Deal", id)).collect(Collectors.toList());
+    return getDealsWithFilter(new ArrayList<>(keys), "__key__", limit, Sort.NEW);
   }
 
   @Override
@@ -275,6 +318,15 @@ public class DealManagerDatastore implements DealManager {
     List<Deal> deals = new ArrayList<>();
     for (Entity entity : entities) {
       deals.add(transformEntityToDeal(entity));
+    }
+    return deals;
+  }
+
+  @Override
+  public List<Deal> readDealsOrder(List<Long> dealIds) {
+    List<Deal> deals = new ArrayList<>();
+    for (Long dealId : dealIds) {
+      deals.add(readDeal(dealId));
     }
     return deals;
   }
