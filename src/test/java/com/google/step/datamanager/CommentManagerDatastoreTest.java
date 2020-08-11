@@ -169,4 +169,13 @@ public final class CommentManagerDatastoreTest {
     assertEquals(5, commentsA.size());
     assertEquals(0, commentsB.size());
   }
+
+  public void testAvgSentiment() {
+    Comment commentA = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_A, CONTENT_A);
+    Comment commentB = commentManagerDatastore.createComment(DEAL_ID_A, USER_ID_B, CONTENT_B);
+    double avgSentiment = commentManagerDatastore.getAvgCommentSentiment(DEAL_ID_A);
+    double expected =
+        0.5 * Double.valueOf(commentA.sentiment) + 0.5 * Double.valueOf(commentB.sentiment);
+    assertEquals(expected, avgSentiment, 0.001);
+  }
 }

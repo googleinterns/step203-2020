@@ -46,14 +46,30 @@ public class CommentManagerDatastore implements CommentManager {
     String sentiment = null;
     try {
       sentiment = getCommentSentiment(content) + "";
-      entity.setProperty("sentiment", sentiment);
     } catch (IOException e) {
-      entity.setProperty("sentiment", "0");
+      sentiment = "0";
     }
+    entity.setProperty("sentiment", sentiment);
     Key key = datastore.put(entity);
     long id = key.getId();
 
     return new Comment(id, dealId, userId, content, timestamp, sentiment);
+  }
+
+  @Override
+  public double getAvgCommentSentiment(long dealId) {
+    Filter propertyFilter = new FilterPredicate("deal", FilterOperator.EQUAL, dealId);
+    Query query = new Query("Comment").setFilter(propertyFilter);
+
+    PreparedQuery pq = datastore.prepare(query);
+
+    List<Entity> entities = pq.asList(FetchOptions.Builder.withDefaults());
+
+    double totalSentimentScore = 0;
+    for (Entity entity : entities) {
+      totalSentimentScore += Double.valueOf((String) entity.getProperty("sentiment"));
+    }
+    return totalSentimentScore / entities.size();
   }
 
   @Override
