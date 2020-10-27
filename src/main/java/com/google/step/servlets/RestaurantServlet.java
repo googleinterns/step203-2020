@@ -4,8 +4,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
-import com.google.step.datamanager.FollowManager;
-import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.RestaurantPlaceManager;
@@ -30,32 +28,32 @@ public class RestaurantServlet extends HttpServlet {
   private RestaurantManager restaurantManager;
   private DealManager dealManager;
   private RestaurantPlaceManager restaurantPlaceManager;
+  private DeleteHelper deleteHelper;
   private UserManager userManager;
   private UserService userService;
-  private FollowManager followManager;
 
   public RestaurantServlet(
       RestaurantManager restaurantManager,
       DealManager dealManager,
       RestaurantPlaceManager restaurantPlaceManager,
+      DeleteHelper deleteHelper,
       UserManager userManager,
-      UserService userService,
-      FollowManager followManager) {
+      UserService userService) {
     this.restaurantManager = restaurantManager;
     this.dealManager = dealManager;
     this.restaurantPlaceManager = restaurantPlaceManager;
     this.userManager = userManager;
     this.userService = userService;
-    this.followManager = followManager;
+    this.deleteHelper = deleteHelper;
   }
 
   public RestaurantServlet() {
     restaurantManager = new RestaurantManagerDatastore();
     dealManager = new DealManagerDatastore();
     restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
+    deleteHelper = new DeleteHelper();
     userManager = new UserManagerDatastore();
     userService = UserServiceFactory.getUserService();
-    followManager = new FollowManagerDatastore();
   }
 
   /** Deletes the restaurant with the given id parameter */
@@ -81,9 +79,7 @@ public class RestaurantServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
-    restaurantManager.deleteRestaurant(id);
-    restaurantPlaceManager.deletePlacesOfRestaurant(id);
-    followManager.deleteFollowersOfRestaurant(id);
+    deleteHelper.deleteRestaurant(id);
   }
 
   /** Gets the restaurant with the given id parameter */

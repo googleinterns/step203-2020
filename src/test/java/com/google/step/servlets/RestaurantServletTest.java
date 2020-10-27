@@ -14,7 +14,6 @@ import static com.google.step.TestConstants.USER_A;
 import static com.google.step.TestConstants.USER_A_BRIEF_JSON;
 import static com.google.step.TestConstants.USER_ID_A;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.step.datamanager.DealManager;
-import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantPlaceManager;
 import com.google.step.datamanager.UserManager;
@@ -54,9 +52,8 @@ public class RestaurantServletTest {
   private RestaurantPlaceManager restaurantPlaceManager;
   private UserManager userManager;
   private UserService userService;
-  private FollowManager followManager;
-
   private RestaurantServlet restaurantServlet;
+  private DeleteHelper deleteHelper;
 
   @Before
   public void setUp() {
@@ -65,16 +62,16 @@ public class RestaurantServletTest {
     restaurantPlaceManager = mock(RestaurantPlaceManager.class);
     userManager = mock(UserManager.class);
     userService = mock(UserService.class);
-    followManager = mock(FollowManager.class);
+    deleteHelper = mock(DeleteHelper.class);
 
     restaurantServlet =
         new RestaurantServlet(
             restaurantManager,
             dealManager,
             restaurantPlaceManager,
+            deleteHelper,
             userManager,
-            userService,
-            followManager);
+            userService);
   }
 
   /** Successfully returns a restaurant */
@@ -267,9 +264,7 @@ public class RestaurantServletTest {
     restaurantServlet.doDelete(request, response);
 
     verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    verify(restaurantManager).deleteRestaurant(anyLong());
-    verify(restaurantPlaceManager).deletePlacesOfRestaurant(1);
-    verify(followManager).deleteFollowersOfRestaurant(1);
+    verify(deleteHelper).deleteRestaurant(1);
   }
 
   /** Invalid ID is given for deleting e.g. String */

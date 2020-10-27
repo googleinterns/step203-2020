@@ -2,12 +2,8 @@ package com.google.step.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.step.datamanager.CommentManager;
-import com.google.step.datamanager.CommentManagerDatastore;
 import com.google.step.datamanager.DealManager;
 import com.google.step.datamanager.DealManagerDatastore;
-import com.google.step.datamanager.DealTagManager;
-import com.google.step.datamanager.DealTagManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -37,8 +33,7 @@ public class DealDetailServlet extends HttpServlet {
   private final UserManager userManager;
   private final VoteManager voteManager;
   private final RestaurantManager restaurantManager;
-  private final CommentManager commentManager;
-  private final DealTagManager dealTagManager;
+  private final DeleteHelper deleteHelper;
   private final UserService userService;
 
   public DealDetailServlet() {
@@ -46,8 +41,7 @@ public class DealDetailServlet extends HttpServlet {
     userManager = new UserManagerDatastore();
     voteManager = new VoteManagerDatastore();
     restaurantManager = new RestaurantManagerDatastore();
-    commentManager = new CommentManagerDatastore();
-    dealTagManager = new DealTagManagerDatastore();
+    deleteHelper = new DeleteHelper();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -56,15 +50,13 @@ public class DealDetailServlet extends HttpServlet {
       UserManager userManager,
       VoteManager voteManager,
       RestaurantManager restaurantManager,
-      CommentManager commentManager,
-      DealTagManager dealTagManager,
+      DeleteHelper deleteHelper,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
     this.voteManager = voteManager;
     this.restaurantManager = restaurantManager;
-    this.commentManager = commentManager;
-    this.dealTagManager = dealTagManager;
+    this.deleteHelper = deleteHelper;
     this.userService = userService;
   }
 
@@ -98,12 +90,9 @@ public class DealDetailServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
+    deleteHelper.deleteDeal(id);
 
     response.setStatus(HttpServletResponse.SC_OK);
-    dealManager.deleteDeal(id);
-    commentManager.deleteAllCommentsOfDeal(id);
-    dealTagManager.deleteAllTagsOfDeal(id);
-    ImageUploader.deleteImage(deal.photoBlobkey);
   }
 
   /** Gets the deal with the given id parameter */
