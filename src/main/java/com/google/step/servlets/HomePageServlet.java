@@ -12,6 +12,8 @@ import com.google.step.datamanager.FollowManager;
 import com.google.step.datamanager.FollowManagerDatastore;
 import com.google.step.datamanager.RestaurantManager;
 import com.google.step.datamanager.RestaurantManagerDatastore;
+import com.google.step.datamanager.RestaurantPlaceManager;
+import com.google.step.datamanager.RestaurantPlaceManagerDatastore;
 import com.google.step.datamanager.TagManager;
 import com.google.step.datamanager.TagManagerDatastore;
 import com.google.step.datamanager.UserManager;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -48,6 +51,8 @@ public class HomePageServlet extends HttpServlet {
   private final TagManager tagManager;
   private final FollowManager followManager;
   private final DealVoteCountManager dealVoteCountManager;
+  private final RestaurantPlaceManager restaurantPlaceManager;
+
   private final Long OLDEST_DEAL_TIMESTAMP = 1594652120L; // arbitrary datetime of first deal posted
   private final String LOCATION = "Asia/Singapore";
 
@@ -58,6 +63,7 @@ public class HomePageServlet extends HttpServlet {
 
   private static final String VOTE_SORT = "votes";
   private static final String NEW_SORT = "new";
+  private static final String DISTANCE_SORT = "distance";
 
   private static final int NUM_HOMEPAGE_DEALS = 8;
 
@@ -69,6 +75,7 @@ public class HomePageServlet extends HttpServlet {
       TagManager tagManager,
       FollowManager followManager,
       DealVoteCountManager dealVoteCountManager,
+      RestaurantPlaceManager restaurantPlaceManager,
       UserService userService) {
     this.dealManager = dealManager;
     this.userManager = userManager;
@@ -77,6 +84,7 @@ public class HomePageServlet extends HttpServlet {
     this.tagManager = tagManager;
     this.followManager = followManager;
     this.dealVoteCountManager = dealVoteCountManager;
+    this.restaurantPlaceManager = restaurantPlaceManager;
     this.userService = userService;
   }
 
@@ -88,6 +96,7 @@ public class HomePageServlet extends HttpServlet {
     dealTagManager = new DealTagManagerDatastore();
     followManager = new FollowManagerDatastore();
     dealVoteCountManager = new DealVoteCountManagerDatastore();
+    restaurantPlaceManager = new RestaurantPlaceManagerDatastore();
     userService = UserServiceFactory.getUserService();
   }
 
@@ -123,14 +132,17 @@ public class HomePageServlet extends HttpServlet {
     if (sort != null
         && !sort.equals(TRENDING)
         && !sort.equals(VOTE_SORT)
-        && !sort.equals(NEW_SORT)) {
+        && !sort.equals(NEW_SORT)
+        && !sort.equals(DISTANCE_SORT)) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
+    String lat = request.getParameter("latitude");
+    String lng = request.getParameter("longitude");
     // if no home page section is being specified to view all deals, return home page data
     if (userService.isUserLoggedIn()) { // all sections are available
       response.setContentType("application/json;");
-      response.getWriter().println(userLoggedIn(homePageSection, sort));
+      response.getWriter().println(userLoggedIn(homePageSection, sort, lat, lng));
     } else {
       String result = userNotLoggedIn(homePageSection);
       if (result != null) {
@@ -143,13 +155,13 @@ public class HomePageServlet extends HttpServlet {
     }
   }
 
-  private String userLoggedIn(String homePageSection, String sort) {
+  private String userLoggedIn(String homePageSection, String sort, String lat, String lng) {
     String email = userService.getCurrentUser().getEmail();
     User user = userManager.readUserByEmail(email);
     long userId = user.id;
     if (homePageSection == null) {
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId, NUM_HOMEPAGE_DEALS, sort);
+          getSectionListMaps(homePageSection, userId, NUM_HOMEPAGE_DEALS, sort, lat, lng);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       homePageMap.put(USERS_SECTION, homePageDealsMaps.get(1));
@@ -159,7 +171,7 @@ public class HomePageServlet extends HttpServlet {
       // user requested to view all deals of particular section
     } else {
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, userId, -1, sort);
+          getSectionListMaps(homePageSection, userId, -1, sort, lat, lng);
       return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     }
   }
@@ -167,14 +179,14 @@ public class HomePageServlet extends HttpServlet {
   private String userNotLoggedIn(String homePageSection) {
     if (homePageSection == null) { // only trending will be shown when not logged in
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(TRENDING, -1, NUM_HOMEPAGE_DEALS, null);
+          getSectionListMaps(TRENDING, -1, NUM_HOMEPAGE_DEALS, null, null, null);
       Map<String, Object> homePageMap = new HashMap<>();
       homePageMap.put(TRENDING, homePageDealsMaps.get(0));
       return JsonFormatter.getHomePageJson(homePageMap);
     } else if (homePageSection.equals(TRENDING)) {
       // User views all deals for trending section
       List<List<Map<String, Object>>> homePageDealsMaps =
-          getSectionListMaps(homePageSection, -1, -1, null);
+          getSectionListMaps(homePageSection, -1, -1, null, null, null);
       return JsonFormatter.getHomePageSectionJson(homePageDealsMaps.get(0));
     } else { // user is unable to view all deals for other sections when not logged in
       return null;
@@ -183,7 +195,7 @@ public class HomePageServlet extends HttpServlet {
 
   /** Gets a list of list of maps based on the required section(s) */
   private List<List<Map<String, Object>>> getSectionListMaps(
-      String section, long userId, int limit, String sort) {
+      String section, long userId, int limit, String sort, String lat, String lng) {
     List<List<Map<String, Object>>> totalDealMaps = new ArrayList<>();
     // for trending section, there is no sorting available as it is already sorted by trending
     if (section == null || section.equals(TRENDING)) {
@@ -203,7 +215,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else { // need to retrieve all deals first, then sort in this servlet
         dealIds = dealManager.getDealsPublishedByUsers(userIds, -1);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -214,7 +226,7 @@ public class HomePageServlet extends HttpServlet {
         deals = sort == null ? dealManager.readDeals(dealIds) : dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsPublishedByRestaurants(restaurantIds, -1);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
@@ -230,14 +242,15 @@ public class HomePageServlet extends HttpServlet {
         deals = dealManager.readDealsOrder(dealIds);
       } else {
         dealIds = dealManager.getDealsWithIds(dealIdsTags, -1);
-        deals = handleSortVoteTrending(dealIds, limit, sort);
+        deals = handleOtherSorts(dealIds, limit, sort, lat, lng);
       }
       totalDealMaps.add(getHomePageSectionMap(deals));
     }
     return totalDealMaps;
   }
 
-  private List<Deal> handleSortVoteTrending(List<Long> dealIds, int limit, String sort) {
+  private List<Deal> handleOtherSorts(
+      List<Long> dealIds, int limit, String sort, String lat, String lng) {
     List<Deal> deals = null;
     if (sort.equals(VOTE_SORT)) {
       dealIds = dealVoteCountManager.sortDealsInOrderOfVotes(dealIds, limit);
@@ -248,7 +261,43 @@ public class HomePageServlet extends HttpServlet {
       if (limit > 0) {
         deals = deals.stream().limit(limit).collect(Collectors.toList());
       }
+    } else if (sort.equals(DISTANCE_SORT)) {
+      deals = dealManager.readDeals(dealIds);
+      deals = sortByDistance(deals, limit, lat, lng);
+      if (limit > 0) {
+        deals = deals.stream().limit(limit).collect(Collectors.toList());
+      }
     }
+    return deals;
+  }
+
+  private List<Deal> sortByDistance(
+      List<Deal> deals, int limit, String latitude, String longitude) {
+    Map<Deal, Double> dealDistMap = new HashMap<>();
+    try {
+      List<List<String>> placeIdsPerDeal = new ArrayList<>();
+      for (int i = 0; i < deals.size(); i++) {
+        Set<String> placeIds =
+            restaurantPlaceManager.getPlaceIdsOfRestaurant(deals.get(i).restaurantId);
+        List<String> placeIdsList = new ArrayList<>(placeIds);
+        placeIdsPerDeal.add(placeIdsList);
+      }
+      List<Map<String, Double>> distances =
+          DistanceUtil.getDistances(deals, latitude, longitude, placeIdsPerDeal);
+      // Gets the min distance for each deal as there are many placeids and put in new map
+      for (int i = 0; i < distances.size(); i++) {
+        if (!distances.get(i).isEmpty()) {
+          Double minDistance = distances.get(i).values().stream().min(Double::compare).get();
+          dealDistMap.put(deals.get(i), minDistance);
+        }
+      }
+    } catch (IOException e) {
+      return new ArrayList<>();
+    }
+    // Sort the deals based on distance
+    List<Entry<Deal, Double>> dealDists = new ArrayList<>(dealDistMap.entrySet());
+    dealDists.sort(Entry.comparingByValue());
+    deals = dealDists.stream().map(dealDist -> dealDist.getKey()).collect(Collectors.toList());
     return deals;
   }
 
